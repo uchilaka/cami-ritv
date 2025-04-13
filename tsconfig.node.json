@@ -12,6 +12,7 @@
   },
   "include": [
     "vite.config.ts",
-    "app/frontend/utils/aliasFactory.ts"
+    "vitest.config.ts",
+    "app/frontend/utils"
   ]
 }

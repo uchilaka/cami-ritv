@@ -27,6 +27,7 @@
     "noFallthroughCasesInSwitch": true,
     "forceConsistentCasingInFileNames": true,
     /* Module resolution */
+    "allowSyntheticDefaultImports": true,
     "paths": {
       "@/*": [
         "./app/frontend/*"
