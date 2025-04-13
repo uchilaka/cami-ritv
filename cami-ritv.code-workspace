@@ -1,8 +1,39 @@
 {
-	"folders": [
-		{
-			"path": "."
-		}
+  "folders": [
+    {
+      "path": "."
+    }
   ],
-  "settings": {}
+  "settings": {
+    "terminal.integrated.fontSize": 15,
+    "window.zoomLevel": 0.125,
+    "rubyLsp.rubyVersionManager": {
+      "identifier": "asdf"
+    },
+    "rubocop.commandPath": "${userHome}/.rbenv/shims/rubocop",
+    "rubocop.mode": "enableViaGemfileOrMissingGemfile",
+    "editor.mouseWheelZoom": true,
+    "terminal.integrated.mouseWheelZoom": true
+  },
+  "extensions": {
+    // See https://go.microsoft.com/fwlink/?LinkId=827846 to learn about workspace recommendations.
+    // Extension identifier format: ${publisher}.${name}. Example: vscode.csharp
+    // List of extensions which should be recommended for users of this workspace.
+    "recommendations": [
+      "esbenp.prettier-vscode",
+      "dbaeumer.vscode-eslint",
+      "bierner.markdown-emoji",
+      "davidanson.vscode-markdownlint",
+      "rubocop.vscode-rubocop",
+      "Shopify.ruby-lsp",
+      "yzhang.markdown-all-in-one",
+      "GitHub.copilot",
+      "GitHub.copilot-chat",
+      "ms-vscode-remote.vscode-remote-extensionpack"
+    ],
+    // List of extensions recommended by VS Code that should not be recommended for users of this workspace.
+    "unwantedRecommendations": [
+      "shopify.rubocop-lsp"
+    ]
+  }
 }
