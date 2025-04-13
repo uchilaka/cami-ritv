@@ -3,7 +3,15 @@ class DemosController < ApplicationController
     render inertia: 'demos/HeroSimplyCentered', props: {
       navigation: [
         { name: 'Product', href: '#' },
-        { name: 'Features', href: '#' },
+        {
+          name: 'Showcase',
+          href: '#',
+          submenu: [
+            { name: 'Hero Simply Centered ', href: '/demos/hero/simply-centered' },
+            { name: 'Feature with Product Screenshot ', href: '/demos/feature/with-product-screenshot' },
+            { name: 'Feature with 2x2 Grid', href: '/demos/feature/with-2x2-grid' },
+          ].sort_by { |h| h[:name] }
+        },
         { name: 'Marketplace', href: '#' },
         { name: 'Company', href: '#' },
       ]

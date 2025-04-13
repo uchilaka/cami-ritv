@@ -4,9 +4,10 @@ import React, { FC, useState } from "react";
 import { Dialog, DialogPanel } from "@headlessui/react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import { ResolvedComponent } from "@/@types";
+import NavItemWithSubmenu, { NavItem } from "@/components/NavItemWithSubmenu";
 
 interface HeroProps {
-  navigation: Array<{ name: string; href: string }>;
+  navigation: Array<NavItem>;
 }
 
 const HeroSimplyCentered: FC<HeroProps> & {
@@ -41,17 +42,28 @@ const HeroSimplyCentered: FC<HeroProps> & {
               <Bars3Icon aria-hidden="true" className="size-6" />
             </button>
           </div>
-          <div className="hidden lg:flex lg:gap-x-12">
-            {navigation.map((item) => (
-              <a
-                key={item.name}
-                href={item.href}
-                className="text-sm/6 font-semibold text-gray-900"
-              >
-                {item.name}
-              </a>
+          <ul className="hidden lg:flex lg:gap-x-12">
+            {navigation.map(({ name, href, submenu }) => (
+              <li>
+                {submenu ? (
+                  <NavItemWithSubmenu
+                    items={submenu}
+                    className="text-sm/6 font-semibold text-gray-900"
+                  >
+                    {name}
+                  </NavItemWithSubmenu>
+                ) : (
+                  <a
+                    key={name}
+                    href={href}
+                    className="text-sm/6 font-semibold text-gray-900"
+                  >
+                    {name}
+                  </a>
+                )}
+              </li>
             ))}
-          </div>
+          </ul>
           <div className="hidden lg:flex lg:flex-1 lg:justify-end">
             <a href="#" className="text-sm/6 font-semibold text-gray-900">
               Log in <span aria-hidden="true">&rarr;</span>
