@@ -1,61 +1,10 @@
 {
-  "compilerOptions": {
-    "target": "ES2020",
-    "useDefineForClassFields": true,
-    "lib": [
-      "ES2020",
-      "DOM",
-      "DOM.Iterable"
-    ],
-    "module": "ESNext",
-    "skipLibCheck": true,
-    "esModuleInterop": true,
-    "baseUrl": ".",
-    /* Bundler mode */
-    "moduleResolution": "bundler",
-    "noEmit": true,
-    "allowImportingTsExtensions": true,
-    "isolatedModules": true,
-    "moduleDetection": "force",
-    "jsx": "react",
-    /* Linting */
-    "strict": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "noFallthroughCasesInSwitch": true,
-    "forceConsistentCasingInFileNames": true,
-    "paths": {
-      "@/*": [
-        "./app/frontend/*"
-      ],
-      "@/components/*": [
-        "./app/frontend/components/*"
-      ],
-      "@/features/*": [
-        "./app/frontend/features/*"
-      ],
-      "@/hooks/*": [
-        "./app/frontend/hooks/*"
-      ],
-      "@/pages/*": [
-        "./app/frontend/pages/*"
-      ]
+  "references": [
+    {
+      "path": "./tsconfig.app.json"
     },
-    "types": [
-      "vite/client",
-      "vitest/globals",
-      "node"
-    ],
-  },
-  "include": [
-    "./app/frontend"
-  ],
-  "exclude": [
-    "**/node_modules/*",
-    "**/dist",
-    "**/test"
-  ],
-  "files": [
-    "eslint.config.ts"
+    {
+      "path": "./tsconfig.node.json"
+    }
   ]
 }

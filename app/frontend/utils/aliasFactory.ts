@@ -5,9 +5,9 @@ import fs from 'fs'
 import omit from 'lodash.omit'
 import uniqBy from 'lodash.uniqby'
 
-const tsConfigFile = path.join(path.resolve('./'), 'tsconfig.json')
+const tsConfigFile = path.join(path.resolve('./'), 'tsconfig.app.json')
 const tsConfig = parse(fs.readFileSync(tsConfigFile).toString(), undefined, true) as Record<string, unknown>
-const compilerOptions = tsConfig!.compilerOptions as CompilerOptions
+const compilerOptions = tsConfig.compilerOptions as CompilerOptions
 
 interface AliasSet {
   aliases: string[]

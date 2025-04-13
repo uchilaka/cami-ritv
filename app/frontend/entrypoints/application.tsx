@@ -1,12 +1,20 @@
-import { createElement } from "react";
+import { createElement, ReactNode } from "react";
 import { createRoot } from "react-dom/client";
-import { createInertiaApp } from "@inertiajs/inertia-react";
+import { createInertiaApp } from "@inertiajs/react";
 import { InertiaProgress } from "@inertiajs/progress";
 import axios from "axios";
-import Layout from "@/components/Layout";
-import { ModuleNamespace } from "vite/types/hot.js";
 
-const pages = import.meta.glob("../pages/*.tsx");
+import Layout from "@/components/Layout";
+
+// Temporary type definition, until @inertiajs/react provides one
+type ResolvedComponent = {
+  default: ReactNode;
+  layout?: (page: ReactNode) => ReactNode;
+};
+
+type ReactNodeWithOptionalLayout = ReactNode & {
+  layout?: ResolvedComponent["layout"];
+};
 
 document.addEventListener("DOMContentLoaded", () => {
   const csrfToken = document.querySelector<HTMLMetaElement>(
@@ -19,26 +27,35 @@ document.addEventListener("DOMContentLoaded", () => {
 
   InertiaProgress.init();
 
-  /* eslint-disable @typescript-eslint/no-unsafe-return */
-  /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-  /* eslint-disable @typescript-eslint/no-unsafe-member-access */
   void createInertiaApp({
-    resolve: async (name) => {
-      const PageNamespace = (await pages[
-        `../pages/${name}.tsx`
-      ]()) as ModuleNamespace;
-      const page = PageNamespace.default;
-      // const page = (await pages[`../pages/${name}.tsx`]()).default;
-      page.layout = page.layout || Layout;
+    resolve: (name) => {
+      const pages = import.meta.glob<ResolvedComponent>("../pages/**/*.tsx", {
+        eager: true,
+      });
+      const page = pages[`../pages/${name}.tsx`];
+      if (!page) {
+        throw new Error(`Missing Inertia page component: '${name}.tsx'`);
+      }
+
+      if (page.default) {
+        // To use a default layout, import the Layout component
+        // and use the following line.
+        // see https://inertia-rails.dev/guide/pages#default-layouts
+        (page.default as ReactNodeWithOptionalLayout).layout = Layout;
+      }
 
       return page;
     },
     setup({ el, App, props }) {
-      const component = createRoot(el);
-      component.render(createElement(App, props));
+      if (el) {
+        createRoot(el).render(createElement(App, props));
+      } else {
+        throw new Error(
+          "Missing root element.\n\n" +
+            "If you see this error, it probably means you load Inertia.js on non-Inertia pages.\n" +
+            'Consider moving <%= vite_typescript_tag "inertia" %> to the Inertia-specific layout instead.'
+        );
+      }
     },
   });
-  /* eslint-enable @typescript-eslint/no-unsafe-return */
-  /* eslint-enable @typescript-eslint/no-unsafe-assignment */
-  /* eslint-enable @typescript-eslint/no-unsafe-member-access */
 });
