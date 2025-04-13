@@ -25,8 +25,23 @@
 
 /public/assets
 
+###################################################################
+############################## Secrets ############################
+###################################################################
+
+# Ignore secret files
+/config/secrets/
+
+# Ignore sensitive files
+/spec/fixtures/pii/
+
+# Ignore proxy server config file (will be processed by initializer)
+/config/ngrok*.yml
+
 # Ignore master key for decrypting credentials and more.
-/config/master.key
+/config/credentials/*.key
+# Ignore backups of secrets file. See the command: bin/thor help lx-cli:secrets:backup
+/config/credentials/*--**-*-*T*.yml.enc
 
 # Vite Ruby
 /public/vite
@@ -37,3 +52,58 @@ node_modules
 # https://vitejs.dev/guide/env-and-mode.html#env-files
 *.local
 
+# IDE specific files
+# IDE files
+/.idea
+/.env.local
+/.env*
+!/.env.example
+
+# General
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Icon must end with two \r
+Icon
+
+# Thumbnails
+._*
+
+# Files that might appear in the root of a volume
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+
+# Directories potentially created on remote AFP share
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
+
+/app/assets/builds/*
+!/app/assets/builds/.keep
+
+# Yarn
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
+
+# Storybook
+*storybook.log
+/storybook-static
+
+# Chromatic
+chromatic-diagnostics.json
+chromatic.log
+
+/config/credentials/development.key
