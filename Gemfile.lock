@@ -239,7 +239,7 @@ PLATFORMS
 DEPENDENCIES
   debug
   inertia_rails
-  puma (>= 6)
+  puma (~> 6)
   rails (~> 7.1)
   sprockets-rails
   sqlite3 (~> 2.6)
