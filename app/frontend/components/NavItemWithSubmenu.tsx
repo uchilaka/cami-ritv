@@ -1,11 +1,14 @@
-import React, { ComponentProps, FC, ReactNode, forwardRef } from "react";
+import React, {
+  ComponentProps,
+  FC,
+  ReactNode,
+  forwardRef,
+  useEffect,
+  useRef,
+} from "react";
+import { Dropdown } from "flowbite";
 import clsx from "clsx";
-
-export interface NavItem {
-  name: string;
-  href: string;
-  submenu?: NavItem[];
-}
+import { NavItem } from "@/@types";
 
 const NavItemWithSubmenu: FC<
   ComponentProps<"button"> & {
@@ -13,7 +16,25 @@ const NavItemWithSubmenu: FC<
     items: Array<Omit<NavItem, "submenu">>;
   }
 > = forwardRef(({ id, items, children, className }, ref) => {
+  const dropdownRef = useRef<HTMLDivElement>(null);
   const targetMenuId = `${id}--submenu`;
+
+  useEffect(() => {
+    const $dropdownEl = dropdownRef.current;
+    const $triggerEl = document.querySelector<HTMLButtonElement>(
+      `[data-dropdown-toggle="${targetMenuId}"]`
+    );
+    if ($dropdownEl) {
+      new Dropdown(
+        $dropdownEl,
+        $triggerEl,
+        {
+          placement: "bottom",
+        },
+        { id, override: true }
+      );
+    }
+  }, [dropdownRef]);
   return (
     <>
       <button
@@ -42,6 +63,7 @@ const NavItemWithSubmenu: FC<
 
       <div
         id={targetMenuId}
+        ref={dropdownRef}
         className="z-10 hidden font-normal bg-white divide-y divide-gray-100 rounded-lg shadow-sm w-44 dark:bg-gray-700 dark:divide-gray-600"
       >
         <ul

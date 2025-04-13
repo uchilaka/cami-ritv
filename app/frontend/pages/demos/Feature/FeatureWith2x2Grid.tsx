@@ -6,6 +6,7 @@ import {
   LockClosedIcon,
 } from "@heroicons/react/24/outline";
 import { FCWithLayout } from "@/@types";
+import DemoLayout from "@/components/DemoLayout";
 import { FeatureConfig, FeatureProps, GenericHeroIcon } from "./@types";
 
 const featureIcons: Record<string, GenericHeroIcon> = {
@@ -70,6 +71,6 @@ const FeatureWith2x2Grid: FCWithLayout<FeatureProps> = ({
   );
 };
 
-FeatureWith2x2Grid.layout = (page: React.ReactNode) => <>{page}</>;
+FeatureWith2x2Grid.layout = DemoLayout;
 
 export default FeatureWith2x2Grid;

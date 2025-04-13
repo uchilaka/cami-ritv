@@ -13,3 +13,14 @@ export type ReactNodeWithOptionalLayout = ReactNode & {
 export interface FCWithLayout<T> extends FC<T> {
   layout?: ResolvedComponent["layout"];
 }
+
+export interface NavItem {
+  name: string;
+  href: string;
+  submenu?: NavItem[];
+}
+
+export interface LayoutProps {
+  children: ReactNode;
+  navigation?: Array<NavItem>;
+}

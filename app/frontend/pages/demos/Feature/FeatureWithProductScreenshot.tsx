@@ -5,6 +5,7 @@ import {
   ServerIcon,
 } from "@heroicons/react/20/solid";
 import { FCWithLayout } from "@/@types";
+import DemoLayout from "@/components/DemoLayout";
 import { FeatureConfig, FeatureProps, GenericHeroIcon } from "./@types";
 
 const featureIcons: Record<string, GenericHeroIcon> = {
@@ -72,6 +73,6 @@ const FeatureWithProductScreenshot: FCWithLayout<FeatureProps> = ({
   );
 };
 
-FeatureWithProductScreenshot.layout = (page: React.ReactNode) => <>{page}</>;
+FeatureWithProductScreenshot.layout = DemoLayout;
 
 export default FeatureWithProductScreenshot;
