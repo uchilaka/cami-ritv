@@ -28,16 +28,16 @@
       "@/*": [
         "./app/frontend/*"
       ],
-      "@components/*": [
+      "@/components/*": [
         "./app/frontend/components/*"
       ],
-      "@features/*": [
+      "@/features/*": [
         "./app/frontend/features/*"
       ],
-      "@hooks/*": [
+      "@/hooks/*": [
         "./app/frontend/hooks/*"
       ],
-      "@pages/*": [
+      "@/pages/*": [
         "./app/frontend/pages/*"
       ]
     },
