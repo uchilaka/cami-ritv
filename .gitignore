@@ -55,8 +55,9 @@ node_modules
 # IDE specific files
 # IDE files
 /.idea
-/.env.local
+/.env.development.local
 /.env*
+!/.envrc
 !/.env.example
 
 # General

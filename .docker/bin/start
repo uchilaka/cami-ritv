@@ -1,0 +1,6 @@
+#!/usr/bin/env zsh
+
+# Intentionally skips the tunnel service, as it is only needed
+# when testing features like SSO or payment integrations
+docker compose --profile=essential up -d &&\
+  docker compose --profile=essential logs --follow
