@@ -1,11 +1,11 @@
 import { defineConfig } from 'vite'
-import RubyPlugin from 'vite-plugin-ruby'
+import RailsPlugin from 'vite-plugin-rails'
 import ReactPlugin from '@vitejs/plugin-react'
 import { viteAliasConfigFromFactory } from './app/frontend/utils/aliasFactory'
 
 export default defineConfig({
   plugins: [
-    RubyPlugin(),
+    RailsPlugin(),
     ReactPlugin(),
   ],
   resolve: {
