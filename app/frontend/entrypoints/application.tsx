@@ -20,11 +20,10 @@ document.addEventListener("DOMContentLoaded", () => {
   InertiaProgress.init();
 
   void createInertiaApp({
-    resolve: (name) => {
-      const pages = import.meta.glob<ResolvedComponent>("../pages/**/*.tsx", {
-        eager: true,
-      });
-      const page = pages[`../pages/${name}.tsx`];
+    resolve: async (name) => {
+      // Pass { eager: true } as options for import.meta.glob to eagerly load all pages
+      const pages = import.meta.glob<ResolvedComponent>("../pages/**/*.tsx");
+      const page = await pages[`../pages/${name}.tsx`]();
       if (!page) {
         throw new Error(`Missing Inertia page component: '${name}.tsx'`);
       }
