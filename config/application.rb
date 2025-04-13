@@ -26,6 +26,8 @@ module Cami
     # Please, add to the `ignore` list any other `lib` subdirectories that do
     # not contain `.rb` files, or that should not be reloaded or eager loaded.
     # Common ones are `templates`, `generators`, or `middleware`, for example.
+    # Read more on ignoring resources:
+    # https://guides.rubyonrails.org/classic_to_zeitwerk_howto.html#having-app-in-the-autoload-paths
     config.autoload_lib(ignore: %w[assets tasks])
 
     config.time_zone = 'Eastern Time (US & Canada)'

@@ -29,7 +29,7 @@ services:
     ports:
       - "4040:4040"
     profiles:
-      - batteries-included
+      - all
 
   app-store:
     container_name: db.cami.larcity

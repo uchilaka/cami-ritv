@@ -27,6 +27,14 @@ if OS.mac?
   brew 'pinentry-mac'
 end
 
+if File.exist?('/Applications/RubyMine.app')
+  puts 'Found RubyMine installed 🥳 - skipping RubyMine installation'
+elsif ENV['VISUAL'] == 'rubymine' || ENV['EDITOR'] == 'rubymine'
+  cask 'rubymine'
+else
+  cask 'visual-studio-code'
+end
+
 # FYI: Brew cask only works on macOS
 if File.exist?('/usr/local/bin/docker')
   puts 'Found Docker installed 🥳 - skipping docker installation'

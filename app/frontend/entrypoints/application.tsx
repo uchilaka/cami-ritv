@@ -19,7 +19,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
   InertiaProgress.init();
 
-  createInertiaApp({
+  /* eslint-disable @typescript-eslint/no-unsafe-return */
+  /* eslint-disable @typescript-eslint/no-unsafe-assignment */
+  /* eslint-disable @typescript-eslint/no-unsafe-member-access */
+  void createInertiaApp({
     resolve: async (name) => {
       const PageNamespace = (await pages[
         `../pages/${name}.tsx`
@@ -35,4 +38,7 @@ document.addEventListener("DOMContentLoaded", () => {
       component.render(createElement(App, props));
     },
   });
+  /* eslint-enable @typescript-eslint/no-unsafe-return */
+  /* eslint-enable @typescript-eslint/no-unsafe-assignment */
+  /* eslint-enable @typescript-eslint/no-unsafe-member-access */
 });

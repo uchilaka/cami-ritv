@@ -1,0 +1,12 @@
+# For a complete example, review https://ngrok.com/docs/secure-tunnels/ngrok-agent/reference/config/#full-example
+version: 2
+
+region: us
+<% if (auth_token = ENV.fetch('NGROK_AUTH_TOKEN', nil)) %>
+authtoken: <%= auth_token %>
+<% end %>
+tunnels:
+  larcity-accounts:
+    proto: http
+    addr: "host.docker.internal:<%= ENV.fetch('PORT', 16006) %>"
+    domain: accounts.larcity.ngrok.dev
