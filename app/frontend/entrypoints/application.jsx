@@ -5,7 +5,7 @@ import { InertiaProgress } from '@inertiajs/progress';
 import axios from 'axios';
 import Layout from '@/components/Layout';
 
-const pages = import.meta.glob('../pages/*.jsx')
+const pages = import.meta.glob('../pages/*.tsx')
 
 document.addEventListener('DOMContentLoaded', () => {
   const csrfToken = document.querySelector('meta[name=csrf-token]').content;
@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   createInertiaApp({
     resolve: async name => {
-      const page = (await pages[`../pages/${name}.jsx`]()).default;
+      const page = (await pages[`../pages/${name}.tsx`]()).default;
       page.layout = page.layout || Layout
 
       return page
