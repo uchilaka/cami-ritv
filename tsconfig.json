@@ -2,27 +2,57 @@
   "compilerOptions": {
     "target": "ES2020",
     "useDefineForClassFields": true,
-    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "lib": [
+      "ES2020",
+      "DOM",
+      "DOM.Iterable"
+    ],
     "module": "ESNext",
     "skipLibCheck": true,
     "esModuleInterop": true,
-
+    "baseUrl": ".",
     /* Bundler mode */
     "moduleResolution": "bundler",
+    "noEmit": true,
     "allowImportingTsExtensions": true,
     "isolatedModules": true,
     "moduleDetection": "force",
     "jsx": "react",
-
     /* Linting */
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
-    "noUncheckedSideEffectImports": true,
-    "forceConsistentCasingInFileNames": true
+    "forceConsistentCasingInFileNames": true,
+    "paths": {
+      "@/*": [
+        "./app/frontend/*"
+      ],
+      "@components/*": [
+        "./app/frontend/components/*"
+      ],
+      "@features/*": [
+        "./app/frontend/features/*"
+      ],
+      "@hooks/*": [
+        "./app/frontend/hooks/*"
+      ],
+      "@pages/*": [
+        "./app/frontend/pages/*"
+      ]
+    },
+    "types": [
+      "vite/client",
+      "vitest/globals",
+      "node"
+    ],
   },
-  "include": ["./app/frontend/**/*.ts*", "./app/frontend/**/*.js*"],
-  "exclude": ["**/node_modules/*", "**/dist", "**/test"],
-  "files": []
+  "include": [
+    "./app/frontend"
+  ],
+  "exclude": [
+    "**/node_modules/*",
+    "**/dist",
+    "**/test"
+  ]
 }

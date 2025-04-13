@@ -1,5 +1,5 @@
-import React from 'react'
-import { render } from 'react-dom'
+import React, { createElement } from 'react'
+import { createRoot } from 'react-dom/client';
 import { createInertiaApp } from '@inertiajs/inertia-react'
 import { InertiaProgress } from '@inertiajs/progress';
 import axios from 'axios';
@@ -22,8 +22,8 @@ document.addEventListener('DOMContentLoaded', () => {
       return page
     },
     setup({ el, App, props }) {
-      render(<App {...props} />, el)
+      const component = createRoot(el)
+      component.render(createElement(App, props))
     },
   })
 });
-
