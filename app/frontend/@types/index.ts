@@ -1,4 +1,4 @@
-import { ReactNode, FC } from "react";
+import { ReactNode, FC, ComponentProps } from "react";
 
 // Temporary type definition, until @inertiajs/react provides one
 export type ResolvedComponent = {
@@ -10,7 +10,7 @@ export type ReactNodeWithOptionalLayout = ReactNode & {
   layout?: ResolvedComponent["layout"];
 };
 
-export interface FCWithLayout<T> extends FC<T> {
+export interface FCWithLayout<T = ComponentProps<"div">> extends FC<T> {
   layout?: ResolvedComponent["layout"];
 }
 

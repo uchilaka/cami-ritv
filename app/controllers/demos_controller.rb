@@ -8,6 +8,7 @@ class DemosController < ApplicationController
         { name: 'Hero Simply Centered ', href: '/demos/hero/simply-centered' },
         { name: 'Feature with Product Screenshot ', href: '/demos/feature/with-product-screenshot' },
         { name: 'Feature with 2x2 Grid', href: '/demos/feature/with-2x2-grid' },
+        { name: 'Pricing with Emphasized Tier', href: '/demos/pricing/with-emphasized-tier' },
       ].sort_by { |h| h[:name] }
     },
     { name: 'Marketplace', href: '#' },
@@ -15,22 +16,7 @@ class DemosController < ApplicationController
   ]
 
   def hero_simply_centered
-    render inertia: 'demos/HeroSimplyCentered', props: {
-      navigation: [
-        { name: 'Product', href: '#' },
-        {
-          name: 'Showcase',
-          href: '#',
-          submenu: [
-            { name: 'Hero Simply Centered ', href: '/demos/hero/simply-centered' },
-            { name: 'Feature with Product Screenshot ', href: '/demos/feature/with-product-screenshot' },
-            { name: 'Feature with 2x2 Grid', href: '/demos/feature/with-2x2-grid' },
-          ].sort_by { |h| h[:name] }
-        },
-        { name: 'Marketplace', href: '#' },
-        { name: 'Company', href: '#' },
-      ]
-    }
+    render inertia: 'demos/HeroSimplyCentered'
   end
 
   def feature_with_product_screenshot
@@ -88,6 +74,41 @@ class DemosController < ApplicationController
             'Arcu egestas dolor vel iaculis in ipsum mauris. Tincidunt mattis aliquet hac quis. Id hac maecenas ac donec pharetra eget.',
           iconKey: 'fingerprint-icon',
         },
+      ]
+    }
+  end
+
+  def pricing_with_emphasized_tier
+    render inertia: 'demos/PricingWithEmphasizedTier', props: {
+      title: 'Pricing',
+      subtitle: 'Choose the right plan for you',
+      description: 'Choose an affordable plan that’s packed with the best features for engaging your audience, creating customer loyalty, and driving sales.',
+      tiers: [
+        {
+          name: 'Hobby',
+          id: 'tier-hobby',
+          href: '#',
+          priceMonthly: '$29',
+          description: "The perfect plan if you're just getting started with our product.",
+          features: ['25 products', 'Up to 10,000 subscribers', 'Advanced analytics', '24-hour support response time'],
+          featured: false,
+        },
+        {
+          name: 'Enterprise',
+          id: 'tier-enterprise',
+          href: '#',
+          priceMonthly: '$99',
+          description: 'Dedicated support and infrastructure for your company.',
+          features: [
+            'Unlimited products',
+            'Unlimited subscribers',
+            'Advanced analytics',
+            'Dedicated support representative',
+            'Marketing automations',
+            'Custom integrations',
+          ],
+          featured: true,
+        }
       ]
     }
   end

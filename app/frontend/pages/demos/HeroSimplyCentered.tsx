@@ -1,16 +1,10 @@
 "use client";
 
-import React, { FC } from "react";
-import { ResolvedComponent, NavItem } from "@/@types";
+import React from "react";
+import { FCWithLayout } from "@/@types";
 import DemoLayout from "@/components/DemoLayout";
 
-interface HeroProps {
-  navigation: Array<NavItem>;
-}
-
-const HeroSimplyCentered: FC<HeroProps> & {
-  layout: ResolvedComponent["layout"];
-} = () => {
+const HeroSimplyCentered: FCWithLayout = () => {
   return (
     <div className="bg-white">
       <div className="relative isolate px-6 pt-14 lg:px-8">
