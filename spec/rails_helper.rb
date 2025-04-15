@@ -9,6 +9,10 @@ abort("The Rails environment is running in production mode!") if Rails.env.produ
 # return unless Rails.env.test?
 require 'rspec/rails'
 # Add additional requires below this line. Rails is not loaded until this point!
+require 'shoulda/matchers'
+require 'shoulda/matchers/integrations/test_frameworks/rspec'
+require 'database_cleaner/active_record'
+require 'vcr'
 
 # Requires supporting ruby files with custom matchers and macros, etc, in
 # spec/support/ and its subdirectories. Files matching `spec/**/*_spec.rb` are
@@ -23,7 +27,7 @@ require 'rspec/rails'
 # directory. Alternatively, in the individual `*_spec.rb` files, manually
 # require only the support files necessary.
 #
-# Rails.root.glob('spec/support/**/*.rb').sort_by(&:to_s).each { |f| require f }
+Rails.root.glob('spec/support/**/*.rb').sort_by(&:to_s).each { |f| require f }
 
 # Checks for pending migrations and applies them before tests are run.
 # If you are not using ActiveRecord, you can remove these lines.
@@ -32,6 +36,47 @@ begin
 rescue ActiveRecord::PendingMigrationError => e
   abort e.to_s.strip
 end
+
+# VCR usage docs https://benoittgt.github.io/vcr
+VCR.configure do |vcr_config|
+  vcr_config.cassette_library_dir = 'spec/fixtures/cassettes'
+  vcr_config.hook_into :faraday
+  vcr_config.allow_http_connections_when_no_cassette = true
+
+  # IMPORTANT: Enables automatic cassette naming based on tags
+  vcr_config.configure_rspec_metadata!
+
+  # Filter out Zoho credentials (applies only to examples tagged with :zoho_cassette)
+  # vcr_config.define_cassette_placeholder('<ZOHO_CLIENT_ID>', :zoho_cassette) { Zoho::Credentials.client_id }
+  # vcr_config.define_cassette_placeholder('<ZOHO_CLIENT_SECRET>', :zoho_cassette) { Zoho::Credentials.client_secret }
+  # vcr_config.define_cassette_placeholder('<ZOHO_AUTHORIZATION_HEADER>', :zoho_cassette) do |interaction|
+  #   interaction.request.headers['Authorization'].try(:first)
+  # end
+
+  # Setup :before_record hook to intercept PII data and prevent it from leaking into the cassettes
+  vcr_config.before_record(:obfuscate) do |interaction, cassette|
+    if interaction.response.body.present?
+      if cassette.name.present? &&
+        interaction.response.headers['content-type'].any? { |t| %r{application/json}.match?(t) }
+        # Some housekeeping to prepare for making a dub of the original response
+        dub_file = Rails.root.join('spec', 'fixtures', 'pii', "#{cassette.name}.json").to_s
+        pii_path = File.dirname(dub_file)
+        FileUtils.mkdir_p(pii_path) unless File.directory?(pii_path)
+        # Prettify the JSON data for easier reading by humans
+        og_response_data = JSON.pretty_generate(JSON.parse(interaction.response.body))
+        # Save the original response body to a fixture location that can be
+        #  validated but not committed to source control
+        File.write(dub_file, og_response_data)
+      end
+      interaction.response.body = PIISanitizer.sanitize(interaction.response.body)
+    end
+  end
+
+  vcr_config.before_http_request do |req|
+    Rails.logger.info "VCR: Request", { method: req.method, uri: req.uri, headers: req.headers }
+  end
+end
+
 RSpec.configure do |config|
   # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures
   config.fixture_paths = [
