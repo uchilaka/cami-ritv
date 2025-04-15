@@ -28,7 +28,10 @@
   </head>
 
   <body class="h-full">
-    <%= yield %>
+    <div class="flex flex-col h-screen">
+      <%= render "shared/flash" %>
+      <%= yield %>
+    </div>
   </body>
 
 </html>
