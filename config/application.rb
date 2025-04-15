@@ -40,6 +40,10 @@ module Cami
     # config.time_zone = "Central Time (US & Canada)"
     # config.eager_load_paths << Rails.root.join("extras")
 
+    # Doc for jbuilder: https://github.com/rails/jbuilder
+    Jbuilder.key_format camelize: :lower
+    Jbuilder.deep_format_keys true
+
     # Don't generate system test files.
     config.generators.system_tests = nil
   end

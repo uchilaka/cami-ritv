@@ -99,6 +99,9 @@ GEM
       pp (>= 0.6.0)
       rdoc (>= 4.0.0)
       reline (>= 0.4.2)
+    jbuilder (2.13.0)
+      actionview (>= 5.0.0)
+      activesupport (>= 5.0.0)
     logger (1.7.0)
     loofah (2.24.0)
       crass (~> 1.0.2)
@@ -263,6 +266,7 @@ DEPENDENCIES
   debug
   dotenv
   inertia_rails
+  jbuilder
   pg (~> 1.5)
   puma (~> 6)
   rails (~> 8.0)
