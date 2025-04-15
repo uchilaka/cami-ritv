@@ -1,0 +1,3 @@
+#!/usr/bin/env zsh
+# Ref: https://github.com/sidekiq/sidekiq/wiki/Problems-and-Troubleshooting#my-sidekiq-process-is-disappearing
+bundle exec ruby -e 'puts Gem.loaded_specs.values.select{ |i| !i.extensions.empty? }.map{ |i| i.name }'

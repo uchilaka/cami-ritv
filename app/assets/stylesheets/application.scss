@@ -14,10 +14,10 @@
  *= require_self
  */
 
-// header {
-//   &.absolute {
-//     nav[aria-label="Global"] {
-//       backdrop-filter: blur(10px) opacity(0.8);
-//     }
-//   }
-// }
+header {
+  &.absolute {
+    nav[aria-label="Global"] {
+      backdrop-filter: opacity(0.6) blur(10px);
+    }
+  }
+}

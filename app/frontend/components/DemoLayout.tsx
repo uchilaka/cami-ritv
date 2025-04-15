@@ -45,7 +45,7 @@ const DemoLayout: FC<LayoutProps> = ({ children }) => {
                   {submenu ? (
                     <NavItemWithSubmenu
                       items={submenu}
-                      className="text-sm/6 font-semibold text-gray-900"
+                      className="text-sm/6 font-semibold dark:text-white text-gray-900"
                     >
                       {name}
                     </NavItemWithSubmenu>
@@ -53,7 +53,7 @@ const DemoLayout: FC<LayoutProps> = ({ children }) => {
                     <a
                       key={name}
                       href={href}
-                      className="text-sm/6 font-semibold text-gray-900"
+                      className="text-sm/6 font-semibold dark:text-white text-gray-900"
                     >
                       {name}
                     </a>
@@ -62,7 +62,10 @@ const DemoLayout: FC<LayoutProps> = ({ children }) => {
               ))}
           </ul>
           <div className="hidden lg:flex lg:flex-1 lg:justify-end">
-            <a href="#" className="text-sm/6 font-semibold text-gray-900">
+            <a
+              href="#"
+              className="text-sm/6 font-semibold dark:text-white text-gray-900"
+            >
               Log in <span aria-hidden="true">&rarr;</span>
             </a>
           </div>

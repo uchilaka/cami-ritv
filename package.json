@@ -1,4 +1,9 @@
 {
+  "name": "@larcity/cami",
+  "license": "UNLICENSED",
+  "engines": {
+    "yarn": ">= 4.5.0"
+  },
   "type": "module",
   "devDependencies": {
     "@eslint/js": "^9.24.0",
@@ -7,6 +12,8 @@
     "@inertiajs/inertia": "^0.11.0",
     "@inertiajs/inertia-react": "^0.8.0",
     "@inertiajs/progress": "^0.2.7",
+    "@types/lodash.debounce": "^4",
+    "@types/lodash.merge": "^4",
     "@types/lodash.omit": "^4",
     "@types/lodash.uniqby": "^4",
     "@types/react": "^19.1.1",
@@ -15,6 +22,7 @@
     "axios": "^0.27.0",
     "comment-json": "^4.2.5",
     "eslint": "^9.24.0",
+    "husky": "^9.1.7",
     "jiti": "^2.4.2",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
@@ -27,21 +35,37 @@
   "packageManager": "yarn@4.9.1",
   "dependencies": {
     "@inertiajs/react": "^2.0.8",
+    "@tailwindcss/aspect-ratio": "^0.4.2",
+    "@tailwindcss/container-queries": "^0.1.1",
     "@tailwindcss/forms": "^0.5.10",
     "@tailwindcss/typography": "^0.5.16",
     "@tailwindcss/vite": "^4.1.3",
     "@types/node": "^22.14.1",
+    "browserslist": "^4.24.4",
     "clsx": "^2.1.1",
+    "date-fns": "^4.1.0",
     "flowbite": "^3.1.2",
+    "lodash.debounce": "^4.0.8",
+    "lodash.merge": "^4.6.2",
     "lodash.omit": "^4.5.0",
     "lodash.uniqby": "^4.7.0",
-    "tailwindcss": "^4.1.3"
+    "react-cookie": "^8.0.1",
+    "snakecase-keys": "^8.0.1",
+    "tailwindcss": "^4.1.3",
+    "trix": "^2.1.13",
+    "uuid": "^11.1.0"
   },
   "scripts": {
     "check": "tsc -p tsconfig.app.json && tsc -p tsconfig.node.json",
     "build:css": "bin/rails tailwindcss:build",
     "build": "bin/vite build",
     "start": "foreman start -f Procfile.dev",
-    "test": "vitest"
+    "test": "vitest",
+    "test:watch": "vitest --watch"
+  },
+  "lint-staged": {
+    "*.rb": [
+      "./bin/lint-ruby"
+    ]
   }
 }
