@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
 require_relative 'base_cmd'
-require_relative 'datakit_cmd'
-require_relative 'devkit_cmd'
+# require_relative 'datakit_cmd'
+# require_relative 'devkit_cmd'
 require_relative 'secrets_cmd'
 require_relative 'tunnel_cmd'
-require_relative 'accounts_cmd'
+# require_relative 'accounts_cmd'
 
 module LarCity
   module CLI
