@@ -1,4 +1,4 @@
-import { createElement, ReactNode } from "react";
+import { createElement } from "react";
 import { createRoot } from "react-dom/client";
 import { createInertiaApp } from "@inertiajs/react";
 import { InertiaProgress } from "@inertiajs/progress";
@@ -6,16 +6,7 @@ import axios from "axios";
 import "flowbite";
 
 import Layout from "@/components/Layout";
-
-// Temporary type definition, until @inertiajs/react provides one
-type ResolvedComponent = {
-  default: ReactNode;
-  layout?: (page: ReactNode) => ReactNode;
-};
-
-type ReactNodeWithOptionalLayout = ReactNode & {
-  layout?: ResolvedComponent["layout"];
-};
+import { ReactNodeWithOptionalLayout, ResolvedComponent } from "@/@types";
 
 document.addEventListener("DOMContentLoaded", () => {
   const csrfToken = document.querySelector<HTMLMetaElement>(
@@ -29,11 +20,10 @@ document.addEventListener("DOMContentLoaded", () => {
   InertiaProgress.init();
 
   void createInertiaApp({
-    resolve: (name) => {
-      const pages = import.meta.glob<ResolvedComponent>("../pages/**/*.tsx", {
-        eager: true,
-      });
-      const page = pages[`../pages/${name}.tsx`];
+    resolve: async (name) => {
+      // Pass { eager: true } as options for import.meta.glob to eagerly load all pages
+      const pages = import.meta.glob<ResolvedComponent>("../pages/**/*.tsx");
+      const page = await pages[`../pages/${name}.tsx`]();
       if (!page) {
         throw new Error(`Missing Inertia page component: '${name}.tsx'`);
       }
@@ -42,7 +32,7 @@ document.addEventListener("DOMContentLoaded", () => {
         // To use a default layout, import the Layout component
         // and use the following line.
         // see https://inertia-rails.dev/guide/pages#default-layouts
-        (page.default as ReactNodeWithOptionalLayout).layout = Layout;
+        (page.default as ReactNodeWithOptionalLayout).layout ||= Layout;
       }
 
       return page;
