@@ -1,5 +1,11 @@
+# frozen_string_literal: true
+
+require 'lib/admin_scope_constraint'
+
 Rails.application.routes.draw do
-  # get 'inertia-example', to: 'inertia_example#index'
+  mount Rswag::Ui::Engine => '/api-docs'
+  mount Rswag::Api::Engine => '/api-docs'
+
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   resources :demos, only: %i[] do
@@ -12,4 +18,6 @@ Rails.application.routes.draw do
   end
 
   root 'dashboard#index'
+
+  draw :flipper
 end

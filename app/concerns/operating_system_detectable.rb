@@ -67,4 +67,3 @@ module OperatingSystemDetectable
     end
   end
 end
-
