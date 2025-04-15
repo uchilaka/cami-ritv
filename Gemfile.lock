@@ -44,6 +44,11 @@ GEM
       erubi (~> 1.11)
       rails-dom-testing (~> 2.2)
       rails-html-sanitizer (~> 1.6)
+    active_model_serializers (0.10.15)
+      actionpack (>= 4.1)
+      activemodel (>= 4.1)
+      case_transform (>= 0.2)
+      jsonapi-renderer (>= 0.1.1.beta1, < 0.3)
     activejob (8.0.2)
       activesupport (= 8.0.2)
       globalid (>= 0.3.6)
@@ -86,6 +91,9 @@ GEM
     brakeman (7.0.2)
       racc
     builder (3.3.0)
+    bumbler (0.9.0)
+    case_transform (0.2)
+      activesupport
     childprocess (5.1.0)
       logger (~> 1.5)
     concurrent-ruby (1.3.5)
@@ -103,6 +111,8 @@ GEM
       irb (~> 1.10)
       reline (>= 0.3.8)
     diff-lcs (1.6.1)
+    discard (1.4.0)
+      activerecord (>= 4.2, < 9.0)
     dotenv (3.1.8)
     drb (2.2.1)
     dry-cli (1.2.0)
@@ -130,6 +140,8 @@ GEM
       rack-protection (>= 1.5.3, < 5.0.0)
       rack-session (>= 1.0.2, < 3.0.0)
       sanitize (< 8)
+    friendly_id (5.5.1)
+      activerecord (>= 4.0.0)
     globalid (1.2.1)
       activesupport (>= 6.1)
     i18n (1.14.7)
@@ -149,6 +161,7 @@ GEM
     json-schema (5.1.1)
       addressable (~> 2.8)
       bigdecimal (~> 3.1)
+    jsonapi-renderer (0.2.2)
     language_server-protocol (3.17.0.4)
     launchy (3.1.1)
       addressable (~> 2.8)
@@ -182,6 +195,8 @@ GEM
       money (~> 6.13)
       railties (>= 3.0)
     mutex_m (0.3.0)
+    name_of_person (1.1.3)
+      activesupport (>= 5.2.0)
     net-imap (0.5.6)
       date
       net-protocol
@@ -217,6 +232,7 @@ GEM
       ast (~> 2.4.1)
       racc
     pg (1.5.9)
+    phonelib (0.10.4)
     pp (0.6.2)
       prettyprint
     prettyprint (0.2.0)
@@ -227,6 +243,8 @@ GEM
     public_suffix (6.0.1)
     puma (6.6.0)
       nio4r (~> 2.0)
+    pundit (2.5.0)
+      activesupport (>= 3.0.0)
     racc (1.8.1)
     rack (3.1.12)
     rack-protection (4.1.1)
@@ -285,6 +303,7 @@ GEM
     request_store (1.7.0)
       rack (>= 1.4)
     rexml (3.4.1)
+    rolify (6.0.1)
     rspec-core (3.13.3)
       rspec-support (~> 3.13.0)
     rspec-expectations (3.13.3)
@@ -429,28 +448,36 @@ PLATFORMS
   x86_64-linux-musl
 
 DEPENDENCIES
+  active_model_serializers
   annotate
   awesome_print
   brakeman
+  bumbler
   data_migrate (~> 11.3)
   database_cleaner-active_record
   debug
+  discard
   dotenv
   flipper-active_record (~> 1.3)
   flipper-api
   flipper-ui
+  friendly_id (~> 5.5)
   globalid (~> 1.2)
   image_processing (~> 1.2)
   inertia_rails
   interactor (~> 3.1)
   letter_opener
   money-rails (~> 1.15)
+  name_of_person
   ostruct
   paper_trail (~> 16)
   pg (~> 1.5)
+  phonelib
   puma (~> 6)
+  pundit (~> 2.5)
   rails (~> 8.0)
   ransack (~> 4.3)
+  rolify (~> 6.0)
   rspec-rails (~> 7)
   rswag-api
   rswag-specs
