@@ -3,6 +3,7 @@
 require 'lib/admin_scope_constraint'
 
 Rails.application.routes.draw do
+  devise_for :users
   mount Rswag::Ui::Engine => '/api-docs'
   mount Rswag::Api::Engine => '/api-docs'
 
@@ -10,6 +11,7 @@ Rails.application.routes.draw do
 
   resources :demos, only: %i[] do
     collection do
+      get 'hello-inertia-rails', to: 'dashboard#index'
       get 'hero/simply-centered', to: 'demos#hero_simply_centered'
       get 'feature/with-product-screenshot', to: 'demos#feature_with_product_screenshot'
       get 'feature/with-2x2-grid', to: 'demos#feature_with_2x2_grid'
@@ -17,7 +19,7 @@ Rails.application.routes.draw do
     end
   end
 
-  root 'dashboard#index'
+  root 'demos#hero_simply_centered'
 
   draw :flipper
 end

@@ -30,4 +30,115 @@
 # available at https://guides.rubyonrails.org/i18n.html.
 
 en:
-  hello: "Hello world"
+  accessibility:
+    main:
+      logo: "LarCity logo"
+    footer:
+      logo: "LarCity logo (footer)"
+      about: "About"
+      contact: "Contact"
+      privacy: "Privacy Policy"
+      licensing: "Licensing"
+      terms: "Terms of Service"
+  ctas:
+    main:
+      sign_up: "Sign Up"
+      sign_in: "Sign In"
+      return_home: "Return Home"
+  labels:
+    engineering_or_support: "Engineering or Support Team"
+    invoices:
+      create: "New invoice"
+      search: "Search for invoices"
+    accounts:
+      tax_id: "Tax ID (E.g. EIN)"
+      notes: "Notes"
+      create: "New account"
+      search: "Search for accounts"
+  shared:
+    navbar:
+      home: "Home"
+      about: "About Us"
+      dashboard: "Dashboard"
+      services: "Services"
+      products: "Products"
+      accounts: "Accounts"
+      invoices: "Invoices"
+      sign_out: "Sign Out"
+      registration: "Settings"
+    footer:
+      flowbite_icons: 'Flowbite Icons'
+      flowbite_integration_guide: 'Flowbite Integration Guide'
+      tailwind_docs: 'Tailwind CSS Documentation'
+      fontawesome_icons: 'FontAwesome Icons'
+      mongoid_docs: 'Mongoid Documentation (v8.1)'
+      component_library: 'Component Library'
+      paypal_sandbox_guide: 'PayPal Sandbox Testing Guide'
+      ruby_doc: 'Ruby Documentation'
+      wai_aria_guide: 'Accessibility Guide (WAI-ARIA)'
+      zoho_crm_api_guide: 'Zoho CRM API Guide (v7)'
+  models:
+    account:
+      errors:
+        user_limit_exceeded: "cannot have more than one user"
+    invoice:
+      errors:
+        record_missing: "%{label} is missing"
+        invalid_payment_vendor: "%{value} is not a valid payment vendor"
+    invoice_account:
+      errors:
+        invalid: "is not a valid invoice account"
+        exists: "already exists"
+    metadata:
+      business:
+        errors:
+          invalid: "is not a valid business"
+          should_have_email_or_phone_number: "should have an email address or phone number"
+  workflows:
+    import_account:
+      errors:
+        generic: "An error occurred while creating the invoice account"
+        already_exists: "A matching invoice account already exists"
+        multiple_matching_accounts: "Multiple matching accounts were found"
+        unsupported_record_type: "Unsupported record matched for account (might be a user record)"
+    import_user_profile:
+      errors:
+        generic: "An error occurred while updating the user profile"
+        email_required: "Email address is required to create a user profile"
+        name_required: "A given/first or family/last name is required to create a user profile"
+        already_exists: "A matching user profile already exists"
+    upsert_user_from_omniauth:
+      errors:
+        generic: "An error occurred while creating the user"
+        token_conflict: "The %{provider} access token does not match the expected value %{context}"
+
+  validators:
+    errors:
+      invalid_email: "%{value} is not a valid email address"
+      invalid_password: "is not a valid password"
+      invalid_username: "%{value} is not a valid username"
+      invalid_phone_number: "%{value} is not a valid phone number"
+
+  exceptions:
+    help_prefix: "If you believe this is an error or you are the application owner, please contact "
+    unauthorized_short: "Unauthorized"
+    unauthorized: "You are not authorized to perform this action. You will need elevated privileges before you can proceed. "
+    not_found_short: "%{resource} Not Found"
+    not_found: "Sorry, the %{resource} you are looking for could not be found. If you are the application owner check the logs for more information."
+    internal_server_error_short: "We're sorry, but something went wrong"
+    internal_server_error: "Something went wrong. If you are the application owner check the logs for more information."
+    bad_request: "The request was invalid"
+    unprocessable_content_short: "The change or resource you requested was rejected"
+    unprocessable_content: "The request was understood, but failed validation. If you are the application owner check the logs for more information."
+    forbidden_short: "Forbidden"
+    forbidden: "You are not allowed to perform this action. You will need elevated privileges before you can proceed. "
+    too_many_requests: "You have exceeded the rate limit"
+    service_unavailable: "The service is temporarily unavailable"
+    gateway_timeout: "The service is temporarily unavailable"
+    not_acceptable: "The requested format is not supported"
+    unsupported_media_type: "The request media type is not supported"
+    not_implemented: "The requested action is not implemented"
+    method_not_allowed: "The requested method is not allowed"
+    conflict: "The request could not be completed due to a conflict with the current state of the resource"
+    precondition_failed: "The request could not be completed due to a conflict with the current state of the resource"
+    precondition_required: "The request could not be completed due to a conflict with the current state of the resource"

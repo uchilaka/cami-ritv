@@ -9,9 +9,9 @@ require 'active_model/railtie'
 require 'active_record/railtie'
 require 'active_storage/engine'
 require 'action_controller/railtie'
-# require "action_mailer/railtie"
+require 'action_mailer/railtie'
 # require "action_mailbox/engine"
-# require "action_text/engine"
+require 'action_text/engine'
 require 'action_view/railtie'
 require 'action_cable/engine'
 # require "rails/test_unit/railtie"
@@ -21,6 +21,7 @@ require 'active_support/core_ext/integer/time'
 $LOAD_PATH.unshift(Dir.pwd)
 
 require 'lib/app_utils'
+require 'lib/virtual_office_manager'
 
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.

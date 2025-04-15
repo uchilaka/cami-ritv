@@ -28,6 +28,44 @@ Rails.application.configure do
   # Change to :null_store to avoid any caching.
   config.cache_store = :memory_store
 
+  # Store uploaded files on the local file system (see config/storage.yml for options).
+  config.active_storage.service = :local
+
+  # Don't care if the mailer can't send.
+  config.action_mailer.raise_delivery_errors = false
+
+  config.action_mailer.perform_deliveries = AppUtils.mailhog_enabled? || AppUtils.letter_opener_enabled?
+  config.action_mailer.delivery_method =
+    if AppUtils.letter_opener_enabled?
+      :letter_opener
+    else
+      :smtp
+    end
+
+  # IMPORTANT: If you will be using the mailhog service for testing emails locally,
+  #   be sure to set LETTER_OPENER_ENABLED=no (it is set to 'yes' by default).
+  #   The LetterOpener gem will save emails as files to ./tmp/email/inbox.
+  #
+  # Configure the mailer to use the SMTP server
+  config.action_mailer.smtp_settings =
+    if AppUtils.configure_real_smtp?
+      {
+        address: ENV.fetch('SMTP_SERVER', Rails.application.credentials.brevo.smtp_server),
+        port: ENV.fetch('SMTP_PORT', Rails.application.credentials.brevo.smtp_port),
+        user_name: ENV.fetch('SMTP_USERNAME', Rails.application.credentials.brevo.smtp_user),
+        password: ENV.fetch('SMTP_PASSWORD', Rails.application.credentials.brevo.smtp_password),
+        enable_starttls_auto: true
+      }
+    else
+      { address: 'localhost', port: 1025 }
+    end
+
+  # Configure logging for the app's mail service.
+  config.action_mailer.logger = Rails.logger
+  # IMPORTANT: This will affect whether letter_opener can open the email in the browser or not
+  # TODO: Spec this config across development, staging and production
+  config.action_mailer.default_url_options = VirtualOfficeManager.initial_default_url_options
+
   # Print deprecation notices to the Rails logger.
   config.active_support.deprecation = :log
 
