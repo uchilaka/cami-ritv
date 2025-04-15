@@ -16,7 +16,7 @@ const DemoLayout: FC<LayoutProps> = ({ children }) => {
       <header className="absolute inset-x-0 fixed w-full top-0 start-0 z-50">
         <nav
           aria-label="Global"
-          className="bg-white dark:bg-gray-900 flex items-center justify-between p-6 lg:px-8 border-b border-gray-200 dark:border-gray-600"
+          className="bg-white flex items-center justify-between p-6 lg:px-8 border-b border-gray-200"
         >
           <div className="flex lg:flex-1">
             <a href="#" className="-m-1.5 p-1.5">
@@ -45,7 +45,7 @@ const DemoLayout: FC<LayoutProps> = ({ children }) => {
                   {submenu ? (
                     <NavItemWithSubmenu
                       items={submenu}
-                      className="text-sm/6 font-semibold dark:text-white text-gray-900"
+                      className="text-sm/6 font-semibold text-gray-900"
                     >
                       {name}
                     </NavItemWithSubmenu>
@@ -53,7 +53,7 @@ const DemoLayout: FC<LayoutProps> = ({ children }) => {
                     <a
                       key={name}
                       href={href}
-                      className="text-sm/6 font-semibold dark:text-white text-gray-900"
+                      className="text-sm/6 font-semibold text-gray-900"
                     >
                       {name}
                     </a>
