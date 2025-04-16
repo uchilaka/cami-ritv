@@ -21,6 +21,8 @@ require 'active_support/core_ext/integer/time'
 $LOAD_PATH.unshift(Dir.pwd)
 
 require 'lib/app_utils'
+require 'lib/virtual_office_manager'
+require 'lib/log_utils'
 
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
