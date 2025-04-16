@@ -1,0 +1,126 @@
+name: Full-stack CI
+
+on:
+  pull_request:
+
+jobs:
+  build_and_test:
+    name: Bundle & RSpec tests
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      pull-requests: write
+
+    strategy:
+      fail-fast: false
+      matrix:
+        ruby-version: [3.2.2]
+        node-version: [22.x]
+        # TODO: CI node total and index are used by Knapsack Pro
+        #ci_node_total: [2]
+        #ci_node_index: [0, 1]
+
+    env:
+      CI: true
+      # TODO: Change to 16006 to match the port in the docker-compose.yml file
+      PORT: 3000
+      RAILS_ENV: test
+      REDIS_URL: redis://localhost:16079/2
+      RSPEC_FAIL_FAST: false
+      RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
+      PROJECT_ROOT: .
+      APP_DATABASE_HOST: localhost
+      APP_DATABASE_NAME: sails_test
+      APP_DATABASE_USER: ${{ secrets.APP_DATABASE_USER }}
+      APP_DATABASE_PASSWORD: ${{ secrets.APP_DATABASE_PASSWORD }}
+      APP_DATABASE_PORT: 5432
+      CRM_ORG_ID: 877691058
+    services:
+      postgres:
+        # https://hub.docker.com/_/postgres
+        image: postgres:17
+        env:
+          POSTGRES_DB: ${{env.APP_DATABASE_NAME}}
+          POSTGRES_USER: ${{env.APP_DATABASE_USER}}
+          POSTGRES_PASSWORD: ${{env.APP_DATABASE_PASSWORD}}
+          #POSTGRES_HOST_AUTH_METHOD: trust # IMPORTANT allows all connections without a password - experimental only!
+        ports:
+          - '5432:5432'
+        options: >- # Options for the service, in this case we want to make sure that the Postgres container passes a health check
+          --health-cmd pg_isready
+          --health-interval 15s
+          --health-timeout 10s
+          --health-retries 3
+      redis:
+        image: redis:7
+        ports:
+          - '16079:6379'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby-version }}
+
+      - name: Check ruby version
+        run: ruby -v
+
+      - uses: actions/cache@v4
+        with:
+          path: vendor/bundle
+          key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-gems-
+
+      - name: Run bundle install
+        working-directory: ${{env.PROJECT_ROOT}}
+        run: |
+          gem install bundler
+          bundle config path vendor/bundle
+          bundle install --jobs 4 --retry 3
+
+      - name: Install OS libraries
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libpq-dev
+          sudo apt-get install -y libvips
+
+      - name: Setup DB
+        run: |
+          bin/rake db:environment:set RAILS_ENV=test
+          bin/rake db:setup db:seed
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'yarn'
+
+      - name: Install Yarn dependencies
+        run: yarn install --immutable
+
+      - name: Build assets - stylesheets
+        run: |
+          bundle exec rake dartsass:build
+          bundle exec rake tailwindcss:build
+
+      - name: Build assets - frontend JS
+        run: |
+          bundle exec rake vite:build_all
+
+      - name: RSpec tests
+        #env:
+        #  KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC: ${{ secrets.KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC }}
+        #  KNAPSACK_PRO_CI_NODE_TOTAL: ${{ matrix.ci_node_total }}
+        #  KNAPSACK_PRO_CI_NODE_INDEX: ${{ matrix.ci_node_index }}
+        #  # See https://docs.knapsackpro.com/ruby/queue-mode/#dynamic-split-vs-fixed-split
+        #  KNAPSACK_PRO_FIXED_QUEUE_SPLIT: true
+        #  KNAPSACK_PRO_LOG_LEVEL: info
+        # See https://docs.knapsackpro.com/ruby/rspec/
+        run: |
+          # Run all specs except those with the option skip_in_ci: true
+          bundle exec rspec --tag ~skip_in_ci:true
