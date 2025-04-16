@@ -17,7 +17,7 @@ Rails.application.routes.draw do
     end
   end
 
-  root 'dashboard#index'
+  root 'demos#hero_simply_centered'
 
   draw :flipper
 end

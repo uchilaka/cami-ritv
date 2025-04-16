@@ -5,6 +5,7 @@ class DemosController < ApplicationController
       name: 'Showcase',
       href: '#',
       submenu: [
+        { name: 'InertiaJS Dashboard', href: '/demos/hello-inertia-rails' },
         { name: 'Hero Simply Centered ', href: '/demos/hero/simply-centered' },
         { name: 'Feature with Product Screenshot ', href: '/demos/feature/with-product-screenshot' },
         { name: 'Feature with 2x2 Grid', href: '/demos/feature/with-2x2-grid' },

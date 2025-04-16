@@ -10,6 +10,12 @@ gem 'rails', '~> 8.0'
 # IMPORTANT: This should be loaded as early as possible
 gem 'dotenv', groups: %i[development test], require: 'dotenv/load'
 
+# Feature rich logging framework that replaces the Rails logger.
+gem 'rails_semantic_logger'
+
+# Better Stack Rails integration
+gem 'logtail-rails'
+
 # The original asset pipeline for Rails [https://github.com/rails/sprockets-rails]
 gem 'sprockets-rails'
 
