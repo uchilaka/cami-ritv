@@ -5,4 +5,12 @@ if ! gem list foreman -i --silent; then
   gem install foreman
 fi
 
+# Default to port 16006 if not specified
+export PORT="${PORT:-16006}"
+
+# Let the debug gem allow remote connections,
+# but avoid loading until `debugger` is called
+export RUBY_DEBUG_OPEN="true"
+export RUBY_DEBUG_LAZY="true"
+
 exec foreman start -f Procfile.dev "$@"
