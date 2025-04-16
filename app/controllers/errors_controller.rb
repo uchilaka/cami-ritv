@@ -7,7 +7,7 @@ class ErrorsController < ApplicationController
   #   customer experienced an error?
   protect_from_forgery with: :exception
 
-  # skip_before_action :authenticate_user!
+  skip_before_action :authenticate_user!
 
   rescue_from LarCity::Errors::ElevatedPrivilegesRequired, with: :forbidden
   rescue_from LarCity::Errors::UnprocessableEntity, with: :unprocessable_entity
