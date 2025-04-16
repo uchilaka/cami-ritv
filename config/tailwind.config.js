@@ -1,10 +1,16 @@
+/** @type {import('tailwindcss').Config} */
+
 // eslint-disable-next-line @typescript-eslint/no-require-imports, @typescript-eslint/no-unsafe-assignment
 const defaultTheme = require("tailwindcss/defaultTheme");
 
 export default {
   content: [
-    "./app/frontend/**/*.{js,ts,jsx,tsx}",
+    "./public/*.html",
     "./node_modules/flowbite/**/*.js",
+    "./app/helpers/**/*.rb",
+    "./app/views/**/*.{html,html.erb,erb}",
+    "./app/views/devise/**/*.{html,html.erb,erb}",
+    "./app/frontend/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
     extend: {
@@ -15,10 +21,10 @@ export default {
     },
   },
   plugins: [
-    "flowbite/plugin",
-    "@tailwindcss/forms",
-    "@tailwindcss/aspect-ratio",
-    "@tailwindcss/typography",
-    "@tailwindcss/container-queries",
+    require("flowbite/plugin"),
+    require("@tailwindcss/forms"),
+    require("@tailwindcss/aspect-ratio"),
+    require("@tailwindcss/typography"),
+    require("@tailwindcss/container-queries"),
   ],
 };

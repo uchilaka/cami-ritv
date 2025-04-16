@@ -13,7 +13,8 @@
   "include": [
     "vite.config.ts",
     "vitest.config.ts",
-    "postcss.config.ts",
+    "config/tailwind.config.js",
+    "postcss.config.mts",
     "app/frontend/utils"
   ]
 }
