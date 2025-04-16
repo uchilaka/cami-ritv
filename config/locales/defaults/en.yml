@@ -43,3 +43,25 @@ en:
       notes: "Notes"
       create: "New account"
       search: "Search for accounts"
+  shared:
+    navbar:
+      home: "Home"
+      about: "About Us"
+      dashboard: "Dashboard"
+      services: "Services"
+      products: "Products"
+      accounts: "Accounts"
+      invoices: "Invoices"
+      sign_out: "Sign Out"
+      registration: "Settings"
+    footer:
+      flowbite_icons: 'Flowbite Icons'
+      flowbite_integration_guide: 'Flowbite Integration Guide'
+      tailwind_docs: 'Tailwind CSS Documentation'
+      fontawesome_icons: 'FontAwesome Icons'
+      mongoid_docs: 'Mongoid Documentation (v8.1)'
+      component_library: 'Component Library'
+      paypal_sandbox_guide: 'PayPal Sandbox Testing Guide'
+      ruby_doc: 'Ruby Documentation'
+      wai_aria_guide: 'Accessibility Guide (WAI-ARIA)'
+      zoho_crm_api_guide: 'Zoho CRM API Guide (v7)'
