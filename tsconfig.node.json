@@ -12,10 +12,13 @@
     "emitDeclarationOnly": true
   },
   "include": [
+    "app/frontend/utils"
+  ],
+  "files": [
     "vite.config.ts",
     "vitest.config.ts",
     "config/tailwind.config.js",
+    "tailwind.config.js",
     "postcss.config.mts",
-    "app/frontend/utils"
   ]
 }
