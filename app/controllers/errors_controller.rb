@@ -5,7 +5,7 @@ class ErrorsController < ApplicationController
 
   # TODO: How does this impact analytics? E.g. reporting to tools like Heap that the
   #   customer experienced an error?
-  protect_from_forgery with: :null_session
+  protect_from_forgery with: :exception
 
   # skip_before_action :authenticate_user!
 
@@ -13,6 +13,7 @@ class ErrorsController < ApplicationController
   rescue_from LarCity::Errors::UnprocessableEntity, with: :unprocessable_entity
   rescue_from LarCity::Errors::InternalServerError, with: :server_error
   rescue_from LarCity::Errors::ResourceNotFound, with: :not_found
+  rescue_from ActionController::InvalidAuthenticityToken, with: :unprocessable_entity
   rescue_from ActionController::RoutingError do |exception|
     emit_routing_exception(exception)
   end
