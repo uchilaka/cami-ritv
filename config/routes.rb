@@ -17,7 +17,9 @@ Rails.application.routes.draw do
     end
   end
 
-  root 'dashboard#index'
+  get '/protego/:code', to: 'errors#render_static_error'
+
+  root 'demos#hero_simply_centered'
 
   draw :flipper
 end

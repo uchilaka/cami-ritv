@@ -64,8 +64,8 @@ class ErrorsController < ApplicationController
 
   def resolve_status(observed_status_code = nil)
     observed_status_code ||= params[:code].to_i
-    supported_codes = supported_codes.keys
-    resolved_code = supported_codes[observed_status_code] || 404
+    supported_codes = supported_error_codes.keys
+    resolved_code = supported_codes.include?(observed_status_code) ? observed_status_code : 404
     [view_for_code(resolved_code), resolved_code]
   end
 

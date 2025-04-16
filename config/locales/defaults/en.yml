@@ -33,3 +33,13 @@ en:
   app:
     name: "Customer Accounts Management & Invoicing"
     short_name: "CAMI"
+  labels:
+    engineering_or_support: "Engineering or Support"
+    invoices:
+      create: "New invoice"
+      search: "Search for invoices"
+    accounts:
+      tax_id: "Tax ID (E.g. EIN)"
+      notes: "Notes"
+      create: "New account"
+      search: "Search for accounts"
