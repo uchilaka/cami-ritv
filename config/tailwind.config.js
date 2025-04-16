@@ -1,7 +1,7 @@
 /** @type {import('tailwindcss').Config} */
 
-// eslint-disable-next-line @typescript-eslint/no-require-imports, @typescript-eslint/no-unsafe-assignment
-const defaultTheme = require("tailwindcss/defaultTheme");
+// // eslint-disable-next-line @typescript-eslint/no-require-imports, @typescript-eslint/no-unsafe-assignment
+// const defaultTheme = require("tailwindcss/defaultTheme");
 
 export default {
   content: [
@@ -14,17 +14,17 @@ export default {
   ],
   theme: {
     extend: {
-      fontFamily: {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment,@typescript-eslint/no-unsafe-member-access
-        sans: ["Inter var", ...defaultTheme.fontFamily.sans],
-      },
+      // fontFamily: {
+      //   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment,@typescript-eslint/no-unsafe-member-access
+      //   sans: ["Inter var", ...defaultTheme.fontFamily.sans],
+      // },
     },
   },
   plugins: [
-    require("flowbite/plugin"),
-    require("@tailwindcss/forms"),
-    require("@tailwindcss/aspect-ratio"),
-    require("@tailwindcss/typography"),
-    require("@tailwindcss/container-queries"),
+    "flowbite/plugin",
+    "@tailwindcss/forms",
+    "@tailwindcss/aspect-ratio",
+    "@tailwindcss/typography",
+    "@tailwindcss/container-queries",
   ],
 };
