@@ -59,7 +59,10 @@ class User < ApplicationRecord
   # Guide on adding confirmable: https://github.com/heartcombo/devise/wiki/How-To:-Add-:confirmable-to-Users
   devise :database_authenticatable, :registerable, :rememberable, :validatable, :recoverable,
          :confirmable, :timeoutable, :lockable, :trackable
-  # Guide on model config: https://github.com/waiting-for-dev/devise-jwt?tab=readme-ov-file#model-configuration
+
+  # # Guide on model config: https://github.com/waiting-for-dev/devise-jwt?tab=readme-ov-file#model-configuration
+  # devise :jwt_authenticatable, jwt_revocation_strategy: self
+
   devise :omniauthable, omniauth_providers: %i[google]
 
   alias_attribute :first_name, :given_name

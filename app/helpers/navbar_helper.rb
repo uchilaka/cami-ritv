@@ -4,7 +4,27 @@ module NavbarHelper
   include UsersHelper
 
   def navbar_version
-    '1.0'
+    '2.0'
+  end
+
+  def current_path
+    request.fullpath
+  end
+
+  def navbar_link_classes(is_current_page: false)
+    if is_current_page
+      return 'block py-2 px-3 text-white bg-blue-700 rounded md:bg-transparent md:text-blue-700 md:p-0 ' \
+             'md:dark:text-blue-500'
+    end
+
+    'block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 ' \
+      'dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white ' \
+      'md:dark:hover:bg-transparent dark:border-gray-700'
+  end
+
+  def profile_link_classes
+    'block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 ' \
+      'dark:text-gray-200 dark:hover:text-white'
   end
 
   def profile_name
@@ -35,20 +55,20 @@ module NavbarHelper
       {
         label: t('shared.navbar.home'),
         path: root_path,
-        public: true
+        public: true,
       },
       {
         label: t('shared.navbar.dashboard'),
-        path: '/app/dashboard'
+        path: '/app/dashboard',
       },
       {
         label: t('shared.navbar.invoices'),
-        path: '/app/invoices'
+        path: '/app/invoices',
       },
-      {
-        label: t('shared.navbar.accounts'),
-        path: accounts_path
-      },
+      # {
+      #   label: t('shared.navbar.accounts'),
+      #   path: accounts_path,
+      # },
       # {
       #   label: t('shared.navbar.services'),
       #   path: services_path
@@ -62,14 +82,14 @@ module NavbarHelper
       {
         label: t('shared.navbar.about'),
         path: '/app/about',
-        public: true
+        public: true,
       },
     ].map { |item| build_menu_item(item) }.filter(&:enabled)
   end
 
   def profile_menu
     @profile_menu ||= [
-      { label: t('shared.navbar.registration'), path: edit_user_registration_path }
+      { label: t('shared.navbar.registration'), path: edit_user_registration_path },
     ].map { |item| build_menu_item(item) }
   end
 
@@ -83,10 +103,10 @@ module NavbarHelper
         label: 'Flowbite :: Integration Guide',
         url: 'https://flowbite.com/docs/getting-started/rails/',
         section: 'UI Library',
-        public: true
+        public: true,
       },
       { label: 'Flowbite :: Blocks', url: 'https://flowbite.com/blocks/', section: 'UI Library', public: true },
-      { label: 'Flowbite :: Icons', url: 'https://flowbite.com/icons/', section: 'UI Library', public: true }
+      { label: 'Flowbite :: Icons', url: 'https://flowbite.com/icons/', section: 'UI Library', public: true },
     ].map { |item| build_menu_item(item) }
   end
 
@@ -108,7 +128,7 @@ module NavbarHelper
         label: 'Storybook',
         url: storybook_url,
         new_tab: true, admin: true,
-        enabled: Rails.env.development?
+        enabled: Rails.env.development?,
       },
       # TODO: Update AppUtils to compose the application's URL based on whether
       #   the NGINX tunnel is running or not.
@@ -116,26 +136,26 @@ module NavbarHelper
         label: 'Test email inbox',
         url: test_inbox_url,
         admin: true,
-        enabled: Rails.env.development?
+        enabled: Rails.env.development?,
       },
       {
         label: 'PayPal Dashboard',
         url: paypal_developer_dashboard_url,
         admin: true,
-        enabled: true
+        enabled: true,
       },
       {
         label: 'CRM Dashboard',
         url: "https://crm.zoho.com/crm/org#{crm_org_id}/tab/Home/begin",
         admin: true,
-        enabled: true
+        enabled: true,
       },
       {
         label: 'Proxy Endpoints',
         url: 'https://dashboard.ngrok.com/endpoints?sortBy=updatedAt&orderBy=desc',
         admin: true,
-        enabled: true
-      }
+        enabled: true,
+      },
     ].map { |item| build_menu_item(item) }.filter(&:enabled)
   end
 

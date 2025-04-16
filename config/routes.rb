@@ -13,7 +13,7 @@ Rails.application.routes.draw do
                registrations: 'users/registrations',
                confirmations: 'users/confirmations',
                unlocks: 'users/unlocks',
-               # omniauth_callbacks: 'users/omniauth/callbacks'
+               omniauth_callbacks: 'users/omniauth/callbacks',
              }
   devise_scope :user do
     get 'users/fallback/sign_in', as: :new_user_fallback_session, to: 'users/sessions#new'

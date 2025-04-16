@@ -1,0 +1,22 @@
+<%
+  id ||= "accordion--#{SecureRandom.uuid}"
+  heading_id ||= "#{id}--collapse-heading"
+  target ||= "#{id}--collapse-body"
+  title ||= id
+  expanded ||= false
+  top ||= false
+  bottom ||= false
+%>
+<h6 id="<%= heading_id %>">
+  <button type="button" class="<%= compose_class_names("flex items-center justify-between w-full p-5 font-medium rtl:text-right text-gray-500 border border-gray-200 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-800 dark:border-gray-700 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 gap-3", { "border-b-0": top && !bottom }) %>" data-accordion-target="#<%= target %>" aria-expanded="<%= expanded %>" aria-controls="<%= target %>">
+    <span><%= title %></span>
+    <svg data-accordion-icon class="w-3 h-3 rotate-180 shrink-0" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+      <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5 5 1 1 5"/>
+    </svg>
+  </button>
+</h6>
+<div id="<%= target %>" class="hidden" aria-labelledby="<%= heading_id %>">
+  <div class="<%= compose_class_names("p-5 border border-gray-200 dark:border-gray-700 dark:bg-gray-900", { "border-b-0": !bottom }) %>">
+    <%= yield %>
+  </div>
+</div>

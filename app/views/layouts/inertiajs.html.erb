@@ -1,9 +1,13 @@
 <!DOCTYPE html>
 <html lang="en" class="h-full bg-gray-100">
   <%= content_for :head do %>
+    <!-- Tells application.tsx to use Inertia.js -->
+    <meta name="layout" content="inertia.js" />
+
     <%= stylesheet_link_tag "application", "actiontext", media: 'all' %>
     <%= vite_stylesheet_tag "application" %>
     <%= vite_client_tag %>
+    <%= inertia_ssr_head %>
     <%= vite_react_refresh_tag %>
     <%= vite_javascript_tag 'application.tsx' %>
     <!--
@@ -19,8 +23,9 @@
   <%= render "layouts/shared/head" %>
 
   <body class="h-full">
-    <%= render "shared/flash" %>
-    <%= yield %>
-    <%= render "shared/footer/full" %>
+  <%= render "shared/flash" %>
+  <%= yield %>
+  <%= render "shared/footer/full" %>
   </body>
+
 </html>

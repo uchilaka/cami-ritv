@@ -2,6 +2,10 @@
 
 en:
   devise:
+    omniauth:
+      ctas:
+        sign_in_with_provider: "Sign in with %{provider}"
+        sign_up_with_provider: "Sign up with %{provider}"
     confirmations:
       confirmed: "Your email address has been successfully confirmed."
       send_instructions: "You will receive an email with instructions for how to confirm your email address in a few minutes."

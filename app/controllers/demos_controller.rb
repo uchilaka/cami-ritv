@@ -1,4 +1,10 @@
+# frozen_string_literal: true
+
 class DemosController < ApplicationController
+  layout 'inertiajs'
+
+  skip_before_action :verify_authenticity_token
+
   inertia_share navigation: [
     { name: 'Product', href: '#' },
     {

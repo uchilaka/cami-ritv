@@ -30,7 +30,11 @@ class ApplicationController < ActionController::Base
   protected
 
   def public_resource?
-    public_page? || %w[/up /api/features /demos].include?(request.path)
+    public_page? || demo_page? || %w[/up /api/features].include?(request.path)
+  end
+
+  def demo_page?
+    %r{^/demos(/)?}.match?(request.path)
   end
 
   def public_page?

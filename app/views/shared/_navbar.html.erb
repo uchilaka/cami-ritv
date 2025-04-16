@@ -1,0 +1,20 @@
+<nav class="navbar">
+  <div class="w-full flex items-center justify-between max-w-screen-xl mx-auto px-4">
+    <%= render "shared/logo" %>
+    <ul class="menu flex p-4 space-x-3">
+      <% if user_signed_in? %>
+        <% main_menu.each do |item| %>
+          <%= render "shared/navbar/menu_item", item: item %>
+        <% end %>
+        <li><%= nav_link_to "Edit profile", edit_user_registration_path, class: "nav-link" %></li>
+        <%= button_to t(".sign_out"), destroy_user_session_path, method: :delete, class: "text-red-400 hover:text-red-600 font-medium" %>
+      <% else %>
+        <% public_menu.each do |item| %>
+          <%= render "shared/navbar/menu_item", item: %>
+        <% end %>
+        <li><%= nav_link_to render("shared/buttons/sign_up"), new_user_registration_path, class: "nav-link" %></li>
+        <li><%= nav_link_to render("shared/buttons/login"), new_user_session_path, class: "nav-link" %></li>
+      <% end %>
+    </ul>
+  </div>
+</nav>
