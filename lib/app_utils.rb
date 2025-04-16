@@ -77,6 +77,13 @@ class AppUtils
       false
     end
 
+    def debug_mode?
+      default_value = Rails.env.production? ? 'no' : 'yes'
+
+      yes?(ENV.fetch('APP_DEBUG_MODE', default_value))
+    end
+
+    # @deprecated Refactor as alias for debug_mode?
     def debug_assets?
       default_value = Rails.env.development? ? 'yes' : 'no'
 

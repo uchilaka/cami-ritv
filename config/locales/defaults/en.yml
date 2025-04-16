@@ -30,6 +30,9 @@
 # available at https://guides.rubyonrails.org/i18n.html.
 
 en:
+  app:
+    name: "Customer Accounts Management & Invoicing"
+    short_name: "CAMI"
   accessibility:
     main:
       logo: "LarCity logo"

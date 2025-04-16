@@ -10,6 +10,12 @@ gem 'rails', '~> 8.0'
 # IMPORTANT: This should be loaded as early as possible
 gem 'dotenv', groups: %i[development test], require: 'dotenv/load'
 
+# Feature rich logging framework that replaces the Rails logger.
+gem 'rails_semantic_logger'
+
+# Better Stack Rails integration
+gem 'logtail-rails'
+
 # The original asset pipeline for Rails [https://github.com/rails/sprockets-rails]
 gem 'sprockets-rails'
 
@@ -18,6 +24,9 @@ gem 'pg', '~> 1.5'
 
 # Use the Puma web server [https://github.com/puma/puma]
 gem 'puma', '~> 6'
+
+# Build JSON APIs with ease [https://github.com/rails/jbuilder]
+gem 'jbuilder'
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem 'tzinfo-data', platforms: %i[mingw mswin x64_mingw jruby]
@@ -59,6 +68,7 @@ gem 'phonelib'
 gem 'pundit', '~> 2.5'
 gem 'ransack', '~> 4.3'
 gem 'rolify', '~> 6.0'
+gem 'faraday'
 
 gem 'flipper-active_record', '~> 1.3'
 gem 'flipper-api'
@@ -97,7 +107,7 @@ group :development do
   gem 'web-console'
 
   # Annotates Rails Models, routes, fixtures, and others based on the database schema.
-  gem 'annotate'
+  gem 'annotaterb'
 
   # Preview mail in browser instead of sending https://github.com/ryanb/letter_opener
   gem 'letter_opener'
@@ -105,6 +115,7 @@ end
 
 group :test do
   gem 'database_cleaner-active_record'
+  gem 'rails-controller-testing'
   gem 'rubocop-capybara', require: false
   gem 'rubocop-performance'
   gem 'rubocop-rails'

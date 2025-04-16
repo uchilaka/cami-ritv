@@ -22,6 +22,7 @@ $LOAD_PATH.unshift(Dir.pwd)
 
 require 'lib/app_utils'
 require 'lib/virtual_office_manager'
+require 'lib/log_utils'
 
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
@@ -35,6 +36,12 @@ module Cami
     config.application_name = 'Customer Account Management & Invoicing'
     config.application_short_name = 'CAMI'
 
+    # Show full error reports?
+    config.consider_all_requests_local = AppUtils.debug_mode?
+
+    config.exceptions_app = lambda { |env|
+      ErrorsController.action(:show).call(env)
+    }
 
     # Please, add to the `ignore` list any other `lib` subdirectories that do
     # not contain `.rb` files, or that should not be reloaded or eager loaded.
@@ -77,5 +84,12 @@ module Cami
     diff.each { |path| config.eager_load_paths << path }
 
     config.assets.paths << "#{root}/vendor/assets"
+
+    # Doc for jbuilder: https://github.com/rails/jbuilder
+    Jbuilder.key_format camelize: :lower
+    Jbuilder.deep_format_keys true
+
+    # Don't generate system test files.
+    config.generators.system_tests = nil
   end
 end
