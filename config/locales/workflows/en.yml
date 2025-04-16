@@ -1,0 +1,18 @@
+en:
+  workflows:
+    import_account:
+      errors:
+        generic: "An error occurred while creating the invoice account"
+        already_exists: "A matching invoice account already exists"
+        multiple_matching_accounts: "Multiple matching accounts were found"
+        unsupported_record_type: "Unsupported record matched for account (might be a user record)"
+    import_user_profile:
+      errors:
+        generic: "An error occurred while updating the user profile"
+        email_required: "Email address is required to create a user profile"
+        name_required: "A given/first or family/last name is required to create a user profile"
+        already_exists: "A matching user profile already exists"
+    upsert_user_from_omniauth:
+      errors:
+        generic: "An error occurred while creating the user"
+        token_conflict: "The %{provider} access token does not match the expected value %{context}"
