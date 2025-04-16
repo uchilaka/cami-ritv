@@ -8,21 +8,23 @@
 #  confirmation_sent_at   :datetime
 #  confirmation_token     :string
 #  confirmed_at           :datetime
+#  current_sign_in_at     :datetime
+#  current_sign_in_ip     :string
 #  email                  :string           default(""), not null
 #  encrypted_password     :string           default(""), not null
 #  failed_attempts        :integer          default(0), not null
 #  family_name            :string
 #  given_name             :string
 #  last_request_at        :datetime
+#  last_sign_in_at        :datetime
+#  last_sign_in_ip        :string
 #  locked_at              :datetime
-#  nickname               :string
 #  profile                :jsonb
-#  providers              :string           default([]), is an Array
 #  remember_created_at    :datetime
 #  reset_password_sent_at :datetime
 #  reset_password_token   :string
+#  sign_in_count          :integer          default(0), not null
 #  timeout_in             :integer          default(1800)
-#  uids                   :jsonb
 #  unconfirmed_email      :string
 #  unlock_token           :string
 #  created_at             :datetime         not null
@@ -33,6 +35,7 @@
 #  index_users_on_confirmation_token    (confirmation_token) UNIQUE
 #  index_users_on_email                 (email) UNIQUE
 #  index_users_on_reset_password_token  (reset_password_token) UNIQUE
+#  index_users_on_unlock_token          (unlock_token) UNIQUE
 #
 require 'rails_helper'
 
