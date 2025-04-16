@@ -55,7 +55,19 @@ class ErrorsController < ApplicationController
     end
   end
 
+  def render_static_error
+    error_view, code = resolve_status
+    render error_view, status: code
+  end
+
   private
+
+  def resolve_status(observed_status_code = nil)
+    observed_status_code ||= params[:code].to_i
+    supported_codes = supported_codes.keys
+    resolved_code = supported_codes[observed_status_code] || 404
+    [view_for_code(resolved_code), resolved_code]
+  end
 
   def view_for_code(code)
     supported_error_codes.fetch(code, '404')
