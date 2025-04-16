@@ -33,23 +33,8 @@ en:
   app:
     name: "Customer Accounts Management & Invoicing"
     short_name: "CAMI"
-  accessibility:
-    main:
-      logo: "LarCity logo"
-    footer:
-      logo: "LarCity logo (footer)"
-      about: "About"
-      contact: "Contact"
-      privacy: "Privacy Policy"
-      licensing: "Licensing"
-      terms: "Terms of Service"
-  ctas:
-    main:
-      sign_up: "Sign Up"
-      sign_in: "Sign In"
-      return_home: "Return Home"
   labels:
-    engineering_or_support: "Engineering or Support Team"
+    engineering_or_support: "Engineering or Support"
     invoices:
       create: "New invoice"
       search: "Search for invoices"
