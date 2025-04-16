@@ -9,9 +9,9 @@ require 'active_model/railtie'
 require 'active_record/railtie'
 require 'active_storage/engine'
 require 'action_controller/railtie'
-# require "action_mailer/railtie"
+require 'action_mailer/railtie'
 # require "action_mailbox/engine"
-# require "action_text/engine"
+require 'action_text/engine'
 require 'action_view/railtie'
 require 'action_cable/engine'
 # require "rails/test_unit/railtie"
@@ -30,6 +30,16 @@ module Cami
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 7.0
+
+    config.application_name = 'Customer Account Management & Invoicing'
+    config.application_short_name = 'CAMI'
+
+    # Show full error reports?
+    config.consider_all_requests_local = AppUtils.debug_mode?
+
+    config.exceptions_app = lambda { |env|
+      ErrorsController.action(:show).call(env)
+    }
 
     # Please, add to the `ignore` list any other `lib` subdirectories that do
     # not contain `.rb` files, or that should not be reloaded or eager loaded.

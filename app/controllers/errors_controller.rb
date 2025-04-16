@@ -1,19 +1,21 @@
 # frozen_string_literal: true
 
 class ErrorsController < ApplicationController
+  layout 'error'
+
   # TODO: How does this impact analytics? E.g. reporting to tools like Heap that the
   #   customer experienced an error?
   protect_from_forgery with: :null_session
 
   # skip_before_action :authenticate_user!
 
-  rescue_from ActionController::RoutingError do |exception|
-    emit_routing_exception(exception)
-  end
   rescue_from LarCity::Errors::ElevatedPrivilegesRequired, with: :forbidden
   rescue_from LarCity::Errors::UnprocessableEntity, with: :unprocessable_entity
   rescue_from LarCity::Errors::InternalServerError, with: :server_error
   rescue_from LarCity::Errors::ResourceNotFound, with: :not_found
+  rescue_from ActionController::RoutingError do |exception|
+    emit_routing_exception(exception)
+  end
 
   def show
     @exception = request.env['action_dispatch.exception']
@@ -41,13 +43,16 @@ class ErrorsController < ApplicationController
   end
 
   def emit_routing_exception(_exception = nil)
-    if %r{/admin/}.match?(request.fullpath)
-      raise LarCity::Errors::ElevatedPrivilegesRequired if request.params[:unmatched].present?
+    @mutex ||= Mutex.new
+    @mutex.synchronize do
+      if %r{/admin/}.match?(request.fullpath)
+        raise LarCity::Errors::ElevatedPrivilegesRequired if request.params[:unmatched].present?
 
-      raise LarCity::Errors::UnprocessableEntity
+        raise LarCity::Errors::UnprocessableEntity
+      end
+
+      raise LarCity::Errors::ResourceNotFound
     end
-
-    raise LarCity::Errors::ResourceNotFound
   end
 
   private

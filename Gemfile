@@ -54,6 +54,7 @@ gem 'phonelib'
 gem 'pundit', '~> 2.5'
 gem 'ransack', '~> 4.3'
 gem 'rolify', '~> 6.0'
+gem 'faraday'
 
 gem 'flipper-active_record', '~> 1.3'
 gem 'flipper-api'
@@ -74,6 +75,10 @@ group :development, :test do
   gem 'debug', platforms: %i[mri mingw x64_mingw]
 
   gem 'brakeman', require: false
+  gem 'climate_control'
+  gem 'fabrication'
+  gem 'faker'
+  gem 'open3'
   gem 'rspec-rails', '~> 7'
   gem 'rswag-specs'
   gem 'rubocop', require: false
@@ -88,7 +93,7 @@ group :development do
   gem 'web-console'
 
   # Annotates Rails Models, routes, fixtures, and others based on the database schema.
-  gem 'annotate'
+  gem 'annotaterb'
 
   # Preview mail in browser instead of sending https://github.com/ryanb/letter_opener
   gem 'letter_opener'
@@ -96,6 +101,7 @@ end
 
 group :test do
   gem 'database_cleaner-active_record'
+  gem 'rails-controller-testing'
   gem 'rubocop-capybara', require: false
   gem 'rubocop-performance'
   gem 'rubocop-rails'
