@@ -13,6 +13,16 @@
  *= require_tree .
  *= require_self
  */
+// TODO: https://flowbite.com/docs/getting-started/rails/
+//@import "tailwindcss";
+//@import "flowbite/src/themes/default";
+
+@plugin "flowbite/plugin";
+@plugin "@tailwindcss/typography";
+@plugin "@tailwindcss/forms";
+
+@source "../../../node_modules/flowbite";
+@source "../../../node_modules/tailwindcss";
 
 header {
   &.absolute {

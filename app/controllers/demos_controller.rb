@@ -16,7 +16,7 @@ class DemosController < ApplicationController
         { name: 'Feature with Product Screenshot ', href: '/demos/feature/with-product-screenshot' },
         { name: 'Feature with 2x2 Grid', href: '/demos/feature/with-2x2-grid' },
         { name: 'Pricing with Emphasized Tier', href: '/demos/pricing/with-emphasized-tier' },
-      ].sort_by { |h| h[:name] }
+      ].sort_by { |h| h[:name] },
     },
     { name: 'Marketplace', href: '#' },
     { name: 'Company', href: '#' },
@@ -48,7 +48,7 @@ class DemosController < ApplicationController
           description: 'Ac tincidunt sapien vehicula erat auctor pellentesque rhoncus. Et magna sit morbi lobortis.',
           iconKey: 'server-icon',
         },
-      ]
+      ],
     }
   end
 
@@ -81,7 +81,7 @@ class DemosController < ApplicationController
             'Arcu egestas dolor vel iaculis in ipsum mauris. Tincidunt mattis aliquet hac quis. Id hac maecenas ac donec pharetra eget.',
           iconKey: 'fingerprint-icon',
         },
-      ]
+      ],
     }
   end
 
@@ -116,7 +116,7 @@ class DemosController < ApplicationController
           ],
           featured: true,
         }
-      ]
+      ],
     }
   end
 end
