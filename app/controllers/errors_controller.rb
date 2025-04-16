@@ -28,7 +28,7 @@ class ErrorsController < ApplicationController
   end
 
   def unprocessable_entity
-    render 'errors/unprocessable_entity', status: :unprocessable_content
+    render 'errors/unprocessable_entity', status: :unprocessable_entity
   end
 
   def not_found
