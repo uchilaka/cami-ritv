@@ -3,6 +3,7 @@ import { createRoot } from "react-dom/client";
 import { createInertiaApp } from "@inertiajs/react";
 import { InertiaProgress } from "@inertiajs/progress";
 import axios from "axios";
+// import "tailwindcss";
 import "flowbite";
 
 import Layout from "@/components/Layout";

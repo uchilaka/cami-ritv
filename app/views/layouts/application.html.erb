@@ -7,10 +7,9 @@
     <%= csp_meta_tag %>
 
     <!-- <script src="https://cdn.tailwindcss.com"></script>-->
-    <%= stylesheet_link_tag "tailwind", "data-turbo-track": "reload" %>
+    <%= stylesheet_link_tag "tailwind", "inter-font", "data-turbo-track": "reload" %>
+    <%= stylesheet_link_tag "application.tailwind", "application" %>
 
-    <%= stylesheet_link_tag "application" %>
-    <%= vite_stylesheet_tag "application" %>
     <%= vite_client_tag %>
     <%= inertia_ssr_head %>
     <%= vite_react_refresh_tag %>
