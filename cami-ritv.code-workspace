@@ -1,7 +1,12 @@
 {
   "folders": [
     {
+      "name": "Monorepo",
       "path": "."
+    },
+    {
+      "name": "Fronend: Entrypoints",
+      "path": "./app/frontend/entrypoints"
     }
   ],
   "settings": {

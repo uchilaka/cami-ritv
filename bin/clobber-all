@@ -1,0 +1,3 @@
+#!/usr/bin/env zsh
+bin/rails assets:clobber tailwindcss:clobber dartsass:clobber &&\
+  bin/rails dartsass:build tailwindcss:build assets:precompile vite:build

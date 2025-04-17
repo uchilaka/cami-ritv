@@ -1,0 +1,9 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="run: WSL2" type="CompoundRunConfigurationType">
+    <toRun name="Development: vite" type="CommandRunConfigurationType" />
+    <toRun name="rails dartsass:watch" type="CommandRunConfigurationType" />
+    <toRun name="rails tailwindcss:watch" type="CommandRunConfigurationType" />
+    <toRun name="Development: CAMI" type="RailsRunConfigurationType" />
+    <method v="2" />
+  </configuration>
+</component>

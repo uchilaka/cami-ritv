@@ -3,7 +3,7 @@ import path from 'path'
 import { parse } from 'comment-json'
 import type { CompilerOptions } from 'typescript'
 
-export const tsConfigFile = path.join(path.resolve('./'), 'tsconfig.app.json')
+export const tsConfigFile = path.join(path.resolve('./'), 'tsconfig.json')
 
 const tsConfig = parse(fs.readFileSync(tsConfigFile).toString(), undefined, true) as Record<string, unknown>
 

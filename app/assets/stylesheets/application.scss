@@ -1,5 +1,5 @@
 /*
- * This is a manifest file that'll be compiled into application.css, which will include all the files
+ * This is a manifest file that'll be compiled into application.scss, which will include all the files
  * listed below.
  *
  * Any CSS (and SCSS, if configured) file within this directory, lib/assets/stylesheets, or any plugin's
@@ -13,11 +13,14 @@
  *= require_tree .
  *= require_self
  */
+@import "flowbite/src/themes/default";
 
-header {
-  &.absolute {
-    nav[aria-label="Global"] {
-      backdrop-filter: opacity(0.6) blur(10px);
-    }
+@plugin "flowbite/plugin";
+
+@source "../../../node_modules/flowbite";
+
+header.absolute {
+  nav[aria-label="Global"] {
+    backdrop-filter: opacity(0.6) blur(10px);
   }
 }

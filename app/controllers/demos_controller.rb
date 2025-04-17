@@ -17,7 +17,12 @@ class DemosController < ApplicationController
   ]
 
   def hero_simply_centered
-    render inertia: 'demos/HeroSimplyCentered'
+    tailwind_version = get_tailwind_version
+    template_relative_path =
+      tailwind_version.present? ?
+        "demos/#{tailwind_version}/HeroSimplyCentered" :
+        'demos/HeroSimplyCentered'
+    render inertia: template_relative_path
   end
 
   def feature_with_product_screenshot
@@ -112,5 +117,15 @@ class DemosController < ApplicationController
         }
       ]
     }
+  end
+
+  private
+
+  def route_params
+    params.permit(:tailwind_version)
+  end
+
+  def get_tailwind_version
+    route_params[:tailwind_version]
   end
 end
