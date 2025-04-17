@@ -1,2 +1,0 @@
-module Demos::HeroSectionsHelper
-end

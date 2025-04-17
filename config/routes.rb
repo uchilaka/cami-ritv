@@ -10,6 +10,7 @@ Rails.application.routes.draw do
 
   resources :demos, only: %i[] do
     collection do
+      get 'hello-inertia-rails', to: 'dashboard#index'
       get 'hero/simply-centered', to: 'demos#hero_simply_centered'
       get 'feature/with-product-screenshot', to: 'demos#feature_with_product_screenshot'
       get 'feature/with-2x2-grid', to: 'demos#feature_with_2x2_grid'
