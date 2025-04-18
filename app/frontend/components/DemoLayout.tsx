@@ -97,18 +97,21 @@ const DemoLayout: FC<LayoutProps> = ({ children }) => {
             </div>
             <div className="mt-6 flow-root">
               <div className="-my-6 divide-y divide-gray-500/10">
-                <div className="space-y-2 py-6">
+                <ul className="space-y-2 py-6">
+                  {/* TODO: Implement mobile sub-menu support */}
                   {!!navigation &&
-                    navigation.map((item) => (
-                      <a
-                        key={item.name}
-                        href={item.href}
-                        className="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50"
-                      >
-                        {item.name}
-                      </a>
+                    navigation.map(({ name, href }) => (
+                      <li>
+                        <a
+                          key={name}
+                          href={href}
+                          className="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50"
+                        >
+                          {name}
+                        </a>
+                      </li>
                     ))}
-                </div>
+                </ul>
                 <div className="py-6">
                   <a
                     href="#"
