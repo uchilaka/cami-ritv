@@ -43,6 +43,7 @@ document.addEventListener("DOMContentLoaded", () => {
       },
       setup({ el, App, props }) {
         if (el) {
+          el.classList.add("min-h-full");
           createRoot(el).render(createElement(App, props));
         } else {
           throw new Error(
