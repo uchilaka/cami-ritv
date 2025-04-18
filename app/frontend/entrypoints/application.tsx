@@ -19,7 +19,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   InertiaProgress.init();
 
-  const candidateTargetEl = document.querySelector<HTMLDivElement>("#inertia-js-app");
+  const candidateTargetEl =
+    document.querySelector<HTMLDivElement>("#inertia-js-app");
   console.debug({ candidateTargetEl });
 
   void createInertiaApp({
@@ -42,6 +43,7 @@ document.addEventListener("DOMContentLoaded", () => {
     },
     setup({ el, App, props }) {
       if (el) {
+        el.classList.add("min-h-full");
         // TODO: Support rendering into an element that's already in the DOM (i.e. #inertia-js-app)
         createRoot(el).render(createElement(App, props));
       } else {

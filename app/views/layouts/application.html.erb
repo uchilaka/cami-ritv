@@ -9,7 +9,9 @@
     <!-- <script src="https://cdn.tailwindcss.com"></script>-->
     <%= stylesheet_link_tag "tailwind", "data-turbo-track": "reload" %>
 
-    <%= stylesheet_link_tag "application", "tailwind.application" %>
+    <%#= stylesheet_link_tag "application", "tailwind.application" %>
+    <%= stylesheet_link_tag "application" %>
+    <%= stylesheet_link_tag "tailwind.application", async: true %>
     <%= vite_stylesheet_tag "application" %>
     <%= vite_client_tag %>
     <%= inertia_ssr_head %>
@@ -24,7 +26,6 @@
 
         Visit the guide for more information: https://vite-ruby.netlify.app/guide/rails
       -->
-
   </head>
 
   <body class="h-full">
