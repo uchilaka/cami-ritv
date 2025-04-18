@@ -39,9 +39,11 @@
   },
   "scripts": {
     "check": "tsc -p tsconfig.app.json && tsc -p tsconfig.node.json",
+    "clobber": "bin/clobber-all",
     "build:css": "bin/rails tailwindcss:build",
     "build": "bin/vite build",
     "start": "foreman start -f Procfile.dev",
+    "test:rspec": "RAILS_ENV=test bundle exec rspec",
     "test": "vitest"
   }
 }

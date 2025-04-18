@@ -78,6 +78,8 @@ VCR.configure do |vcr_config|
 end
 
 RSpec.configure do |config|
+  config.fail_fast = AppUtils.yes?(ENV.fetch('RSPEC_FAIL_FAST', false)) ? true : false
+
   # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures
   config.fixture_paths = [
     Rails.root.join('spec/fixtures')
@@ -86,7 +88,7 @@ RSpec.configure do |config|
   # If you're not using ActiveRecord, or you'd prefer not to run each of your
   # examples within a transaction, remove the following line or assign false
   # instead of true.
-  config.use_transactional_fixtures = true
+  # config.use_transactional_fixtures = true
 
   # You can uncomment this line to turn off ActiveRecord support entirely.
   # config.use_active_record = false
@@ -106,10 +108,81 @@ RSpec.configure do |config|
   # behaviour is considered legacy and will be removed in a future version.
   #
   # To enable this behaviour uncomment the line below.
-  # config.infer_spec_type_from_file_location!
+  config.infer_spec_type_from_file_location!
 
   # Filter lines from Rails gems in backtraces.
   config.filter_rails_from_backtrace!
   # arbitrary gems may also be filtered via:
   # config.filter_gems_from_backtrace("gem name")
+
+  # # Devise integration helpers https://github.com/heartcombo/devise?tab=readme-ov-file#integration-tests
+  # config.include Devise::Test::IntegrationHelpers, type: :feature
+  # config.include Devise::Test::IntegrationHelpers, type: :request
+  # config.include Devise::Test::IntegrationHelpers, type: :view
+
+  # Internationalization guide: https://guides.rubyonrails.org/i18n.html
+  config.include AbstractController::Translation, type: :view
+  config.include AbstractController::Translation, type: :helper
+
+  # # Sample phone numbers
+  # config.include_context 'for phone number testing', real_world_data: true
+  #
+  # # Sample invoices
+  # config.include_context 'for invoice testing', preload_invoice_data: true
+
+  config.before(:suite) do
+    if config.use_transactional_fixtures?
+      raise(<<-MSG)
+        Delete line `config.use_transactional_fixtures = true` from rails_helper.rb
+        (or set it to false) to prevent uncommitted transactions being used in
+        JavaScript-dependent specs.
+
+        During testing, the app-under-test that the browser driver connects to
+        uses a different database connection to the database connection used by
+        the spec. The app's database connection would not be able to access
+        uncommitted transaction data setup over the spec's database connection.
+      MSG
+    end
+    # Ensure that truncation ONLY happens in rails test environment
+    if Rails.env.test?
+      DatabaseCleaner.clean_with(:truncation)
+    else
+      puts "️⚠️ RSpec is running in #{Rails.env} environment. Skipping database truncation. 🙅🏾‍♂️"
+    end
+
+    Rails.application.load_seed
+  end
+
+  # Review example of RSpec with Capybara configuration:
+  # https://github.com/DatabaseCleaner/database_cleaner?tab=readme-ov-file#rspec-with-capybara-example
+  config.before(:each) do
+    # Database cleaner setup: https://github.com/DatabaseCleaner/database_cleaner?tab=readme-ov-file#rspec-example
+    DatabaseCleaner.strategy = :transaction
+  end
+
+  config.before(:each) do
+    DatabaseCleaner.start
+  end
+
+  # config.around(:each) do |example|
+  #   # Conditionally load invoice sample data
+  #   load_sample_invoice_dataset if example.metadata[:preload_invoice_data]
+  #
+  #   # Run example
+  #   example.run
+  # end
+
+  config.append_after(:each) do
+    DatabaseCleaner.clean
+
+    # Clean up all test double state
+    RSpec::Mocks.teardown
+  end
+end
+
+Shoulda::Matchers.configure do |config|
+  config.integrate do |with|
+    with.test_framework :rspec
+    with.library :rails
+  end
 end

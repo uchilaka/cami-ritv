@@ -10,12 +10,15 @@ Rails.application.routes.draw do
 
   resources :demos, only: %i[] do
     collection do
+      get 'hello-inertia-rails', to: 'dashboard#index'
       get 'hero/simply-centered', to: 'demos#hero_simply_centered'
       get 'feature/with-product-screenshot', to: 'demos#feature_with_product_screenshot'
       get 'feature/with-2x2-grid', to: 'demos#feature_with_2x2_grid'
       get 'pricing/with-emphasized-tier', to: 'demos#pricing_with_emphasized_tier'
     end
   end
+
+  get '/protego/:code', to: 'errors#render_static_error'
 
   root 'demos#hero_simply_centered'
 

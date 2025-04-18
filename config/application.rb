@@ -11,7 +11,7 @@ require 'active_storage/engine'
 require 'action_controller/railtie'
 require 'action_mailer/railtie'
 # require "action_mailbox/engine"
-# require "action_text/engine"
+require 'action_text/engine'
 require 'action_view/railtie'
 require 'action_cable/engine'
 # require "rails/test_unit/railtie"
@@ -33,6 +33,16 @@ module Cami
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 7.0
 
+    config.application_name = 'Customer Account Management & Invoicing'
+    config.application_short_name = 'CAMI'
+
+    # Show full error reports?
+    config.consider_all_requests_local = AppUtils.debug_mode?
+
+    config.exceptions_app = lambda { |env|
+      ErrorsController.action(:show).call(env)
+    }
+
     # Please, add to the `ignore` list any other `lib` subdirectories that do
     # not contain `.rb` files, or that should not be reloaded or eager loaded.
     # Common ones are `templates`, `generators`, or `middleware`, for example.
@@ -50,5 +60,25 @@ module Cami
     #
     # config.time_zone = "Central Time (US & Canada)"
     # config.eager_load_paths << Rails.root.join("extras")
+    config.eager_load_paths << "#{root}/lib"
+    config.eager_load_paths << "#{root}/app/concerns"
+
+    # Autoload paths
+    config.autoload_paths << "#{root}/lib/workflows"
+    config.autoload_paths << "#{root}/lib/commands"
+    config.autoload_paths << "#{root}/config/vcr"
+
+    # TODO: Make sure all the directories in the autoload_paths are present in the eager_load_paths
+    diff = config.eager_load_paths - config.autoload_paths
+    diff.each { |path| config.eager_load_paths << path }
+
+    config.assets.paths << "#{root}/vendor/assets"
+
+    # Doc for jbuilder: https://github.com/rails/jbuilder
+    Jbuilder.key_format camelize: :lower
+    Jbuilder.deep_format_keys true
+
+    # Don't generate system test files.
+    config.generators.system_tests = nil
   end
 end

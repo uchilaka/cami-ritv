@@ -25,6 +25,9 @@ gem 'pg', '~> 1.5'
 # Use the Puma web server [https://github.com/puma/puma]
 gem 'puma', '~> 6'
 
+# Build JSON APIs with ease [https://github.com/rails/jbuilder]
+gem 'jbuilder'
+
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem 'tzinfo-data', platforms: %i[mingw mswin x64_mingw jruby]
 
@@ -47,6 +50,7 @@ gem 'active_model_serializers'
 gem 'bumbler'
 gem 'data_migrate', '~> 11.3'
 gem 'discard'
+gem 'faraday'
 gem 'friendly_id', '~> 5.5'
 gem 'globalid', '~> 1.2'
 gem 'interactor', '~> 3.1'
@@ -77,6 +81,10 @@ group :development, :test do
   gem 'debug', platforms: %i[mri mingw x64_mingw]
 
   gem 'brakeman', require: false
+  gem 'climate_control'
+  gem 'fabrication'
+  gem 'faker'
+  gem 'open3'
   gem 'rspec-rails', '~> 7'
   gem 'rswag-specs'
   gem 'rubocop', require: false
@@ -91,7 +99,7 @@ group :development do
   gem 'web-console'
 
   # Annotates Rails Models, routes, fixtures, and others based on the database schema.
-  gem 'annotate'
+  gem 'annotaterb'
 
   # Preview mail in browser instead of sending https://github.com/ryanb/letter_opener
   gem 'letter_opener'
@@ -99,6 +107,7 @@ end
 
 group :test do
   gem 'database_cleaner-active_record'
+  gem 'rails-controller-testing'
   gem 'rubocop-capybara', require: false
   gem 'rubocop-performance'
   gem 'rubocop-rails'

@@ -1,0 +1,16 @@
+<p class="text-4xl md:text-5xl lg:text-6xl font-bold tracking-wider text-gray-300 mt-2">
+  <%= t('exceptions.forbidden_short') %>
+</p>
+<section class="text-lg md:text-xl lg:text-2xl text-gray-500 my-12">
+  <p>
+    <%= t('exceptions.forbidden') %>
+  </p>
+  <p class="mt-2">
+    <%= t('exceptions.help_prefix') %>
+    <a href="mailto:devsecops@lar.city?subject=I+need+application+access" class="font-semibold text-gray-900" target="_blank">
+      <%= t('labels.engineering_or_support') %>
+    </a>.
+  </p>
+</section>
+
+<%= render 'errors/links' %>
