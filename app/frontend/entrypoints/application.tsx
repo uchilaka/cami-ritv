@@ -19,10 +19,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   InertiaProgress.init();
 
-  const candidateTargetEl =
-    document.querySelector<HTMLDivElement>("#inertia-js-app");
-  console.debug({ candidateTargetEl });
-
   void createInertiaApp({
     resolve: async (name) => {
       // Pass { eager: true } as options for import.meta.glob to eagerly load all pages
