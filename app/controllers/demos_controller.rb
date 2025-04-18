@@ -102,4 +102,16 @@ class DemosController < ApplicationController
       ]
     }
   end
+
+  def simple_sign_in
+    render inertia: 'demos/SimpleSignIn', props: {
+      title: 'Simple Sign In',
+      subtitle: 'Sign in to your account',
+      description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio. Praesent libero. Sed cursus ante dapibus diam. Sed nisi.',
+      # formAction: user_google_omniauth_authorize_path,
+      # formMethod: :get,
+      # formId: 'simple-sign-in-form',
+      # buttonLabel: t('devise.omniauth.ctas.sign_in_with_provider', provider: 'Google'),
+    }
+  end
 end

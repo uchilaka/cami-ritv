@@ -21,6 +21,7 @@ module Demonstrable
             { name: 'Feature with Product Screenshot ', href: '/demos/feature/with-product-screenshot' },
             { name: 'Feature with 2x2 Grid', href: '/demos/feature/with-2x2-grid' },
             { name: 'Pricing with Emphasized Tier', href: '/demos/pricing/with-emphasized-tier' },
+            { name: 'Simple Sign In', href: '/demos/simple-sign-in' },
           ].sort_by { |h| h[:name] }
         },
         { name: 'Marketplace', href: '#' },

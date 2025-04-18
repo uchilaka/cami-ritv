@@ -19,6 +19,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
   InertiaProgress.init();
 
+  const candidateTargetEl = document.querySelector<HTMLDivElement>("#inertia-js-app");
+  console.debug({ candidateTargetEl });
+
   void createInertiaApp({
     resolve: async (name) => {
       // Pass { eager: true } as options for import.meta.glob to eagerly load all pages
@@ -39,6 +42,7 @@ document.addEventListener("DOMContentLoaded", () => {
     },
     setup({ el, App, props }) {
       if (el) {
+        // TODO: Support rendering into an element that's already in the DOM (i.e. #inertia-js-app)
         createRoot(el).render(createElement(App, props));
       } else {
         throw new Error(

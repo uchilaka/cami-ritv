@@ -9,7 +9,7 @@
     <!-- <script src="https://cdn.tailwindcss.com"></script>-->
     <%= stylesheet_link_tag "tailwind", "data-turbo-track": "reload" %>
 
-    <%= stylesheet_link_tag "application" %>
+    <%= stylesheet_link_tag "application", "tailwind.application" %>
     <%= vite_stylesheet_tag "application" %>
     <%= vite_client_tag %>
     <%= inertia_ssr_head %>
@@ -29,6 +29,8 @@
 
   <body class="h-full">
     <%= yield %>
+    <!-- TODO: have InertiaJS optionally render the app here -->
+    <div id="inertia-js-app"></div>
   </body>
 
 </html>
