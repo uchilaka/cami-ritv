@@ -27,7 +27,7 @@
 header {
   &.absolute {
     nav[aria-label="Global"] {
-      backdrop-filter: opacity(0.6) blur(10px);
+      backdrop-filter: opacity(0.8) blur(10px);
     }
   }
 }

@@ -1,4 +1,3 @@
 #!/usr/bin/env zsh
-bundle exec rake dartsass:clobber
-bundle exec rake tailwindcss:clobber
-bundle exec rake assets:clobber
+bin/rails dartsass:clobber tailwindcss:clobber assets:clobber &&\
+  bin/rails dartsass:build tailwindcss:build

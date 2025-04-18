@@ -13,10 +13,10 @@ const DemoLayout: FC<LayoutProps> = ({ children }) => {
 
   return (
     <>
-      <header className="absolute inset-x-0 fixed w-full top-0 start-0 z-50">
+      <header className="fixed w-full inset-x-0 top-0 start-0 z-50">
         <nav
           aria-label="Global"
-          className="bg-white flex items-center justify-between p-6 lg:px-8 border-b border-gray-200"
+          className="bg-white shadow-sm flex items-center justify-between p-6 lg:px-8"
         >
           <div className="flex lg:flex-1">
             <a href="#" className="-m-1.5 p-1.5">

@@ -1,26 +1,13 @@
 # frozen_string_literal: true
 
 class DemosController < ApplicationController
-  layout 'inertiajs'
+  include Demonstrable
+
+  inertia_share navigation: demo_navigation_items
 
   skip_before_action :verify_authenticity_token
 
-  inertia_share navigation: [
-    { name: 'Product', href: '#' },
-    {
-      name: 'Showcase',
-      href: '#',
-      submenu: [
-        { name: 'InertiaJS Dashboard', href: '/demos/hello-inertia-rails' },
-        { name: 'Hero Simply Centered', href: '/demos/hero/simply-centered' },
-        { name: 'Feature with Product Screenshot ', href: '/demos/feature/with-product-screenshot' },
-        { name: 'Feature with 2x2 Grid', href: '/demos/feature/with-2x2-grid' },
-        { name: 'Pricing with Emphasized Tier', href: '/demos/pricing/with-emphasized-tier' },
-      ].sort_by { |h| h[:name] },
-    },
-    { name: 'Marketplace', href: '#' },
-    { name: 'Company', href: '#' },
-  ]
+  layout 'inertiajs'
 
   def hero_simply_centered
     render inertia: 'demos/HeroSimplyCentered'
