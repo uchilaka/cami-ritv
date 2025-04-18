@@ -24,8 +24,8 @@ module FooterHelper
         'https://flowbite.com/docs/getting-started/introduction/'
       ],
       [
-        t('shared.footer.tailwind_docs'),
-        'https://tailwindcss.com/docs'
+        t('shared.footer.tailwind_blocks'),
+        'https://tailwindcss.com/plus/ui-blocks'
       ],
       [
         t('shared.footer.wai_aria_guide'),

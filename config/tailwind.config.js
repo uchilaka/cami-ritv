@@ -9,6 +9,9 @@ export const content = [
   "./app/helpers/**/*.rb",
   "./app/views/**/*.{html,html.erb,erb}",
   "./app/views/devise/**/*.{html,html.erb,erb}",
+  "./config/locales/ctas/*.rb",
+  "./config/locales/defaults/*.rb",
+  "./config/locales/devise.*.{yml,yaml}",
 ];
 
 export const theme = {

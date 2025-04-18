@@ -59,7 +59,7 @@ en:
     footer:
       flowbite_icons: 'Flowbite Icons'
       flowbite_integration_guide: 'Flowbite Integration Guide'
-      tailwind_docs: 'Tailwind CSS Documentation'
+      tailwind_blocks: 'Tailwind CSS UI Blocks'
       fontawesome_icons: 'FontAwesome Icons'
       mongoid_docs: 'Mongoid Documentation (v8.1)'
       component_library: 'Component Library'
