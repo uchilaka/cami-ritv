@@ -63,8 +63,8 @@ const DemoLayout: FC<LayoutProps> = ({ children }) => {
           </ul>
           <div className="hidden lg:flex lg:flex-1 lg:justify-end">
             <a
-              href="#"
-              className="text-sm/6 font-semibold dark:text-white text-gray-900"
+              href="/users/sign_in"
+              className="text-sm/6 font-semibold text-gray-900"
             >
               Log in <span aria-hidden="true">&rarr;</span>
             </a>
