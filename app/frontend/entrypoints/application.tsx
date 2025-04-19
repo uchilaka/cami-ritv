@@ -39,6 +39,8 @@ document.addEventListener("DOMContentLoaded", () => {
     },
     setup({ el, App, props }) {
       if (el) {
+        el.classList.add("min-h-full");
+        // TODO: Support rendering into an element that's already in the DOM (i.e. #inertia-js-app)
         createRoot(el).render(createElement(App, props));
       } else {
         throw new Error(
