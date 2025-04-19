@@ -4,10 +4,14 @@ import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import NavItemWithSubmenu from "@/components/NavItemWithSubmenu";
 import { LayoutProps } from "@/@types";
 import useLayoutNav from "@/hooks/useLayoutNav";
+import useSession from "@/hooks/useSession";
 // import SiteFooter from "./SiteFooter";
 
 const DemoLayout: FC<LayoutProps> = ({ children }) => {
   const { navigation } = useLayoutNav();
+  const { currentUser, isAuthenticated } = useSession();
+
+  console.debug({ currentUser, isAuthenticated });
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 

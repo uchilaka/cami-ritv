@@ -6,19 +6,6 @@ class ApplicationController < ActionController::Base
   include Pundit::Authorization
   include SitewideContextAware
 
-  inertia_share footer_resource_links: footer_resource_links,
-                footer_company_links: [
-                  { label: t('accessibility.footer.about'), href: '#' },
-                  {
-                    label: t('accessibility.footer.contact'),
-                    href: 'mailto:support@lar.city?subj=Email%20contact%20via%20website',
-                  },
-                ],
-                logo: {
-                  url: logo_url,
-                  aria_label: t('accessibility.footer.logo'),
-                }
-
   # before_action :set_paper_trail_whodunnit
 
   # For more on action controller filters, see https://guides.rubyonrails.org/action_controller_overview.html#filters
@@ -26,6 +13,33 @@ class ApplicationController < ActionController::Base
   before_action :authenticate_user!, unless: :public_resource?
 
   # rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
+
+  # inertia_share footer_resource_links: footer_resource_links,
+  #               footer_company_links: [
+  #                 { label: t('accessibility.footer.about'), href: '#' },
+  #                 {
+  #                   label: t('accessibility.footer.contact'),
+  #                   href: 'mailto:support@lar.city?subj=Email%20contact%20via%20website',
+  #                 },
+  #               ],
+
+  inertia_share do
+    {
+      current_user: maybe_current_user,
+      footer_resource_links: footer_resource_links,
+      footer_company_links: [
+        { label: t('accessibility.footer.about'), href: '#' },
+        {
+          label: t('accessibility.footer.contact'),
+          href: 'mailto:support@lar.city?subj=Email%20contact%20via%20website',
+        },
+      ],
+      logo: {
+        url: logo_url,
+        aria_label: t('accessibility.footer.logo'),
+      },
+    }
+  end
 
   layout 'legacy-application'
 
@@ -44,6 +58,12 @@ class ApplicationController < ActionController::Base
   end
 
   protected
+
+  def maybe_current_user
+    return current_user.serializable_hash if user_signed_in?
+
+    nil
+  end
 
   def public_resource?
     public_page? || demo_page? || %w[/up /api/features].include?(request.path)
