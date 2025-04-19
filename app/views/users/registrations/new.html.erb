@@ -1,7 +1,7 @@
 <% content_for :centered_form_layout do %>
   <h3 class="mb-5">Sign up</h3>
 
-  <%= render "devise/shared/omniauth/links" %>
+  <%= render "users/shared/omniauth/links" %>
 
   <%= render 'shared/terms_and_privacy_notice' %>
 
@@ -10,7 +10,7 @@
   </div>
 
   <%= form_for(resource, as: resource_name, url: user_registration_path(resource_name)) do |f| %>
-    <%= render "devise/shared/error_messages", resource: resource %>
+    <%= render "users/shared/error_messages", resource: resource %>
 
     <div class="field">
       <%= f.label :name, class: "label" %>

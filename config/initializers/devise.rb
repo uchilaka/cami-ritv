@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require "lib/lar_city/devise_failure_app"
 # Assuming you have not yet modified this file, each configuration option below
 # is set to its default value. Note that some are commented out while others
 # are not: uncommented lines are intended to protect your configuration from
@@ -24,7 +25,7 @@ Devise.setup do |config|
   # Configure the e-mail address which will be shown in Devise::Mailer,
   # note that it will be overwritten if you use your own mailer class
   # with default "from" parameter.
-  config.mailer_sender = 'please-change-me-at-config-initializers-devise@example.com'
+  config.mailer_sender = ENV.fetch('SMTP_USER', Rails.application.credentials.brevo.smtp_user)
 
   # Configure the class responsible to send e-mails.
   # config.mailer = 'Devise::Mailer'
@@ -143,7 +144,7 @@ Devise.setup do |config|
   # without confirming their account.
   # Default is 0.days, meaning the user cannot access the website without
   # confirming their account.
-  # config.allow_unconfirmed_access_for = 2.days
+  config.allow_unconfirmed_access_for = 7.days
 
   # A period that the user is allowed to confirm their account before their
   # token becomes invalid. For example, if set to 3.days, the user can confirm
@@ -183,12 +184,12 @@ Devise.setup do |config|
   # Email regex used to validate email formats. It simply asserts that
   # one (and only one) @ exists in the given string. This is mainly
   # to give user feedback and not to assert the e-mail validity.
-  config.email_regexp = /\A[^@\s]+@[^@\s]+\z/
+  config.email_regexp = URI::MailTo::EMAIL_REGEXP
 
   # ==> Configuration for :timeoutable
   # The time you want to timeout the user session without activity. After this
   # time the user will be asked for credentials again. Default is 30 minutes.
-  # config.timeout_in = 30.minutes
+  config.timeout_in = 24.hours
 
   # ==> Configuration for :lockable
   # Defines which strategy will be used to lock an account.
@@ -277,10 +278,11 @@ Devise.setup do |config|
   # If you want to use other strategies, that are not supported by Devise, or
   # change the failure app, you can configure them inside the config.warden block.
   #
-  # config.warden do |manager|
-  #   manager.intercept_401 = false
-  #   manager.default_strategies(scope: :user).unshift :some_external_strategy
-  # end
+  config.warden do |manager|
+    # manager.intercept_401 = false
+    # manager.default_strategies(scope: :user).unshift :some_external_strategy
+    manager.failure_app = ::LarCity::DeviseFailureApp
+  end
 
   # ==> Mountable engine configurations
   # When using Devise inside an engine, let's call it `MyEngine`, and this engine
@@ -310,4 +312,44 @@ Devise.setup do |config|
   # When set to false, does not sign a user in automatically after their password is
   # changed. Defaults to true, so a user is signed in automatically after changing a password.
   # config.sign_in_after_change_password = true
+
+  # ==> Configuration for :magic_link_authenticatable
+
+  # Need to use a custom Devise mailer in order to send magic links.
+  # If you're already using a custom mailer just have it inherit from
+  # Devise::Passwordless::Mailer instead of Devise::Mailer
+  config.mailer = "Devise::Passwordless::Mailer"
+
+  # Which algorithm to use for tokenizing magic links. See README for descriptions
+  config.passwordless_tokenizer = "::LarCity::SignedGlobalIdTokenizer"
+
+  # Time period after a magic login link is sent out that it will be valid for.
+  # config.passwordless_login_within = 20.minutes
+
+  # The secret key used to generate passwordless login tokens. The default value
+  # is nil, which means defer to Devise's `secret_key` config value. Changing this
+  # key will render invalid all existing passwordless login tokens. You can
+  # generate your own secret value with e.g. `rake secret`
+  # config.passwordless_secret_key = nil
+
+  # When using the :trackable module, set to true to consider magic link tokens
+  # generated before the user's current sign in time to be expired. In other words,
+  # each time you sign in, all existing magic links will be considered invalid.
+  # config.passwordless_expire_old_tokens_on_sign_in = false
+
+  # ==> Configuration for Devise JWT
+  # Configure the expiration time of the JWT token.
+  config.jwt do |jwt|
+    jwt.secret = Rails.application.credentials.devise_jwt_secret_key!
+    # TODO: Test that the configuration of dispatches for JWT tokens
+    #   is working as expected. This could be done quickly with Insomnia.
+    jwt.dispatch_requests = [
+      ['POST', %r{^/users/sign_in$}]
+    ]
+    jwt.revocation_requests = [
+      ['DELETE', %r{^/users/sign_out$}]
+    ]
+    # Configure other JWT options as needed
+    # jwt.expiration_time = 1.day.to_i
+  end
 end

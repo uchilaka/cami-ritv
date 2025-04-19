@@ -41,6 +41,9 @@
 #  index_users_on_unlock_token          (unlock_token) UNIQUE
 #
 class User < ApplicationRecord
+  include Devise::JWT::RevocationStrategies::Allowlist
+
+  rolify
   class << self
     # Docs on Devise passwordless customization: https://github.com/abevoelker/devise-passwordless#customization
     def passwordless_login_within
@@ -63,7 +66,7 @@ class User < ApplicationRecord
          :confirmable, :timeoutable, :lockable, :trackable
 
   # # Guide on model config: https://github.com/waiting-for-dev/devise-jwt?tab=readme-ov-file#model-configuration
-  # devise :jwt_authenticatable, jwt_revocation_strategy: self
+  devise :jwt_authenticatable, jwt_revocation_strategy: self
 
   devise :omniauthable, omniauth_providers: %i[google]
 
@@ -78,6 +81,46 @@ class User < ApplicationRecord
   has_many :identity_provider_profiles, dependent: :destroy
 
   before_validation :cleanup_providers, if: :providers_changed?
+
+  def admin?
+    has_role?(:admin)
+  end
+
+  def assign_default_role
+    add_role(:user)
+  end
+
+  def maybe_assign_default_role
+    assign_default_role unless has_role?(:user)
+  end
+
+  # def jwt_payload
+  #   super.merge(foo: 'bar')
+  # end
+  #
+  # # IMPORTANT: This method is used by the AllowList revocation strategy
+  # def on_jwt_dispatch(token, payload)
+  #   super
+  #   do_something(token, payload)
+  # end
+
+  # https://github.com/heartcombo/devise?tab=readme-ov-file#active-job-integration
+  # def send_devise_notification(notification, *args)
+  #   devise_mailer.send(notification, self, *args).deliver_later
+  # end
+  #
+  # TODO: Test attempting to activate several accounts and ensure only the ones
+  #   that are not already activated are activated
+  # def after_confirmation
+  #   accounts.each(&:activate!)
+  # end
+  #
+  def after_magic_link_authentication
+    maybe_assign_default_role
+    # NOTE: Consider the successful completion of a magic link authentication
+    #  as a confirmation of the user's email address
+    confirm unless confirmed?
+  end
 
   private
 
