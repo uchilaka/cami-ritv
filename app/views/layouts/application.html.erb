@@ -3,7 +3,10 @@
   <%= content_for :head do %>
     <!-- include via CDN for turbo support -->
     <script src="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.turbo.min.js"></script>
-    <%= stylesheet_link_tag "application", "actiontext", media: 'all' %>
+    <%= stylesheet_link_tag "application",
+                            "tailwind",
+                            "actiontext", media: 'all' %>
+  <%= stylesheet_link_tag "tailwind", "data-turbo-track": "reload" %>
     <%= vite_stylesheet_tag "application" %>
     <%= vite_client_tag %>
     <%= vite_react_refresh_tag %>
@@ -17,6 +20,7 @@
 
         Visit the guide for more information: https://vite-ruby.netlify.app/guide/rails
       -->
+    <script src="https://cdn.tailwindcss.com"></script>
   <% end %>
   <%= render "layouts/shared/head" %>
 

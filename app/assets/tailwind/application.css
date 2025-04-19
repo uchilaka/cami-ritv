@@ -1,1 +1,3 @@
-@import "../stylesheets/tailwind.application.css";
+@import "tailwindcss/preflight";
+
+@tailwind utilities;

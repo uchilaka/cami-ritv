@@ -74,6 +74,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_16_103858) do
     t.datetime "last_request_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "providers", default: [], array: true
+    t.jsonb "uids", default: {}
     t.string "nickname"
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true

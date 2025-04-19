@@ -2,6 +2,7 @@ en:
   accessibility:
     main:
       logo: "LarCity logo"
+      nav: "Global Navigation"
     footer:
       logo: "LarCity logo (footer)"
       about: "About"
