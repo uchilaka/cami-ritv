@@ -4,6 +4,7 @@ require_relative 'base_cmd'
 # require_relative 'datakit_cmd'
 # require_relative 'devkit_cmd'
 require_relative 'secrets_cmd'
+require_relative 'services_cmd'
 require_relative 'tunnel_cmd'
 # require_relative 'accounts_cmd'
 
@@ -17,6 +18,9 @@ module LarCity
 
       desc 'secrets [SUBCOMMAND]', 'Manage the secrets in the environment credentials file'
       subcommand 'secrets', SecretsCmd
+
+      desc 'services [SUBCOMMAND]', 'Manage application dockerized services'
+      subcommand 'services', ServicesCmd
 
       # desc 'devkit [SUBCOMMAND]', 'A few developer tools for the project'
       # subcommand 'devkit', DevkitCmd
