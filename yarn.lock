@@ -785,6 +785,7 @@ __metadata:
     date-fns: "npm:^4.1.0"
     eslint: "npm:^9.24.0"
     flowbite: "npm:^3.1.2"
+    flowbite-typography: "npm:^1.0.5"
     husky: "npm:^9.1.7"
     jiti: "npm:^2.4.2"
     lodash.debounce: "npm:^4.0.8"
@@ -3003,6 +3004,17 @@ __metadata:
     "@rollup/plugin-node-resolve": "npm:^15.2.3"
     flowbite: "npm:^2.0.0"
   checksum: 10c0/ea9aa41829aadcf7118ccc983035d069b5315c470de7a58c16a8b7a72e0521a220daa6a587dce1d6160f6fe1f2b5fe27e152e8a8ac052d689bbfec47d4d62ab7
+  languageName: node
+  linkType: hard
+
+"flowbite-typography@npm:^1.0.5":
+  version: 1.0.5
+  resolution: "flowbite-typography@npm:1.0.5"
+  dependencies:
+    lodash.castarray: "npm:^4.4.0"
+    lodash.isplainobject: "npm:^4.0.6"
+    lodash.merge: "npm:^4.6.2"
+  checksum: 10c0/6336c4da1d2be61d3ae3f053d3b732db1b0a8b14c8991b31ca59b58d8eb80d62c96e63511df2c944da034472a26c278d028ed4d6c381e54d500a17dd58869c2f
   languageName: node
   linkType: hard
 

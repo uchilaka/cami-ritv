@@ -1,5 +1,16 @@
-@use "tailwind.application";
-//@use "../../../node_modules/tailwindcss";
-//@use "../../../node_modules/tailwindcss/preflight";
-//
-//@tailwind utilities;
+@use "../../../node_modules/tailwindcss";
+@use "../../../node_modules/tailwindcss/preflight";
+@use "../../../node_modules/flowbite/src/themes/default";
+
+@source "../../../node_modules/tailwindcss/base";
+@source "../../../node_modules/flowbite";
+
+@tailwind utilities;
+
+@plugin "flowbite/plugin";
+@plugin "@tailwindcss/typography";
+@plugin "@tailwindcss/forms";
+
+#app, #inertia-js-app {
+  @apply min-h-full;
+}

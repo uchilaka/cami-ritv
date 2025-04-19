@@ -24,11 +24,12 @@ export const theme = {
 };
 
 export const plugins = [
-  "flowbite/plugin",
-  "@tailwindcss/forms",
-  "@tailwindcss/aspect-ratio",
-  "@tailwindcss/typography",
-  "@tailwindcss/container-queries",
+  import("flowbite/plugin"),
+  import("@tailwindcss/forms"),
+  import("@tailwindcss/aspect-ratio"),
+  import("flowbite-typography"),
+  // import("@tailwindcss/typography"),
+  import("@tailwindcss/container-queries"),
 ];
 
 export default {
