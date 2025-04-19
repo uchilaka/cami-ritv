@@ -43,7 +43,6 @@
 class User < ApplicationRecord
   include Devise::JWT::RevocationStrategies::Allowlist
 
-  rolify
   class << self
     # Docs on Devise passwordless customization: https://github.com/abevoelker/devise-passwordless#customization
     def passwordless_login_within
@@ -59,6 +58,8 @@ class User < ApplicationRecord
       result.user
     end
   end
+
+  rolify
 
   # Source code for confirmable: https://github.com/heartcombo/devise/blob/main/lib/devise/models/confirmable.rb
   # Guide on adding confirmable: https://github.com/heartcombo/devise/wiki/How-To:-Add-:confirmable-to-Users
