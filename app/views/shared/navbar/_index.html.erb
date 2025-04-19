@@ -1,6 +1,6 @@
-<div class="fixed w-full z-20 top-0 start-0">
+<div class="fixed w-full z-50 top-0 start-0">
   <!-- Main Navbar -->
-  <nav class="navbar bg-white border-gray-200 dark:bg-gray-900 w-full max-sm:px-4">
+  <nav class="navbar shadow-sm bg-white border-b border-gray-200 dark:bg-gray-900 w-full max-sm:px-4">
     <div class="w-full max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-0">
       <a href="/app/assets/builds" class="flex items-center space-x-3 rtl:space-x-reverse">
         <%= render 'shared/logo' %>
@@ -29,7 +29,7 @@
           <!-- Main profile menu -->
           <ul class="py-2" aria-labelledby="user-menu-button">
             <% (user_signed_in? ? profile_menu : public_menu).each do |item| %>
-              <%= render partial: 'shared/navbar/v2/profile_menu_item', locals: { item: } %>
+              <%= render partial: 'shared/navbar/profile_menu_item', locals: { item: } %>
             <% end %>
           </ul>
 
@@ -37,7 +37,7 @@
             <!-- Admin menu -->
             <ul class="py-2">
               <% admin_menu.each do |item| %>
-                <%= render partial: 'shared/navbar/v2/profile_menu_item', locals: {item:} %>
+                <%= render partial: 'shared/navbar/profile_menu_item', locals: {item:} %>
               <% end %>
             </ul>
 
@@ -46,7 +46,7 @@
               <!-- TODO: Show only to folks with the developer role -->
               <ul class="py-2">
                 <% developer_menu.each do |item| %>
-                  <%= render partial: 'shared/navbar/v2/profile_menu_item', locals: { item: } %>
+                  <%= render partial: 'shared/navbar/profile_menu_item', locals: { item: } %>
                 <% end %>
               </ul>
             <% end %>
@@ -75,7 +75,7 @@
       </div>
 
       <!-- Main Menu -->
-      <%= render 'shared/navbar/v2/main_menu' %>
+      <%= render 'shared/navbar/main_menu' %>
     </div>
   </nav>
   <!-- App Context Menu render container -->

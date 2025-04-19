@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 class ApplicationController < ActionController::Base
-  # include LarCity::CurrentAttributes
-  # include LarCity::WebConsoleLoader
+  include LarCity::CurrentAttributes
+  include LarCity::WebConsoleLoader
   include Pundit::Authorization
   include SitewideContextAware
 
@@ -13,15 +13,6 @@ class ApplicationController < ActionController::Base
   before_action :authenticate_user!, unless: :public_resource?
 
   # rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
-
-  # inertia_share footer_resource_links: footer_resource_links,
-  #               footer_company_links: [
-  #                 { label: t('accessibility.footer.about'), href: '#' },
-  #                 {
-  #                   label: t('accessibility.footer.contact'),
-  #                   href: 'mailto:support@lar.city?subj=Email%20contact%20via%20website',
-  #                 },
-  #               ],
 
   inertia_share do
     {
