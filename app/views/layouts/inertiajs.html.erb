@@ -24,9 +24,11 @@
   <%= render "layouts/shared/head" %>
 
   <body class="h-full">
-  <%= render "shared/flash" %>
-  <%= yield %>
-  <%= render "shared/footer/full" %>
+    <%= render "shared/flash" %>
+    <main class="min-h-dvh">
+      <%= yield %>
+      <%= render "shared/footer/full" %>
+    </main>
   </body>
 
 </html>
