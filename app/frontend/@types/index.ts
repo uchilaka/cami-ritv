@@ -15,8 +15,13 @@ export interface FCWithLayout<T = ComponentProps<"div">> extends FC<T> {
 }
 
 export interface NavItem {
-  name: string;
   href: string;
+  label: string;
+  name?: string;
+  // new_tab?: boolean;
+  // new_window?: boolean;
+  // feature_flag?: string;
+  // enabled?: boolean;
   submenu?: NavItem[];
 }
 
