@@ -5,6 +5,8 @@ class DemosController < ApplicationController
 
   inertia_share navigation: demo_navigation_items
 
+  layout 'inertiajs'
+
   def hero_simply_centered
     render inertia: 'demos/HeroSimplyCentered'
   end

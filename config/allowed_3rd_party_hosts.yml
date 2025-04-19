@@ -1,0 +1,34 @@
+# 3rd party HTTP server hosts that may be accessed by the application.
+---
+shared:
+  public:
+    - google.com
+    - facebook.com
+    - twitter.com
+    - linkedin.com
+    - youtube.com
+    - instagram.com
+    - pinterest.com
+    - tumblr.com
+    - reddit.com
+    - flickr.com
+    - vimeo.com
+    - soundcloud.com
+    - github.com
+    - stackoverflow.com
+    - wordpress.com
+    - medium.com
+    - quora.com
+    - dropbox.com
+    - googleapis.com
+  zoho:
+    by_region:
+      eu: accounts.zoho.eu
+      ae: accounts.zoho.ae
+      au: accounts.zoho.com.au
+      in: accounts.zoho.in
+      jp: accounts.zoho.jp
+      uk: accounts.zoho.uk
+      us: accounts.zoho.com
+      ca: accounts.zohocloud.ca
+      sa: accounts.zoho.sa

@@ -5,6 +5,8 @@ class DashboardController < ApplicationController
 
   inertia_share navigation: demo_navigation_items
 
+  layout 'inertiajs'
+
   def index
     render inertia: 'Dashboard', props: {
       name: 'Inertia Rails'

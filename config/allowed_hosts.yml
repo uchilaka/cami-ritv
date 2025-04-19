@@ -1,0 +1,13 @@
+development:
+  - accounts.larcity.ngrok.dev
+test:
+  - accounts.larcity.ngrok.test
+  - accounts.larcity.test
+  - www.example.com
+production:
+  - accounts.larcity.com
+  - accounts.lar.city
+  - www.larcity.com
+  - www.lar.city
+  - larcity.com
+  - lar.city
