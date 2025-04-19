@@ -4,7 +4,7 @@ import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import NavItemWithSubmenu from "@/components/NavItemWithSubmenu";
 import { LayoutProps } from "@/@types";
 import useLayoutNav from "@/hooks/useLayoutNav";
-import SiteFooter from "./SiteFooter";
+// import SiteFooter from "./SiteFooter";
 
 const DemoLayout: FC<LayoutProps> = ({ children }) => {
   const { navigation } = useLayoutNav();
@@ -63,12 +63,12 @@ const DemoLayout: FC<LayoutProps> = ({ children }) => {
                 ))}
             </ul>
             <div className="hidden lg:flex lg:flex-1 lg:justify-end">
-                <a
-                    href="/users/sign_in"
-                    className="text-sm/6 font-semibold text-gray-900"
-                >
-                    Log in <span aria-hidden="true">&rarr;</span>
-                </a>
+              <a
+                href="/users/sign_in"
+                className="text-sm/6 font-semibold text-gray-900"
+              >
+                Log in <span aria-hidden="true">&rarr;</span>
+              </a>
             </div>
           </nav>
           <Dialog
@@ -127,7 +127,8 @@ const DemoLayout: FC<LayoutProps> = ({ children }) => {
 
         <section>{children}</section>
       </div>
-      <SiteFooter />
+      {/* TODO: Resolve compiled asset URLs to unlock use of frontend SiteFooter */}
+      {/* <SiteFooter /> */}
     </>
   );
 };
