@@ -9,6 +9,9 @@ export const content = [
   "./app/helpers/**/*.rb",
   "./app/views/**/*.{html,html.erb,erb}",
   "./app/views/devise/**/*.{html,html.erb,erb}",
+  "./config/locales/ctas/*.rb",
+  "./config/locales/defaults/*.rb",
+  "./config/locales/devise.*.{yml,yaml}",
 ];
 
 export const theme = {
@@ -21,11 +24,12 @@ export const theme = {
 };
 
 export const plugins = [
-  "flowbite/plugin",
-  "@tailwindcss/forms",
-  "@tailwindcss/aspect-ratio",
-  "@tailwindcss/typography",
-  "@tailwindcss/container-queries",
+  import("flowbite/plugin"),
+  import("@tailwindcss/forms"),
+  import("@tailwindcss/aspect-ratio"),
+  import("flowbite-typography"),
+  // import("@tailwindcss/typography"),
+  import("@tailwindcss/container-queries"),
 ];
 
 export default {

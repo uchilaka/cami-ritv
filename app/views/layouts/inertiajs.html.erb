@@ -24,10 +24,12 @@
   <%= render "layouts/shared/head" %>
 
   <body class="h-full">
+    <%= render "shared/navbar" %>
     <%= render "shared/flash" %>
     <main class="bg-white min-h-[85dvh]">
       <%= yield %>
     </main>
+    <%= render "shared/footer/full" %>
   </body>
 
 </html>

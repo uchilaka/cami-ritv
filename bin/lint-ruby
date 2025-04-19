@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+
+# Gist: https://gist.github.com/mckeed/baa6ce5d85b28ef5690bfa025890fb0d
+STAGED_FILES=$(git diff-index HEAD --name-only --cached)
+if [[ -z $STAGED_FILES ]]
+then
+  exit # no staged files, no need to run rubocop
+fi
+
+# Checks if any staged files have unstaged changes
+# otherwise rubocop isn't running on what is actually
+# going to be committed.
+WARN_FILES=$(git diff-files --stat -- $STAGED_FILES)
+if [[ -n $WARN_FILES ]]
+then
+  echo 'There are unstaged changes to files (git stash --keep-index to commit safely):'
+  printf '%s\n', "$WARN_FILES"
+  exit 1
+fi
+
+echo "Running rubocop..."
+exec git diff --cached --name-only --relative --diff-filter=ACMR | xargs \
+  bundle exec rubocop --force-exclusion \
+                      --autocorrect-all --fail-level A \
+                      --format simple \
+                      --parallel --cache true

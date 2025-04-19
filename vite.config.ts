@@ -8,7 +8,12 @@ export default defineConfig({
   plugins: [
     RailsPlugin({
       fullReload: {
-        additionalPaths: ["app/frontend/**/*"],
+        additionalPaths: [
+          "app/assets/stylesheets/**/*.scss",
+          "app/frontend/components/**/*.tsx",
+          "app/frontend/hooks/**/*.tsx",
+          "app/frontend/pages/**/*.tsx",
+        ],
         delay: 250,
       },
     }),

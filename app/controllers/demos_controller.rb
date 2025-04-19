@@ -5,6 +5,8 @@ class DemosController < ApplicationController
 
   inertia_share navigation: demo_navigation_items
 
+  skip_before_action :verify_authenticity_token
+
   layout 'inertiajs'
 
   def hero_simply_centered
@@ -33,7 +35,7 @@ class DemosController < ApplicationController
           description: 'Ac tincidunt sapien vehicula erat auctor pellentesque rhoncus. Et magna sit morbi lobortis.',
           iconKey: 'server-icon',
         },
-      ]
+      ],
     }
   end
 
@@ -66,7 +68,7 @@ class DemosController < ApplicationController
             'Arcu egestas dolor vel iaculis in ipsum mauris. Tincidunt mattis aliquet hac quis. Id hac maecenas ac donec pharetra eget.',
           iconKey: 'fingerprint-icon',
         },
-      ]
+      ],
     }
   end
 
@@ -101,7 +103,7 @@ class DemosController < ApplicationController
           ],
           featured: true,
         }
-      ]
+      ],
     }
   end
 

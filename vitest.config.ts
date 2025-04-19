@@ -5,9 +5,6 @@ import { fileURLToPath } from "url";
 import { tsConfigFile, compilerOptions } from "./app/frontend/utils/tsConfig";
 
 const __filename = fileURLToPath(import.meta.url);
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 const __dirname = path.dirname(__filename);
 
 const { paths } = compilerOptions;

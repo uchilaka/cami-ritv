@@ -252,4 +252,9 @@ Style/Documentation:
   Enabled: false
 
 Style/TrailingCommaInArrayLiteral:
-  Enabled: false
+  Enabled: true
+  EnforcedStyleForMultiline: consistent_comma
+
+Style/TrailingCommaInHashLiteral:
+  Enabled: true
+  EnforcedStyleForMultiline: consistent_comma
