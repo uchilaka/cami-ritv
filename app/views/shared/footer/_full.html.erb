@@ -1,0 +1,77 @@
+<footer class="bg-white sm:p-6 dark:bg-gray-800">
+  <div class="w-full mx-auto max-w-screen-xl p-4 md:py-8">
+    <div class="md:flex md:justify-between">
+      <div class="mb-6 md:mb-0">
+        <a href="https://madebylar.city/" class="flex items-center mb-4 sm:mb-0 space-x-3 rtl:space-x-reverse">
+          <img src="<%= image_url('footer-logo.png') %>" class="logo h-16" alt="<%= t('accessibility.footer.logo') %>" />
+        </a>
+      </div>
+      <div class="grid grid-cols-2 gap-8 sm:gap-6 md:grid-cols-4">
+        <div>
+          <h2 class="mb-6 text-sm font-semibold text-gray-900 uppercase dark:text-white">Company</h2>
+          <ul class="text-gray-600 dark:text-gray-400">
+            <li class="mb-4">
+              <a href="#" class="hover:underline me-4 md:me-6"><%= t('accessibility.footer.about') %></a>
+            </li>
+            <li>
+              <a href="#" class="hover:underline"><%= t('accessibility.footer.contact') %></a>
+            </li>
+          </ul>
+        </div>
+        <div>
+          <h2 class="mb-6 text-sm font-semibold text-gray-900 uppercase dark:text-white">Resources</h2>
+          <ul class="text-gray-600 dark:text-gray-400">
+            <% footer_resource_links.each do |label, url| %>
+              <li class="mb-4">
+                <%= link_to label, url, class: 'hover:underline', target: '_blank' %>
+              </li>
+            <% end %>
+          </ul>
+        </div>
+        <div>
+          <h2 class="mb-6 text-sm font-semibold text-gray-900 uppercase dark:text-white">Follow us</h2>
+          <ul class="text-gray-600 dark:text-gray-400">
+            <li class="mb-4">
+              <a href="https://github.com/larcitylab" class="hover:underline ">Github</a>
+            </li>
+            <li>
+              <a href="https://discord.gg/4eeurUVvTy" class="hover:underline">Discord</a>
+            </li>
+          </ul>
+        </div>
+        <div>
+          <h2 class="mb-6 text-sm font-semibold text-gray-900 uppercase dark:text-white">Legal</h2>
+          <ul class="text-gray-600 dark:text-gray-400">
+            <li class="mb-4">
+              <a href="/app/legal/privacy" class="hover:underline me-4 md:me-6"><%= t('accessibility.footer.privacy') %></a>
+            </li>
+            <% if Flipper.enabled?('feat__legal_terms') %>
+              <li class="mb-4">
+                <a href="/app/legal/terms" class="hover:underline me-4 md:me-6">
+                  <%= t('accessibility.footer.terms') %>
+                </a>
+              </li>
+            <% end %>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <hr class="my-6 border-gray-200 sm:mx-auto dark:border-gray-700 lg:my-8" />
+    <div class="sm:flex sm:items-center sm:justify-between">
+      <%= render partial: 'shared/footer/copywright' %>
+      <div class="flex mt-4 space-x-6 sm:justify-center sm:mt-0">
+        <a href="#" class="text-gray-500 hover:text-gray-900 dark:hover:text-white">
+          <i class="fa-brands fa-facebook-messenger">
+            <span class="sr-only">Facebook Messenger</span>
+          </i>
+        </a>
+        <a href="#" class="text-gray-500 hover:text-gray-900 dark:hover:text-white">
+          <i class="fa-brands fa-medium"><span class="sr-only">Uche's Blog</span></i>
+        </a>
+        <a href="https://github.com/larcitylab" class="text-gray-500 hover:text-gray-900 dark:hover:text-white">
+          <i class="fa-brands fa-github"><span class="sr-only">Github</span></i>
+        </a>
+      </div>
+    </div>
+  </div>
+</footer>
