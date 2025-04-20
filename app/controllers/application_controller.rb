@@ -63,6 +63,8 @@ class ApplicationController < ActionController::Base
   end
 
   def public_page?
+    return true if params['controller'] == 'lobby'
+
     params['controller'] == 'pages' &&
       params['action'] == 'app' &&
       (params['path'].nil? || public_app_paths.include?(params['path']))

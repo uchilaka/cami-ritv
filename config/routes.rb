@@ -34,6 +34,7 @@ Rails.application.routes.draw do
     end
   end
 
+  get '/about-us', to: 'lobby#about_us'
   get '/protego/:code', to: 'errors#render_static_error'
 
   root 'demos#hero_simply_centered'

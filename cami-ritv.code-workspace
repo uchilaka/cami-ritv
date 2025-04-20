@@ -24,6 +24,14 @@
       "path": "./app/frontend/features/",
       "name": "Frontend/Features"
     },
+    {
+      "path": "./app/frontend/pages/",
+      "name": "Frontend/Pages"
+    },
+    {
+      "path": "./app/frontend/utils/",
+      "name": "Frontend/Utils"
+    },
   ],
   "settings": {
     "terminal.integrated.fontSize": 15,

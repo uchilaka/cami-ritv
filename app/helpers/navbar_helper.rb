@@ -99,7 +99,7 @@ module NavbarHelper
           # },
           {
             label: t('shared.navbar.about'),
-            path: '/app/about',
+            path: '/about-us',
             public: true,
           },
         ].map { |item| build_menu_item(item) }.filter(&:enabled)
