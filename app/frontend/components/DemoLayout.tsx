@@ -6,10 +6,8 @@ import { LayoutProps } from "@/@types";
 const DemoLayout: FC<LayoutProps> = ({ children }) => {
   return (
     <>
-      <div className="bg-white min-h-[85dvh]">
-        {/* <DemoNavbar /> */}
-        <section>{children}</section>
-      </div>
+      {/* <DemoNavbar /> */}
+      <section>{children}</section>
       {/* TODO: Resolve compiled asset URLs to unlock use of frontend SiteFooter */}
       {/* <SiteFooter /> */}
     </>

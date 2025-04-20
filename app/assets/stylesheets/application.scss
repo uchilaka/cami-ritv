@@ -14,9 +14,7 @@
  *= require_self
  */
 @use "fontawesome";
-//@use "../../frontend/entrypoints/stylesheets/global";
-//@use "../../frontend/entrypoints/stylesheets/buttons";
-//@use "../../frontend/entrypoints/stylesheets/navbar";
+@use "variables";
 
 #main_logo > img, footer img.logo {
   width: auto;

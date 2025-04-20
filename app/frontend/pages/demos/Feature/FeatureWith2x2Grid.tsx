@@ -31,7 +31,7 @@ const FeatureWith2x2Grid: FCWithLayout<FeatureProps> = ({
   const features = buildFeatures(featureConfigs);
   console.debug({ features });
   return (
-    <div className="bg-white py-24 sm:py-32">
+    <div className="py-24 sm:py-32">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="mx-auto max-w-2xl lg:text-center">
           <h2 className="text-base/7 font-semibold text-indigo-600">
