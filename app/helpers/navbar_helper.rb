@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module NavbarHelper
+  include Demonstrable
   include UsersHelper
 
   def navbar_version
