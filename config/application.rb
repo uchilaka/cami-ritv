@@ -53,6 +53,17 @@ module Cami
     config.time_zone = 'Eastern Time (US & Canada)'
     config.active_support.to_time_preserves_timezone = :zone
 
+    config.active_record.query_log_tags =
+      %i[
+        application
+        controller
+        namespaced_controller
+        action
+        db_host
+        database
+        job
+      ]
+
     # Configuration for the application, engines, and railties goes here.
     #
     # These settings can be overridden in specific environments using the files
@@ -72,7 +83,8 @@ module Cami
     diff = config.eager_load_paths - config.autoload_paths
     diff.each { |path| config.eager_load_paths << path }
 
-    config.assets.paths << "#{root}/vendor/assets"
+    # Configure allowed hosts. See doc https://guides.rubyonrails.org/configuring.html#actiondispatch-hostauthorization
+    config.hosts += config_for(:allowed_hosts)
 
     # Configure allowed hosts. See doc https://guides.rubyonrails.org/configuring.html#actiondispatch-hostauthorization
     config.hosts += config_for(:allowed_hosts)
@@ -80,6 +92,9 @@ module Cami
     # Doc for jbuilder: https://github.com/rails/jbuilder
     Jbuilder.key_format camelize: :lower
     Jbuilder.deep_format_keys true
+
+    # Configure CSS compressor
+    config.assets.css_compressor = :sass
 
     # Don't generate system test files.
     config.generators.system_tests = nil

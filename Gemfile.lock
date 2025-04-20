@@ -79,12 +79,15 @@ GEM
       uri (>= 0.13.1)
     addressable (2.8.7)
       public_suffix (>= 2.0.2, < 7.0)
+    aes_key_wrap (1.1.0)
     annotaterb (4.14.0)
     ast (2.4.3)
     awesome_print (1.9.2)
     base64 (0.2.0)
+    bcrypt (3.1.20)
     benchmark (0.4.0)
     bigdecimal (3.1.9)
+    bindata (2.5.1)
     bindex (0.8.1)
     brakeman (7.0.2)
       racc
@@ -96,7 +99,7 @@ GEM
       logger (~> 1.5)
     climate_control (1.2.0)
     concurrent-ruby (1.3.5)
-    connection_pool (2.5.0)
+    connection_pool (2.5.1)
     crass (1.0.6)
     dartsass-rails (0.5.1)
       railties (>= 6.0.0)
@@ -112,12 +115,34 @@ GEM
     debug (1.10.0)
       irb (~> 1.10)
       reline (>= 0.3.8)
+    devise (4.9.4)
+      bcrypt (~> 3.0)
+      orm_adapter (~> 0.1)
+      railties (>= 4.1.0)
+      responders
+      warden (~> 1.2.3)
+    devise-jwt (0.12.1)
+      devise (~> 4.0)
+      warden-jwt_auth (~> 0.10)
+    devise-passwordless (1.1.0)
+      devise
+      globalid
     diff-lcs (1.6.1)
     discard (1.4.0)
       activerecord (>= 4.2, < 9.0)
     dotenv (3.1.8)
     drb (2.2.1)
+    dry-auto_inject (1.1.0)
+      dry-core (~> 1.1)
+      zeitwerk (~> 2.6)
     dry-cli (1.2.0)
+    dry-configurable (1.3.0)
+      dry-core (~> 1.1)
+      zeitwerk (~> 2.6)
+    dry-core (1.1.0)
+      concurrent-ruby (~> 1.0)
+      logger
+      zeitwerk (~> 2.6)
     erubi (1.13.1)
     fabrication (2.31.0)
     faker (3.5.1)
@@ -126,10 +151,12 @@ GEM
       faraday-net_http (>= 2.0, < 3.5)
       json
       logger
+    faraday-follow_redirects (0.3.0)
+      faraday (>= 1, < 3)
     faraday-net_http (3.4.0)
       net-http (>= 0.5.0)
-    ffi (1.17.1-arm64-darwin)
-    ffi (1.17.1-x86_64-linux-gnu)
+    ffi (1.17.2-arm64-darwin)
+    ffi (1.17.2-x86_64-linux-gnu)
     flipper (1.3.4)
       concurrent-ruby (< 2)
     flipper-active_record (1.3.4)
@@ -155,6 +182,7 @@ GEM
     google-protobuf (4.30.2-x86_64-linux)
       bigdecimal
       rake (>= 13)
+    hashie (5.0.0)
     i18n (1.14.7)
       concurrent-ruby (~> 1.0)
     image_processing (1.14.0)
@@ -172,10 +200,19 @@ GEM
       actionview (>= 5.0.0)
       activesupport (>= 5.0.0)
     json (2.10.2)
+    json-jwt (1.16.7)
+      activesupport (>= 4.2)
+      aes_key_wrap
+      base64
+      bindata
+      faraday (~> 2.0)
+      faraday-follow_redirects
     json-schema (5.1.1)
       addressable (~> 2.8)
       bigdecimal (~> 3.1)
     jsonapi-renderer (0.2.2)
+    jwt (2.10.1)
+      base64
     language_server-protocol (3.17.0.4)
     launchy (3.1.1)
       addressable (~> 2.8)
@@ -185,7 +222,7 @@ GEM
       launchy (>= 2.2, < 4)
     lint_roller (1.1.0)
     logger (1.7.0)
-    logtail (0.1.15)
+    logtail (0.1.17)
       msgpack (~> 1.0)
     logtail-rack (0.2.6)
       logtail (~> 0.1)
@@ -220,6 +257,8 @@ GEM
       money (~> 6.13)
       railties (>= 3.0)
     msgpack (1.8.0)
+    multi_xml (0.7.1)
+      bigdecimal (~> 3.1)
     mutex_m (0.3.0)
     name_of_person (1.1.3)
       activesupport (>= 5.2.0)
@@ -239,7 +278,33 @@ GEM
       racc (~> 1.4)
     nokogiri (1.18.7-x86_64-linux-gnu)
       racc (~> 1.4)
+    oauth2 (2.0.9)
+      faraday (>= 0.17.3, < 3.0)
+      jwt (>= 1.0, < 3.0)
+      multi_xml (~> 0.5)
+      rack (>= 1.2, < 4)
+      snaky_hash (~> 2.0)
+      version_gem (~> 1.1)
+    omniauth (2.1.3)
+      hashie (>= 3.4.6)
+      rack (>= 2.2.3)
+      rack-protection
+    omniauth-apple (1.3.0)
+      json-jwt
+      omniauth-oauth2
+    omniauth-google-oauth2 (1.2.1)
+      jwt (>= 2.9.2)
+      oauth2 (~> 2.0)
+      omniauth (~> 2.0)
+      omniauth-oauth2 (~> 1.8)
+    omniauth-oauth2 (1.8.0)
+      oauth2 (>= 1.4, < 3)
+      omniauth (~> 2.0)
+    omniauth-rails_csrf_protection (1.0.2)
+      actionpack (>= 4.2)
+      omniauth (~> 2.0)
     open3 (0.2.1)
+    orm_adapter (0.5.0)
     ostruct (0.6.1)
     paper_trail (16.0.0)
       activerecord (>= 6.1)
@@ -263,7 +328,9 @@ GEM
     pundit (2.5.0)
       activesupport (>= 3.0.0)
     racc (1.8.1)
-    rack (3.1.12)
+    rack (3.1.13)
+    rack-cors (2.0.2)
+      rack (>= 2.0.0)
     rack-protection (4.1.1)
       base64 (>= 0.1.0)
       logger (>= 1.6.0)
@@ -327,6 +394,9 @@ GEM
       io-console (~> 0.5)
     request_store (1.7.0)
       rack (>= 1.4)
+    responders (3.1.1)
+      actionpack (>= 5.2)
+      railties (>= 5.2)
     rexml (3.4.1)
     rolify (6.0.1)
     rspec-core (3.13.3)
@@ -388,7 +458,7 @@ GEM
       rubocop (>= 1.72)
       rubocop-performance (>= 1.24)
       rubocop-rails (>= 2.30)
-    rubocop-rspec (3.5.0)
+    rubocop-rspec (3.6.0)
       lint_roller (~> 1.1)
       rubocop (~> 1.72, >= 1.72.1)
     ruby-progressbar (1.13.0)
@@ -422,22 +492,25 @@ GEM
       concurrent-ruby (~> 1.0)
     shoulda-matchers (6.4.0)
       activesupport (>= 5.2.0)
-    sprockets (4.2.1)
+    snaky_hash (2.0.1)
+      hashie
+      version_gem (~> 1.1, >= 1.1.1)
+    sprockets (4.2.2)
       concurrent-ruby (~> 1.0)
+      logger
       rack (>= 2.2.4, < 4)
     sprockets-rails (3.5.2)
       actionpack (>= 6.1)
       activesupport (>= 6.1)
       sprockets (>= 3.0.0)
     stringio (3.1.6)
-    strong_migrations (2.2.0)
+    strong_migrations (2.3.0)
       activerecord (>= 7)
-    tailwindcss-rails (4.2.2)
+    tailwindcss-rails (3.3.1)
       railties (>= 7.0.0)
-      tailwindcss-ruby (~> 4.0)
-    tailwindcss-ruby (4.1.3)
-    tailwindcss-ruby (4.1.3-arm64-darwin)
-    tailwindcss-ruby (4.1.3-x86_64-linux-gnu)
+      tailwindcss-ruby (~> 3.0)
+    tailwindcss-ruby (3.4.17-arm64-darwin)
+    tailwindcss-ruby (3.4.17-x86_64-linux)
     terminal-table (4.0.0)
       unicode-display_width (>= 1.1.1, < 4)
     thor (1.3.2)
@@ -452,6 +525,7 @@ GEM
     useragent (0.16.11)
     vcr (6.3.1)
       base64
+    version_gem (1.1.7)
     vite_rails (3.0.19)
       railties (>= 5.1, < 9)
       vite_ruby (~> 3.0, >= 3.2.2)
@@ -461,6 +535,13 @@ GEM
       mutex_m
       rack-proxy (~> 0.6, >= 0.6.1)
       zeitwerk (~> 2.2)
+    warden (1.2.9)
+      rack (>= 2.0.9)
+    warden-jwt_auth (0.11.0)
+      dry-auto_inject (>= 0.8, < 2)
+      dry-configurable (>= 0.13, < 2)
+      jwt (~> 2.1)
+      warden (~> 1.2)
     web-console (4.2.1)
       actionview (>= 6.0.0)
       activemodel (>= 6.0.0)
@@ -488,6 +569,9 @@ DEPENDENCIES
   data_migrate (~> 11.3)
   database_cleaner-active_record
   debug
+  devise
+  devise-jwt (~> 0.12)
+  devise-passwordless (~> 1.1)
   discard
   dotenv
   fabrication
@@ -506,6 +590,9 @@ DEPENDENCIES
   logtail-rails
   money-rails (~> 1.15)
   name_of_person
+  omniauth-apple (~> 1.3)
+  omniauth-google-oauth2 (~> 1.2)
+  omniauth-rails_csrf_protection
   open3
   ostruct
   paper_trail (~> 16)
@@ -513,6 +600,7 @@ DEPENDENCIES
   phonelib
   puma (~> 6)
   pundit (~> 2.5)
+  rack-cors (~> 2.0)
   rails (~> 8.0)
   rails-controller-testing
   rails_semantic_logger
@@ -534,8 +622,8 @@ DEPENDENCIES
   shoulda-matchers
   sprockets-rails
   strong_migrations
-  tailwindcss-rails (~> 4.2)
-  tailwindcss-ruby
+  tailwindcss-rails (~> 3.3)
+  tailwindcss-ruby (~> 3.4)
   terminal-table
   tzinfo-data
   vcr (~> 6.2)

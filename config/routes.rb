@@ -6,6 +6,21 @@ Rails.application.routes.draw do
   mount Rswag::Ui::Engine => '/api-docs'
   mount Rswag::Api::Engine => '/api-docs'
 
+  devise_for :users,
+             controllers: {
+               sessions: 'users/passwordless',
+               passwords: 'users/passwords',
+               registrations: 'users/registrations',
+               confirmations: 'users/confirmations',
+               unlocks: 'users/unlocks',
+               omniauth_callbacks: 'users/omniauth/callbacks',
+             }
+  devise_scope :user do
+    get 'users/fallback/sign_in', as: :new_user_fallback_session, to: 'users/sessions#new'
+    post 'users/fallback/sign_in', as: :user_fallback_session, to: 'users/sessions#create'
+    delete 'users/fallback/sign_out', as: :destroy_user_fallback_session, to: 'users/sessions#destroy'
+  end
+
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   resources :demos, only: %i[] do

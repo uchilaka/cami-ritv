@@ -1,4 +1,9 @@
 {
+  "name": "@larcity/cami",
+  "license": "UNLICENSED",
+  "engines": {
+    "yarn": ">= 4.5.0"
+  },
   "type": "module",
   "devDependencies": {
     "@eslint/js": "^9.24.0",
@@ -7,18 +12,27 @@
     "@inertiajs/inertia": "^0.11.0",
     "@inertiajs/inertia-react": "^0.8.0",
     "@inertiajs/progress": "^0.2.7",
+    "@types/lodash.debounce": "^4",
+    "@types/lodash.find": "^4",
+    "@types/lodash.merge": "^4",
     "@types/lodash.omit": "^4",
     "@types/lodash.uniqby": "^4",
     "@types/react": "^19.1.1",
     "@types/react-dom": "^19.1.2",
     "@vitejs/plugin-react": "^4.4.0",
+    "autoprefixer": "^10.4.21",
     "axios": "^0.27.0",
     "comment-json": "^4.2.5",
     "eslint": "^9.24.0",
+    "flowbite-typography": "^1.0.5",
+    "husky": "^9.1.7",
     "jiti": "^2.4.2",
+    "jsdom": "^26.1.0",
+    "postcss": "^8.5.3",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "sass": "^1.86.3",
+    "tailwindcss": "3",
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.29.1",
     "vite": "^6.2.6",
@@ -28,17 +42,26 @@
   "packageManager": "yarn@4.9.1",
   "dependencies": {
     "@inertiajs/react": "^2.0.8",
+    "@tailwindcss/aspect-ratio": "^0.4.2",
+    "@tailwindcss/container-queries": "^0.1.1",
     "@tailwindcss/forms": "^0.5.10",
     "@tailwindcss/postcss": "^4.1.4",
     "@tailwindcss/typography": "^0.5.16",
     "@tailwindcss/vite": "^4.1.3",
     "@types/node": "^22.14.1",
+    "browserslist": "^4.24.4",
     "clsx": "^2.1.1",
+    "date-fns": "^4.1.0",
     "flowbite": "^3.1.2",
+    "lodash.debounce": "^4.0.8",
+    "lodash.find": "^4.6.0",
+    "lodash.merge": "^4.6.2",
     "lodash.omit": "^4.5.0",
     "lodash.uniqby": "^4.7.0",
-    "postcss": "^8.5.3",
-    "tailwindcss": "^4.1.3"
+    "react-cookie": "^8.0.1",
+    "snakecase-keys": "^8.0.1",
+    "trix": "^2.1.13",
+    "uuid": "^11.1.0"
   },
   "scripts": {
     "check": "tsc -p tsconfig.app.json && tsc -p tsconfig.node.json",
@@ -47,6 +70,12 @@
     "build": "bin/vite build",
     "start": "foreman start -f Procfile.dev",
     "test:rspec": "RAILS_ENV=test bundle exec rspec",
-    "test": "vitest"
+    "test": "vitest",
+    "test:watch": "vitest --watch"
+  },
+  "lint-staged": {
+    "*.rb": [
+      "./bin/lint-ruby"
+    ]
   }
 }

@@ -1,0 +1,83 @@
+<div class="fixed w-full z-50 top-0 start-0">
+  <!-- Main Navbar -->
+  <nav class="navbar shadow-sm bg-white border-b border-gray-200 dark:bg-gray-900 w-full max-sm:px-4">
+    <div class="w-full max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-0">
+      <a href="/app/assets/builds" class="flex items-center space-x-3 rtl:space-x-reverse">
+        <%= render 'shared/logo' %>
+      </a>
+
+      <div class="flex items-center md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
+        <button type="button" class="flex text-sm bg-gray-800 rounded-full md:me-0 focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600" id="user-menu-button" aria-expanded="false" data-dropdown-toggle="user-dropdown" data-dropdown-placement="bottom">
+          <span class="sr-only">Open user menu</span>
+          <img class="w-8 h-8 rounded-full" src="<%= profile_photo_url %>" alt="user photo">
+        </button>
+
+        <!-- Profile dropdown menu. See https://flowbite.com/docs/components/dropdowns/ -->
+        <div class="z-50 hidden my-4 text-base list-none bg-white divide-y divide-gray-100 rounded-lg shadow dark:bg-gray-700 dark:divide-gray-600" id="user-dropdown">
+          <!-- Dropdown header -->
+          <% if user_signed_in? %>
+            <div class="px-4 py-3">
+              <span class="block text-sm text-gray-900 dark:text-white">
+                <%= profile_name %>
+              </span>
+              <span class="block text-sm  text-gray-500 truncate dark:text-gray-400">
+                <%= profile_email %>
+              </span>
+            </div>
+          <% end %>
+
+          <!-- Main profile menu -->
+          <ul class="py-2" aria-labelledby="user-menu-button">
+            <% (user_signed_in? ? profile_menu : public_menu).each do |item| %>
+              <%= render partial: 'shared/navbar/profile_menu_item', locals: { item: } %>
+            <% end %>
+          </ul>
+
+          <% if show_admin_menu? %>
+            <!-- Admin menu -->
+            <ul class="py-2">
+              <% admin_menu.each do |item| %>
+                <%= render partial: 'shared/navbar/profile_menu_item', locals: {item:} %>
+              <% end %>
+            </ul>
+
+            <% if Flipper.enabled? :feat__developer_menu, current_user %>
+              <!-- Developer menu -->
+              <!-- TODO: Show only to folks with the developer role -->
+              <ul class="py-2">
+                <% developer_menu.each do |item| %>
+                  <%= render partial: 'shared/navbar/profile_menu_item', locals: { item: } %>
+                <% end %>
+              </ul>
+            <% end %>
+          <% end %>
+
+          <% if user_signed_in? %>
+            <!-- TODO: Fix button full width styling & apply then apply hover:bg-gray-100 -->
+            <div class="py-2">
+              <%= button_to t('shared.navbar.sign_out'), destroy_user_session_path,
+                            method: :delete,
+                            class: "block px-4 py-2 text-sm text-red-400 hover:text-red-600" %>
+            </div>
+          <% else %>
+            <ul class="py-2">
+              <li><%= nav_link_to render("shared/buttons/login"), new_user_session_path, class: "#{profile_link_classes}" %></li>
+              <li><%= nav_link_to render("shared/buttons/sign_up"), new_user_registration_path, class: "#{profile_link_classes}" %></li>
+            </ul>
+          <% end %>
+        </div>
+        <button data-collapse-toggle="navbar-main" type="button" class="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600" aria-controls="navbar-main" aria-expanded="false">
+          <span class="sr-only">Open main menu</span>
+          <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 17 14">
+            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h15M1 7h15M1 13h15"/>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Main Menu -->
+      <%= render 'shared/navbar/main_menu' %>
+    </div>
+  </nav>
+  <!-- App Context Menu render container -->
+  <nav id="app-context-menu" class="bg-gray-100 border-gray-200 dark:bg-gray-700 w-full"></nav>
+</div>

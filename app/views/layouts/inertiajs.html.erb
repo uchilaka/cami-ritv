@@ -3,12 +3,11 @@
   <%= content_for :head do %>
     <!-- Tells application.tsx to use Inertia.js -->
     <meta name="layout" content="inertia.js" />
-    <%= stylesheet_link_tag "application", "actiontext", media: 'all' %>
-    <%= stylesheet_link_tag "tailwind", "data-turbo-track": "reload" %>
-    <%= vite_stylesheet_tag "application" %>
+    <%#= vite_stylesheet_tag "application" %>
     <%= vite_client_tag %>
     <%= inertia_ssr_head %>
     <%= vite_react_refresh_tag %>
+    <%#= vite_stylesheet_tag "application" %>
     <%= vite_javascript_tag 'application.tsx' %>
     <!--
         If using a TypeScript entrypoint file:
@@ -19,15 +18,22 @@
 
         Visit the guide for more information: https://vite-ruby.netlify.app/guide/rails
       -->
-    <script src="https://cdn.tailwindcss.com"></script>
+  <%= stylesheet_link_tag "tailwind", "data-turbo-track": "reload" %>
+  <%= stylesheet_link_tag "application",
+                          "actiontext", media: 'all' %>
+  <!-- <link href="//cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.css" rel="stylesheet" />-->
   <% end %>
   <%= render "layouts/shared/head" %>
 
   <body class="h-full">
+    <%= render "shared/navbar/index" %>
     <%= render "shared/flash" %>
-    <main class="bg-white min-h-[85dvh]">
+    <main class="bg-white min-h-[var(--min-h-with-footer-peek)]">
       <%= yield %>
     </main>
+    <%= render "shared/footer/full" %>
+    <!-- Bootstrap all the Flowbite JS things -->
+    <script src="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js"></script>
   </body>
 
 </html>

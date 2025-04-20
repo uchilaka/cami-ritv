@@ -33,6 +33,7 @@ en:
   app:
     name: "Customer Accounts Management & Invoicing"
     short_name: "CAMI"
+
   labels:
     engineering_or_support: "Engineering or Support"
     invoices:
@@ -43,11 +44,13 @@ en:
       notes: "Notes"
       create: "New account"
       search: "Search for accounts"
+
   shared:
     navbar:
       home: "Home"
       about: "About Us"
       dashboard: "Dashboard"
+      demos: "Showcase"
       services: "Services"
       products: "Products"
       accounts: "Accounts"
@@ -57,7 +60,7 @@ en:
     footer:
       flowbite_icons: 'Flowbite Icons'
       flowbite_integration_guide: 'Flowbite Integration Guide'
-      tailwind_docs: 'Tailwind CSS Documentation'
+      tailwind_blocks: 'Tailwind CSS UI Blocks'
       fontawesome_icons: 'FontAwesome Icons'
       mongoid_docs: 'Mongoid Documentation (v8.1)'
       component_library: 'Component Library'
@@ -65,3 +68,10 @@ en:
       ruby_doc: 'Ruby Documentation'
       wai_aria_guide: 'Accessibility Guide (WAI-ARIA)'
       zoho_crm_api_guide: 'Zoho CRM API Guide (v7)'
+
+  validators:
+    errors:
+      invalid_email: "%{value} is not a valid email address"
+      invalid_password: "is not a valid password"
+      invalid_username: "%{value} is not a valid username"
+      invalid_phone_number: "%{value} is not a valid phone number"

@@ -12,9 +12,9 @@ Rails.application.configure do
     File.exist?(file)
   end)
 
-  # # https://github.com/heartcombo/devise?tab=readme-ov-file#testing
-  # config.middleware.insert_before Warden::Manager, ActionDispatch::Cookies
-  # config.middleware.insert_before Warden::Manager, ActionDispatch::Session::CookieStore
+  # https://github.com/heartcombo/devise?tab=readme-ov-file#testing
+  config.middleware.insert_before Warden::Manager, ActionDispatch::Cookies
+  config.middleware.insert_before Warden::Manager, ActionDispatch::Session::CookieStore
 
   # While tests run files are not watched, reloading is not necessary.
   config.enable_reloading = false

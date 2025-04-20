@@ -4,6 +4,9 @@ module SitewideContextAware
   extend ActiveSupport::Concern
 
   def self.included(base)
+    # Make these methods available as instance methods
+    include ClassMethods
+
     # Read more about what base.extend(ClassMethods) does https://stackoverflow.com/a/45110474
     base.extend ClassMethods
   end

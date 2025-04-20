@@ -1,8 +1,29 @@
 {
   "folders": [
     {
-      "path": "."
-    }
+      "path": ".",
+      "name": "Rails"
+    },
+    {
+      "path": "./app/views/",
+      "name": "Rails/Views"
+    },
+    {
+      "path": "./app/frontend/__tests__/",
+      "name": "Frontend/Tests"
+    },
+    {
+      "path": "./app/frontend/components/",
+      "name": "Frontend/Components"
+    },
+    {
+      "path": "./app/frontend/entrypoints/",
+      "name": "Frontend/Entrypoints"
+    },
+    {
+      "path": "./app/frontend/features/",
+      "name": "Frontend/Features"
+    },
   ],
   "settings": {
     "terminal.integrated.fontSize": 15,

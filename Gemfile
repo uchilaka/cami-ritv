@@ -35,8 +35,9 @@ gem 'dartsass-rails', '~> 0.5'
 gem 'sassc-rails', '~> 2.1'
 
 gem 'inertia_rails'
-gem 'tailwindcss-rails', '~> 4.2'
-gem 'tailwindcss-ruby'
+# Setup guide https://v3.tailwindcss.com/docs/installation/using-postcss
+gem 'tailwindcss-rails', '~> 3.3'
+gem 'tailwindcss-ruby', '~> 3.4'
 gem 'vite_rails'
 
 # Use Active Storage variants https://guides.rubyonrails.org/active_storage_overview.html#transforming-images
@@ -45,6 +46,14 @@ gem 'image_processing', '~> 1.2'
 
 # A fast image processing library with low memory needs
 gem 'ruby-vips', '~> 2.2'
+
+gem 'devise'
+gem 'devise-jwt', '~> 0.12'
+gem 'devise-passwordless', '~> 1.1'
+gem 'omniauth-apple', '~> 1.3'
+gem 'omniauth-google-oauth2', '~> 1.2'
+gem 'omniauth-rails_csrf_protection'
+gem 'rack-cors', '~> 2.0'
 
 gem 'active_model_serializers'
 gem 'bumbler'

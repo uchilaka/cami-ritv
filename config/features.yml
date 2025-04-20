@@ -1,0 +1,38 @@
+# Persisting the default state of features in this config file since
+#   the feature flags may not persisted across restarts in the data
+#   store (e.g. redis in low rent environments).
+default: &default
+  feat__google_omniauth:
+    enabled: true
+  feat__navbar_v2:
+    enabled: false
+  feat__accounts:
+    enabled: false
+  feat__dashboard:
+    enabled: false
+  feat__products:
+    enabled: false
+  feat__services:
+    enabled: false
+  feat__invoices:
+    enabled: true
+  feat__filterable_billing_type_badge:
+    enabled: false
+  feat__sortable_invoice_index:
+    enabled: false
+development:
+  <<: *default
+  feat__dashboard:
+    enabled: true
+  feat__navbar_v2:
+    enabled: true
+  feat__accounts:
+    enabled: true
+  feat__filterable_billing_type_badge:
+    enabled: true
+  feat__sortable_invoice_index:
+    enabled: true
+test:
+  <<: *default
+production:
+  <<: *default

@@ -1,0 +1,4 @@
+<%= nav_link_to item.label,
+                item.path || item.url,
+                class: "#{profile_link_classes}",
+                target: (item.new_tab || item.url.present?) ? '_blank' : '_self' %>
