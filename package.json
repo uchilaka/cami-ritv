@@ -21,7 +21,7 @@
     "@types/react-dom": "^19.1.2",
     "@vitejs/plugin-react": "^4.4.0",
     "autoprefixer": "^10.4.21",
-    "axios": "^0.27.0",
+    "axios": "^1.8.4",
     "comment-json": "^4.2.5",
     "eslint": "^9.24.0",
     "flowbite-typography": "^1.0.5",
