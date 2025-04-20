@@ -7,6 +7,7 @@
     <%= vite_client_tag %>
     <%= inertia_ssr_head %>
     <%= vite_react_refresh_tag %>
+    <%#= vite_stylesheet_tag "application" %>
     <%= vite_javascript_tag 'application.tsx' %>
     <!--
         If using a TypeScript entrypoint file:
@@ -17,20 +18,21 @@
 
         Visit the guide for more information: https://vite-ruby.netlify.app/guide/rails
       -->
-  <style>html{visibility: hidden;opacity:0;}</style>
   <%= stylesheet_link_tag "tailwind", "data-turbo-track": "reload" %>
   <%= stylesheet_link_tag "application",
                           "actiontext", media: 'all' %>
+  <!-- <link href="//cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.css" rel="stylesheet" />-->
   <% end %>
   <%= render "layouts/shared/head" %>
 
   <body class="h-full">
-    <%= render "shared/navbar" %>
+    <%#= render "shared/navbar/v2/index" %>
     <%= render "shared/flash" %>
     <main class="bg-white min-h-[85dvh]">
       <%= yield %>
     </main>
     <%= render "shared/footer/full" %>
+    <!-- <script src="//cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js"></script>-->
   </body>
 
 </html>

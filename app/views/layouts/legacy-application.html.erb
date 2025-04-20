@@ -13,7 +13,6 @@
 
         Visit the guide for more information: https://vite-ruby.netlify.app/guide/rails
       -->
-    <style>html{visibility: hidden;opacity:0;}</style>
     <!-- include via CDN for turbo support -->
     <%= stylesheet_link_tag "legacy.application",
                             "legacy.tailwind",
@@ -22,7 +21,7 @@
   <%= render "layouts/shared/head" %>
 
   <body class="h-full">
-    <%= render "shared/navbar" %>
+    <%= render "shared/navbar/index" %>
     <div class="flex flex-col h-screen">
       <%= render "shared/flash" %>
       <main class="container flex flex-col flex-1 pt-40 max-sm:px-2 md:px-5 mx-auto mt-0 mb-12 max-w-screen-xl">

@@ -12,5 +12,5 @@ Rails.application.configure do
   # config.assets.paths << "#{root}/node_modules/@fortawesome"
 
   # # Exclude assets that will be pre-compiled
-  # config.assets.excluded_paths << "#{root}/app/assets/stylesheets"
+  # config.assets.excluded_paths = ["#{root}/app/assets/stylesheets"]
 end

@@ -1,8 +1,6 @@
 // NPM imports
-@use "tailwindcss";
-@use "flowbite/src/themes/default";
-@use "tailwindcss/preflight";
-@use "tailwindcss/utilities";
+@use "tailwindcss/base";
+@use "tailwindcss/components";
 
 // Local stylesheet imports
 @use "stylesheets/global";
@@ -10,6 +8,15 @@
 @use "stylesheets/form";
 @use "stylesheets/alert";
 @use "stylesheets/navbar";
+
+//@use "flowbite/src/themes/default";
+
+@use "tailwindcss/utilities";
+
+//@plugin "flowbite/plugin";
+////@plugin "@tailwindcss/typography";
+//@plugin "flowbite-typography";
+//@plugin "@tailwindcss/forms";
 
 /** Turn visibility of website back on **/
 html {

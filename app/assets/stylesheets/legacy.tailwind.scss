@@ -1,10 +1,12 @@
-@use "../../../node_modules/tailwindcss";
-@use "../../../node_modules/tailwindcss/preflight";
-@use "../../../node_modules/flowbite/src/themes/default";
+//@use "../../../node_modules/tailwindcss";
+//@use "../../../node_modules/tailwindcss/preflight";
+//@use "../../../node_modules/flowbite/src/themes/default";
+//
+//@source "../../../node_modules/tailwindcss/base";
+//@source "../../../node_modules/flowbite";
 
-@source "../../../node_modules/tailwindcss/base";
-@source "../../../node_modules/flowbite";
-
+@tailwind base;
+@tailwind components;
 @tailwind utilities;
 
 @plugin "flowbite/plugin";

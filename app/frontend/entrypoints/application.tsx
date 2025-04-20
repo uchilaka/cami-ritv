@@ -2,9 +2,10 @@ import { createElement } from "react";
 import { createRoot } from "react-dom/client";
 import { createInertiaApp } from "@inertiajs/react";
 import { InertiaProgress } from "@inertiajs/progress";
-import "tailwindcss";
-import "flowbite";
 import axios from "axios";
+
+// import "tailwindcss";
+import "flowbite/dist/flowbite.turbo";
 
 import "./main.scss";
 
