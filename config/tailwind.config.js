@@ -29,8 +29,8 @@ export const plugins = [
   require("flowbite/plugin"),
   require("@tailwindcss/forms"),
   require("@tailwindcss/aspect-ratio"),
-  // require("flowbite-typography"),
   require("@tailwindcss/typography"),
+  require("flowbite-typography"),
   require("@tailwindcss/container-queries"),
 ];
 

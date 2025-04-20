@@ -9,14 +9,16 @@
 @use "stylesheets/alert";
 @use "stylesheets/navbar";
 
-//@use "flowbite/src/themes/default";
+@use "flowbite/src/themes/default";
 
 @use "tailwindcss/utilities";
 
-//@plugin "flowbite/plugin";
+@plugin "flowbite/plugin";
 ////@plugin "@tailwindcss/typography";
-//@plugin "flowbite-typography";
+@plugin "flowbite-typography";
 //@plugin "@tailwindcss/forms";
+
+@source "../../../node_modules/flowbite";
 
 /** Turn visibility of website back on **/
 html {
