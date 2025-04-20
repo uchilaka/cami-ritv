@@ -93,8 +93,8 @@ module Cami
     Jbuilder.key_format camelize: :lower
     Jbuilder.deep_format_keys true
 
-    # Configure CSS compressor
-    config.assets.css_compressor = :sass
+    # # Configure CSS compressor
+    # config.assets.css_compressor = :sass
 
     # Don't generate system test files.
     config.generators.system_tests = nil
