@@ -23,11 +23,11 @@ const WhatWeDo: FCWithLayout = () => {
       typed.current = new Typed(el.current, {
         strings: [
           // Discover the tools that will help you work smarter, not harder
-          "Level Up Your Tech",
+          "Tech",
           // Do more with the tools you already use
-          "Level Up Your Productivity",
+          "Productivity",
           // Build the future of your business
-          "Level Up Your Operations",
+          "Operations",
         ],
         typeSpeed: 35,
         backSpeed: 50,
@@ -67,10 +67,11 @@ const WhatWeDo: FCWithLayout = () => {
           </div>
         </div>
         <div className="text-center">
-          <h1
-            ref={el}
-            className="text-5xl font-semibold tracking-tight text-balance text-gray-900 sm:text-7xl"
-          />
+          <h1 className="text-5xl font-semibold tracking-tight text-balance text-gray-900 sm:text-7xl">
+            Level Up Your
+            <br />
+            <span ref={el} />
+          </h1>
           <p className="mt-8 text-lg font-medium text-pretty text-gray-500 sm:text-xl/8">
             Anim aute id magna aliqua ad ad non deserunt sunt. Qui irure qui
             lorem cupidatat commodo. Elit sunt amet fugiat veniam occaecat.
