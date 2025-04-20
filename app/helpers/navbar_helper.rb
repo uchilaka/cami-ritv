@@ -13,14 +13,20 @@ module NavbarHelper
   end
 
   def navbar_link_classes(is_current_page: false)
-    if is_current_page
-      return 'block py-2 px-3 text-white bg-blue-700 rounded md:bg-transparent md:text-blue-700 md:p-0 ' \
-             'md:dark:text-blue-500'
-    end
+    return navbar_link_classes_for_current_page if is_current_page
 
+    navbar_link_generic_classes
+  end
+
+  def navbar_link_generic_classes
     'block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 ' \
       'dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white ' \
       'md:dark:hover:bg-transparent dark:border-gray-700'
+  end
+
+  def navbar_link_classes_for_current_page
+    'block py-2 px-3 text-white bg-blue-700 rounded md:bg-transparent md:text-blue-700 md:p-0 ' \
+      'md:dark:text-blue-500'
   end
 
   def profile_link_classes
@@ -45,47 +51,59 @@ module NavbarHelper
   end
 
   def main_menu
-    # TODO: Internationalize these link labels
-    # TODO: Include accessibility information for screen readers
-    #  and other assistive technologies
-    # TODO: Include icon classes for each link
-    # TODO: Use pundit policy to determine which links to display
-    # TODO: Memoize and return as @main_menu after policy checks
-    # TODO: Cache this menu in Redis for 1 hour
-    @main_menu ||= [
-      {
-        label: t('shared.navbar.home'),
-        path: root_path,
-        public: true,
-      },
-      {
-        label: t('shared.navbar.dashboard'),
-        path: '/app/dashboard',
-      },
-      {
-        label: t('shared.navbar.invoices'),
-        path: '/app/invoices',
-      },
-      # {
-      #   label: t('shared.navbar.accounts'),
-      #   path: accounts_path,
-      # },
-      # {
-      #   label: t('shared.navbar.services'),
-      #   path: services_path
-      # },
-      # TODO: Eventually take products off this list - intended navigation
-      #   is to traverse via services to the component products
-      # {
-      #   label: t('shared.navbar.products'),
-      #   path: products_path
-      # },
-      {
-        label: t('shared.navbar.about'),
-        path: '/app/about',
-        public: true,
-      },
-    ].map { |item| build_menu_item(item) }.filter(&:enabled)
+    @main_menu ||=
+      if @main_menu.nil?
+        demo_sub_menu = showcase_nav_item[:submenu].map do |menu_item|
+          label, path = menu_item.values_at(:name, :href)
+          { label:, path: }
+        end
+        # TODO: Internationalize these link labels
+        # TODO: Include accessibility information for screen readers
+        #  and other assistive technologies
+        # TODO: Include icon classes for each link
+        # TODO: Use pundit policy to determine which links to display
+        # TODO: Memoize and return as @main_menu after policy checks
+        # TODO: Cache this menu response for 1 hour
+        [
+          {
+            label: t('shared.navbar.home'),
+            path: root_path,
+            public: true,
+          },
+          {
+            label: t('shared.navbar.dashboard'),
+            path: '/app/dashboard',
+          },
+          {
+            label: t('shared.navbar.invoices'),
+            path: '/app/invoices',
+          },
+          {
+            label: t('shared.navbar.demos'),
+            path: '#',
+            submenu: demo_sub_menu,
+          },
+          # {
+          #   label: t('shared.navbar.accounts'),
+          #   path: accounts_path,
+          # },
+          # {
+          #   label: t('shared.navbar.services'),
+          #   path: services_path
+          # },
+          # TODO: Eventually take products off this list - intended navigation
+          #   is to traverse via services to the component products
+          # {
+          #   label: t('shared.navbar.products'),
+          #   path: products_path
+          # },
+          {
+            label: t('shared.navbar.about'),
+            path: '/app/about',
+            public: true,
+          },
+        ].map { |item| build_menu_item(item) }.filter(&:enabled)
+      end
   end
 
   def profile_menu
@@ -185,6 +203,8 @@ module NavbarHelper
   end
 
   def build_menu_item(item)
+    label_or_name = item[:label] || item[:name]
+    item[:id] ||= anonymous_dom_id(label_or_name)
     item[:enabled] ||= calculate_enabled(item)
     item[:admin] ||= false
     item[:public] ||= false

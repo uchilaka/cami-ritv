@@ -1,0 +1,46 @@
+<%
+  trigger_id = anonymous_dom_id(item[:label])
+  target_menu_id = anonymous_dom_id("#{item[:label]} Submenu")
+  is_current_page ||= false
+%>
+<!-- Dropdown menu toggle for: <%= target_menu_id %> -->
+<%= button_tag(
+      id: trigger_id,
+      class: compose_class_names("nav-link flex items-center justify-between", {
+        navbar_link_classes_for_current_page => is_current_page,
+        navbar_link_generic_classes => !is_current_page
+      }),
+      "data-dropdown-toggle": target_menu_id,
+    ) do %>
+  <%= item[:label] %>
+  <svg
+    class="w-2.5 h-2.5 ms-2.5"
+    aria-hidden="true"
+    xmlns="http://www.w3.org/2000/svg"
+    fill="none"
+    viewBox="0 0 10 6"
+  >
+    <path
+      stroke="currentColor"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      stroke-width="2"
+      d="m1 1 4 4 4-4"
+      />
+  </svg>
+<% end %>
+
+<!-- Dropdown menu triggered by: <%= trigger_id %> -->
+<div
+  id="<%= target_menu_id %>"
+  class="z-10 hidden font-normal bg-white divide-y divide-gray-100 rounded-lg shadow-sm w-44 dark:bg-gray-700 dark:divide-gray-600">
+  <ul class="py-2 text-sm text-gray-700 dark:text-gray-400" aria-labelledby="<%= trigger_id %>">
+    <% item[:submenu].each do |submenu_item| %>
+      <li>
+        <a href="<%= submenu_item[:path] || submenu_item[:url] %>" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+          <%= submenu_item[:label] %>
+        </a>
+      </li>
+    <% end %>
+  </ul>
+</div>

@@ -1,14 +1,14 @@
 <% is_current_page = item[:path] == current_path %>
-<% if is_current_page  %>
-  <%= nav_link_to item[:label],
-                  item[:path] || item[:url],
-                  class: "nav-link #{navbar_link_classes(is_current_page:)}",
-                  target: item[:url].present? ? "_blank" : "_self",
-                  "aria-current": "page" %>
+<% if item[:submenu].present? %>
+  <%= render "shared/navbar/menu_item_with_submenu",
+             item:, is_current_page: %>
 <% else %>
   <%= nav_link_to item[:label],
                   item[:path] || item[:url],
-                  class: "nav-link #{navbar_link_classes(is_current_page:)}",
-                  target: item[:url].present? ? "_blank" : "_self"
-  %>
+                  class: compose_class_names("nav-link", {
+                    navbar_link_classes_for_current_page => is_current_page,
+                    navbar_link_generic_classes => !is_current_page
+                  }),
+                  target: item[:url].present? ? "_blank" : "_self",
+                  "aria-current": is_current_page && "page" %>
 <% end %>
