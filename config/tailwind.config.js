@@ -1,7 +1,9 @@
 /** @type {import('tailwindcss').Config} */
 
-// // eslint-disable-next-line @typescript-eslint/no-require-imports, @typescript-eslint/no-unsafe-assignment
-// const defaultTheme = require("tailwindcss/defaultTheme");
+/* eslint-disable no-undef */
+/* eslint-disable @typescript-eslint/no-require-imports */
+
+const defaultTheme = require("tailwindcss/defaultTheme");
 
 export const content = [
   "./public/*.html",
@@ -16,20 +18,19 @@ export const content = [
 
 export const theme = {
   extend: {
-    // fontFamily: {
-    //   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment,@typescript-eslint/no-unsafe-member-access
-    //   sans: ["Inter var", ...defaultTheme.fontFamily.sans],
-    // },
+    fontFamily: {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment,@typescript-eslint/no-unsafe-member-access
+      sans: ["Inter var", ...defaultTheme.fontFamily.sans],
+    },
   },
 };
 
 export const plugins = [
-  import("flowbite/plugin"),
-  import("@tailwindcss/forms"),
-  import("@tailwindcss/aspect-ratio"),
-  import("flowbite-typography"),
-  // import("@tailwindcss/typography"),
-  import("@tailwindcss/container-queries"),
+  require("flowbite/plugin"),
+  require("@tailwindcss/forms"),
+  require("@tailwindcss/aspect-ratio"),
+  require("@tailwindcss/typography"),
+  require("@tailwindcss/container-queries"),
 ];
 
 export default {

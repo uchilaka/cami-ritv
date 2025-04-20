@@ -1,0 +1,18 @@
+// NPM imports
+@use "tailwindcss";
+@use "flowbite/src/themes/default";
+@use "tailwindcss/preflight";
+@use "tailwindcss/utilities";
+
+// Local stylesheet imports
+@use "stylesheets/global";
+@use "stylesheets/buttons";
+@use "stylesheets/form";
+@use "stylesheets/alert";
+@use "stylesheets/navbar";
+
+/** Turn visibility of website back on **/
+html {
+  visibility: visible;
+  opacity: 1;
+}

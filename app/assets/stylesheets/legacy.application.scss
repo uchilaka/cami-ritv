@@ -15,6 +15,24 @@
  */
 @use "fontawesome";
 
+// NPM imports
+@use "../../../node_modules/tailwindcss";
+@use "../../../node_modules/tailwindcss/preflight";
+@use "../../../node_modules/flowbite/src/themes/default";
+@use "../../../node_modules/tailwindcss/utilities";
+
+// Local stylesheet imports
+@use "../../frontend/entrypoints/stylesheets/global";
+@use "../../frontend/entrypoints/stylesheets/buttons";
+@use "../../frontend/entrypoints/stylesheets/form";
+@use "../../frontend/entrypoints/stylesheets/alert";
+@use "../../frontend/entrypoints/stylesheets/navbar";
+
+//@tailwind utilities;
+
+//@source "../../../node_modules/tailwindcss";
+//@source "../../../node_modules/flowbite";
+
 #main_logo > img, footer img.logo {
   width: auto;
 }
