@@ -36,8 +36,8 @@ gem 'sassc-rails', '~> 2.1'
 
 gem 'inertia_rails'
 # Setup guide https://v3.tailwindcss.com/docs/installation/using-postcss
-gem 'tailwindcss-rails', '~> 3.3'
-gem 'tailwindcss-ruby', '~> 3.4'
+gem 'tailwindcss-rails', '~> 4.2'
+gem 'tailwindcss-ruby', '~> 4.1'
 gem 'vite_rails'
 
 # Use Active Storage variants https://guides.rubyonrails.org/active_storage_overview.html#transforming-images
