@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from "react";
 import Typed from "typed.js";
 import DemoLayout from "@/components/DemoLayout";
 import { FCWithLayout } from "@/@types";
-import BackgroundVideoFactory from "./BackgroundVideo";
+import BackgroundVideo from "./BackgroundVideo";
 
 const Home: FCWithLayout = () => {
   const el = useRef<HTMLHeadingElement>(null);
@@ -44,7 +44,7 @@ const Home: FCWithLayout = () => {
 
   return (
     <>
-      <BackgroundVideoFactory />
+      <BackgroundVideo />
       <div className="relative isolate px-6 pt-14 lg:px-8">
         <div
           aria-hidden="true"
