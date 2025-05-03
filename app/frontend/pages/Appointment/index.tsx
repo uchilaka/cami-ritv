@@ -14,7 +14,7 @@ const Appointment = () => {
               solutions
             </h1>
             <p className="text-lg font-normal text-gray-600 lg:text-xl">
-              Schedule a free consultation today! (First one's on us)
+              Schedule a free consultation - first one's on us
             </p>
 
             {/* <!-- Google Calendar Appointment Scheduling begin --> */}
