@@ -25,6 +25,7 @@ Rails.application.routes.draw do
 
   resources :demos, only: %i[] do
     collection do
+      get 'blog-highlights', to: 'demos#blog_highlights'
       get 'feature/with-product-screenshot', to: 'demos#feature_with_product_screenshot'
       get 'feature/with-2x2-grid', to: 'demos#feature_with_2x2_grid'
       get 'hello-inertia-rails', to: 'dashboard#index'

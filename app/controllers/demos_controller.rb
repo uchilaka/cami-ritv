@@ -154,4 +154,16 @@ class DemosController < ApplicationController
       # buttonLabel: t('devise.omniauth.ctas.sign_in_with_provider', provider: 'Google'),
     }
   end
+
+  def blog_highlights
+    render inertia: 'demos/BlogHighlights', props: {
+      title: 'Blog Highlights',
+      subtitle: 'Latest articles from our blog',
+      description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio. Praesent libero. Sed cursus ante dapibus diam. Sed nisi.',
+      # formAction: user_google_omniauth_authorize_path,
+      # formMethod: :get,
+      # formId: 'blog-highlights-form',
+      # buttonLabel: t('devise.omniauth.ctas.sign_in_with_provider', provider: 'Google'),
+    }
+  end
 end

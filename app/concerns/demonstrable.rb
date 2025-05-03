@@ -35,6 +35,7 @@ module Demonstrable
           { name: 'Work with us', href: '/demos/work-with-us' },
           { name: 'Newsletter', href: '/demos/newsletter' },
           { name: 'Testimonials', href: '/demos/testimonials' },
+          { name: 'Blog Highlights', href: '/demos/blog-highlights' },
         ].sort_by { |h| h[:name] },
       }
     end
