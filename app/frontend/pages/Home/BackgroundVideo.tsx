@@ -1,6 +1,7 @@
-import React, { useRef, useEffect, useCallback } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 
 const BackgroundVideo = () => {
+  const [useScrollBackgroundOpacityEffect] = useState(false);
   const scrollBlurRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
 
@@ -50,14 +51,15 @@ const BackgroundVideo = () => {
       const scrollY = window.scrollY;
       const newBlurValue = Math.min(scrollY / 100, 10); // Cap the blur at 10px
       const newBgOpacityValue =
-        Math.round(Math.min((scrollY + 250) / window.outerHeight, 0.5) * 100) /
+        Math.round(Math.min((scrollY + 425) / window.outerHeight, 0.8) * 100) /
         100.0;
       console.debug({ newBlurValue, newBgOpacityValue });
       if (scrollBlurRef.current) {
         const el = scrollBlurRef.current;
         el.style.backdropFilter = `blur(${newBlurValue}px)`;
         // Use the inverse color relative the current theme
-        el.style.background = `rgba(0, 0, 0, ${newBgOpacityValue})`;
+        if (useScrollBackgroundOpacityEffect)
+          el.style.background = `rgba(255, 255, 255, ${newBgOpacityValue})`;
       }
     };
 
@@ -66,7 +68,7 @@ const BackgroundVideo = () => {
     return () => {
       window.removeEventListener("scroll", handleScroll);
     };
-  }, []);
+  }, [useScrollBackgroundOpacityEffect]);
 
   return (
     <>
@@ -89,7 +91,7 @@ const BackgroundVideo = () => {
       <div
         id="overlay"
         ref={scrollBlurRef}
-        className="fixed z-10 top-0 start-0 w-[100vw] h-[100vh]"
+        className="bg-white/40 fixed z-10 top-0 start-0 w-[100vw] h-[100vh]"
       ></div>
     </>
   );

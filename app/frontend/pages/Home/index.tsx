@@ -1,9 +1,9 @@
 import React, { useCallback, useEffect, useRef } from "react";
 import Typed from "typed.js";
 import DemoLayout from "@/components/DemoLayout";
-import clsx from "clsx";
+// import clsx from "clsx";
 import { FCWithLayout } from "@/@types";
-import styles from "./Home.module.css";
+// import styles from "./Home.module.css";
 import BackgroundVideo from "./BackgroundVideo";
 
 const Home: FCWithLayout = () => {
@@ -85,7 +85,7 @@ const Home: FCWithLayout = () => {
         {/* Content Section */}
         <div className="mx-auto max-w-2xl py-32 sm:py-48 lg:py-56">
           <div className="hidden sm:mb-8 sm:flex sm:justify-center">
-            <div className="bg-black/30 relative rounded-full px-3 py-1 text-sm/6 text-gray-100 ring-1 ring-gray-300/10 hover:ring-gray-300/20">
+            <div className="relative rounded-full px-3 py-1 text-sm/6 ring-1 ring-gray-900/10 hover:ring-gray-900/30">
               Announcing our next round of funding.{" "}
               <a href="#" className="font-semibold text-indigo-600">
                 <span aria-hidden="true" className="absolute inset-0" />
@@ -95,22 +95,12 @@ const Home: FCWithLayout = () => {
           </div>
           <div className="text-center">
             {/* TODO: A/B test the title style */}
-            <h1
-              className={clsx(
-                "text-5xl font-semibold tracking-tight text-balance text-white sm:text-7xl",
-                styles.title
-              )}
-            >
+            <h1 className="text-5xl font-semibold tracking-tight text-balance sm:text-7xl">
               Level Up Your
               <br />
               <span ref={autoCursorEl} />
             </h1>
-            <p
-              className={clsx(
-                "mt-8 text-lg font-medium text-pretty text-gray-100 sm:text-xl/8",
-                styles.overlayText
-              )}
-            >
+            <p className="mt-8 text-lg font-medium text-pretty text-gray-900 sm:text-xl/8">
               Need to scale up your online business, automate digital marketing,
               or fine-tune your internet-based workflows? Get expert advice on
               using internet technology to run your small business or startup
@@ -123,13 +113,7 @@ const Home: FCWithLayout = () => {
               >
                 Get started today
               </a>
-              <a
-                href="#"
-                className={clsx(
-                  "text-lg/6 font-semibold text-gray-200",
-                  styles.overlayText
-                )}
-              >
+              <a href="#" className="text-lg/6 font-semibold text-gray-600">
                 Learn more <span aria-hidden="true">→</span>
               </a>
             </div>
