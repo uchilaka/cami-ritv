@@ -6,6 +6,7 @@ const Appointment = () => {
       <div className="py-10">
         <div className="flex min-h-[var(--lc-min-hero-height)] flex-col justify-center max-w-7xl mx-auto sm:px-6 py-12 lg:px-8">
           <div className="bg-white rounded-lg p-4 lg:p-12">
+            {/* TODO: A/B test CTAs on this view */}
             <h1 className="mb-4 text-4xl font-extrabold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl">
               Unlock results with{" "}
               <mark className="px-2 text-white bg-blue-600 rounded-sm dark:bg-blue-500">
