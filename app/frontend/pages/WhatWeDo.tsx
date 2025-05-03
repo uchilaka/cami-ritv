@@ -7,7 +7,6 @@ const WhatWeDo: FCWithLayout = () => {
   const el = useRef<HTMLHeadingElement>(null);
   const typed = useRef<Typed | null>(null);
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const onStringTyped = (arrayPos: number, typist: Typed) => {
     console.debug({ arrayPos });
     typist.stop();
@@ -73,17 +72,19 @@ const WhatWeDo: FCWithLayout = () => {
             <span ref={el} />
           </h1>
           <p className="mt-8 text-lg font-medium text-pretty text-gray-500 sm:text-xl/8">
-            Anim aute id magna aliqua ad ad non deserunt sunt. Qui irure qui
-            lorem cupidatat commodo. Elit sunt amet fugiat veniam occaecat.
+            Need to scale up your online business, automate digital marketing,
+            or fine-tune your internet-based workflows? Get expert advice on
+            using internet technology to run your small business or startup
+            smarter. Let's talk!
           </p>
           <div className="mt-10 flex items-center justify-center gap-x-6">
             <a
               href="#"
-              className="rounded-md bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+              className="rounded-md bg-indigo-600 px-3.5 py-2.5 text-lg font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
             >
-              Get started
+              Get started today
             </a>
-            <a href="#" className="text-sm/6 font-semibold text-gray-900">
+            <a href="#" className="text-lg/6 font-semibold text-gray-900">
               Learn more <span aria-hidden="true">→</span>
             </a>
           </div>
