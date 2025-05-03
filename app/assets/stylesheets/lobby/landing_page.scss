@@ -1,0 +1,23 @@
+@import "libs/vendor";
+
+/****************** Overlay ********************/
+
+@include keyframes("overlay") {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+#overlay {
+  animation: overlay 1.5s 1.5s forwards;
+  background-attachment: fixed, fixed;
+  background-image: url("overlay-pattern.png"),
+  url("overlay.svg");
+  background-position: top left, center center;
+  background-repeat: repeat, no-repeat;
+  background-size: auto, cover;
+  opacity: 0;
+}
