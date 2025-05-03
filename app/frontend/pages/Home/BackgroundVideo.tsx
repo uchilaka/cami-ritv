@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
+import clsx from "clsx";
 
 const BackgroundVideo = () => {
   const [useScrollBackgroundOpacityEffect] = useState(false);
@@ -91,7 +92,10 @@ const BackgroundVideo = () => {
       <div
         id="overlay"
         ref={scrollBlurRef}
-        className="bg-white/40 fixed z-10 top-0 start-0 w-[100vw] h-[100vh]"
+        className={clsx("fixed z-10 top-0 start-0 w-[100vw] h-[100vh]", {
+          "bg-white/20": !useScrollBackgroundOpacityEffect,
+          "bg-white/40": useScrollBackgroundOpacityEffect,
+        })}
       ></div>
     </>
   );
