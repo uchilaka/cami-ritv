@@ -14,7 +14,7 @@
  *= require_self
  */
 @use "fontawesome";
-@use "variables";
+@use "global_vars";
 
 // From HTML5 style suite
 @use "libs/vars";
@@ -54,6 +54,16 @@ header {
     }
   }
 }
+
+
+/**************** Breakpoints ******************/
+
+//@include breakpoints((
+//        wide:      ( 1281px,  1680px ),
+//        normal:    ( 737px,   1280px ),
+//        mobile:    ( 481px,   736px  ),
+//        mobilep:   ( null,    480px  )
+//));
 
 /****************** Overlay ********************/
 

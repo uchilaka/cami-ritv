@@ -45,7 +45,7 @@ const Home: FCWithLayout = () => {
   return (
     <>
       <BackgroundVideo />
-      <div className="relative isolate px-6 pt-14 lg:px-8">
+      <div className="relative isolate z-30 px-6 pt-[22rem] sm:pt-[36rem] lg:px-8 min-h-[var(--min-h-with-footer-peek)]">
         <div
           aria-hidden="true"
           className="absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80"

@@ -7,7 +7,7 @@ const DemoLayout: FC<LayoutProps> = ({ children }) => {
   return (
     <>
       {/* <DemoNavbar /> */}
-      <section>{children}</section>
+      {children}
       {/* TODO: Resolve compiled asset URLs to unlock use of frontend SiteFooter */}
       {/* <SiteFooter /> */}
     </>
