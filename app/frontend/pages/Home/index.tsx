@@ -1,11 +1,14 @@
 import React, { useCallback, useEffect, useRef } from "react";
 import Typed from "typed.js";
 import DemoLayout from "@/components/DemoLayout";
+import clsx from "clsx";
 import { FCWithLayout } from "@/@types";
+import styles from "./Home.module.css";
 import BackgroundVideo from "./BackgroundVideo";
 
 const Home: FCWithLayout = () => {
   const autoCursorEl = useRef<HTMLHeadingElement>(null);
+  const scrollBlurEl = useRef<HTMLDivElement>(null);
   const typed = useRef<Typed | null>(null);
 
   const onStringTyped = (arrayPos: number, typist: Typed) => {
@@ -50,15 +53,29 @@ const Home: FCWithLayout = () => {
   }, []);
 
   // Initialize blur on scroll effect
-  useEffect(() => {}, []);
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollY = window.scrollY;
+      const blurValue = Math.min(scrollY / 100, 10); // Cap the blur at 10px
+      if (scrollBlurEl.current) {
+        scrollBlurEl.current.style.backdropFilter = `blur(${blurValue}px)`;
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
 
   return (
     <>
       <BackgroundVideo />
-      <div className="relative isolate z-30 px-6 pt-[22rem] sm:pt-[36rem] lg:px-8 min-h-[var(--min-h-with-footer-peek)]">
+      <div className="relative isolate z-30 px-6 pt-[22rem] sm:pt-[36rem] lg:px-8 min-h-[var(--lc-min-hero-height)]">
         {/* Top Blur Shape */}
         <div
-          id="scroll-blur-element"
+          ref={scrollBlurEl}
           aria-hidden="true"
           className="absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80"
         >
@@ -68,7 +85,7 @@ const Home: FCWithLayout = () => {
         {/* Content Section */}
         <div className="mx-auto max-w-2xl py-32 sm:py-48 lg:py-56">
           <div className="hidden sm:mb-8 sm:flex sm:justify-center">
-            <div className="relative rounded-full px-3 py-1 text-sm/6 text-gray-600 ring-1 ring-gray-900/10 hover:ring-gray-900/20">
+            <div className="bg-black/30 relative rounded-full px-3 py-1 text-sm/6 text-gray-100 ring-1 ring-gray-300/10 hover:ring-gray-300/20">
               Announcing our next round of funding.{" "}
               <a href="#" className="font-semibold text-indigo-600">
                 <span aria-hidden="true" className="absolute inset-0" />
@@ -77,12 +94,23 @@ const Home: FCWithLayout = () => {
             </div>
           </div>
           <div className="text-center">
-            <h1 className="text-5xl font-semibold tracking-tight text-balance text-gray-900 sm:text-7xl">
+            {/* TODO: A/B test the title style */}
+            <h1
+              className={clsx(
+                "text-5xl font-semibold tracking-tight text-balance text-white sm:text-7xl",
+                styles.title
+              )}
+            >
               Level Up Your
               <br />
               <span ref={autoCursorEl} />
             </h1>
-            <p className="mt-8 text-lg font-medium text-pretty text-gray-500 sm:text-xl/8">
+            <p
+              className={clsx(
+                "mt-8 text-lg font-medium text-pretty text-gray-100 sm:text-xl/8",
+                styles.overlayText
+              )}
+            >
               Need to scale up your online business, automate digital marketing,
               or fine-tune your internet-based workflows? Get expert advice on
               using internet technology to run your small business or startup
@@ -95,7 +123,13 @@ const Home: FCWithLayout = () => {
               >
                 Get started today
               </a>
-              <a href="#" className="text-lg/6 font-semibold text-gray-900">
+              <a
+                href="#"
+                className={clsx(
+                  "text-lg/6 font-semibold text-gray-200",
+                  styles.overlayText
+                )}
+              >
                 Learn more <span aria-hidden="true">→</span>
               </a>
             </div>

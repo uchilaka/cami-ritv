@@ -1,6 +1,7 @@
 import React, { useRef, useEffect, useCallback } from "react";
 
 const BackgroundVideo = () => {
+  const scrollBlurRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
 
   const videoEventsListener = useCallback((ev: Event) => {
@@ -43,6 +44,30 @@ const BackgroundVideo = () => {
     }
   }, [videoRef.current]);
 
+  // Initialize blur on scroll effect
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollY = window.scrollY;
+      const newBlurValue = Math.min(scrollY / 100, 10); // Cap the blur at 10px
+      const newBgOpacityValue =
+        Math.round(Math.min((scrollY + 250) / window.outerHeight, 0.5) * 100) /
+        100.0;
+      console.debug({ newBlurValue, newBgOpacityValue });
+      if (scrollBlurRef.current) {
+        const el = scrollBlurRef.current;
+        el.style.backdropFilter = `blur(${newBlurValue}px)`;
+        // Use the inverse color relative the current theme
+        el.style.background = `rgba(0, 0, 0, ${newBgOpacityValue})`;
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
   return (
     <>
       <video
@@ -59,8 +84,11 @@ const BackgroundVideo = () => {
           type="video/mp4"
         />
       </video>
+
+      {/* Blur Overlay */}
       <div
         id="overlay"
+        ref={scrollBlurRef}
         className="fixed z-10 top-0 start-0 w-[100vw] h-[100vh]"
       ></div>
     </>
