@@ -32,6 +32,7 @@ module Demonstrable
           { name: 'Feature with 2x2 Grid', href: '/demos/feature/with-2x2-grid' },
           { name: 'Pricing with Emphasized Tier', href: '/demos/pricing/with-emphasized-tier' },
           { name: 'Simple Sign In', href: '/demos/simple-sign-in' },
+          { name: 'Work with us', href: '/demos/work-with-us' },
         ].sort_by { |h| h[:name] },
       }
     end

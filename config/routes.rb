@@ -31,6 +31,7 @@ Rails.application.routes.draw do
       get 'hero/simply-centered', to: 'demos#hero_simply_centered'
       get 'pricing/with-emphasized-tier', to: 'demos#pricing_with_emphasized_tier'
       get 'simple-sign-in', to: 'demos#simple_sign_in'
+      get 'work-with-us', to: 'demos#work_with_us'
     end
   end
 

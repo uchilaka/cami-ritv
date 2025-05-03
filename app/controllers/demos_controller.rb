@@ -118,4 +118,16 @@ class DemosController < ApplicationController
       # buttonLabel: t('devise.omniauth.ctas.sign_in_with_provider', provider: 'Google'),
     }
   end
+
+  def work_with_us
+    render inertia: 'demos/WorkWithUs', props: {
+      title: 'Work With Us',
+      subtitle: 'Join our team and make a difference',
+      description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio. Praesent libero. Sed cursus ante dapibus diam. Sed nisi.',
+      # formAction: user_google_omniauth_authorize_path,
+      # formMethod: :get,
+      # formId: 'work-with-us-form',
+      # buttonLabel: t('devise.omniauth.ctas.sign_in_with_provider', provider: 'Google'),
+    }
+  end
 end
