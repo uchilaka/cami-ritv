@@ -25,3 +25,32 @@ html {
   visibility: visible;
   opacity: 1;
 }
+
+img,
+svg,
+video,
+canvas,
+audio,
+iframe,
+embed,
+object {
+  display: block;
+}
+
+video {
+  object-fit: cover;
+  object-position: 50% 50%;
+  overflow-clip-margin: content-box;
+  overflow: clip;
+}
+
+#small-biz-b-roll {
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  bottom: 0px;
+  z-index: 0;
+  min-width: 100vw;
+  min-height: 100vh;
+  overflow: hidden;
+}

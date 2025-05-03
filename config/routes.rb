@@ -36,8 +36,9 @@ Rails.application.routes.draw do
 
   get '/about-us', to: 'lobby#about_us'
   get '/protego/:code', to: 'errors#render_static_error'
+  get '/video', to: 'lobby#background_video'
 
-  root 'demos#hero_simply_centered'
+  root 'lobby#landing_page'
 
   draw :flipper
 end

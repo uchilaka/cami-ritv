@@ -35,13 +35,11 @@ const Layout: FC<LayoutProps> = ({ children }) => {
       </nav>
 
       <div className="py-10">
-        <main>
-          <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div className="px-4 py-8 sm:px-0">
-              <div className="bg-white rounded-lg h-96 p-3">{children}</div>
-            </div>
+        <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
+          <div className="px-4 py-8 sm:px-0">
+            <div className="bg-white rounded-lg h-96 p-3">{children}</div>
           </div>
-        </main>
+        </div>
       </div>
     </>
   );

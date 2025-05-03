@@ -2,8 +2,9 @@ import React, { useEffect, useRef } from "react";
 import Typed from "typed.js";
 import DemoLayout from "@/components/DemoLayout";
 import { FCWithLayout } from "@/@types";
+import BackgroundVideoFactory from "./BackgroundVideo";
 
-const WhatWeDo: FCWithLayout = () => {
+const Home: FCWithLayout = () => {
   const el = useRef<HTMLHeadingElement>(null);
   const typed = useRef<Typed | null>(null);
 
@@ -43,12 +44,7 @@ const WhatWeDo: FCWithLayout = () => {
 
   return (
     <>
-      <video autoPlay loop id="small-biz-b-roll">
-        <source
-          src="//storage.googleapis.com/com-larcity-assets/videos/SmallBizBRoll/960x540.mp4"
-          type="video/mp4"
-        />
-      </video>
+      <BackgroundVideoFactory />
       <div className="relative isolate px-6 pt-14 lg:px-8">
         <div
           aria-hidden="true"
@@ -114,6 +110,6 @@ const WhatWeDo: FCWithLayout = () => {
   );
 };
 
-WhatWeDo.layout = DemoLayout;
+Home.layout = DemoLayout;
 
-export default WhatWeDo;
+export default Home;

@@ -16,7 +16,15 @@
 @use "fontawesome";
 @use "variables";
 
-#main_logo > img, footer img.logo {
+// From HTML5 style suite
+@use "libs/vars";
+@use "libs/functions";
+@use "libs/mixins";
+@use "libs/vendor";
+@use "libs/breakpoints";
+
+#main_logo > img,
+footer img.logo {
   width: auto;
 }
 
@@ -46,3 +54,32 @@ header {
     }
   }
 }
+
+/****************** Overlay ********************/
+
+// @include keyframes("overlay") {
+//   0% {
+//     opacity: 0;
+//   }
+//   100% {
+//     opacity: 1;
+//   }
+// }
+
+// #overlay {
+//   @include vendor(
+//     "animation",
+//     "overlay #{_duration(overlay)} #{$delay-overlay} forwards"
+//   );
+//   background-attachment: fixed, fixed;
+//   background-image: url("images/overlay-pattern.png"), url("images/overlay.svg");
+//   background-position: top left, center center;
+//   background-repeat: repeat, no-repeat;
+//   background-size: auto, cover;
+//   // height: 100%;
+//   // left: 0;
+//   opacity: 0;
+//   // position: fixed;
+//   // top: 0;
+//   // width: 100%;
+// }
