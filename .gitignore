@@ -108,3 +108,5 @@ chromatic-diagnostics.json
 chromatic.log
 
 /config/credentials/development.key
+
+/node_modules
