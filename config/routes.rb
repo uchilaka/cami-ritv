@@ -29,6 +29,7 @@ Rails.application.routes.draw do
       get 'feature/with-2x2-grid', to: 'demos#feature_with_2x2_grid'
       get 'hello-inertia-rails', to: 'dashboard#index'
       get 'hero/simply-centered', to: 'demos#hero_simply_centered'
+      get 'newsletter', to: 'demos#newsletter'
       get 'pricing/with-emphasized-tier', to: 'demos#pricing_with_emphasized_tier'
       get 'simple-sign-in', to: 'demos#simple_sign_in'
       get 'work-with-us', to: 'demos#work_with_us'

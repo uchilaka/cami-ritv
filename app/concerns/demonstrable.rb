@@ -33,6 +33,7 @@ module Demonstrable
           { name: 'Pricing with Emphasized Tier', href: '/demos/pricing/with-emphasized-tier' },
           { name: 'Simple Sign In', href: '/demos/simple-sign-in' },
           { name: 'Work with us', href: '/demos/work-with-us' },
+          { name: 'Newsletter', href: '/demos/newsletter' },
         ].sort_by { |h| h[:name] },
       }
     end
