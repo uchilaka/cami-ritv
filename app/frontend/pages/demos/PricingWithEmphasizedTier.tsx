@@ -1,7 +1,7 @@
 import React from "react";
 import clsx from "clsx";
 import { CheckIcon } from "@heroicons/react/20/solid";
-import DemoLayout from "@/components/DemoLayout";
+import DemoLayout from "@/components/MinimalLayout";
 import { FCWithLayout } from "@/@types";
 
 interface PriceTier {

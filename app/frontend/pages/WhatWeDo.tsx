@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import Typed from "typed.js";
-import DemoLayout from "@/components/DemoLayout";
+import DemoLayout from "@/components/MinimalLayout";
 import { FCWithLayout } from "@/@types";
 
 const WhatWeDo: FCWithLayout = () => {

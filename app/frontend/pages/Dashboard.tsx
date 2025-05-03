@@ -1,6 +1,6 @@
 import React from "react";
 
-import DemoLayout from "@/components/DemoLayout";
+import DemoLayout from "@/components/MinimalLayout";
 import { FCWithLayout } from "@/@types";
 
 function Dashboard({ name }: FCWithLayout<{ name: string }>) {

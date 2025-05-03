@@ -6,7 +6,7 @@ import {
   LockClosedIcon,
 } from "@heroicons/react/24/outline";
 import { FCWithLayout } from "@/@types";
-import DemoLayout from "@/components/DemoLayout";
+import DemoLayout from "@/components/MinimalLayout";
 import { FeatureConfig, FeatureProps, GenericHeroIcon } from "./@types";
 
 const featureIcons: Record<string, GenericHeroIcon> = {

@@ -9,7 +9,7 @@ import "flowbite/dist/flowbite.turbo";
 
 import "./main.scss";
 
-import Layout from "@/components/Layout";
+import Layout from "@/components/MinimalLayout";
 import { ReactNodeWithOptionalLayout, ResolvedComponent } from "@/@types";
 
 document.addEventListener("DOMContentLoaded", () => {

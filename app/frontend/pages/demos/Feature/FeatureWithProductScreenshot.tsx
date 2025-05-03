@@ -5,7 +5,7 @@ import {
   ServerIcon,
 } from "@heroicons/react/20/solid";
 import { FCWithLayout } from "@/@types";
-import DemoLayout from "@/components/DemoLayout";
+import DemoLayout from "@/components/MinimalLayout";
 import { FeatureConfig, FeatureProps, GenericHeroIcon } from "./@types";
 
 const featureIcons: Record<string, GenericHeroIcon> = {

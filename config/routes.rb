@@ -35,6 +35,7 @@ Rails.application.routes.draw do
   end
 
   get '/about-us', to: 'lobby#about_us'
+  get '/consultation/:subject', to: 'lobby#consultation'
   get '/protego/:code', to: 'errors#render_static_error'
   get '/video', to: 'lobby#background_video'
 
