@@ -17,11 +17,11 @@
 @use "global_vars";
 
 // From HTML5 style suite
-@import "libs/vars";
-@import "libs/functions";
-@import "libs/mixins";
-@import "libs/vendor";
-@import "libs/breakpoints";
+//@import "libs/vars";
+//@import "libs/functions";
+//@import "libs/mixins";
+//@import "libs/vendor";
+//@import "libs/breakpoints";
 
 #main_logo > img,
 footer img.logo {
@@ -64,24 +64,5 @@ header {
 //        mobilep:   ( null,    480px  )
 //));
 
-/****************** Overlay ********************/
 
-@include keyframes("overlay") {
-  0% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
-  }
-}
-
-#overlay {
-  animation: overlay 1.5s 1.5s forwards;
-  background-attachment: fixed, fixed;
-  background-image: url("../images/overlay-pattern.png"),
-    url("../images/overlay.svg");
-  background-position: top left, center center;
-  background-repeat: repeat, no-repeat;
-  background-size: auto, cover;
-  opacity: 0;
-}
+@import "lobby/landing_page";

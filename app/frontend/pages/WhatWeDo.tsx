@@ -43,12 +43,6 @@ const WhatWeDo: FCWithLayout = () => {
 
   return (
     <>
-      <video autoPlay loop id="small-biz-b-roll">
-        <source
-          src="//storage.googleapis.com/com-larcity-assets/videos/SmallBizBRoll/960x540.mp4"
-          type="video/mp4"
-        />
-      </video>
       <div className="relative isolate px-6 pt-14 lg:px-8">
         <div
           aria-hidden="true"

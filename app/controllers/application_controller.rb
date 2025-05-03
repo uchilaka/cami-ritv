@@ -29,6 +29,9 @@ class ApplicationController < ActionController::Base
         url: logo_url,
         aria_label: t('accessibility.footer.logo'),
       },
+      feature_flags: Flipper.features.each_with_object({}) do |feature, flags|
+        flags[feature.name] = respond_to?(:current_user) ? feature.enabled?(current_user) : feature.enabled?
+      end,
     }
   end
 

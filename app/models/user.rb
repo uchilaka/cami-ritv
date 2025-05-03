@@ -87,6 +87,10 @@ class User < ApplicationRecord
     has_role?(:admin)
   end
 
+  def flipper_id
+    id
+  end
+
   def assign_default_role
     add_role(:user)
   end
