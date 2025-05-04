@@ -71,6 +71,9 @@ gem 'pundit', '~> 2.5'
 gem 'ransack', '~> 4.3'
 gem 'rolify', '~> 6.0'
 
+# Rationale: setup "staging" environments to be identical to production, distinguished by their domain name.
+gem 'sib-api-v3-sdk', groups: %i[production]
+
 gem 'flipper-active_record', '~> 1.3'
 gem 'flipper-api'
 gem 'flipper-ui'
@@ -84,6 +87,9 @@ gem 'ostruct'
 
 # Simple, feature rich ascii table generation library https://github.com/tj/terminal-table
 gem 'terminal-table'
+
+gem 'nokogiri'
+gem 'reverse_markdown'
 
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
