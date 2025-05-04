@@ -25,18 +25,25 @@ Rails.application.routes.draw do
 
   resources :demos, only: %i[] do
     collection do
+      get 'blog-highlights', to: 'demos#blog_highlights'
+      get 'content-sections', to: 'demos#content_sections'
       get 'feature/with-product-screenshot', to: 'demos#feature_with_product_screenshot'
       get 'feature/with-2x2-grid', to: 'demos#feature_with_2x2_grid'
       get 'hello-inertia-rails', to: 'dashboard#index'
       get 'hero/simply-centered', to: 'demos#hero_simply_centered'
+      get 'newsletter', to: 'demos#newsletter'
       get 'pricing/with-emphasized-tier', to: 'demos#pricing_with_emphasized_tier'
       get 'simple-sign-in', to: 'demos#simple_sign_in'
+      get 'testimonials', to: 'demos#testimonials'
+      get 'work-with-us', to: 'demos#work_with_us'
     end
   end
 
+  get '/about-us', to: 'lobby#about_us'
   get '/protego/:code', to: 'errors#render_static_error'
+  get '/video', to: 'lobby#background_video'
 
-  root 'demos#hero_simply_centered'
+  root 'lobby#landing_page'
 
   draw :flipper
 end

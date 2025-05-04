@@ -22,12 +22,12 @@ document.addEventListener("DOMContentLoaded", () => {
   axios.defaults.headers.common["X-CSRF-Token"] = csrfToken;
 
   const LayoutMeta = document.querySelector<HTMLMetaElement>("[name=layout]");
-  if(LayoutMeta?.content === "inertia.js") {
+  if (LayoutMeta?.content === "inertia.js") {
     console.debug("Initializing Inertia.js app");
     InertiaProgress.init();
     void createInertiaApp({
       resolve: async (name) => {
-        console.debug({ name })
+        console.debug({ name });
         // Pass { eager: true } as options for import.meta.glob to eagerly load all pages
         const pages = import.meta.glob<ResolvedComponent>("../pages/**/*.tsx");
         const page = await pages[`../pages/${name}.tsx`]();
@@ -46,11 +46,11 @@ document.addEventListener("DOMContentLoaded", () => {
       },
       setup({ el, App, props }) {
         if (el) {
-          el.classList.add("min-h-full");
+          // el.classList.add("min-h-[var(--lc-min-hero-height)]");
           createRoot(el).render(createElement(App, props));
         } else {
           throw new Error(
-              "Missing root element.\n\n" +
+            "Missing root element.\n\n" +
               "If you see this error, it probably means you load Inertia.js on non-Inertia pages.\n" +
               'Consider moving <%= vite_typescript_tag "inertia" %> to the Inertia-specific layout instead.'
           );

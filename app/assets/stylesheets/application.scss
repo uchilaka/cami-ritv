@@ -14,9 +14,17 @@
  *= require_self
  */
 @use "fontawesome";
-@use "variables";
+@use "global_vars";
 
-#main_logo > img, footer img.logo {
+// From HTML5 style suite
+//@import "libs/vars";
+//@import "libs/functions";
+//@import "libs/mixins";
+//@import "libs/vendor";
+//@import "libs/breakpoints";
+
+#main_logo > img,
+footer img.logo {
   width: auto;
 }
 
@@ -46,3 +54,15 @@ header {
     }
   }
 }
+
+/**************** Breakpoints ******************/
+
+//@include breakpoints((
+//        wide:      ( 1281px,  1680px ),
+//        normal:    ( 737px,   1280px ),
+//        mobile:    ( 481px,   736px  ),
+//        mobilep:   ( null,    480px  )
+//));
+
+
+@import "lobby/landing_page";
