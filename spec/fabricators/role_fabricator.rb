@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: roles
@@ -15,4 +17,7 @@
 #  index_roles_on_resource                                (resource_type,resource_id)
 #
 Fabricator(:role) do
+  name                 'member'
+  resource            { Fabricate :account }
+  users               { [Fabricate(:user)] }
 end

@@ -9,6 +9,7 @@ abort("The Rails environment is running in production mode!") if Rails.env.produ
 # return unless Rails.env.test?
 require 'rspec/rails'
 # Add additional requires below this line. Rails is not loaded until this point!
+require 'aasm/rspec'
 require 'shoulda/matchers'
 require 'shoulda/matchers/integrations/test_frameworks/rspec'
 require 'database_cleaner/active_record'
