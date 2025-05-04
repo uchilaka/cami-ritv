@@ -42,6 +42,7 @@
   "packageManager": "yarn@4.9.1",
   "dependencies": {
     "@inertiajs/react": "^2.0.8",
+    "@rails/actiontext": "^8.0.200",
     "@tailwindcss/aspect-ratio": "^0.4.2",
     "@tailwindcss/container-queries": "^0.1.1",
     "@tailwindcss/forms": "^0.5.10",
@@ -60,7 +61,7 @@
     "lodash.uniqby": "^4.7.0",
     "react-cookie": "^8.0.1",
     "snakecase-keys": "^8.0.1",
-    "trix": "^2.1.13",
+    "trix": "^2.1.14",
     "typed.js": "^2.1.0",
     "uuid": "^11.1.0"
   },
