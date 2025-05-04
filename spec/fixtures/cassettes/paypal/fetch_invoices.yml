@@ -1,0 +1,2106 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://api-m.sandbox.paypal.com/v2/invoicing/invoices?page=1&page_size=25
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Content-type:
+      - application/json
+      User-Agent:
+      - Faraday v2.12.0
+      Authorization:
+      - Basic FakeAuthToken
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      connection:
+      - keep-alive
+      access-control-expose-headers:
+      - Server-Timing
+      cache-control:
+      - max-age=0, no-cache, no-store, must-revalidate
+      content-encoding:
+      - gzip
+      content-type:
+      - application/json
+      paypal-debug-id:
+      - 9d40a84b0391e
+      server-timing:
+      - traceparent;desc="00-00000000000000000009d40a84b0391e-b4b5a25974c185f2-01"
+      set-cookie:
+      - l7_az=ccg14.slc; Path=/; Domain=paypal.com; Expires=Thu, 28 Nov 2024 16:44:01
+        GMT; HttpOnly; Secure
+      traceparent:
+      - 00-00000000000000000009d40a84b0391e-4f317f1cc003eeda-01
+      accept-ranges:
+      - bytes
+      via:
+      - 1.1 varnish, 1.1 varnish
+      edge-control:
+      - max-age=0
+      date:
+      - Thu, 28 Nov 2024 16:14:01 GMT
+      strict-transport-security:
+      - max-age=63072000; includeSubDomains; preload
+      x-served-by:
+      - cache-iad-kjyo7100118-IAD, cache-cmh1290071-CMH
+      x-cache:
+      - MISS, MISS
+      x-cache-hits:
+      - 0, 0
+      x-timer:
+      - S1732810442.539003,VS0,VE192
+      vary:
+      - Accept-Encoding
+      transfer-encoding:
+      - chunked
+    body:
+      encoding: UTF-8
+      string: |-
+        {
+          "items": [
+            {
+              "id": "INV2-MG8P-GMSG-JNK2-G3WX",
+              "status": "SENT",
+              "detail": {
+                "currency_code": "USD",
+                "note": "Hi Chuji!\r\n\r\nYour current registration for 360supplychain.com is good until 09/2019.",
+                "invoice_number": "2021-EST014",
+                "invoice_date": "2024-03-09",
+                "payment_term": {
+                  "due_date": "2024-03-09"
+                },
+                "viewed_by_recipient": true,
+                "group_draft": false,
+                "metadata": {
+                  "create_time": "2024-03-09T12:00:19Z"
+                }
+              },
+              "invoicer": {
+                "email_address": "fredric_weber@wiegand.test"
+              },
+              "primary_recipients": [
+                {
+                  "billing_info": {
+                    "business_name": "Tyler",
+                    "name": {
+                      "given_name": "Alexis",
+                      "surname": "Briar",
+                      "full_name": "River"
+                    },
+                    "email_address": "jerrod@wiegand.test"
+                  }
+                }
+              ],
+              "amount": {
+                "currency_code": "USD",
+                "value": "12.00"
+              },
+              "due_amount": {
+                "currency_code": "USD",
+                "value": "12.00"
+              },
+              "links": [
+                {
+                  "href": "https://api.paypal.com/v2/invoicing/invoices/INV2-MG8P-GMSG-JNK2-G3WX",
+                  "rel": "self",
+                  "method": "GET"
+                },
+                {
+                  "href": "https://api.paypal.com/v2/invoicing/invoices/INV2-MG8P-GMSG-JNK2-G3WX",
+                  "rel": "replace",
+                  "method": "PUT"
+                },
+                {
+                  "href": "https://api.paypal.com/v2/invoicing/invoices/INV2-MG8P-GMSG-JNK2-G3WX/cancel",
+                  "rel": "cancel",
+                  "method": "POST"
+                },
+                {
+                  "href": "https://api.paypal.com/v2/invoicing/invoices/INV2-MG8P-GMSG-JNK2-G3WX/remind",
+                  "rel": "remind",
+                  "method": "POST"
+                },
+                {
+                  "href": "https://api.paypal.com/v2/invoicing/invoices/INV2-MG8P-GMSG-JNK2-G3WX/payments",
+                  "rel": "record-payment",
+                  "method": "POST"
+                },
+                {
+                  "href": "https://api.paypal.com/v2/invoicing/invoices/INV2-MG8P-GMSG-JNK2-G3WX/generate-qr-code",
+                  "rel": "qr-code",
+                  "method": "GET"
+                }
+              ],
+              "recurring_Id": "RI-42C626788M529081F",
+              "unilateral": false
+            },
+            {
+              "id": "INV2-K3QF-Q5H3-V925-QV9Y",
+              "status": "PAID",
+              "detail": {
+                "currency_code": "USD",
+                "note": "Thank you for being a great Customer!\n\nNOTES:\nGandi.net has increased their hosting prices from $7/mo. to $10/mo. for the Small+SSL hosted Wordpress Instance starting Jan 12, 2024\n\nThe Gandi.net current rate for renewal of AELNG.COM is $23.99 \n\nLet us know if you have any questions @ support@larcity.com.",
+                "invoice_number": "2021-EST013",
+                "invoice_date": "2023-12-01",
+                "payment_term": {
+                  "due_date": "2023-12-16"
+                },
+                "viewed_by_recipient": false,
+                "group_draft": false,
+                "metadata": {
+                  "create_time": "2023-12-01T12:01:18Z"
+                }
+              },
+              "invoicer": {
+                "email_address": "loriann_bayer@price.test"
+              },
+              "primary_recipients": [
+                {
+                  "billing_info": {
+                    "business_name": "Alexis",
+                    "name": {
+                      "given_name": "Ryan",
+                      "surname": "Landry",
+                      "full_name": "River"
+                    },
+                    "email_address": "sun@gusikowski.test"
+                  }
+                }
+              ],
+              "amount": {
+                "currency_code": "USD",
+                "value": "386.19"
+              },
+              "due_amount": {
+                "currency_code": "USD",
+                "value": "0.00"
+              },
+              "payments": {
+                "paid_amount": {
+                  "currency_code": "USD",
+                  "value": "386.19"
+                }
+              },
+              "links": [
+                {
+                  "href": "https://api.paypal.com/v2/invoicing/invoices/INV2-K3QF-Q5H3-V925-QV9Y",
+                  "rel": "self",
+                  "method": "GET"
+                }
+              ],
+              "recurring_Id": "RI-7R0950349X277721A",
+              "unilateral": false
+            },
+            {
+              "id": "INV2-2D2H-6HJA-BUPH-AS4L",
+              "status": "PAID",
+              "detail": {
+                "currency_code": "USD",
+                "note": "Hi Chuji!\r\n\r\nYour current registration for 360supplychain.com is good until 09/2019.",
+                "invoice_number": "2021-EST012",
+                "invoice_date": "2023-03-09",
+                "payment_term": {
+                  "due_date": "2023-03-09"
+                },
+                "viewed_by_recipient": false,
+                "group_draft": false,
+                "metadata": {
+                  "create_time": "2023-03-09T12:00:26Z"
+                }
+              },
+              "invoicer": {
+                "email_address": "augustine@schowalter.test"
+              },
+              "primary_recipients": [
+                {
+                  "billing_info": {
+                    "business_name": "Royal",
+                    "name": {
+                      "given_name": "Sutton",
+                      "surname": "Tatum",
+                      "full_name": "Onyx"
+                    },
+                    "email_address": "tiffani.bins@abshire-prohaska.example"
+                  }
+                }
+              ],
+              "amount": {
+                "currency_code": "USD",
+                "value": "12.00"
+              },
+              "due_amount": {
+                "currency_code": "USD",
+                "value": "0.00"
+              },
+              "payments": {
+                "paid_amount": {
+                  "currency_code": "USD",
+                  "value": "12.00"
+                }
+              },
+              "links": [
+                {
+                  "href": "https://api.paypal.com/v2/invoicing/invoices/INV2-2D2H-6HJA-BUPH-AS4L",
+                  "rel": "self",
+                  "method": "GET"
+                }
+              ],
+              "recurring_Id": "RI-42C626788M529081F",
+              "unilateral": false
+            },
+            {
+              "id": "INV2-42LV-GD9H-R493-2DSL",
+              "status": "PAID",
+              "detail": {
+                "currency_code": "USD",
+                "note": "Thank you for being a great Customer!\r\n\r\nNOTE: Google has increased their prices for G-Suite basic from $5 / user / month, to $6 / user / month starting 05/2019.\r\n\r\nLet us know if you have any questions @ support@larcity.com.",
+                "invoice_number": "2021-EST011",
+                "invoice_date": "2022-12-01",
+                "payment_term": {
+                  "due_date": "2022-12-16"
+                },
+                "viewed_by_recipient": false,
+                "group_draft": false,
+                "metadata": {
+                  "create_time": "2022-12-01T12:01:04Z"
+                }
+              },
+              "invoicer": {
+                "email_address": "qiana@marvin-dickinson.test"
+              },
+              "primary_recipients": [
+                {
+                  "billing_info": {
+                    "business_name": "Casey",
+                    "name": {
+                      "given_name": "River",
+                      "surname": "Tatum",
+                      "full_name": "Dallas"
+                    },
+                    "email_address": "raul_armstrong@dickinson-schmitt.example"
+                  }
+                }
+              ],
+              "amount": {
+                "currency_code": "USD",
+                "value": "245.80"
+              },
+              "due_amount": {
+                "currency_code": "USD",
+                "value": "0.00"
+              },
+              "payments": {
+                "paid_amount": {
+                  "currency_code": "USD",
+                  "value": "245.80"
+                }
+              },
+              "links": [
+                {
+                  "href": "https://api.paypal.com/v2/invoicing/invoices/INV2-42LV-GD9H-R493-2DSL",
+                  "rel": "self",
+                  "method": "GET"
+                }
+              ],
+              "recurring_Id": "RI-7R0950349X277721A",
+              "unilateral": false
+            },
+            {
+              "id": "INV2-N9XD-7LZB-PCGF-M6UZ",
+              "status": "PAID",
+              "detail": {
+                "currency_code": "USD",
+                "note": "Hi Chuji!\r\n\r\nYour current registration for 360supplychain.com is good until 09/2019.",
+                "invoice_number": "2021-EST010",
+                "invoice_date": "2022-03-09",
+                "payment_term": {
+                  "due_date": "2022-03-09"
+                },
+                "viewed_by_recipient": false,
+                "group_draft": false,
+                "metadata": {
+                  "create_time": "2022-03-09T12:00:40Z"
+                }
+              },
+              "invoicer": {
+                "email_address": "rick.donnelly@murazik.test"
+              },
+              "primary_recipients": [
+                {
+                  "billing_info": {
+                    "business_name": "Emerson",
+                    "name": {
+                      "given_name": "Phoenix",
+                      "surname": "Rowan",
+                      "full_name": "Denver"
+                    },
+                    "email_address": "bronwyn_waters@lesch-balistreri.example"
+                  }
+                }
+              ],
+              "amount": {
+                "currency_code": "USD",
+                "value": "12.00"
+              },
+              "due_amount": {
+                "currency_code": "USD",
+                "value": "0.00"
+              },
+              "payments": {
+                "paid_amount": {
+                  "currency_code": "USD",
+                  "value": "12.00"
+                }
+              },
+              "links": [
+                {
+                  "href": "https://api.paypal.com/v2/invoicing/invoices/INV2-N9XD-7LZB-PCGF-M6UZ",
+                  "rel": "self",
+                  "method": "GET"
+                }
+              ],
+              "recurring_Id": "RI-42C626788M529081F",
+              "unilateral": false
+            },
+            {
+              "id": "INV2-4KZW-6DRC-FDLN-8UFT",
+              "status": "PAID",
+              "detail": {
+                "currency_code": "USD",
+                "note": "Thank you for being a great Customer!\n\nThis invoice is for the 2022 service year (initially generated 12/2021).\n\nThe adjustment on the Wordpress hosting charges (9 months instead of 12) lines up both services so we can have 1 invoice due at EOY going forward. \n\nLet us know if you have any questions @ support@larcity.com.",
+                "invoice_number": "2021-EST009",
+                "invoice_date": "2021-12-01",
+                "payment_term": {
+                  "due_date": "2021-12-16"
+                },
+                "viewed_by_recipient": false,
+                "group_draft": false,
+                "metadata": {
+                  "create_time": "2021-12-01T12:03:01Z"
+                }
+              },
+              "invoicer": {
+                "email_address": "spencer@tromp.test"
+              },
+              "primary_recipients": [
+                {
+                  "billing_info": {
+                    "business_name": "Emerson",
+                    "name": {
+                      "given_name": "Landry",
+                      "surname": "Riley",
+                      "full_name": "Sam"
+                    },
+                    "email_address": "antonio@powlowski.example"
+                  }
+                }
+              ],
+              "amount": {
+                "currency_code": "USD",
+                "value": "223.05"
+              },
+              "due_amount": {
+                "currency_code": "USD",
+                "value": "0.00"
+              },
+              "payments": {
+                "paid_amount": {
+                  "currency_code": "USD",
+                  "value": "223.05"
+                }
+              },
+              "links": [
+                {
+                  "href": "https://api.paypal.com/v2/invoicing/invoices/INV2-4KZW-6DRC-FDLN-8UFT",
+                  "rel": "self",
+                  "method": "GET"
+                }
+              ],
+              "recurring_Id": "RI-7R0950349X277721A",
+              "unilateral": false
+            },
+            {
+              "id": "INV2-VXEL-F8YU-QQ3S-TD7A",
+              "status": "SENT",
+              "detail": {
+                "currency_code": "USD",
+                "invoice_number": "2021-EST008",
+                "invoice_date": "2021-10-09",
+                "payment_term": {
+                  "due_date": "2021-10-24"
+                },
+                "viewed_by_recipient": false,
+                "group_draft": false,
+                "metadata": {
+                  "create_time": "2021-10-09T11:00:48Z"
+                }
+              },
+              "invoicer": {
+                "email_address": "denise_lubowitz@gusikowski-rodriguez.test"
+              },
+              "primary_recipients": [
+                {
+                  "billing_info": {
+                    "name": {
+                      "given_name": "Brooklyn",
+                      "surname": "Azariah",
+                      "full_name": "Spencer"
+                    },
+                    "email_address": "elizabeth.zemlak@pacocha-jaskolski.example"
+                  }
+                }
+              ],
+              "amount": {
+                "currency_code": "USD",
+                "value": "21.01"
+              },
+              "due_amount": {
+                "currency_code": "USD",
+                "value": "21.01"
+              },
+              "links": [
+                {
+                  "href": "https://api.paypal.com/v2/invoicing/invoices/INV2-VXEL-F8YU-QQ3S-TD7A",
+                  "rel": "self",
+                  "method": "GET"
+                },
+                {
+                  "href": "https://api.paypal.com/v2/invoicing/invoices/INV2-VXEL-F8YU-QQ3S-TD7A",
+                  "rel": "replace",
+                  "method": "PUT"
+                },
+                {
+                  "href": "https://api.paypal.com/v2/invoicing/invoices/INV2-VXEL-F8YU-QQ3S-TD7A/cancel",
+                  "rel": "cancel",
+                  "method": "POST"
+                },
+                {
+                  "href": "https://api.paypal.com/v2/invoicing/invoices/INV2-VXEL-F8YU-QQ3S-TD7A/remind",
+                  "rel": "remind",
+                  "method": "POST"
+                },
+                {
+                  "href": "https://api.paypal.com/v2/invoicing/invoices/INV2-VXEL-F8YU-QQ3S-TD7A/payments",
+                  "rel": "record-payment",
+                  "method": "POST"
+                },
+                {
+                  "href": "https://api.paypal.com/v2/invoicing/invoices/INV2-VXEL-F8YU-QQ3S-TD7A/generate-qr-code",
+                  "rel": "qr-code",
+                  "method": "GET"
+                }
+              ],
+              "recurring_Id": "RI-8K187618X49167532",
+              "unilateral": false
+            },
+            {
+              "id": "INV2-Y9EW-UX3X-9DC4-579C",
+              "estimate_id": "EST-WT2R-H836-9BWV-CH99",
+              "status": "PAID",
+              "detail": {
+                "currency_code": "USD",
+                "note": "$116.25 is due on receipt. \nThe balance of $116.25 is due 10/21/2021",
+                "invoice_number": "2021-EST007",
+                "invoice_date": "2021-04-10",
+                "payment_term": {
+                  "due_date": "2021-04-10"
+                },
+                "viewed_by_recipient": false,
+                "group_draft": false,
+                "metadata": {
+                  "create_time": "2021-04-10T17:46:57Z"
+                }
+              },
+              "invoicer": {
+                "email_address": "cuc.armstrong@roberts-volkman.example"
+              },
+              "primary_recipients": [
+                {
+                  "billing_info": {
+                    "business_name": "Alexis",
+                    "name": {
+                      "given_name": "Dakota",
+                      "surname": "Briar",
+                      "full_name": "Tatum"
+                    },
+                    "email_address": "jacquelyn_cassin@schinner.test"
+                  }
+                }
+              ],
+              "amount": {
+                "currency_code": "USD",
+                "value": "232.50"
+              },
+              "due_amount": {
+                "currency_code": "USD",
+                "value": "0.00"
+              },
+              "payments": {
+                "paid_amount": {
+                  "currency_code": "USD",
+                  "value": "232.50"
+                }
+              },
+              "links": [
+                {
+                  "href": "https://api.paypal.com/v2/invoicing/invoices/INV2-Y9EW-UX3X-9DC4-579C",
+                  "rel": "self",
+                  "method": "GET"
+                }
+              ],
+              "unilateral": false
+            },
+            {
+              "id": "INV2-KGJ3-FK9N-P54H-3YXC",
+              "estimate_id": "EST-JNCY-TSN2-NUYY-C8SW",
+              "status": "PAID",
+              "detail": {
+                "currency_code": "USD",
+                "note": "It's been great working with Sul and the rest of the Team! \n\nHere are the credentials to Elementor Pro:\nURL: https://my.elementor.com/websites/\nusername: the-augustine-center@googlegroups.com\npassword: A?Agdv!X!q&vnV6",
+                "invoice_number": "2021-EST006",
+                "invoice_date": "2021-03-26",
+                "payment_term": {
+                  "due_date": "2021-03-26"
+                },
+                "viewed_by_recipient": false,
+                "group_draft": false,
+                "metadata": {
+                  "create_time": "2021-03-26T16:11:46Z"
+                }
+              },
+              "invoicer": {
+                "email_address": "elnora.bahringer@durgan.example"
+              },
+              "primary_recipients": [
+                {
+                  "billing_info": {
+                    "business_name": "Brooklyn",
+                    "name": {
+                      "given_name": "Sawyer",
+                      "surname": "Shae",
+                      "full_name": "Shiloh"
+                    },
+                    "email_address": "maurita@smitham-sauer.example"
+                  }
+                }
+              ],
+              "amount": {
+                "currency_code": "USD",
+                "value": "138.30"
+              },
+              "due_amount": {
+                "currency_code": "USD",
+                "value": "0.00"
+              },
+              "payments": {
+                "paid_amount": {
+                  "currency_code": "USD",
+                  "value": "138.30"
+                }
+              },
+              "links": [
+                {
+                  "href": "https://api.paypal.com/v2/invoicing/invoices/INV2-KGJ3-FK9N-P54H-3YXC",
+                  "rel": "self",
+                  "method": "GET"
+                }
+              ],
+              "unilateral": false
+            },
+            {
+              "id": "INV2-UN7X-HM67-GPDZ-PWTK",
+              "status": "DRAFT",
+              "detail": {
+                "currency_code": "USD",
+                "note": "Thank you for being a great Customer!\n\nLet us know if you have any questions @ support@larcity.com.",
+                "invoice_number": "2021-EST005",
+                "invoice_date": "2021-03-23",
+                "payment_term": {
+                  "due_date": "2021-04-07"
+                },
+                "viewed_by_recipient": false,
+                "group_draft": false,
+                "metadata": {
+                  "create_time": "2021-03-23T09:55:30Z"
+                }
+              },
+              "invoicer": {
+                "email_address": "shawnna@becker.example"
+              },
+              "primary_recipients": [
+                {
+                  "billing_info": {
+                    "business_name": "Avery",
+                    "name": {
+                      "given_name": "Finley",
+                      "surname": "Haven",
+                      "full_name": "Drew"
+                    },
+                    "email_address": "romana@hills.test"
+                  }
+                }
+              ],
+              "amount": {
+                "currency_code": "USD",
+                "value": "77.40"
+              },
+              "due_amount": {
+                "currency_code": "USD",
+                "value": "77.40"
+              },
+              "links": [
+                {
+                  "href": "https://api.paypal.com/v2/invoicing/invoices/INV2-UN7X-HM67-GPDZ-PWTK",
+                  "rel": "self",
+                  "method": "GET"
+                },
+                {
+                  "href": "https://api.paypal.com/v2/invoicing/invoices/INV2-UN7X-HM67-GPDZ-PWTK/send",
+                  "rel": "send",
+                  "method": "POST"
+                },
+                {
+                  "href": "https://api.paypal.com/v2/invoicing/invoices/INV2-UN7X-HM67-GPDZ-PWTK",
+                  "rel": "replace",
+                  "method": "PUT"
+                },
+                {
+                  "href": "https://api.paypal.com/v2/invoicing/invoices/INV2-UN7X-HM67-GPDZ-PWTK",
+                  "rel": "delete",
+                  "method": "DELETE"
+                },
+                {
+                  "href": "https://api.paypal.com/v2/invoicing/invoices/INV2-UN7X-HM67-GPDZ-PWTK/payments",
+                  "rel": "record-payment",
+                  "method": "POST"
+                }
+              ],
+              "unilateral": false
+            },
+            {
+              "id": "INV2-CNPC-9LY9-YTLL-DK4H",
+              "status": "PAID",
+              "detail": {
+                "currency_code": "USD",
+                "note": "Hi Chuji!\r\n\r\nYour current registration for 360supplychain.com is good until 09/2019.",
+                "invoice_number": "2021-EST004",
+                "invoice_date": "2021-03-09",
+                "payment_term": {
+                  "due_date": "2021-03-09"
+                },
+                "viewed_by_recipient": false,
+                "group_draft": false,
+                "metadata": {
+                  "create_time": "2021-03-09T12:01:36Z"
+                }
+              },
+              "invoicer": {
+                "email_address": "agustina.torp@jakubowski.example"
+              },
+              "primary_recipients": [
+                {
+                  "billing_info": {
+                    "business_name": "Greer",
+                    "name": {
+                      "given_name": "Emery",
+                      "surname": "Ari",
+                      "full_name": "Briar"
+                    },
+                    "email_address": "tomiko.armstrong@block.example"
+                  }
+                }
+              ],
+              "amount": {
+                "currency_code": "USD",
+                "value": "12.00"
+              },
+              "due_amount": {
+                "currency_code": "USD",
+                "value": "0.00"
+              },
+              "payments": {
+                "paid_amount": {
+                  "currency_code": "USD",
+                  "value": "12.00"
+                }
+              },
+              "links": [
+                {
+                  "href": "https://api.paypal.com/v2/invoicing/invoices/INV2-CNPC-9LY9-YTLL-DK4H",
+                  "rel": "self",
+                  "method": "GET"
+                }
+              ],
+              "recurring_Id": "RI-42C626788M529081F",
+              "unilateral": false
+            },
+            {
+              "id": "INV2-B8N5-B599-7BSE-44SR",
+              "status": "CANCELLED",
+              "detail": {
+                "currency_code": "USD",
+                "note": "This is the first estimate - for code updates to the website as-is. I'll be sending you an estimate for the wordpress build shortly.",
+                "invoice_number": "2021-EST003",
+                "invoice_date": "2021-01-08",
+                "payment_term": {
+                  "due_date": "2021-01-08"
+                },
+                "viewed_by_recipient": false,
+                "group_draft": false,
+                "metadata": {
+                  "create_time": "2021-01-08T12:45:35Z"
+                }
+              },
+              "invoicer": {
+                "email_address": "henrietta.kautzer@rodriguez-gutmann.test"
+              },
+              "primary_recipients": [
+                {
+                  "billing_info": {
+                    "business_name": "Bellamy",
+                    "name": {
+                      "given_name": "Shae",
+                      "surname": "Morgan",
+                      "full_name": "River"
+                    },
+                    "email_address": "maggie@senger-mertz.test"
+                  }
+                }
+              ],
+              "amount": {
+                "currency_code": "USD",
+                "value": "403.13"
+              },
+              "due_amount": {
+                "currency_code": "USD",
+                "value": "403.13"
+              },
+              "links": [
+                {
+                  "href": "https://api.paypal.com/v2/invoicing/invoices/INV2-B8N5-B599-7BSE-44SR",
+                  "rel": "self",
+                  "method": "GET"
+                }
+              ],
+              "unilateral": false
+            },
+            {
+              "id": "INV2-B7T4-ZPDB-7QQM-JV89",
+              "status": "SENT",
+              "detail": {
+                "currency_code": "USD",
+                "note": "Thank you for being a great Customer!\r\n\r\nNOTE: Google has increased their prices for G-Suite basic from $5 / user / month, to $6 / user / month starting 05/2019.\r\n\r\nLet us know if you have any questions @ support@larcity.com.",
+                "invoice_number": "2020-INV0069",
+                "invoice_date": "2020-12-01",
+                "payment_term": {
+                  "due_date": "2020-12-16"
+                },
+                "viewed_by_recipient": true,
+                "group_draft": false,
+                "metadata": {
+                  "create_time": "2020-12-01T12:01:02Z"
+                }
+              },
+              "invoicer": {
+                "email_address": "yvette_williamson@nader.example"
+              },
+              "primary_recipients": [
+                {
+                  "billing_info": {
+                    "business_name": "Sawyer",
+                    "name": {
+                      "given_name": "Azariah",
+                      "surname": "Emery",
+                      "full_name": "Oakley"
+                    },
+                    "email_address": "elmo@erdman.test"
+                  }
+                }
+              ],
+              "amount": {
+                "currency_code": "USD",
+                "value": "154.80"
+              },
+              "due_amount": {
+                "currency_code": "USD",
+                "value": "154.80"
+              },
+              "links": [
+                {
+                  "href": "https://api.paypal.com/v2/invoicing/invoices/INV2-B7T4-ZPDB-7QQM-JV89",
+                  "rel": "self",
+                  "method": "GET"
+                },
+                {
+                  "href": "https://api.paypal.com/v2/invoicing/invoices/INV2-B7T4-ZPDB-7QQM-JV89",
+                  "rel": "replace",
+                  "method": "PUT"
+                },
+                {
+                  "href": "https://api.paypal.com/v2/invoicing/invoices/INV2-B7T4-ZPDB-7QQM-JV89/cancel",
+                  "rel": "cancel",
+                  "method": "POST"
+                },
+                {
+                  "href": "https://api.paypal.com/v2/invoicing/invoices/INV2-B7T4-ZPDB-7QQM-JV89/remind",
+                  "rel": "remind",
+                  "method": "POST"
+                },
+                {
+                  "href": "https://api.paypal.com/v2/invoicing/invoices/INV2-B7T4-ZPDB-7QQM-JV89/payments",
+                  "rel": "record-payment",
+                  "method": "POST"
+                },
+                {
+                  "href": "https://api.paypal.com/v2/invoicing/invoices/INV2-B7T4-ZPDB-7QQM-JV89/generate-qr-code",
+                  "rel": "qr-code",
+                  "method": "GET"
+                }
+              ],
+              "recurring_Id": "RI-7R0950349X277721A",
+              "unilateral": false
+            },
+            {
+              "id": "INV2-VVMN-3HBP-543F-E7ZJ",
+              "status": "DRAFT",
+              "detail": {
+                "currency_code": "USD",
+                "note": "As always, thank you for your Business! Please let us know if you have any questions @ support@larcity.com.",
+                "invoice_number": "2020-INV0068",
+                "invoice_date": "2020-11-17",
+                "payment_term": {
+                  "due_date": "2020-11-17"
+                },
+                "viewed_by_recipient": false,
+                "group_draft": false,
+                "metadata": {
+                  "create_time": "2020-11-17T07:02:40Z"
+                }
+              },
+              "invoicer": {
+                "email_address": "corrina.gorczany@swift-feest.test"
+              },
+              "primary_recipients": [
+                {
+                  "billing_info": {
+                    "business_name": "Justice",
+                    "email_address": "bonnie.morar@pfeffer.test"
+                  }
+                }
+              ],
+              "amount": {
+                "currency_code": "USD",
+                "value": "21.50"
+              },
+              "due_amount": {
+                "currency_code": "USD",
+                "value": "21.50"
+              },
+              "links": [
+                {
+                  "href": "https://api.paypal.com/v2/invoicing/invoices/INV2-VVMN-3HBP-543F-E7ZJ",
+                  "rel": "self",
+                  "method": "GET"
+                },
+                {
+                  "href": "https://api.paypal.com/v2/invoicing/invoices/INV2-VVMN-3HBP-543F-E7ZJ/send",
+                  "rel": "send",
+                  "method": "POST"
+                },
+                {
+                  "href": "https://api.paypal.com/v2/invoicing/invoices/INV2-VVMN-3HBP-543F-E7ZJ",
+                  "rel": "replace",
+                  "method": "PUT"
+                },
+                {
+                  "href": "https://api.paypal.com/v2/invoicing/invoices/INV2-VVMN-3HBP-543F-E7ZJ",
+                  "rel": "delete",
+                  "method": "DELETE"
+                },
+                {
+                  "href": "https://api.paypal.com/v2/invoicing/invoices/INV2-VVMN-3HBP-543F-E7ZJ/payments",
+                  "rel": "record-payment",
+                  "method": "POST"
+                }
+              ],
+              "unilateral": false
+            },
+            {
+              "id": "INV2-NQ7Z-4ENL-FWDS-L5UT",
+              "status": "PAID",
+              "detail": {
+                "currency_code": "USD",
+                "note": "As always, thank you for your Business! Please let us know if you have any questions @ support@larcity.com.",
+                "invoice_number": "2020-INV0067",
+                "invoice_date": "2020-11-17",
+                "payment_term": {
+                  "due_date": "2020-11-17"
+                },
+                "viewed_by_recipient": false,
+                "group_draft": false,
+                "metadata": {
+                  "create_time": "2020-11-17T06:45:49Z"
+                }
+              },
+              "invoicer": {
+                "email_address": "corrinne.turner@frami.test"
+              },
+              "primary_recipients": [
+                {
+                  "billing_info": {
+                    "business_name": "River",
+                    "email_address": "jerry.monahan@aufderhar.test"
+                  }
+                }
+              ],
+              "amount": {
+                "currency_code": "USD",
+                "value": "197.80"
+              },
+              "due_amount": {
+                "currency_code": "USD",
+                "value": "0.00"
+              },
+              "payments": {
+                "paid_amount": {
+                  "currency_code": "USD",
+                  "value": "197.80"
+                }
+              },
+              "links": [
+                {
+                  "href": "https://api.paypal.com/v2/invoicing/invoices/INV2-NQ7Z-4ENL-FWDS-L5UT",
+                  "rel": "self",
+                  "method": "GET"
+                }
+              ],
+              "unilateral": false
+            },
+            {
+              "id": "INV2-K996-TRCQ-75HJ-6MFA",
+              "status": "SENT",
+              "detail": {
+                "currency_code": "USD",
+                "note": "As always, thank you for your Business! Please let us know if you have any questions @ support@larcity.com.",
+                "invoice_number": "2020-INV0066",
+                "invoice_date": "2020-10-24",
+                "payment_term": {
+                  "due_date": "2020-10-24"
+                },
+                "viewed_by_recipient": true,
+                "group_draft": false,
+                "metadata": {
+                  "create_time": "2020-10-24T09:12:13Z"
+                }
+              },
+              "invoicer": {
+                "email_address": "forrest.hodkiewicz@nader.test"
+              },
+              "primary_recipients": [
+                {
+                  "billing_info": {
+                    "business_name": "Corey",
+                    "email_address": "cyndi@terry.test"
+                  }
+                }
+              ],
+              "amount": {
+                "currency_code": "USD",
+                "value": "352.60"
+              },
+              "due_amount": {
+                "currency_code": "USD",
+                "value": "352.60"
+              },
+              "links": [
+                {
+                  "href": "https://api.paypal.com/v2/invoicing/invoices/INV2-K996-TRCQ-75HJ-6MFA",
+                  "rel": "self",
+                  "method": "GET"
+                },
+                {
+                  "href": "https://api.paypal.com/v2/invoicing/invoices/INV2-K996-TRCQ-75HJ-6MFA",
+                  "rel": "replace",
+                  "method": "PUT"
+                },
+                {
+                  "href": "https://api.paypal.com/v2/invoicing/invoices/INV2-K996-TRCQ-75HJ-6MFA/cancel",
+                  "rel": "cancel",
+                  "method": "POST"
+                },
+                {
+                  "href": "https://api.paypal.com/v2/invoicing/invoices/INV2-K996-TRCQ-75HJ-6MFA/remind",
+                  "rel": "remind",
+                  "method": "POST"
+                },
+                {
+                  "href": "https://api.paypal.com/v2/invoicing/invoices/INV2-K996-TRCQ-75HJ-6MFA/payments",
+                  "rel": "record-payment",
+                  "method": "POST"
+                },
+                {
+                  "href": "https://api.paypal.com/v2/invoicing/invoices/INV2-K996-TRCQ-75HJ-6MFA/generate-qr-code",
+                  "rel": "qr-code",
+                  "method": "GET"
+                }
+              ],
+              "unilateral": false
+            },
+            {
+              "id": "INV2-ENMJ-BLQ7-XYE5-SVMB",
+              "status": "SENT",
+              "detail": {
+                "currency_code": "USD",
+                "invoice_number": "2020-INV0064",
+                "invoice_date": "2020-10-09",
+                "payment_term": {
+                  "due_date": "2020-10-24"
+                },
+                "viewed_by_recipient": true,
+                "group_draft": false,
+                "metadata": {
+                  "create_time": "2020-10-09T11:00:38Z"
+                }
+              },
+              "invoicer": {
+                "email_address": "gerald.weissnat@schuppe.example"
+              },
+              "primary_recipients": [
+                {
+                  "billing_info": {
+                    "name": {
+                      "given_name": "Denver",
+                      "surname": "Greer",
+                      "full_name": "Denver"
+                    },
+                    "email_address": "lacy@sipes.test"
+                  }
+                }
+              ],
+              "amount": {
+                "currency_code": "USD",
+                "value": "21.01"
+              },
+              "due_amount": {
+                "currency_code": "USD",
+                "value": "21.01"
+              },
+              "links": [
+                {
+                  "href": "https://api.paypal.com/v2/invoicing/invoices/INV2-ENMJ-BLQ7-XYE5-SVMB",
+                  "rel": "self",
+                  "method": "GET"
+                },
+                {
+                  "href": "https://api.paypal.com/v2/invoicing/invoices/INV2-ENMJ-BLQ7-XYE5-SVMB",
+                  "rel": "replace",
+                  "method": "PUT"
+                },
+                {
+                  "href": "https://api.paypal.com/v2/invoicing/invoices/INV2-ENMJ-BLQ7-XYE5-SVMB/cancel",
+                  "rel": "cancel",
+                  "method": "POST"
+                },
+                {
+                  "href": "https://api.paypal.com/v2/invoicing/invoices/INV2-ENMJ-BLQ7-XYE5-SVMB/remind",
+                  "rel": "remind",
+                  "method": "POST"
+                },
+                {
+                  "href": "https://api.paypal.com/v2/invoicing/invoices/INV2-ENMJ-BLQ7-XYE5-SVMB/payments",
+                  "rel": "record-payment",
+                  "method": "POST"
+                },
+                {
+                  "href": "https://api.paypal.com/v2/invoicing/invoices/INV2-ENMJ-BLQ7-XYE5-SVMB/generate-qr-code",
+                  "rel": "qr-code",
+                  "method": "GET"
+                }
+              ],
+              "recurring_Id": "RI-8K187618X49167532",
+              "unilateral": false
+            },
+            {
+              "id": "INV2-EXCS-BCKQ-NA4Y-9C36",
+              "status": "SENT",
+              "detail": {
+                "currency_code": "USD",
+                "invoice_number": "2020-INV0065",
+                "invoice_date": "2020-10-09",
+                "payment_term": {
+                  "due_date": "2020-10-24"
+                },
+                "viewed_by_recipient": false,
+                "group_draft": false,
+                "metadata": {
+                  "create_time": "2020-10-09T11:00:38Z"
+                }
+              },
+              "invoicer": {
+                "email_address": "sabina@bednar-marquardt.example"
+              },
+              "primary_recipients": [
+                {
+                  "billing_info": {
+                    "name": {
+                      "given_name": "Baylor",
+                      "surname": "Brooklyn",
+                      "full_name": "Zion"
+                    },
+                    "email_address": "belva@deckow.example"
+                  }
+                }
+              ],
+              "amount": {
+                "currency_code": "USD",
+                "value": "21.01"
+              },
+              "due_amount": {
+                "currency_code": "USD",
+                "value": "21.01"
+              },
+              "links": [
+                {
+                  "href": "https://api.paypal.com/v2/invoicing/invoices/INV2-EXCS-BCKQ-NA4Y-9C36",
+                  "rel": "self",
+                  "method": "GET"
+                },
+                {
+                  "href": "https://api.paypal.com/v2/invoicing/invoices/INV2-EXCS-BCKQ-NA4Y-9C36",
+                  "rel": "replace",
+                  "method": "PUT"
+                },
+                {
+                  "href": "https://api.paypal.com/v2/invoicing/invoices/INV2-EXCS-BCKQ-NA4Y-9C36/cancel",
+                  "rel": "cancel",
+                  "method": "POST"
+                },
+                {
+                  "href": "https://api.paypal.com/v2/invoicing/invoices/INV2-EXCS-BCKQ-NA4Y-9C36/remind",
+                  "rel": "remind",
+                  "method": "POST"
+                },
+                {
+                  "href": "https://api.paypal.com/v2/invoicing/invoices/INV2-EXCS-BCKQ-NA4Y-9C36/payments",
+                  "rel": "record-payment",
+                  "method": "POST"
+                },
+                {
+                  "href": "https://api.paypal.com/v2/invoicing/invoices/INV2-EXCS-BCKQ-NA4Y-9C36/generate-qr-code",
+                  "rel": "qr-code",
+                  "method": "GET"
+                }
+              ],
+              "recurring_Id": "RI-8K187618X49167532",
+              "unilateral": false
+            },
+            {
+              "id": "INV2-URFW-3QW9-X3Z2-88LW",
+              "status": "CANCELLED",
+              "detail": {
+                "currency_code": "USD",
+                "note": "Hi Maggie,\r\n\r\nHope business is going well in these challenging times! Lets setup some time for a video call to get your ZOHO billing information for slaylengths.com updated so the invoice comes to you directly. \r\n\r\nCheers!",
+                "invoice_number": "2020-INV0063",
+                "invoice_date": "2020-09-14",
+                "payment_term": {
+                  "due_date": "2020-09-14"
+                },
+                "viewed_by_recipient": true,
+                "group_draft": false,
+                "metadata": {
+                  "create_time": "2020-09-14T09:25:34Z"
+                }
+              },
+              "invoicer": {
+                "email_address": "ricardo@haag.example"
+              },
+              "primary_recipients": [
+                {
+                  "billing_info": {
+                    "business_name": "Max",
+                    "name": {
+                      "given_name": "Stevie",
+                      "surname": "Lennox",
+                      "full_name": "Greer"
+                    },
+                    "email_address": "marty.swaniawski@treutel.test"
+                  }
+                }
+              ],
+              "amount": {
+                "currency_code": "USD",
+                "value": "25.80"
+              },
+              "due_amount": {
+                "currency_code": "USD",
+                "value": "25.80"
+              },
+              "links": [
+                {
+                  "href": "https://api.paypal.com/v2/invoicing/invoices/INV2-URFW-3QW9-X3Z2-88LW",
+                  "rel": "self",
+                  "method": "GET"
+                }
+              ],
+              "unilateral": false
+            },
+            {
+              "id": "INV2-HKLX-H6D3-8VCZ-JZDF",
+              "status": "SENT",
+              "detail": {
+                "currency_code": "USD",
+                "note": "Hi Chuji!\r\n\r\nYour current registration for 360supplychain.com is good until 09/2019.",
+                "invoice_number": "2019-INV0062",
+                "invoice_date": "2020-03-09",
+                "payment_term": {
+                  "due_date": "2020-03-09"
+                },
+                "viewed_by_recipient": false,
+                "group_draft": false,
+                "metadata": {
+                  "create_time": "2020-03-09T11:00:40Z"
+                }
+              },
+              "invoicer": {
+                "email_address": "celestine@parisian.example"
+              },
+              "primary_recipients": [
+                {
+                  "billing_info": {
+                    "business_name": "Jordan",
+                    "name": {
+                      "given_name": "Spencer",
+                      "surname": "Marion",
+                      "full_name": "Sutton"
+                    },
+                    "email_address": "gerard_witting@russel.test"
+                  }
+                }
+              ],
+              "amount": {
+                "currency_code": "USD",
+                "value": "12.00"
+              },
+              "due_amount": {
+                "currency_code": "USD",
+                "value": "12.00"
+              },
+              "links": [
+                {
+                  "href": "https://api.paypal.com/v2/invoicing/invoices/INV2-HKLX-H6D3-8VCZ-JZDF",
+                  "rel": "self",
+                  "method": "GET"
+                },
+                {
+                  "href": "https://api.paypal.com/v2/invoicing/invoices/INV2-HKLX-H6D3-8VCZ-JZDF",
+                  "rel": "replace",
+                  "method": "PUT"
+                },
+                {
+                  "href": "https://api.paypal.com/v2/invoicing/invoices/INV2-HKLX-H6D3-8VCZ-JZDF/cancel",
+                  "rel": "cancel",
+                  "method": "POST"
+                },
+                {
+                  "href": "https://api.paypal.com/v2/invoicing/invoices/INV2-HKLX-H6D3-8VCZ-JZDF/remind",
+                  "rel": "remind",
+                  "method": "POST"
+                },
+                {
+                  "href": "https://api.paypal.com/v2/invoicing/invoices/INV2-HKLX-H6D3-8VCZ-JZDF/payments",
+                  "rel": "record-payment",
+                  "method": "POST"
+                },
+                {
+                  "href": "https://api.paypal.com/v2/invoicing/invoices/INV2-HKLX-H6D3-8VCZ-JZDF/generate-qr-code",
+                  "rel": "qr-code",
+                  "method": "GET"
+                }
+              ],
+              "recurring_Id": "RI-42C626788M529081F",
+              "unilateral": false
+            },
+            {
+              "id": "INV2-BAGB-4WDG-837L-76SC",
+              "status": "PAID",
+              "detail": {
+                "currency_code": "USD",
+                "note": "Thank you for your Business! \r\n\r\nG-Suite subscription pricing is subject to changes by Google LLC. In the event of pricing changes, an invoice will be generated for any pro-rated amount outstanding. \r\n\r\nHappy Holidays!",
+                "invoice_number": "2019-INV0061",
+                "invoice_date": "2019-12-20",
+                "payment_term": {
+                  "due_date": "2019-12-20"
+                },
+                "viewed_by_recipient": false,
+                "group_draft": false,
+                "metadata": {
+                  "create_time": "2019-12-21T08:00:50Z"
+                }
+              },
+              "invoicer": {
+                "email_address": "brenton.gutmann@mayert-hyatt.test"
+              },
+              "amount": {
+                "currency_code": "USD",
+                "value": "184.00"
+              },
+              "due_amount": {
+                "currency_code": "USD",
+                "value": "0.00"
+              },
+              "payments": {
+                "paid_amount": {
+                  "currency_code": "USD",
+                  "value": "184.00"
+                }
+              },
+              "links": [
+                {
+                  "href": "https://api.paypal.com/v2/invoicing/invoices/INV2-BAGB-4WDG-837L-76SC",
+                  "rel": "self",
+                  "method": "GET"
+                }
+              ],
+              "unilateral": false
+            },
+            {
+              "id": "INV2-MUSD-6NVX-ZLXP-X5F3",
+              "status": "CANCELLED",
+              "detail": {
+                "currency_code": "USD",
+                "note": "Hi Sammy! \r\n\r\nLet me know if you would like this domain name renewed. If not, it is set to lapse by December 24, 2018 and no action is required. \r\n\r\nCheers",
+                "invoice_number": "2019-INV0060",
+                "invoice_date": "2019-12-16",
+                "payment_term": {
+                  "due_date": "2019-12-16"
+                },
+                "viewed_by_recipient": false,
+                "group_draft": false,
+                "metadata": {
+                  "create_time": "2019-12-16T12:00:43Z"
+                }
+              },
+              "invoicer": {
+                "email_address": "julietta@schuster.test"
+              },
+              "primary_recipients": [
+                {
+                  "billing_info": {
+                    "business_name": "Reese",
+                    "email_address": "chad_breitenberg@ritchie-kessler.test"
+                  }
+                }
+              ],
+              "amount": {
+                "currency_code": "USD",
+                "value": "12.00"
+              },
+              "due_amount": {
+                "currency_code": "USD",
+                "value": "12.00"
+              },
+              "links": [
+                {
+                  "href": "https://api.paypal.com/v2/invoicing/invoices/INV2-MUSD-6NVX-ZLXP-X5F3",
+                  "rel": "self",
+                  "method": "GET"
+                }
+              ],
+              "recurring_Id": "RI-71W40404Y76836012",
+              "unilateral": false
+            },
+            {
+              "id": "INV2-VMS8-GK4N-4R6K-7NPR",
+              "status": "CANCELLED",
+              "detail": {
+                "currency_code": "USD",
+                "invoice_number": "2019-INV0059",
+                "invoice_date": "2019-12-01",
+                "payment_term": {
+                  "due_date": "2019-12-01"
+                },
+                "viewed_by_recipient": false,
+                "group_draft": false,
+                "metadata": {
+                  "create_time": "2019-12-01T12:00:56Z"
+                }
+              },
+              "invoicer": {
+                "email_address": "dee@rogahn.test"
+              },
+              "primary_recipients": [
+                {
+                  "billing_info": {
+                    "name": {
+                      "given_name": "Denver",
+                      "surname": "Dakota",
+                      "full_name": "Riley"
+                    },
+                    "email_address": "nevada_leuschke@hackett-klocko.test"
+                  }
+                }
+              ],
+              "amount": {
+                "currency_code": "USD",
+                "value": "12.00"
+              },
+              "due_amount": {
+                "currency_code": "USD",
+                "value": "12.00"
+              },
+              "links": [
+                {
+                  "href": "https://api.paypal.com/v2/invoicing/invoices/INV2-VMS8-GK4N-4R6K-7NPR",
+                  "rel": "self",
+                  "method": "GET"
+                }
+              ],
+              "recurring_Id": "RI-64G31380JH7571818",
+              "unilateral": false
+            },
+            {
+              "id": "INV2-ZTAE-T5LQ-6TV4-YE93",
+              "status": "SENT",
+              "detail": {
+                "currency_code": "USD",
+                "invoice_number": "2019-INV0058",
+                "invoice_date": "2019-10-09",
+                "payment_term": {
+                  "due_date": "2019-10-24"
+                },
+                "viewed_by_recipient": false,
+                "group_draft": false,
+                "metadata": {
+                  "create_time": "2019-10-09T11:00:38Z"
+                }
+              },
+              "invoicer": {
+                "email_address": "fredrick@reinger.example"
+              },
+              "primary_recipients": [
+                {
+                  "billing_info": {
+                    "name": {
+                      "given_name": "Riley",
+                      "surname": "Ryan",
+                      "full_name": "Ryan"
+                    },
+                    "email_address": "myrtis@hamill.example"
+                  }
+                }
+              ],
+              "amount": {
+                "currency_code": "USD",
+                "value": "21.01"
+              },
+              "due_amount": {
+                "currency_code": "USD",
+                "value": "21.01"
+              },
+              "links": [
+                {
+                  "href": "https://api.paypal.com/v2/invoicing/invoices/INV2-ZTAE-T5LQ-6TV4-YE93",
+                  "rel": "self",
+                  "method": "GET"
+                },
+                {
+                  "href": "https://api.paypal.com/v2/invoicing/invoices/INV2-ZTAE-T5LQ-6TV4-YE93",
+                  "rel": "replace",
+                  "method": "PUT"
+                },
+                {
+                  "href": "https://api.paypal.com/v2/invoicing/invoices/INV2-ZTAE-T5LQ-6TV4-YE93/cancel",
+                  "rel": "cancel",
+                  "method": "POST"
+                },
+                {
+                  "href": "https://api.paypal.com/v2/invoicing/invoices/INV2-ZTAE-T5LQ-6TV4-YE93/remind",
+                  "rel": "remind",
+                  "method": "POST"
+                },
+                {
+                  "href": "https://api.paypal.com/v2/invoicing/invoices/INV2-ZTAE-T5LQ-6TV4-YE93/payments",
+                  "rel": "record-payment",
+                  "method": "POST"
+                },
+                {
+                  "href": "https://api.paypal.com/v2/invoicing/invoices/INV2-ZTAE-T5LQ-6TV4-YE93/generate-qr-code",
+                  "rel": "qr-code",
+                  "method": "GET"
+                }
+              ],
+              "recurring_Id": "RI-8K187618X49167532",
+              "unilateral": false
+            },
+            {
+              "id": "INV2-B6AC-CE82-YRDU-LHQQ",
+              "status": "PAID",
+              "detail": {
+                "currency_code": "USD",
+                "note": "It was a great opportunity working with you on these concepts!!\r\n\r\nThe UXPin account will be available until the end of October. Please let me know if you would like to take over the account (updated billing etc.). Here's a link to exports of the work we completed on there: https://drive.google.com/drive/folders/1oIUWM_A4W-N7t0YzOuBjkdmURb0FKxoD?usp=sharing. Let me know if you have any trouble accessing.",
+                "invoice_number": "2019-INV0057",
+                "invoice_date": "2019-10-27",
+                "payment_term": {
+                  "due_date": "2019-10-27"
+                },
+                "viewed_by_recipient": false,
+                "group_draft": false,
+                "metadata": {
+                  "create_time": "2019-08-27T00:52:57Z"
+                }
+              },
+              "invoicer": {
+                "email_address": "osvaldo@mayert.example"
+              },
+              "primary_recipients": [
+                {
+                  "billing_info": {
+                    "business_name": "Morgan",
+                    "name": {
+                      "given_name": "Casey",
+                      "surname": "Brooklyn",
+                      "full_name": "Avery"
+                    },
+                    "email_address": "wilburn@bartoletti.test"
+                  }
+                }
+              ],
+              "amount": {
+                "currency_code": "USD",
+                "value": "431.00"
+              },
+              "due_amount": {
+                "currency_code": "USD",
+                "value": "0.00"
+              },
+              "payments": {
+                "paid_amount": {
+                  "currency_code": "USD",
+                  "value": "431.00"
+                }
+              },
+              "links": [
+                {
+                  "href": "https://api.paypal.com/v2/invoicing/invoices/INV2-B6AC-CE82-YRDU-LHQQ",
+                  "rel": "self",
+                  "method": "GET"
+                }
+              ],
+              "unilateral": false
+            }
+          ],
+          "links": [
+            {
+              "href": "https://api.paypal.com/v2/invoicing/invoices?page=1&page_size=25&total_required=false",
+              "rel": "self",
+              "method": "GET"
+            },
+            {
+              "href": "https://api.paypal.com/v2/invoicing/invoices?page=2&page_size=25&total_required=false",
+              "rel": "next",
+              "method": "GET"
+            }
+          ]
+        }
+  recorded_at: Thu, 28 Nov 2024 16:14:01 GMT
+- request:
+    method: get
+    uri: https://api-m.sandbox.paypal.com/v2/invoicing/invoices?page=2&page_size=25
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Content-type:
+      - application/json
+      User-Agent:
+      - Faraday v2.12.0
+      Authorization:
+      - Basic FakeAuthToken
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      connection:
+      - keep-alive
+      access-control-expose-headers:
+      - Server-Timing
+      cache-control:
+      - max-age=0, no-cache, no-store, must-revalidate
+      content-encoding:
+      - gzip
+      content-type:
+      - application/json
+      paypal-debug-id:
+      - 3a7cf66a09256
+      server-timing:
+      - traceparent;desc="00-00000000000000000003a7cf66a09256-e70c110b19a0acb9-01"
+      traceparent:
+      - 00-00000000000000000003a7cf66a09256-88b9bf906f5be94f-01
+      accept-ranges:
+      - bytes
+      via:
+      - 1.1 varnish, 1.1 varnish
+      edge-control:
+      - max-age=0
+      date:
+      - Thu, 28 Nov 2024 16:14:02 GMT
+      strict-transport-security:
+      - max-age=63072000; includeSubDomains; preload
+      x-served-by:
+      - cache-iad-kiad7000167-IAD, cache-cmh1290026-CMH
+      x-cache:
+      - MISS, MISS
+      x-cache-hits:
+      - 0, 0
+      x-timer:
+      - S1732810442.825715,VS0,VE241
+      vary:
+      - Accept-Encoding
+      transfer-encoding:
+      - chunked
+    body:
+      encoding: UTF-8
+      string: "{\n  \"items\": [\n    {\n      \"id\": \"INV2-9E3C-DPSK-2H9Y-4VA6\",\n
+        \     \"status\": \"PAID\",\n      \"detail\": {\n        \"currency_code\":
+        \"USD\",\n        \"note\": \"Thank you for your business! Looking forward
+        to collaborating with you as your Startup begins it's journey \U0001F44D\U0001F3FE\",\n
+        \       \"invoice_number\": \"2019-INV0056\",\n        \"invoice_date\": \"2019-06-14\",\n
+        \       \"payment_term\": {\n          \"due_date\": \"2019-06-14\"\n        },\n
+        \       \"viewed_by_recipient\": false,\n        \"group_draft\": false,\n
+        \       \"metadata\": {\n          \"create_time\": \"2019-06-14T10:23:26Z\"\n
+        \       }\n      },\n      \"invoicer\": {\n        \"email_address\": \"enoch@thompson.example\"\n
+        \     },\n      \"primary_recipients\": [\n        {\n          \"billing_info\":
+        {\n            \"business_name\": \"Greer\",\n            \"name\": {\n              \"given_name\":
+        \"Charlie\",\n              \"surname\": \"Emery\",\n              \"full_name\":
+        \"Campbell\"\n            },\n            \"email_address\": \"fidelia.pouros@pacocha.test\"\n
+        \         }\n        }\n      ],\n      \"amount\": {\n        \"currency_code\":
+        \"USD\",\n        \"value\": \"200.00\"\n      },\n      \"due_amount\": {\n
+        \       \"currency_code\": \"USD\",\n        \"value\": \"0.00\"\n      },\n
+        \     \"payments\": {\n        \"paid_amount\": {\n          \"currency_code\":
+        \"USD\",\n          \"value\": \"200.00\"\n        }\n      },\n      \"links\":
+        [\n        {\n          \"href\": \"https://api.paypal.com/v2/invoicing/invoices/INV2-9E3C-DPSK-2H9Y-4VA6\",\n
+        \         \"rel\": \"self\",\n          \"method\": \"GET\"\n        }\n      ],\n
+        \     \"unilateral\": false\n    },\n    {\n      \"id\": \"INV2-FHP4-DTGD-XFH7-5WBU\",\n
+        \     \"status\": \"CANCELLED\",\n      \"detail\": {\n        \"currency_code\":
+        \"USD\",\n        \"note\": \"Hey Team! \\r\\n\\r\\nGoogle increased the price
+        of G-Suite Basic from $5 / User / Mo. to $6 / User / Mo. starting May 2019\\r\\n\\r\\nThis
+        is a pro-rated invoice to cover the difference from your paid invoice #2019-INV0012\\r\\n\\r\\nQuestions?
+        Let us know at support@larcity.com\",\n        \"invoice_number\": \"2019-INV0055\",\n
+        \       \"invoice_date\": \"2019-05-01\",\n        \"payment_term\": {\n          \"due_date\":
+        \"2019-05-01\"\n        },\n        \"viewed_by_recipient\": true,\n        \"group_draft\":
+        false,\n        \"metadata\": {\n          \"create_time\": \"2019-06-14T10:12:43Z\"\n
+        \       }\n      },\n      \"invoicer\": {\n        \"email_address\": \"linh@abbott.test\"\n
+        \     },\n      \"primary_recipients\": [\n        {\n          \"billing_info\":
+        {\n            \"business_name\": \"Emerson\",\n            \"name\": {\n
+        \             \"given_name\": \"Bellamy\",\n              \"surname\": \"Drew\",\n
+        \             \"full_name\": \"Shae\"\n            },\n            \"email_address\":
+        \"vallie.lang@wunsch-bartoletti.test\"\n          }\n        }\n      ],\n
+        \     \"amount\": {\n        \"currency_code\": \"USD\",\n        \"value\":
+        \"17.20\"\n      },\n      \"due_amount\": {\n        \"currency_code\": \"USD\",\n
+        \       \"value\": \"17.20\"\n      },\n      \"links\": [\n        {\n          \"href\":
+        \"https://api.paypal.com/v2/invoicing/invoices/INV2-FHP4-DTGD-XFH7-5WBU\",\n
+        \         \"rel\": \"self\",\n          \"method\": \"GET\"\n        }\n      ],\n
+        \     \"unilateral\": false\n    },\n    {\n      \"id\": \"INV2-HRJG-TB9Z-8CZW-9SFW\",\n
+        \     \"status\": \"CANCELLED\",\n      \"detail\": {\n        \"currency_code\":
+        \"USD\",\n        \"note\": \"Hey Team - \\r\\n\\r\\nI've setup this monthly
+        invoice for our G-Suite billing. The invoice is setup to allow partial payment
+        so that we don't need an individual invoice for each user. \\r\\n\\r\\nIf
+        you would like to pay for just your (1x) account, please enter the unit price
+        displayed on the invoice as your payment amount. The invoice will stay open
+        until the entire amount due is met by the team. \\r\\n\\r\\nI've included
+        everyone setup on our Quup G-Suite service on the invoice. Let me know if
+        you have any questions. \\r\\n\\r\\nCheers!\",\n        \"invoice_number\":
+        \"2019-INV0054\",\n        \"invoice_date\": \"2019-06-01\",\n        \"payment_term\":
+        {\n          \"due_date\": \"2019-06-01\"\n        },\n        \"viewed_by_recipient\":
+        false,\n        \"group_draft\": false,\n        \"metadata\": {\n          \"create_time\":
+        \"2019-06-01T11:00:59Z\"\n        }\n      },\n      \"invoicer\": {\n        \"email_address\":
+        \"archie@monahan-schulist.test\"\n      },\n      \"primary_recipients\":
+        [\n        {\n          \"billing_info\": {\n            \"business_name\":
+        \"Peyton\",\n            \"email_address\": \"terresa_harris@wintheiser.example\"\n
+        \         }\n        }\n      ],\n      \"amount\": {\n        \"currency_code\":
+        \"USD\",\n        \"value\": \"10.00\"\n      },\n      \"due_amount\": {\n
+        \       \"currency_code\": \"USD\",\n        \"value\": \"10.00\"\n      },\n
+        \     \"links\": [\n        {\n          \"href\": \"https://api.paypal.com/v2/invoicing/invoices/INV2-HRJG-TB9Z-8CZW-9SFW\",\n
+        \         \"rel\": \"self\",\n          \"method\": \"GET\"\n        }\n      ],\n
+        \     \"recurring_Id\": \"RI-56D78462GL467282P\",\n      \"unilateral\": false\n
+        \   },\n    {\n      \"id\": \"INV2-MFMZ-A99Q-TLZT-X862\",\n      \"status\":
+        \"CANCELLED\",\n      \"detail\": {\n        \"currency_code\": \"USD\",\n
+        \       \"note\": \"Hey Team - \\r\\n\\r\\nI've setup this monthly invoice
+        for our G-Suite billing. The invoice is setup to allow partial payment so
+        that we don't need an individual invoice for each user. \\r\\n\\r\\nIf you
+        would like to pay for just your (1x) account, please enter the unit price
+        displayed on the invoice as your payment amount. The invoice will stay open
+        until the entire amount due is met by the team. \\r\\n\\r\\nI've included
+        everyone setup on our Quup G-Suite service on the invoice. Let me know if
+        you have any questions. \\r\\n\\r\\nCheers!\",\n        \"invoice_number\":
+        \"2019-INV0053\",\n        \"invoice_date\": \"2019-05-01\",\n        \"payment_term\":
+        {\n          \"due_date\": \"2019-05-01\"\n        },\n        \"viewed_by_recipient\":
+        false,\n        \"group_draft\": false,\n        \"metadata\": {\n          \"create_time\":
+        \"2019-05-01T11:01:22Z\"\n        }\n      },\n      \"invoicer\": {\n        \"email_address\":
+        \"owen@dibbert.test\"\n      },\n      \"primary_recipients\": [\n        {\n
+        \         \"billing_info\": {\n            \"business_name\": \"Tyler\",\n
+        \           \"email_address\": \"mao.lueilwitz@gleichner.test\"\n          }\n
+        \       }\n      ],\n      \"amount\": {\n        \"currency_code\": \"USD\",\n
+        \       \"value\": \"10.00\"\n      },\n      \"due_amount\": {\n        \"currency_code\":
+        \"USD\",\n        \"value\": \"10.00\"\n      },\n      \"links\": [\n        {\n
+        \         \"href\": \"https://api.paypal.com/v2/invoicing/invoices/INV2-MFMZ-A99Q-TLZT-X862\",\n
+        \         \"rel\": \"self\",\n          \"method\": \"GET\"\n        }\n      ],\n
+        \     \"recurring_Id\": \"RI-56D78462GL467282P\",\n      \"unilateral\": false\n
+        \   },\n    {\n      \"id\": \"INV2-ECB7-2YMP-GVPT-Q7BH\",\n      \"status\":
+        \"CANCELLED\",\n      \"detail\": {\n        \"currency_code\": \"USD\",\n
+        \       \"note\": \"Hey Team - \\r\\n\\r\\nI've setup this monthly invoice
+        for our G-Suite billing. The invoice is setup to allow partial payment so
+        that we don't need an individual invoice for each user. \\r\\n\\r\\nIf you
+        would like to pay for just your (1x) account, please enter the unit price
+        displayed on the invoice as your payment amount. The invoice will stay open
+        until the entire amount due is met by the team. \\r\\n\\r\\nI've included
+        everyone setup on our Quup G-Suite service on the invoice. Let me know if
+        you have any questions. \\r\\n\\r\\nCheers!\",\n        \"invoice_number\":
+        \"2019-INV0052\",\n        \"invoice_date\": \"2019-04-01\",\n        \"payment_term\":
+        {\n          \"due_date\": \"2019-04-01\"\n        },\n        \"viewed_by_recipient\":
+        false,\n        \"group_draft\": false,\n        \"metadata\": {\n          \"create_time\":
+        \"2019-04-01T11:00:56Z\"\n        }\n      },\n      \"invoicer\": {\n        \"email_address\":
+        \"fredric_aufderhar@kilback-runte.test\"\n      },\n      \"primary_recipients\":
+        [\n        {\n          \"billing_info\": {\n            \"business_name\":
+        \"Rory\",\n            \"email_address\": \"trevor@lehner.test\"\n          }\n
+        \       }\n      ],\n      \"amount\": {\n        \"currency_code\": \"USD\",\n
+        \       \"value\": \"10.00\"\n      },\n      \"due_amount\": {\n        \"currency_code\":
+        \"USD\",\n        \"value\": \"10.00\"\n      },\n      \"links\": [\n        {\n
+        \         \"href\": \"https://api.paypal.com/v2/invoicing/invoices/INV2-ECB7-2YMP-GVPT-Q7BH\",\n
+        \         \"rel\": \"self\",\n          \"method\": \"GET\"\n        }\n      ],\n
+        \     \"recurring_Id\": \"RI-56D78462GL467282P\",\n      \"unilateral\": false\n
+        \   },\n    {\n      \"id\": \"INV2-HP54-4DUA-ZZ4X-AKNK\",\n      \"status\":
+        \"PAID\",\n      \"detail\": {\n        \"currency_code\": \"USD\",\n        \"note\":
+        \"Hi Chuji!\\r\\n\\r\\nYour current registration for 360supplychain.com is
+        good until 09/2019.\",\n        \"invoice_number\": \"2019-INV0051\",\n        \"invoice_date\":
+        \"2019-03-09\",\n        \"payment_term\": {\n          \"due_date\": \"2019-03-09\"\n
+        \       },\n        \"viewed_by_recipient\": false,\n        \"group_draft\":
+        false,\n        \"metadata\": {\n          \"create_time\": \"2019-03-09T12:00:39Z\"\n
+        \       }\n      },\n      \"invoicer\": {\n        \"email_address\": \"jacquelin_sipes@lockman.test\"\n
+        \     },\n      \"primary_recipients\": [\n        {\n          \"billing_info\":
+        {\n            \"business_name\": \"Baylor\",\n            \"name\": {\n              \"given_name\":
+        \"Campbell\",\n              \"surname\": \"Greer\",\n              \"full_name\":
+        \"Dakota\"\n            },\n            \"email_address\": \"margaret@ziemann.example\"\n
+        \         }\n        }\n      ],\n      \"amount\": {\n        \"currency_code\":
+        \"USD\",\n        \"value\": \"12.00\"\n      },\n      \"due_amount\": {\n
+        \       \"currency_code\": \"USD\",\n        \"value\": \"0.00\"\n      },\n
+        \     \"payments\": {\n        \"paid_amount\": {\n          \"currency_code\":
+        \"USD\",\n          \"value\": \"12.00\"\n        }\n      },\n      \"links\":
+        [\n        {\n          \"href\": \"https://api.paypal.com/v2/invoicing/invoices/INV2-HP54-4DUA-ZZ4X-AKNK\",\n
+        \         \"rel\": \"self\",\n          \"method\": \"GET\"\n        }\n      ],\n
+        \     \"recurring_Id\": \"RI-42C626788M529081F\",\n      \"unilateral\": false\n
+        \   },\n    {\n      \"id\": \"INV2-J7PA-R9MM-DKCC-7NB4\",\n      \"status\":
+        \"PAID\",\n      \"detail\": {\n        \"currency_code\": \"USD\",\n        \"note\":
+        \"Hi Delali - \\r\\n\\r\\nI've confirmed the domain was renewed successfully!
+        Soon as the invoice is actioned, I'll be updating the domain to give you full
+        control of it through https://domains.google. \\r\\n\\r\\nHappy Holidays!\\r\\n\\r\\nUche\",\n
+        \       \"invoice_number\": \"2018-INV0049\",\n        \"invoice_date\": \"2018-12-16\",\n
+        \       \"payment_term\": {\n          \"due_date\": \"2018-12-16\"\n        },\n
+        \       \"viewed_by_recipient\": false,\n        \"group_draft\": false,\n
+        \       \"metadata\": {\n          \"create_time\": \"2018-12-16T23:17:02Z\"\n
+        \       }\n      },\n      \"invoicer\": {\n        \"email_address\": \"alfonso_schmidt@dietrich-zieme.example\"\n
+        \     },\n      \"primary_recipients\": [\n        {\n          \"billing_info\":
+        {\n            \"name\": {\n              \"given_name\": \"Denver\",\n              \"surname\":
+        \"Campbell\",\n              \"full_name\": \"Riley\"\n            },\n            \"email_address\":
+        \"kandra_oreilly@mraz.example\"\n          }\n        }\n      ],\n      \"amount\":
+        {\n        \"currency_code\": \"USD\",\n        \"value\": \"12.00\"\n      },\n
+        \     \"due_amount\": {\n        \"currency_code\": \"USD\",\n        \"value\":
+        \"0.00\"\n      },\n      \"payments\": {\n        \"paid_amount\": {\n          \"currency_code\":
+        \"USD\",\n          \"value\": \"12.00\"\n        }\n      },\n      \"links\":
+        [\n        {\n          \"href\": \"https://api.paypal.com/v2/invoicing/invoices/INV2-J7PA-R9MM-DKCC-7NB4\",\n
+        \         \"rel\": \"self\",\n          \"method\": \"GET\"\n        }\n      ],\n
+        \     \"unilateral\": false\n    },\n    {\n      \"id\": \"INV2-SXVE-DE6X-N4F6-V5Z7\",\n
+        \     \"status\": \"PAID\",\n      \"detail\": {\n        \"currency_code\":
+        \"USD\",\n        \"note\": \"Hi Sammy! \\r\\n\\r\\nLet me know if you would
+        like this domain name renewed. If not, it is set to lapse by December 24,
+        2018 and no action is required. \\r\\n\\r\\nCheers\",\n        \"invoice_number\":
+        \"2018-INV0048\",\n        \"invoice_date\": \"2018-12-16\",\n        \"payment_term\":
+        {\n          \"due_date\": \"2018-12-16\"\n        },\n        \"viewed_by_recipient\":
+        false,\n        \"group_draft\": false,\n        \"metadata\": {\n          \"create_time\":
+        \"2018-12-16T21:13:08Z\"\n        }\n      },\n      \"invoicer\": {\n        \"email_address\":
+        \"dominick.jerde@bruen.example\"\n      },\n      \"primary_recipients\":
+        [\n        {\n          \"billing_info\": {\n            \"business_name\":
+        \"Skyler\",\n            \"name\": {\n              \"given_name\": \"Reese\",\n
+        \             \"surname\": \"Phoenix\",\n              \"full_name\": \"Marion\"\n
+        \           },\n            \"email_address\": \"madlyn@hodkiewicz.example\"\n
+        \         }\n        }\n      ],\n      \"amount\": {\n        \"currency_code\":
+        \"USD\",\n        \"value\": \"12.00\"\n      },\n      \"due_amount\": {\n
+        \       \"currency_code\": \"USD\",\n        \"value\": \"0.00\"\n      },\n
+        \     \"payments\": {\n        \"paid_amount\": {\n          \"currency_code\":
+        \"USD\",\n          \"value\": \"12.00\"\n        }\n      },\n      \"links\":
+        [\n        {\n          \"href\": \"https://api.paypal.com/v2/invoicing/invoices/INV2-SXVE-DE6X-N4F6-V5Z7\",\n
+        \         \"rel\": \"self\",\n          \"method\": \"GET\"\n        }\n      ],\n
+        \     \"recurring_Id\": \"RI-71W40404Y76836012\",\n      \"unilateral\": false\n
+        \   },\n    {\n      \"id\": \"INV2-AET3-SRKH-REPK-B8MT\",\n      \"status\":
+        \"PAID\",\n      \"detail\": {\n        \"currency_code\": \"USD\",\n        \"note\":
+        \"Please let us know if you have any questions @ support@larcity.com. \\r\\n\\r\\nLooking
+        forward to making your online business experiences even better with custom
+        email raised to the power of G-Suite.\",\n        \"invoice_number\": \"2019-INV0012\",\n
+        \       \"invoice_date\": \"2019-01-04\",\n        \"payment_term\": {\n          \"due_date\":
+        \"2019-01-04\"\n        },\n        \"viewed_by_recipient\": false,\n        \"group_draft\":
+        false,\n        \"metadata\": {\n          \"create_time\": \"2018-12-03T04:07:55Z\"\n
+        \       }\n      },\n      \"invoicer\": {\n        \"email_address\": \"brant@lindgren.test\"\n
+        \     },\n      \"primary_recipients\": [\n        {\n          \"billing_info\":
+        {\n            \"business_name\": \"Shae\",\n            \"email_address\":
+        \"helena.lang@schoen-senger.example\"\n          }\n        }\n      ],\n
+        \     \"amount\": {\n        \"currency_code\": \"USD\",\n        \"value\":
+        \"120.00\"\n      },\n      \"due_amount\": {\n        \"currency_code\":
+        \"USD\",\n        \"value\": \"0.00\"\n      },\n      \"payments\": {\n        \"paid_amount\":
+        {\n          \"currency_code\": \"USD\",\n          \"value\": \"120.00\"\n
+        \       }\n      },\n      \"links\": [\n        {\n          \"href\": \"https://api.paypal.com/v2/invoicing/invoices/INV2-AET3-SRKH-REPK-B8MT\",\n
+        \         \"rel\": \"self\",\n          \"method\": \"GET\"\n        }\n      ],\n
+        \     \"unilateral\": false\n    },\n    {\n      \"id\": \"INV2-QTKD-J3GT-34H6-EM9E\",\n
+        \     \"status\": \"CANCELLED\",\n      \"detail\": {\n        \"currency_code\":
+        \"USD\",\n        \"note\": \"Hi Erin! \\r\\n\\r\\nI've configured the domain
+        with the redirect we discussed (to Instagram) and added you as an admin for
+        the domain, so whenever you are ready, you'll have the control you need. Feel
+        free to reach out if you have any questions need help at that time! Stay in
+        touch :)\",\n        \"invoice_number\": \"2018-INV0046\",\n        \"invoice_date\":
+        \"2018-01-19\",\n        \"payment_term\": {\n          \"due_date\": \"2018-01-19\"\n
+        \       },\n        \"viewed_by_recipient\": false,\n        \"group_draft\":
+        false,\n        \"metadata\": {\n          \"create_time\": \"2018-01-20T02:57:00Z\"\n
+        \       }\n      },\n      \"invoicer\": {\n        \"email_address\": \"jovita.wintheiser@bayer.example\"\n
+        \     },\n      \"primary_recipients\": [\n        {\n          \"billing_info\":
+        {\n            \"name\": {\n              \"given_name\": \"Denver\",\n              \"surname\":
+        \"Robin\",\n              \"full_name\": \"Armani\"\n            },\n            \"email_address\":
+        \"sacha@schmeler-wehner.test\"\n          }\n        }\n      ],\n      \"amount\":
+        {\n        \"currency_code\": \"USD\",\n        \"value\": \"30.00\"\n      },\n
+        \     \"due_amount\": {\n        \"currency_code\": \"USD\",\n        \"value\":
+        \"30.00\"\n      },\n      \"links\": [\n        {\n          \"href\": \"https://api.paypal.com/v2/invoicing/invoices/INV2-QTKD-J3GT-34H6-EM9E\",\n
+        \         \"rel\": \"self\",\n          \"method\": \"GET\"\n        }\n      ],\n
+        \     \"unilateral\": false\n    },\n    {\n      \"id\": \"INV2-JCL6-CFC5-T3ZT-G8S8\",\n
+        \     \"status\": \"PAID\",\n      \"detail\": {\n        \"currency_code\":
+        \"USD\",\n        \"note\": \"Hi Chuji - Let me know your GMail address so
+        I can add you as an admin for the domain as discussed. I can prepare an invoice
+        for GMail for Business or any other services you decide on when you are ready.
+        For now, this takes care of the domain parking with Google. Cheers!\",\n        \"invoice_number\":
+        \"2018-INV0045\",\n        \"invoice_date\": \"2018-01-19\",\n        \"payment_term\":
+        {\n          \"due_date\": \"2018-01-19\"\n        },\n        \"viewed_by_recipient\":
+        false,\n        \"group_draft\": false,\n        \"metadata\": {\n          \"create_time\":
+        \"2018-01-20T02:50:30Z\"\n        }\n      },\n      \"invoicer\": {\n        \"email_address\":
+        \"morris.auer@zieme.test\"\n      },\n      \"primary_recipients\": [\n        {\n
+        \         \"billing_info\": {\n            \"email_address\": \"napoleon@anderson.example\"\n
+        \         }\n        }\n      ],\n      \"amount\": {\n        \"currency_code\":
+        \"USD\",\n        \"value\": \"12.00\"\n      },\n      \"due_amount\": {\n
+        \       \"currency_code\": \"USD\",\n        \"value\": \"0.00\"\n      },\n
+        \     \"payments\": {\n        \"paid_amount\": {\n          \"currency_code\":
+        \"USD\",\n          \"value\": \"12.00\"\n        }\n      },\n      \"links\":
+        [\n        {\n          \"href\": \"https://api.paypal.com/v2/invoicing/invoices/INV2-JCL6-CFC5-T3ZT-G8S8\",\n
+        \         \"rel\": \"self\",\n          \"method\": \"GET\"\n        }\n      ],\n
+        \     \"unilateral\": false\n    },\n    {\n      \"id\": \"INV2-VUJM-VEJW-FD3E-MFLR\",\n
+        \     \"status\": \"CANCELLED\",\n      \"detail\": {\n        \"currency_code\":
+        \"USD\",\n        \"note\": \"Let me know if you have any questions, and thank
+        you for your business!\",\n        \"invoice_number\": \"2018-INV0044\",\n
+        \       \"invoice_date\": \"2018-10-31\",\n        \"payment_term\": {\n          \"due_date\":
+        \"2018-11-30\"\n        },\n        \"viewed_by_recipient\": false,\n        \"group_draft\":
+        false,\n        \"metadata\": {\n          \"create_time\": \"2018-01-13T05:25:14Z\"\n
+        \       }\n      },\n      \"invoicer\": {\n        \"email_address\": \"shakira@dietrich-schowalter.test\"\n
+        \     },\n      \"primary_recipients\": [\n        {\n          \"billing_info\":
+        {\n            \"email_address\": \"bridget.jerde@pouros.example\"\n          }\n
+        \       }\n      ],\n      \"amount\": {\n        \"currency_code\": \"USD\",\n
+        \       \"value\": \"364.00\"\n      },\n      \"due_amount\": {\n        \"currency_code\":
+        \"USD\",\n        \"value\": \"364.00\"\n      },\n      \"links\": [\n        {\n
+        \         \"href\": \"https://api.paypal.com/v2/invoicing/invoices/INV2-VUJM-VEJW-FD3E-MFLR\",\n
+        \         \"rel\": \"self\",\n          \"method\": \"GET\"\n        }\n      ],\n
+        \     \"unilateral\": false\n    },\n    {\n      \"id\": \"INV2-JT5J-QZ56-F6TC-QX2E\",\n
+        \     \"status\": \"PAID\",\n      \"detail\": {\n        \"currency_code\":
+        \"USD\",\n        \"note\": \"Let me know if you have any questions, and thank
+        you for your business!\",\n        \"invoice_number\": \"2018-INV0042\",\n
+        \       \"invoice_date\": \"2018-01-12\",\n        \"payment_term\": {\n          \"due_date\":
+        \"2018-01-12\"\n        },\n        \"viewed_by_recipient\": false,\n        \"group_draft\":
+        false,\n        \"metadata\": {\n          \"create_time\": \"2018-01-12T19:39:13Z\"\n
+        \       }\n      },\n      \"invoicer\": {\n        \"email_address\": \"terrell@bosco.test\"\n
+        \     },\n      \"primary_recipients\": [\n        {\n          \"billing_info\":
+        {\n            \"email_address\": \"harold@maggio.example\"\n          }\n
+        \       }\n      ],\n      \"amount\": {\n        \"currency_code\": \"USD\",\n
+        \       \"value\": \"394.00\"\n      },\n      \"due_amount\": {\n        \"currency_code\":
+        \"USD\",\n        \"value\": \"0.00\"\n      },\n      \"payments\": {\n        \"paid_amount\":
+        {\n          \"currency_code\": \"USD\",\n          \"value\": \"394.00\"\n
+        \       }\n      },\n      \"links\": [\n        {\n          \"href\": \"https://api.paypal.com/v2/invoicing/invoices/INV2-JT5J-QZ56-F6TC-QX2E\",\n
+        \         \"rel\": \"self\",\n          \"method\": \"GET\"\n        }\n      ],\n
+        \     \"unilateral\": false\n    },\n    {\n      \"id\": \"INV2-9V8K-PD8X-YHGR-B9UY\",\n
+        \     \"status\": \"PAID\",\n      \"detail\": {\n        \"currency_code\":
+        \"USD\",\n        \"note\": \"Your domain name expires July 29th, 2017. Please
+        make the payment ASAP so I can renew your domain. The domain renewal is annual.
+        Let me know if you have any questions @ support@larcity.com.\",\n        \"invoice_number\":
+        \"2017-INV0021\",\n        \"invoice_date\": \"2017-07-01\",\n        \"payment_term\":
+        {\n          \"due_date\": \"2017-07-01\"\n        },\n        \"viewed_by_recipient\":
+        false,\n        \"group_draft\": false,\n        \"metadata\": {\n          \"create_time\":
+        \"2017-07-02T03:14:53Z\"\n        }\n      },\n      \"invoicer\": {\n        \"email_address\":
+        \"nanci.howe@bashirian-wiegand.example\"\n      },\n      \"primary_recipients\":
+        [\n        {\n          \"billing_info\": {\n            \"business_name\":
+        \"Tatum\",\n            \"name\": {\n              \"given_name\": \"Dakota\",\n
+        \             \"surname\": \"Azariah\",\n              \"full_name\": \"Emerson\"\n
+        \           },\n            \"email_address\": \"hildred_smith@hammes-jacobs.example\"\n
+        \         }\n        }\n      ],\n      \"amount\": {\n        \"currency_code\":
+        \"USD\",\n        \"value\": \"20.00\"\n      },\n      \"due_amount\": {\n
+        \       \"currency_code\": \"USD\",\n        \"value\": \"0.00\"\n      },\n
+        \     \"payments\": {\n        \"paid_amount\": {\n          \"currency_code\":
+        \"USD\",\n          \"value\": \"20.00\"\n        }\n      },\n      \"links\":
+        [\n        {\n          \"href\": \"https://api.paypal.com/v2/invoicing/invoices/INV2-9V8K-PD8X-YHGR-B9UY\",\n
+        \         \"rel\": \"self\",\n          \"method\": \"GET\"\n        }\n      ],\n
+        \     \"unilateral\": false\n    },\n    {\n      \"id\": \"INV2-L9Y6-WA5T-GABS-NMUQ\",\n
+        \     \"status\": \"PAID\",\n      \"detail\": {\n        \"currency_code\":
+        \"USD\",\n        \"note\": \"Thank you for your business!\",\n        \"invoice_number\":
+        \"2017-INV0020\",\n        \"invoice_date\": \"2017-04-11\",\n        \"payment_term\":
+        {\n          \"due_date\": \"2017-04-11\"\n        },\n        \"viewed_by_recipient\":
+        false,\n        \"group_draft\": false,\n        \"metadata\": {\n          \"create_time\":
+        \"2017-04-12T03:58:25Z\"\n        }\n      },\n      \"invoicer\": {\n        \"email_address\":
+        \"laticia@lind-zulauf.test\"\n      },\n      \"primary_recipients\": [\n
+        \       {\n          \"billing_info\": {\n            \"email_address\": \"eusebio_purdy@altenwerth.test\"\n
+        \         }\n        }\n      ],\n      \"amount\": {\n        \"currency_code\":
+        \"USD\",\n        \"value\": \"24.00\"\n      },\n      \"due_amount\": {\n
+        \       \"currency_code\": \"USD\",\n        \"value\": \"0.00\"\n      },\n
+        \     \"payments\": {\n        \"paid_amount\": {\n          \"currency_code\":
+        \"USD\",\n          \"value\": \"24.00\"\n        }\n      },\n      \"links\":
+        [\n        {\n          \"href\": \"https://api.paypal.com/v2/invoicing/invoices/INV2-L9Y6-WA5T-GABS-NMUQ\",\n
+        \         \"rel\": \"self\",\n          \"method\": \"GET\"\n        }\n      ],\n
+        \     \"unilateral\": false\n    },\n    {\n      \"id\": \"INV2-WEY2-XKZE-KT8U-GBRJ\",\n
+        \     \"status\": \"PAID\",\n      \"detail\": {\n        \"currency_code\":
+        \"USD\",\n        \"note\": \"Included in your invoice, is a discount for
+        the first year use of aelng.org. Future year renewals will be billed at $20
+        / Yr.\\r\\n\\r\\nI've also comp'd the taxes as an additional courtesy for
+        the the invoice mishap - hence the lower amount.\\r\\n\\r\\nThanks for your
+        business!\",\n        \"invoice_number\": \"2016-INV0017\",\n        \"invoice_date\":
+        \"2017-01-22\",\n        \"payment_term\": {\n          \"due_date\": \"2017-01-22\"\n
+        \       },\n        \"viewed_by_recipient\": false,\n        \"group_draft\":
+        false,\n        \"metadata\": {\n          \"create_time\": \"2017-01-23T03:58:41Z\"\n
+        \       }\n      },\n      \"invoicer\": {\n        \"email_address\": \"chester@gerhold.test\"\n
+        \     },\n      \"primary_recipients\": [\n        {\n          \"billing_info\":
+        {\n            \"email_address\": \"aldo.macgyver@cremin.example\"\n          }\n
+        \       }\n      ],\n      \"amount\": {\n        \"currency_code\": \"USD\",\n
+        \       \"value\": \"44.00\"\n      },\n      \"due_amount\": {\n        \"currency_code\":
+        \"USD\",\n        \"value\": \"0.00\"\n      },\n      \"payments\": {\n        \"paid_amount\":
+        {\n          \"currency_code\": \"USD\",\n          \"value\": \"44.00\"\n
+        \       }\n      },\n      \"links\": [\n        {\n          \"href\": \"https://api.paypal.com/v2/invoicing/invoices/INV2-WEY2-XKZE-KT8U-GBRJ\",\n
+        \         \"rel\": \"self\",\n          \"method\": \"GET\"\n        }\n      ],\n
+        \     \"unilateral\": false\n    },\n    {\n      \"id\": \"INV2-P9NR-B9U2-NUY4-4UCH\",\n
+        \     \"status\": \"PAID\",\n      \"detail\": {\n        \"currency_code\":
+        \"USD\",\n        \"invoice_number\": \"2016-INV0016\",\n        \"invoice_date\":
+        \"2016-11-16\",\n        \"payment_term\": {\n          \"due_date\": \"2016-11-16\"\n
+        \       },\n        \"viewed_by_recipient\": false,\n        \"group_draft\":
+        false,\n        \"metadata\": {\n          \"create_time\": \"2016-11-17T04:15:08Z\"\n
+        \       }\n      },\n      \"invoicer\": {\n        \"email_address\": \"kraig@gorczany-larkin.test\"\n
+        \     },\n      \"primary_recipients\": [\n        {\n          \"billing_info\":
+        {\n            \"email_address\": \"kassandra@kirlin-hand.example\"\n          }\n
+        \       }\n      ],\n      \"amount\": {\n        \"currency_code\": \"USD\",\n
+        \       \"value\": \"86.00\"\n      },\n      \"due_amount\": {\n        \"currency_code\":
+        \"USD\",\n        \"value\": \"0.00\"\n      },\n      \"payments\": {\n        \"paid_amount\":
+        {\n          \"currency_code\": \"USD\",\n          \"value\": \"86.00\"\n
+        \       }\n      },\n      \"links\": [\n        {\n          \"href\": \"https://api.paypal.com/v2/invoicing/invoices/INV2-P9NR-B9U2-NUY4-4UCH\",\n
+        \         \"rel\": \"self\",\n          \"method\": \"GET\"\n        }\n      ],\n
+        \     \"unilateral\": false\n    },\n    {\n      \"id\": \"INV2-6SB3-FXWV-46S5-ADH8\",\n
+        \     \"status\": \"CANCELLED\",\n      \"detail\": {\n        \"currency_code\":
+        \"USD\",\n        \"note\": \"Let me know if you have any questions, and thank
+        you for your business!\",\n        \"invoice_number\": \"2017-INV0019\",\n
+        \       \"invoice_date\": \"2017-04-11\",\n        \"payment_term\": {\n          \"due_date\":
+        \"2017-04-11\"\n        },\n        \"viewed_by_recipient\": false,\n        \"group_draft\":
+        false,\n        \"metadata\": {\n          \"create_time\": \"2016-11-16T13:07:55Z\"\n
+        \       }\n      },\n      \"invoicer\": {\n        \"email_address\": \"treasa_macgyver@barton.example\"\n
+        \     },\n      \"primary_recipients\": [\n        {\n          \"billing_info\":
+        {\n            \"email_address\": \"garret@cole.example\"\n          }\n        }\n
+        \     ],\n      \"amount\": {\n        \"currency_code\": \"USD\",\n        \"value\":
+        \"215.63\"\n      },\n      \"due_amount\": {\n        \"currency_code\":
+        \"USD\",\n        \"value\": \"215.63\"\n      },\n      \"links\": [\n        {\n
+        \         \"href\": \"https://api.paypal.com/v2/invoicing/invoices/INV2-6SB3-FXWV-46S5-ADH8\",\n
+        \         \"rel\": \"self\",\n          \"method\": \"GET\"\n        }\n      ],\n
+        \     \"unilateral\": false\n    },\n    {\n      \"id\": \"INV2-MGTP-AX8W-MHKW-JXAL\",\n
+        \     \"status\": \"PAID\",\n      \"detail\": {\n        \"currency_code\":
+        \"USD\",\n        \"note\": \"This is the re-generated invoice. Sorry about
+        the issues with Wave. The refund has been sent to you and should be reflecting
+        shortly if your card was billed.\",\n        \"invoice_number\": \"201603-INV0011\",\n
+        \       \"invoice_date\": \"2016-04-15\",\n        \"payment_term\": {\n          \"due_date\":
+        \"2016-04-15\"\n        },\n        \"viewed_by_recipient\": false,\n        \"group_draft\":
+        false,\n        \"metadata\": {\n          \"create_time\": \"2016-04-15T19:07:07Z\"\n
+        \       }\n      },\n      \"invoicer\": {\n        \"email_address\": \"emilia@heidenreich.example\"\n
+        \     },\n      \"primary_recipients\": [\n        {\n          \"billing_info\":
+        {\n            \"business_name\": \"Haven\",\n            \"name\": {\n              \"given_name\":
+        \"Casey\",\n              \"surname\": \"Dylan\",\n              \"full_name\":
+        \"Rowan\"\n            },\n            \"email_address\": \"tobias@adams.example\"\n
+        \         }\n        }\n      ],\n      \"amount\": {\n        \"currency_code\":
+        \"USD\",\n        \"value\": \"1075.00\"\n      },\n      \"due_amount\":
+        {\n        \"currency_code\": \"USD\",\n        \"value\": \"0.00\"\n      },\n
+        \     \"payments\": {\n        \"paid_amount\": {\n          \"currency_code\":
+        \"USD\",\n          \"value\": \"1075.00\"\n        }\n      },\n      \"links\":
+        [\n        {\n          \"href\": \"https://api.paypal.com/v2/invoicing/invoices/INV2-MGTP-AX8W-MHKW-JXAL\",\n
+        \         \"rel\": \"self\",\n          \"method\": \"GET\"\n        }\n      ],\n
+        \     \"unilateral\": false\n    },\n    {\n      \"id\": \"INV2-4V8P-XFF3-4XZ6-KDT2\",\n
+        \     \"status\": \"PAID\",\n      \"detail\": {\n        \"currency_code\":
+        \"USD\",\n        \"invoice_number\": \"201603-INV0010\",\n        \"invoice_date\":
+        \"2016-03-02\",\n        \"payment_term\": {\n          \"due_date\": \"2016-03-02\"\n
+        \       },\n        \"viewed_by_recipient\": false,\n        \"group_draft\":
+        false,\n        \"metadata\": {\n          \"create_time\": \"2016-03-03T07:24:31Z\"\n
+        \       }\n      },\n      \"invoicer\": {\n        \"email_address\": \"rod.schimmel@durgan.example\"\n
+        \     },\n      \"primary_recipients\": [\n        {\n          \"billing_info\":
+        {\n            \"business_name\": \"Parker\",\n            \"name\": {\n              \"given_name\":
+        \"Azariah\",\n              \"surname\": \"Alexis\",\n              \"full_name\":
+        \"Ryan\"\n            },\n            \"email_address\": \"michael@kilback.test\"\n
+        \         }\n        }\n      ],\n      \"amount\": {\n        \"currency_code\":
+        \"USD\",\n        \"value\": \"228.44\"\n      },\n      \"due_amount\": {\n
+        \       \"currency_code\": \"USD\",\n        \"value\": \"0.00\"\n      },\n
+        \     \"payments\": {\n        \"paid_amount\": {\n          \"currency_code\":
+        \"USD\",\n          \"value\": \"228.44\"\n        }\n      },\n      \"links\":
+        [\n        {\n          \"href\": \"https://api.paypal.com/v2/invoicing/invoices/INV2-4V8P-XFF3-4XZ6-KDT2\",\n
+        \         \"rel\": \"self\",\n          \"method\": \"GET\"\n        }\n      ],\n
+        \     \"unilateral\": false\n    },\n    {\n      \"id\": \"INV2-AQZB-X47N-F73R-RS6U\",\n
+        \     \"status\": \"PAID\",\n      \"detail\": {\n        \"currency_code\":
+        \"USD\",\n        \"invoice_number\": \"201603-INV0009\",\n        \"invoice_date\":
+        \"2016-03-02\",\n        \"payment_term\": {\n          \"due_date\": \"2016-03-02\"\n
+        \       },\n        \"viewed_by_recipient\": false,\n        \"group_draft\":
+        false,\n        \"metadata\": {\n          \"create_time\": \"2016-03-03T07:21:47Z\"\n
+        \       }\n      },\n      \"invoicer\": {\n        \"email_address\": \"tinisha@spinka.test\"\n
+        \     },\n      \"primary_recipients\": [\n        {\n          \"billing_info\":
+        {\n            \"business_name\": \"Sam\",\n            \"name\": {\n              \"given_name\":
+        \"Lennon\",\n              \"surname\": \"Oakley\",\n              \"full_name\":
+        \"Emerson\"\n            },\n            \"email_address\": \"josue.schumm@medhurst-bins.example\"\n
+        \         }\n        }\n      ],\n      \"amount\": {\n        \"currency_code\":
+        \"USD\",\n        \"value\": \"30.00\"\n      },\n      \"due_amount\": {\n
+        \       \"currency_code\": \"USD\",\n        \"value\": \"0.00\"\n      },\n
+        \     \"payments\": {\n        \"paid_amount\": {\n          \"currency_code\":
+        \"USD\",\n          \"value\": \"30.00\"\n        }\n      },\n      \"links\":
+        [\n        {\n          \"href\": \"https://api.paypal.com/v2/invoicing/invoices/INV2-AQZB-X47N-F73R-RS6U\",\n
+        \         \"rel\": \"self\",\n          \"method\": \"GET\"\n        }\n      ],\n
+        \     \"unilateral\": false\n    },\n    {\n      \"id\": \"INV2-4UQH-48Y7-B4ZP-7NAS\",\n
+        \     \"status\": \"CANCELLED\",\n      \"detail\": {\n        \"currency_code\":
+        \"USD\",\n        \"note\": \"Instructions for using Shadowbox to update website
+        content will be available via email later this week.\",\n        \"invoice_number\":
+        \"0002\",\n        \"invoice_date\": \"2015-04-24\",\n        \"payment_term\":
+        {\n          \"due_date\": \"2015-04-23\"\n        },\n        \"viewed_by_recipient\":
+        false,\n        \"group_draft\": false,\n        \"metadata\": {\n          \"create_time\":
+        \"2015-04-23T12:28:07Z\"\n        }\n      },\n      \"primary_recipients\":
+        [\n        {\n          \"billing_info\": {\n            \"email_address\":
+        \"dante_mitchell@stamm-tromp.test\"\n          }\n        }\n      ],\n      \"amount\":
+        {\n        \"currency_code\": \"USD\",\n        \"value\": \"1057.50\"\n      },\n
+        \     \"due_amount\": {\n        \"currency_code\": \"USD\",\n        \"value\":
+        \"1057.50\"\n      },\n      \"links\": [\n        {\n          \"href\":
+        \"https://api.paypal.com/v2/invoicing/invoices/INV2-4UQH-48Y7-B4ZP-7NAS\",\n
+        \         \"rel\": \"self\",\n          \"method\": \"GET\"\n        }\n      ],\n
+        \     \"unilateral\": false\n    },\n    {\n      \"id\": \"INV2-SYMT-EZ7X-GTUC-2FCG\",\n
+        \     \"status\": \"CANCELLED\",\n      \"detail\": {\n        \"currency_code\":
+        \"USD\",\n        \"note\": \"Instructions for using Shadowbox to update website
+        content will be available via email later this week.\",\n        \"invoice_number\":
+        \"201404-INV0008\",\n        \"invoice_date\": \"2015-04-24\",\n        \"payment_term\":
+        {\n          \"due_date\": \"2015-04-23\"\n        },\n        \"viewed_by_recipient\":
+        false,\n        \"group_draft\": false,\n        \"metadata\": {\n          \"create_time\":
+        \"2015-04-23T12:28:06Z\"\n        }\n      },\n      \"primary_recipients\":
+        [\n        {\n          \"billing_info\": {\n            \"email_address\":
+        \"shanda.feeney@lehner.test\"\n          }\n        }\n      ],\n      \"amount\":
+        {\n        \"currency_code\": \"USD\",\n        \"value\": \"1057.50\"\n      },\n
+        \     \"due_amount\": {\n        \"currency_code\": \"USD\",\n        \"value\":
+        \"1057.50\"\n      },\n      \"links\": [\n        {\n          \"href\":
+        \"https://api.paypal.com/v2/invoicing/invoices/INV2-SYMT-EZ7X-GTUC-2FCG\",\n
+        \         \"rel\": \"self\",\n          \"method\": \"GET\"\n        }\n      ],\n
+        \     \"unilateral\": false\n    }\n  ],\n  \"links\": [\n    {\n      \"href\":
+        \"https://api.paypal.com/v2/invoicing/invoices?page=2&page_size=25&total_required=false\",\n
+        \     \"rel\": \"self\",\n      \"method\": \"GET\"\n    },\n    {\n      \"href\":
+        \"https://api.paypal.com/v2/invoicing/invoices?page=1&page_size=25&total_required=false\",\n
+        \     \"rel\": \"prev\",\n      \"method\": \"GET\"\n    }\n  ]\n}"
+  recorded_at: Thu, 28 Nov 2024 16:14:02 GMT
+recorded_with: VCR 6.3.1
