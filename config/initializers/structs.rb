@@ -24,6 +24,7 @@ Struct.new(
   :new_window,
   :section,
   :submenu,
+  :feature,
   :feature_flag,
   :enabled,
   :public,

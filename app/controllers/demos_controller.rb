@@ -118,4 +118,60 @@ class DemosController < ApplicationController
       # buttonLabel: t('devise.omniauth.ctas.sign_in_with_provider', provider: 'Google'),
     }
   end
+
+  def work_with_us
+    render inertia: 'demos/WorkWithUs', props: {
+      title: 'Work With Us',
+      subtitle: 'Join our team and make a difference',
+      description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio. Praesent libero. Sed cursus ante dapibus diam. Sed nisi.',
+      # formAction: user_google_omniauth_authorize_path,
+      # formMethod: :get,
+      # formId: 'work-with-us-form',
+      # buttonLabel: t('devise.omniauth.ctas.sign_in_with_provider', provider: 'Google'),
+    }
+  end
+
+  def newsletter
+    render inertia: 'demos/Newsletter', props: {
+      title: 'Newsletter',
+      subtitle: 'Stay updated with our latest news',
+      description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio. Praesent libero. Sed cursus ante dapibus diam. Sed nisi.',
+      # formAction: user_google_omniauth_authorize_path,
+      # formMethod: :get,
+      # formId: 'newsletter-form',
+      # buttonLabel: t('devise.omniauth.ctas.sign_in_with_provider', provider: 'Google'),
+    }
+  end
+
+  def testimonials
+    render inertia: 'demos/Testimonials', props: {
+      title: 'Testimonials',
+      subtitle: 'What our customers say about us',
+      description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio. Praesent libero. Sed cursus ante dapibus diam. Sed nisi.',
+      # formAction: user_google_omniauth_authorize_path,
+      # formMethod: :get,
+      # formId: 'testimonials-form',
+      # buttonLabel: t('devise.omniauth.ctas.sign_in_with_provider', provider: 'Google'),
+    }
+  end
+
+  def blog_highlights
+    render inertia: 'demos/BlogHighlights', props: {
+      title: 'Blog Highlights',
+      subtitle: 'Latest articles from our blog',
+      description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio. Praesent libero. Sed cursus ante dapibus diam. Sed nisi.',
+      # formAction: user_google_omniauth_authorize_path,
+      # formMethod: :get,
+      # formId: 'blog-highlights-form',
+      # buttonLabel: t('devise.omniauth.ctas.sign_in_with_provider', provider: 'Google'),
+    }
+  end
+
+  def content_sections
+    render inertia: 'demos/ContentSections', props: {
+      title: 'Content Sections',
+      subtitle: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+      description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio. Praesent libero. Sed cursus ante dapibus diam. Sed nisi.',
+    }
+  end
 end

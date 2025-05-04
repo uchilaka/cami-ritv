@@ -100,7 +100,7 @@ module NavbarHelper
           {
             label: t('shared.navbar.about'),
             path: '/about-us',
-            public: true,
+            feature: true,
           },
         ].map { |item| build_menu_item(item) }.filter(&:enabled)
       end
@@ -113,7 +113,7 @@ module NavbarHelper
   end
 
   def public_menu
-    @public_menu ||= main_menu.filter(&:public)
+    @public_menu ||= (main_menu.filter(&:public) + main_menu.filter(&:feature))
   end
 
   def developer_menu

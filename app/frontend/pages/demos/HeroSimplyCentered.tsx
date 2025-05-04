@@ -6,7 +6,7 @@ import DemoLayout from "@/components/MinimalLayout";
 
 const HeroSimplyCentered: FCWithLayout = () => {
   return (
-    <div className="relative isolate px-6 pt-14 lg:px-8">
+    <div className="bg-white relative isolate px-6 pt-14 lg:px-8">
       <div
         aria-hidden="true"
         className="absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80"

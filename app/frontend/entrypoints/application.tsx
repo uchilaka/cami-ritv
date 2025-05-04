@@ -46,7 +46,7 @@ document.addEventListener("DOMContentLoaded", () => {
       },
       setup({ el, App, props }) {
         if (el) {
-          el.classList.add("min-h-[var(--lc-min-hero-height)]");
+          // el.classList.add("min-h-[var(--lc-min-hero-height)]");
           createRoot(el).render(createElement(App, props));
         } else {
           throw new Error(
