@@ -166,4 +166,12 @@ class DemosController < ApplicationController
       # buttonLabel: t('devise.omniauth.ctas.sign_in_with_provider', provider: 'Google'),
     }
   end
+
+  def content_sections
+    render inertia: 'demos/ContentSections', props: {
+      title: 'Content Sections',
+      subtitle: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+      description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio. Praesent libero. Sed cursus ante dapibus diam. Sed nisi.',
+    }
+  end
 end
