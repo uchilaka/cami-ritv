@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_05_04_085838) do
+ActiveRecord::Schema[8.0].define(version: 2025_05_04_093920) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -23,9 +23,22 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_04_085838) do
     t.string "type"
     t.string "tax_id"
     t.text "readme"
+    t.string "remote_crm_id"
     t.jsonb "metadata", default: {}
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.uuid "parent_id"
+    t.datetime "discarded_at"
+    t.index ["discarded_at"], name: "index_accounts_on_discarded_at"
+    t.index ["email"], name: "by_account_email_if_set", unique: true, where: "(email IS NOT NULL)", nulls_not_distinct: true
+  end
+
+  create_table "accounts_roles", id: false, force: :cascade do |t|
+    t.uuid "account_id"
+    t.uuid "role_id"
+    t.index ["account_id", "role_id"], name: "index_accounts_roles_on_account_id_and_role_id"
+    t.index ["account_id"], name: "index_accounts_roles_on_account_id"
+    t.index ["role_id"], name: "index_accounts_roles_on_role_id"
   end
 
   create_table "accounts_users", id: false, force: :cascade do |t|
@@ -142,6 +155,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_04_085838) do
     t.index ["item_type", "item_id"], name: "index_versions_on_item_type_and_item_id"
   end
 
+  add_foreign_key "accounts", "accounts", column: "parent_id", validate: false
   add_foreign_key "allowlisted_jwts", "users", on_delete: :cascade
   add_foreign_key "identity_provider_profiles", "users"
 end

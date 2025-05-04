@@ -1,6 +1,8 @@
 GEM
   remote: https://rubygems.org/
   specs:
+    aasm (5.5.0)
+      concurrent-ruby (~> 1.0)
     actioncable (8.0.2)
       actionpack (= 8.0.2)
       activesupport (= 8.0.2)
@@ -80,6 +82,9 @@ GEM
     addressable (2.8.7)
       public_suffix (>= 2.0.2, < 7.0)
     aes_key_wrap (1.1.0)
+    after_commit_everywhere (1.6.0)
+      activerecord (>= 4.2)
+      activesupport
     annotaterb (4.14.0)
     ast (2.4.3)
     awesome_print (1.9.2)
@@ -569,7 +574,9 @@ PLATFORMS
   x86_64-linux
 
 DEPENDENCIES
+  aasm
   active_model_serializers
+  after_commit_everywhere (~> 1.6)
   annotaterb
   awesome_print
   brakeman
@@ -582,7 +589,7 @@ DEPENDENCIES
   devise
   devise-jwt (~> 0.12)
   devise-passwordless (~> 1.1)
-  discard
+  discard (~> 1.4)
   dotenv
   fabrication
   faker

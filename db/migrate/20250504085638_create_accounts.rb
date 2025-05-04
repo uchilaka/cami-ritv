@@ -12,6 +12,7 @@ class CreateAccounts < ActiveRecord::Migration[8.0]
       t.string :type
       t.string :tax_id
       t.text :readme
+      t.string :remote_crm_id
       t.jsonb :metadata, default: {}
 
       t.timestamps

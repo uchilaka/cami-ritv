@@ -55,10 +55,17 @@ gem 'omniauth-google-oauth2', '~> 1.2'
 gem 'omniauth-rails_csrf_protection'
 gem 'rack-cors', '~> 2.0'
 
+# Not supported yet on Rails 8.0
+# gem 'active_record_extended'
+
+gem 'aasm'
+# Required by AASM
+gem 'after_commit_everywhere', '~> 1.6'
+
 gem 'active_model_serializers'
 gem 'bumbler'
 gem 'data_migrate', '~> 11.3'
-gem 'discard'
+gem 'discard', '~> 1.4'
 gem 'faraday'
 gem 'friendly_id', '~> 5.5'
 gem 'globalid', '~> 1.2'
