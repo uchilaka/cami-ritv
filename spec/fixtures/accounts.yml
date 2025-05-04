@@ -1,0 +1,58 @@
+# == Schema Information
+#
+# Table name: accounts
+#
+#  id            :uuid             not null, primary key
+#  discarded_at  :datetime
+#  display_name  :string
+#  email         :string
+#  metadata      :jsonb
+#  phone         :jsonb
+#  readme        :text
+#  slug          :string
+#  status        :integer
+#  type          :string
+#  created_at    :datetime         not null
+#  updated_at    :datetime         not null
+#  parent_id     :uuid
+#  remote_crm_id :string
+#  tax_id        :string
+#
+# Indexes
+#
+#  by_account_email_if_set         (email) UNIQUE WHERE (email IS NOT NULL)
+#  index_accounts_on_discarded_at  (discarded_at)
+#
+# Foreign Keys
+#
+#  fk_rails_...  (parent_id => accounts.id)
+#
+---
+- display_name: Acme Corporation
+  email: acme@fakein.box
+  slug: acme
+- display_name: LarCity LLC
+  email: support@lar.city
+  tax_id: <%= VirtualOfficeManager.default_entity[:tax_id] %>
+  slug: larcity
+# SEC archive doc: https://www.sec.gov/Archives/edgar/data/1103415/000091205702037693/a2090698z8-k.htm
+- display_name: PayPal, Inc.
+  email: support@paypal.com
+  tax_id: <%= VirtualOfficeManager.entities.dig(:paypal, :tax_id) %>
+  slug: paypal
+- display_name: Google, Inc.
+  email: support@google.com
+  tax_id: <%= VirtualOfficeManager.entities.dig(:google, :tax_id) %>
+  slug: google
+- display_name: Amazon.com, Inc.
+  slug: amazon
+- display_name: Microsoft Corporation
+  slug: microsoft
+- display_name: Apple Inc.
+  slug: apple
+- display_name: Zoho Corporation
+  slug: zoho
+- display_name: Squarespace, Inc.
+  slug: squarespace
+- display_name: Shopify, Inc.
+  slug: shopify
