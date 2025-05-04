@@ -1,5 +1,5 @@
 import React from "react";
-import DemoLayout from "@/components/DemoLayout";
+import BasicLayout from "@/components/BasicLayout";
 import { FCWithLayout } from "@/@types";
 
 const links = [
@@ -82,6 +82,6 @@ const WhatWeDo: FCWithLayout = () => {
   );
 };
 
-WhatWeDo.layout = DemoLayout;
+WhatWeDo.layout = BasicLayout;
 
 export default WhatWeDo;

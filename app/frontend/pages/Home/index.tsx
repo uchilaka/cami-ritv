@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef } from "react";
 import Typed from "typed.js";
-import DemoLayout from "@/components/DemoLayout";
+import DemoLayout from "@/components/BasicLayout";
 // import clsx from "clsx";
 import { FCWithLayout } from "@/@types";
 // import styles from "./Home.module.css";
@@ -114,7 +114,7 @@ const Home: FCWithLayout = () => {
             </p>
             <div className="mt-10 flex items-center justify-center gap-x-6">
               <a
-                href="#"
+                href="/consultation/first-contact"
                 className="rounded-md bg-indigo-600 px-3.5 py-2.5 text-lg font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
               >
                 Get started today

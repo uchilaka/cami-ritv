@@ -1,6 +1,6 @@
 import React from "react";
 import { FCWithLayout } from "@/@types";
-import DemoLayout from "@/components/DemoLayout";
+import DemoLayout from "@/components/BasicLayout";
 
 const SimpleSignIn: FCWithLayout = () => {
   return (

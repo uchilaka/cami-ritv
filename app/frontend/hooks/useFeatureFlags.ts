@@ -1,6 +1,9 @@
 import { usePage } from "@inertiajs/react";
 
-type FeatureFlag = "feat__showcase" | "feat__marketing_announcements";
+type FeatureFlag =
+  | "feat__showcase"
+  | "feat__marketing_announcements"
+  | "feat_first_contact_consultation";
 
 type FeatureFlags = Record<FeatureFlag, boolean>;
 

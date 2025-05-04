@@ -16,6 +16,13 @@ class LobbyController < ApplicationController
     }
   end
 
+  def consultation
+    render inertia: 'Appointment/index', props: {
+      title: 'Request a Consultation',
+      subject: consultation_params[:subject],
+    }
+  end
+
   def background_video
     render inertia: 'Home/BackgroundVideo', props: {
       title: 'Welcome to LarCity (Background Video)',
@@ -26,5 +33,13 @@ class LobbyController < ApplicationController
     render inertia: 'WhatWeDo', props: {
       title: 'What We Do',
     }
+  end
+
+  private
+
+  # TODO: This should be a strong params method with an allowed list of
+  #   values: ['deal', 'follow-up', 'renew', 'cancel', 'demo', 'support', 'first-contact']
+  def consultation_params
+    params.permit(:subject)
   end
 end
