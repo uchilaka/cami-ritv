@@ -25,6 +25,10 @@
       "name": "Frontend/Features"
     },
     {
+      "path": "./app/frontend/hooks/",
+      "name": "Frontend/Hooks"
+    },
+    {
       "path": "./app/frontend/pages/",
       "name": "Frontend/Pages"
     },

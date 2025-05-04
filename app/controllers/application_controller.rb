@@ -16,7 +16,7 @@ class ApplicationController < ActionController::Base
 
   inertia_share do
     {
-      current_user: maybe_current_user,
+      current_user: maybe_current_user_hash,
       footer_resource_links: footer_resource_links,
       footer_company_links: [
         { label: t('accessibility.footer.about'), href: '#' },
@@ -29,6 +29,9 @@ class ApplicationController < ActionController::Base
         url: logo_url,
         aria_label: t('accessibility.footer.logo'),
       },
+      feature_flags: Flipper.features.each_with_object({}) do |feature, flags|
+        flags[feature.name] = respond_to?(:current_user) ? feature.enabled?(current_user) : feature.enabled?
+      end,
     }
   end
 
@@ -48,7 +51,7 @@ class ApplicationController < ActionController::Base
 
   protected
 
-  def maybe_current_user
+  def maybe_current_user_hash
     return current_user.serializable_hash if user_signed_in?
 
     nil

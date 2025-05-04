@@ -5,11 +5,15 @@ import DemoLayout from "@/components/DemoLayout";
 import { FCWithLayout } from "@/@types";
 // import styles from "./Home.module.css";
 import BackgroundVideo from "./BackgroundVideo";
+import useFeatureFlags from "@/hooks/useFeatureFlags";
 
 const Home: FCWithLayout = () => {
+  const { featureFlags, isEnabled } = useFeatureFlags();
   const autoCursorEl = useRef<HTMLHeadingElement>(null);
   const scrollBlurEl = useRef<HTMLDivElement>(null);
   const typed = useRef<Typed | null>(null);
+
+  console.debug({ featureFlags });
 
   const onStringTyped = (arrayPos: number, typist: Typed) => {
     console.debug({ arrayPos });
@@ -84,15 +88,17 @@ const Home: FCWithLayout = () => {
 
         {/* Content Section */}
         <div className="mx-auto max-w-2xl py-32 sm:py-48 lg:py-56">
-          <div className="hidden sm:mb-8 sm:flex sm:justify-center">
-            <div className="relative rounded-full px-3 py-1 text-sm/6 ring-1 ring-gray-900/10 hover:ring-gray-900/30">
-              Announcing our next round of funding.{" "}
-              <a href="#" className="font-semibold text-indigo-600">
-                <span aria-hidden="true" className="absolute inset-0" />
-                Read more <span aria-hidden="true">&rarr;</span>
-              </a>
+          {isEnabled("feat__marketing_announcements") && (
+            <div className="hidden sm:mb-8 sm:flex sm:justify-center">
+              <div className="relative rounded-full px-3 py-1 text-sm/6 ring-1 ring-gray-900/10 hover:ring-gray-900/30">
+                Announcing our next round of funding.{" "}
+                <a href="#" className="font-semibold text-indigo-600">
+                  <span aria-hidden="true" className="absolute inset-0" />
+                  Read more <span aria-hidden="true">&rarr;</span>
+                </a>
+              </div>
             </div>
-          </div>
+          )}
           <div className="text-center">
             {/* TODO: A/B test the title style */}
             <h1 className="text-5xl font-semibold tracking-tight text-balance sm:text-7xl">

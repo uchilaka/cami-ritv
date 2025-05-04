@@ -25,10 +25,11 @@
 <% end %>
 <%= render "layouts/shared/head" %>
 
-<body class="h-full">
+<body class="h-full dark:bg-gray-800">
   <%= render "shared/navbar/index" %>
   <%= render "shared/flash" %>
-  <main class="bg-transparent min-h-[var(--lc-min-hero-height)]">
+  <!-- add this to class enforce minimum height: min-h-[var(--lc-min-hero-height)] -->
+  <main class="bg-transparent">
     <%= yield %>
   </main>
   <%= render "shared/footer/full" %>
