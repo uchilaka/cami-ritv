@@ -15,6 +15,7 @@
  */
 @use "fontawesome";
 @use "global_vars";
+@use "lobby/landing_page";
 
 // From HTML5 style suite
 //@import "libs/vars";
@@ -63,6 +64,3 @@ header {
 //        mobile:    ( 481px,   736px  ),
 //        mobilep:   ( null,    480px  )
 //));
-
-
-@import "lobby/landing_page";
