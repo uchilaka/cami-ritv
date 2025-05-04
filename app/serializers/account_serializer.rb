@@ -22,7 +22,7 @@
 #
 # Indexes
 #
-#  by_account_email_if_set         (email) UNIQUE WHERE (email IS NOT NULL)
+#  by_account_email_if_set         (email) UNIQUE NULLS NOT DISTINCT WHERE (email IS NOT NULL)
 #  index_accounts_on_discarded_at  (discarded_at)
 #
 # Foreign Keys
