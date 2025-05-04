@@ -2,7 +2,7 @@
 
 import React from "react";
 import { FCWithLayout } from "@/@types";
-import DemoLayout from "@/components/MinimalLayout";
+import DemoLayout from "@/components/BasicLayout";
 
 const HeroSimplyCentered: FCWithLayout = () => {
   return (

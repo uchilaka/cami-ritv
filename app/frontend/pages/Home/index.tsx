@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef } from "react";
 import Typed from "typed.js";
-import DemoLayout from "@/components/MinimalLayout";
+import DemoLayout from "@/components/BasicLayout";
 // import clsx from "clsx";
 import { FCWithLayout } from "@/@types";
 // import styles from "./Home.module.css";
