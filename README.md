@@ -6,4 +6,5 @@
 
 ## Future work 
 
-- [ ] Implement dark mode switcher: https://flowbite.com/docs/customize/dark-mode/#dark-mode-switcher
+- [ ] Dark mode switcher: https://flowbite.com/docs/customize/dark-mode/#dark-mode-switcher
+- [ ] Google Workspace IAM Identity Provider for AWS: https://docs.aws.amazon.com/singlesignon/latest/userguide/gs-gwp.html
