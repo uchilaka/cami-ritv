@@ -10,7 +10,7 @@ module Zoho
             Account_Name: company_name,
             Description: description,
             Phone: phone_number,
-            Website: website
+            Website: website,
           }
           attr[:Mobile] = phone_number if has_mobile_number?
           attr.compact

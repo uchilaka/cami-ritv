@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+require_relative 'model'
+require_relative '../access_token'
+
 module Zoho
   module API
     class Account < Model
@@ -12,10 +15,10 @@ module Zoho
           resource_uri = "/crm/v7/#{module_name}/upsert"
           payload = {
             data: [
-              Zoho::AccountSerializer.new(record).serializable_hash
+              Zoho::AccountSerializer.new(record).serializable_hash,
             ],
             duplicate_check_fields: %w[Email Phone],
-            trigger: ['workflow']
+            trigger: ['workflow'],
           }
           if pretend
             Rails.logger.info("Pretending to upsert #{module_name} record data", payload:)
