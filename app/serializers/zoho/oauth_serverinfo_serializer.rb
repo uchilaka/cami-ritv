@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Zoho
-  class ServerinfoSerializer < AdhocSerializer
+  class OauthServerinfoSerializer < AdhocSerializer
     def attributes
       @attributes = { key:, location:, endpoint:, region: } unless defined?(@attributes)
       @attributes.compact

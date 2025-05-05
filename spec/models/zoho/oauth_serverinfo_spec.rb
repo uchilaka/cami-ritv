@@ -3,20 +3,18 @@
 require 'rails_helper'
 
 module Zoho
-  RSpec.describe Serverinfo, type: :model do
-    subject(:config) { Fabricate :zoho_serverinfo }
+  RSpec.describe OauthServerinfo, type: :model do
+    subject(:config) { Fabricate :zoho_oauth_serverinfo }
 
     shared_examples 'a supported serverinfo region' do |region_alpha2, endpoint, region_name = nil|
       subject(:config) do
         Fabricate(
-          :zoho_serverinfo,
+          :zoho_oauth_serverinfo,
           value: {
-            oauth: {
-              region_alpha2:,
-              region_name:,
-              endpoint:,
-            }.compact,
-          }
+            region_alpha2:,
+            region_name:,
+            endpoint:,
+          }.compact
         )
       end
 
@@ -27,12 +25,10 @@ module Zoho
     describe '#endpoint' do
       subject(:config) do
         Fabricate(
-          :zoho_serverinfo,
+          :zoho_oauth_serverinfo,
           value: {
-            oauth: {
-              region_alpha2: 'JP',
-              endpoint: 'https://accounts.zoho.jp',
-            },
+            region_alpha2: 'JP',
+            endpoint: 'https://accounts.zoho.jp',
           }
         )
       end
@@ -43,12 +39,10 @@ module Zoho
     describe '#region_name' do
       subject(:config) do
         Fabricate(
-          :zoho_serverinfo,
+          :zoho_oauth_serverinfo,
           value: {
-            oauth: {
-              region_alpha2: 'JP',
-              endpoint: 'https://accounts.zoho.jp',
-            },
+            region_alpha2: 'JP',
+            endpoint: 'https://accounts.zoho.jp',
           }
         )
       end

@@ -38,8 +38,10 @@ module Zoho
             next if country.blank? && !valid_server_region?(region_alpha2)
 
             region_name = country.blank? ? region_alpha2 : country[:name]
+            config_key = response.env.url.to_s
             result[region_alpha2.to_s.upcase.to_sym] = {
-              oauth: {
+              key: config_key,
+              value: {
                 endpoint: endpoint.to_s,
                 region_alpha2: region_alpha2.to_s.upcase,
                 region_name:,

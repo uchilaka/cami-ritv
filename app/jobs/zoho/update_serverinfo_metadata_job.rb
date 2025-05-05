@@ -5,15 +5,7 @@ module Zoho
     queue_as :yeet
 
     def perform(*args)
-      response =
-        API::Account
-          .connection(auth: true)
-          .get('/oauth/serverinfo')
-      data = response.body || {}
-
-      url = data.dig('locations', 'us')
-      raise ::LarCity::Errors::Unknown3rdPartyHostError unless valid_http_host?(url)
-
+      UpdateServerinfoMetadata.call
     end
   end
 end
