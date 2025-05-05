@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # Doc on pre-loading collapsed directories: https://guides.rubyonrails.org/autoloading_and_reloading_constants.html#option-2-preload-a-collapsed-directory
-sti_model_paths = %w[accounts invoices].map { |dir| "#{Rails.root}/app/models/#{dir}" }
+sti_model_paths = %w[accounts invoices metadata].map { |dir| "#{Rails.root}/app/models/#{dir}" }
 
 sti_model_paths.each do |path|
   Rails.autoloaders.main.collapse(path) # Not a namespace
