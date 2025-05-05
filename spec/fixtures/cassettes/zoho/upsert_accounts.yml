@@ -1,0 +1,199 @@
+---
+http_interactions:
+  - request:
+      method: get
+      uri: https://accounts.zoho.com/oauth/serverinfo
+      body:
+        encoding: US-ASCII
+        string: ''
+      headers:
+        User-Agent:
+          - Faraday v2.12.0
+    response:
+      status:
+        code: 200
+        message: ''
+      headers:
+        server:
+          - ZGS
+        date:
+          - Sat, 01 Feb 2025 12:34:32 GMT
+        content-type:
+          - application/json;charset=UTF-8
+        content-length:
+          - '300'
+        connection:
+          - keep-alive
+        set-cookie:
+          - zalb_b266a5bf57=a711b6da0e6cbadb5e254290f114a026; Path=/; Secure; HttpOnly,
+            iamcsr=2d963ec5-13e4-49b2-bd3d-cdfb7f27d397;path=/;SameSite=None;Secure;priority=high,
+            _zcsr_tmp=2d963ec5-13e4-49b2-bd3d-cdfb7f27d397;path=/;SameSite=Strict;Secure;priority=high
+        x-content-type-options:
+          - nosniff
+        x-frame-options:
+          - SAMEORIGIN
+        content-language:
+          - en-US
+        strict-transport-security:
+          - max-age=63072000
+      body:
+        encoding: UTF-8
+        string: |-
+          {
+            "result": "success",
+            "locations": {
+              "eu": "https://accounts.zoho.eu",
+              "au": "https://accounts.zoho.com.au",
+              "in": "https://accounts.zoho.in",
+              "jp": "https://accounts.zoho.jp",
+              "uk": "https://accounts.zoho.uk",
+              "us": "https://accounts.zoho.com",
+              "ca": "https://accounts.zohocloud.ca",
+              "sa": "https://accounts.zoho.sa"
+            }
+          }
+    recorded_at: Sat, 01 Feb 2025 12:34:32 GMT
+  - request:
+      method: post
+      uri: https://accounts.zoho.com/oauth/v2/token
+      body:
+        encoding: UTF-8
+        string: client_id=<ZOHO_CLIENT_ID>&client_secret=<ZOHO_CLIENT_SECRET>&grant_type=client_credentials&scope=ZohoCRM.modules.accounts.ALL%2CZohoCRM.modules.appointments.ALL%2CZohoCRM.modules.contacts.ALL%2CZohoCRM.modules.deals.ALL%2CZohoCRM.modules.invoices.ALL%2CZohoCRM.modules.leads.ALL%2CZohoCRM.modules.notes.ALL%2CZohoCRM.modules.products.ALL%2CZohoCRM.modules.tasks.ALL%2CZohoCRM.modules.vendors.ALL&soid=ZohoCRM.877691058
+      headers:
+        User-Agent:
+          - Faraday v2.12.0
+        Content-Type:
+          - application/x-www-form-urlencoded
+    response:
+      status:
+        code: 200
+        message: ''
+      headers:
+        server:
+          - ZGS
+        date:
+          - Sat, 01 Feb 2025 12:34:32 GMT
+        content-type:
+          - application/json;charset=UTF-8
+        content-length:
+          - '460'
+        connection:
+          - keep-alive
+        set-cookie:
+          - zalb_b266a5bf57=a711b6da0e6cbadb5e254290f114a026; Path=/; Secure; HttpOnly,
+            iamcsr=2dd3b5da-9088-4ab0-bab4-f2e069151f27;path=/;SameSite=None;Secure;priority=high,
+            _zcsr_tmp=2dd3b5da-9088-4ab0-bab4-f2e069151f27;path=/;SameSite=Strict;Secure;priority=high
+        cache-control:
+          - no-store
+        x-content-type-options:
+          - nosniff
+        pragma:
+          - no-cache
+        x-frame-options:
+          - SAMEORIGIN
+        content-language:
+          - en-US
+        strict-transport-security:
+          - max-age=63072000
+      body:
+        encoding: UTF-8
+        string: |-
+          {
+            "access_token": "<ZOHO_ACCESS_TOKEN>",
+            "scope": "ZohoCRM.modules.accounts.ALL ZohoCRM.modules.appointments.ALL ZohoCRM.modules.contacts.ALL ZohoCRM.modules.deals.ALL ZohoCRM.modules.invoices.ALL ZohoCRM.modules.leads.ALL ZohoCRM.modules.notes.ALL ZohoCRM.modules.products.ALL ZohoCRM.modules.tasks.ALL ZohoCRM.modules.vendors.ALL",
+            "api_domain": "https://www.zohoapis.com",
+            "token_type": "Bearer",
+            "expires_in": 3600
+          }
+    recorded_at: Sat, 01 Feb 2025 12:34:32 GMT
+  - request:
+      method: post
+      uri: https://www.zohoapis.com/crm/v7/Accounts/upsert
+      body:
+        encoding: UTF-8
+        string: '{"data":[{"Email":"bruce.smith@lesch.example","Account_Name":"Gerhold
+        Group","Phone":"+208111297741"}],"duplicate_check_fields":["Email","Mobile"],"trigger":["workflow"]}'
+      headers:
+        User-Agent:
+          - Faraday v2.12.0
+        Authorization:
+          - "<ZOHO_AUTHORIZATION_HEADER>"
+        Content-Type:
+          - application/json
+    response:
+      status:
+        code: 200
+        message: ''
+      headers:
+        server:
+          - ZGS
+        date:
+          - Sat, 01 Feb 2025 12:34:32 GMT
+        content-type:
+          - application/json;charset=UTF-8
+        content-length:
+          - '398'
+        connection:
+          - keep-alive
+        set-cookie:
+          - zalb_1ccad04dca=b13f29b80337275633ee296dd14e08be; Path=/; Secure; HttpOnly,
+            crmcsr=2c9c80ff-7398-4c9a-a8a9-5d82a2e5a9dc;path=/;SameSite=None;Secure;priority=high,
+            _zcsr_tmp=2c9c80ff-7398-4c9a-a8a9-5d82a2e5a9dc;path=/;SameSite=Strict;Secure;priority=high
+        referrer-policy:
+          - strict-origin
+        x-content-type-options:
+          - nosniff
+        content-security-policy:
+          - default-src 'none';frame-ancestors 'self'; report-uri https://logsapi.zoho.com/csplog?service=crm
+        x-xss-protection:
+          - 1; mode=block
+        cache-control:
+          - no-store, no-cache, must-revalidate, private
+        pragma:
+          - no-cache
+        expires:
+          - Thu, 01 Jan 1970 00:00:00 GMT
+        x-frame-options:
+          - SAMEORIGIN
+        x-accesstoken-reset:
+          - '2025-02-01T08:34:32-05:00'
+        clientversion:
+          - '9906101'
+        clientsubversion:
+          - 2d9476c05e1efe9e9414b6a824553844
+        content-disposition:
+          - attachment; filename=response.json
+        content-language:
+          - en-US
+        strict-transport-security:
+          - max-age=63072000
+      body:
+        encoding: UTF-8
+        string: |-
+          {
+            "data": [
+              {
+                "code": "SUCCESS",
+                "duplicate_field": null,
+                "action": "insert",
+                "details": {
+                  "Modified_Time": "2025-02-01T07:34:32-05:00",
+                  "Modified_By": {
+                    "name": "Zion",
+                    "id": "6608277000000498001"
+                  },
+                  "Created_Time": "2025-02-01T07:34:32-05:00",
+                  "id": "6608277000000512016",
+                  "Created_By": {
+                    "name": "Quinn",
+                    "id": "6608277000000498001"
+                  },
+                  "$approval_state": "approved"
+                },
+                "message": "record added",
+                "status": "success"
+              }
+            ]
+          }
+    recorded_at: Sat, 01 Feb 2025 12:34:33 GMT
+recorded_with: VCR 6.3.1
