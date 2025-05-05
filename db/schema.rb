@@ -38,9 +38,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_04_144509) do
   end
 
   create_table "accounts_roles", id: false, force: :cascade do |t|
-    t.uuid "account_id"
     t.uuid "role_id"
-    t.index ["account_id", "role_id"], name: "index_accounts_roles_on_account_id_and_role_id"
+    t.uuid "account_id"
     t.index ["account_id"], name: "index_accounts_roles_on_account_id"
     t.index ["role_id"], name: "index_accounts_roles_on_role_id"
   end
@@ -146,6 +145,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_04_144509) do
     t.string "invoice_number"
     t.string "payment_vendor"
     t.enum "status", default: "draft", enum_type: "invoice_status"
+    t.string "type", default: "Invoice"
     t.datetime "issued_at", precision: nil
     t.datetime "updated_accounts_at", precision: nil
     t.datetime "due_at", precision: nil
@@ -155,8 +155,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_04_144509) do
     t.integer "due_amount_cents", default: 0, null: false
     t.string "due_amount_currency", default: "USD", null: false
     t.text "notes"
-    t.jsonb "payments"
+    t.jsonb "invoicer", default: {}
     t.jsonb "links"
+    t.jsonb "metadata", default: {}
+    t.jsonb "payments"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["invoiceable_type", "invoiceable_id"], name: "index_invoices_on_invoiceable"
@@ -226,6 +228,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_04_144509) do
   end
 
   add_foreign_key "accounts", "accounts", column: "parent_id", validate: false
+  add_foreign_key "accounts_roles", "accounts"
+  add_foreign_key "accounts_roles", "roles"
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "allowlisted_jwts", "users", on_delete: :cascade

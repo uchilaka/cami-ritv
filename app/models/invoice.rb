@@ -12,13 +12,16 @@
 #  due_at                    :datetime
 #  invoice_number            :string
 #  invoiceable_type          :string
+#  invoicer                  :jsonb
 #  issued_at                 :datetime
 #  links                     :jsonb
+#  metadata                  :jsonb
 #  notes                     :text
 #  paid_at                   :datetime
 #  payment_vendor            :string
 #  payments                  :jsonb
 #  status                    :enum             default("draft")
+#  type                      :string           default("Invoice")
 #  updated_accounts_at       :datetime
 #  created_at                :datetime         not null
 #  updated_at                :datetime         not null

@@ -4,10 +4,8 @@
 class RolifyCreateAccountsRoles < ActiveRecord::Migration[8.0]
   def change
     create_table(:accounts_roles, id: false) do |t|
-      t.references :account, type: :uuid
-      t.references :role, type: :uuid
+      t.belongs_to :role, foreign_key: true, type: :uuid
+      t.belongs_to :account, foreign_key: true, type: :uuid
     end
-
-    add_index(:accounts_roles, %i[account_id role_id])
   end
 end

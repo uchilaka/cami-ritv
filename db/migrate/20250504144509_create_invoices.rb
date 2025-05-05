@@ -26,6 +26,7 @@ class CreateInvoices < ActiveRecord::Migration[8.0]
       t.string :invoice_number
       t.string :payment_vendor
       t.enum :status, default: :draft, enum_type: :invoice_status
+      t.string :type, default: 'Invoice'
       t.timestamp :issued_at
       # t.timestamp :viewed_by_recipient_at # TODO Figure out queries of paper_trail data instead for this
       t.timestamp :updated_accounts_at
@@ -34,8 +35,10 @@ class CreateInvoices < ActiveRecord::Migration[8.0]
       t.monetize :amount
       t.monetize :due_amount
       t.text :notes
-      t.jsonb :payments
+      t.jsonb :invoicer, default: {}
       t.jsonb :links
+      t.jsonb :metadata, default: {}
+      t.jsonb :payments
 
       t.timestamps
     end
