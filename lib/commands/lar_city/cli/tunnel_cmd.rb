@@ -5,7 +5,7 @@ require 'open3'
 
 module LarCity
   module CLI
-  # Manage NGROK tunnels for dev testing of the app and rails API
+    # Manage NGROK tunnels for dev testing of the app and rails API
     class TunnelCmd < BaseCmd
       namespace 'tunnel'
 

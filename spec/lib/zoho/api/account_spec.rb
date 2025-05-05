@@ -198,20 +198,19 @@ module Zoho
         end
         # End VCR configuration
 
-        subject { described_class.serverinfo }
+        subject(:us_region_crm_config) { described_class.serverinfo[:US] }
 
         it 'returns a hash with the server info' do
-          expect(subject).to be_a(Hash)
-          expect(subject.keys).to include('data')
-          expect(subject['data']).to be_a(Hash)
-          expect(subject['data']['id']).to be_present
-          expect(subject['data']['name']).to be_present
-          expect(subject['data']['type']).to be_present
-          expect(subject['data']['country']).to be_present
+          expect(us_region_crm_config.keys).to include(:oauth)
+          expect(us_region_crm_config[:oauth]).to be_a(Hash)
         end
 
+        it { expect(us_region_crm_config.dig(:oauth, :endpoint)).to eq('https://accounts.zoho.com') }
+        it { expect(us_region_crm_config.dig(:oauth, :region_alpha2)).to eq('US') }
+        it { expect(us_region_crm_config.dig(:oauth, :region_name)).to eq('United States of America') }
+
         it 'is idempotent' do
-          expect(subject).to eq(described_class.serverinfo)
+          expect(us_region_crm_config).to eq(described_class.serverinfo[:US])
         end
       end
     end

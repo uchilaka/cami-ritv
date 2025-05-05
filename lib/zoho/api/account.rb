@@ -37,11 +37,12 @@ module Zoho
             country = LarCity::GeoRegions.lookup(region_alpha2)
             next if country.blank? && !valid_server_region?(region_alpha2)
 
-            result[region_alpha2.to_sym] = {
+            region_name = country.blank? ? region_alpha2 : country[:name]
+            result[region_alpha2.to_s.upcase.to_sym] = {
               oauth: {
                 endpoint: endpoint.to_s,
-                country_alpha2: region_alpha2.to_s,
-                country_name: country[:name],
+                region_alpha2: region_alpha2.to_s.upcase,
+                region_name:,
               },
             }
           end
