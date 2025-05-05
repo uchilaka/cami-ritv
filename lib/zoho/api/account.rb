@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require_relative 'model'
-require_relative '../access_token'
-
 module Zoho
   module API
     class Account < Model
