@@ -17,16 +17,15 @@ module Zoho
         metadata_map.each do |obj|
           config_key = obj[:key]
           config_value = obj[:value]
-          region_name, region_alpha2, endpoint = config_value.values_at :region_name, :region_alpha2, :endpoint
-          record = Zoho::OauthServerinfo.find_or_initialize_by(
-            key: config_key,
-            value: {
-              region_alpha2:,
-            }
-          )
+          endpoint, region_name, region_alpha2, resource_url = config_value.values_at :endpoint,
+                                                                                      :region_name,
+                                                                                      :region_alpha2,
+                                                                                      :resource_url
+          record = Zoho::OauthServerinfo.find_or_initialize_by(key: config_key)
+          record.endpoint = endpoint
           record.region_name = region_name
           record.region_alpha2 = region_alpha2
-          record.endpoint = endpoint
+          record.resource_url = resource_url
           record.save!
         end
       end

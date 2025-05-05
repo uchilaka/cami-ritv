@@ -29,17 +29,19 @@ module Zoho
 
       it 'updates existing records without creating duplicates' do
         existing_record = Zoho::OauthServerinfo.create!(
-          key: 'https://accounts.zoho.com/oauth/serverinfo',
-          value: { region_alpha2: 'US' },
-          region_name: 'US',
-          region_alpha2: 'US',
-          endpoint: 'https://accounts.zoho.com/oauth/serverinfo'
+          key: 'https://accounts.zoho.com',
+          value: {
+            endpoint: 'https://accounts.zoho.com',
+            region_name: 'United States of America',
+            resource_url: 'https://accounts.zoho.com/oauth/serverinfo',
+            region_alpha2: 'US',
+          }
         )
 
-        expect { described_class.call }.not_to change(Zoho::OauthServerinfo, :count)
+        expect { described_class.call }.to change(Zoho::OauthServerinfo, :count).by(7)
 
         existing_record.reload
-        expect(existing_record.region_name).to eq('US')
+        expect(existing_record.region_name).to eq('United States of America')
         expect(existing_record.region_alpha2).to eq('US')
         expect(existing_record.endpoint).to eq('https://accounts.zoho.com/oauth/serverinfo')
       end
