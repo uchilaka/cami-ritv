@@ -4,8 +4,8 @@ module Zoho
   module API
     class Model
       class << self
-        def connection(auth: false, access_token: nil)
-          url = base_url(auth:)
+        def connection(auth: false, access_token: nil, endpoint: nil)
+          url = base_url(auth:, endpoint:)
           Faraday.new(url:) do |builder|
             builder.request :authorization, 'Zoho-oauthtoken', access_token if access_token.present?
             builder.request :json
@@ -15,30 +15,16 @@ module Zoho
           end
         end
 
-        def base_url(*)
-          'https://www.zohoapis.com'
+        def base_url(args)
+          args[:endpoint] || 'https://www.zohoapis.com'
         end
 
         def auth_endpoint_url
           @auth_endpoint_url ||= regional_oauth_endpoint_url
         end
 
-        def regional_oauth_endpoint_url(region = 'us')
-          unless allowed_regions.include?(region.to_sym)
-            exception = ::LarCity::Errors::Unknown3rdPartyHostError.new('Unsupported 3rd party service region')
-            raise exception
-          end
-
-          response = connection(auth: true).get('/oauth/serverinfo')
-          data = response.body || {}
-          url = data.dig('locations', region.to_s)
-          raise ::LarCity::Errors::Unknown3rdPartyHostError unless valid_http_host?(url)
-
-          if %r{https://accounts\.zoho\.(eu|uk|com)}.match?(url)
-            url
-          else
-            raise ::LarCity::Errors::Unknown3rdPartyHostError, 'Unexpected Zoho OAuth endpoint URL'
-          end
+        def serverinfo
+          raise NotImplementedError, "You MUST implement the #{name}.#{__method__} method"
         end
 
         def fields_list_url
@@ -51,12 +37,36 @@ module Zoho
 
         protected
 
+        def valid_server_region?(region)
+          %w[EU].include?(region.to_s.strip.upcase)
+        end
+
         def valid_http_host?(url_or_hostname)
           hostname = URI.parse(url_or_hostname).host
           allowed_hosts.include?(hostname)
         end
 
         private
+
+        def regional_oauth_endpoint_url(region = 'us')
+          unless allowed_regions.include?(region.to_sym)
+            exception = ::LarCity::Errors::Unknown3rdPartyHostError.new('Unsupported 3rd party service region')
+            raise exception
+          end
+
+          response =
+            connection(endpoint: 'https://accounts.zoho.com')
+              .get('/oauth/serverinfo')
+          data = response.body || {}
+          url = data.dig('locations', region.to_s)
+          raise ::LarCity::Errors::Unknown3rdPartyHostError unless valid_http_host?(url)
+
+          if %r{https://accounts\.zoho\.(eu|uk|com)}.match?(url)
+            url
+          else
+            raise ::LarCity::Errors::Unknown3rdPartyHostError, 'Unexpected Zoho OAuth endpoint URL'
+          end
+        end
 
         def allowed_regions
           @allowed_regions ||=

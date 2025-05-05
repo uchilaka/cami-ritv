@@ -26,13 +26,34 @@ module Zoho
           response.body
         end
 
+        def serverinfo
+          response = connection(auth: true).get('/oauth/serverinfo')
+          data = response.body || {}
+
+          url = data.dig('locations', 'us')
+          raise ::LarCity::Errors::Unknown3rdPartyHostError unless valid_http_host?(url)
+
+          data['locations'].each_with_object({}) do |(region_alpha2, endpoint), result|
+            country = LarCity::GeoRegions.lookup(region_alpha2)
+            next if country.blank? && !valid_server_region?(region_alpha2)
+
+            result[region_alpha2.to_sym] = {
+              oauth: {
+                endpoint: endpoint.to_s,
+                country_alpha2: region_alpha2.to_s,
+                country_name: country[:name],
+              },
+            }
+          end
+        end
+
         def resource_url(auth: true)
           return auth_endpoint_url if auth
 
           base_url(auth:)
         end
 
-        def base_url(auth: false)
+        def base_url(auth: false, endpoint: nil)
           return 'https://accounts.zoho.com' if auth
 
           super
