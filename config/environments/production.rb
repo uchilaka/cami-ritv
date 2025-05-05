@@ -53,6 +53,10 @@ Rails.application.configure do
   # Only use :id for inspections in production.
   config.active_record.attributes_for_inspect = [ :id ]
 
+  # Async jobs are run in the background using SolidQueue.
+  config.active_job.queue_adapter = :solid_queue
+  config.active_job.connects_to = { database: { writing: :queue } }
+
   # Enable DNS rebinding protection and other `Host` header attacks.
   # config.hosts = [
   #   "example.com",     # Allow requests from example.com

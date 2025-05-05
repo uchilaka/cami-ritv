@@ -26,35 +26,40 @@ default: &default
   gssencmode: disable
 
 development:
-  <<: *default
-  database: sails_development
+  primary: &primary_development
+    <<: *default
+    database: sails_development
 
-  # The specified database role being used to connect to postgres.
-  # To create additional roles in postgres see `$ createuser --help`.
-  # When left blank, postgres will use the default role. This is
-  # the same name as the operating system user running Rails.
-  username: <%= ENV.fetch('APP_DATABASE_USER', 'postgres') %>
+    # The specified database role being used to connect to postgres.
+    # To create additional roles in postgres see `$ createuser --help`.
+    # When left blank, postgres will use the default role. This is
+    # the same name as the operating system user running Rails.
+    username: <%= ENV.fetch('APP_DATABASE_USER', 'postgres') %>
 
-  # The password associated with the postgres role (username).
-  password: <%= ENV.fetch('APP_DATABASE_PASSWORD', Rails.application.credentials.postgres&.password) %>
+    # The password associated with the postgres role (username).
+    password: <%= ENV.fetch('APP_DATABASE_PASSWORD', Rails.application.credentials.postgres&.password) %>
 
-  # Connect on a TCP socket. Omitted by default since the client uses a
-  # domain socket that doesn't need configuration. Windows does not have
-  # domain sockets, so uncomment these lines.
-  #host: localhost
+    # Connect on a TCP socket. Omitted by default since the client uses a
+    # domain socket that doesn't need configuration. Windows does not have
+    # domain sockets, so uncomment these lines.
+    #host: localhost
 
-  # The TCP port the server listens on. Defaults to 5432.
-  # If your server runs on a different port number, change accordingly.
-  # port: 5432
+    # The TCP port the server listens on. Defaults to 5432.
+    # If your server runs on a different port number, change accordingly.
+    # port: 5432
 
-  # Schema search path. The server defaults to $user,public
-  #schema_search_path: myapp,sharedapp,public
+    # Schema search path. The server defaults to $user,public
+    #schema_search_path: myapp,sharedapp,public
 
-  # Minimum log levels, in increasing order:
-  #   debug5, debug4, debug3, debug2, debug1,
-  #   log, notice, warning, error, fatal, and panic
-  # Defaults to warning.
-  #min_messages: notice
+    # Minimum log levels, in increasing order:
+    #   debug5, debug4, debug3, debug2, debug1,
+    #   log, notice, warning, error, fatal, and panic
+    # Defaults to warning.
+    #min_messages: notice
+  queue:
+    <<: *primary_development
+    database: sails_development_queue
+    migration_paths: db/queue_migrate
 
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".
@@ -86,12 +91,17 @@ test:
 # for a full overview on how database connection configuration can be specified.
 #
 production:
-  <<: *default
-  connect_timeout: 5
-  # See https://github.com/ankane/strong_migrations?tab=readme-ov-file#app-timeouts
-  variables:
-    statement_timeout: 15s
-    lock_timeout: 10s
-  database: sails_production
-  username: <%= ENV.fetch('APP_DATABASE_USER', 'postgres') %>
-  password: <%= ENV.fetch("APP_DATABASE_PASSWORD", Rails.application.credentials.postgres&.password) %>
+  primary: &primary_production
+    <<: *default
+    connect_timeout: 5
+    # See https://github.com/ankane/strong_migrations?tab=readme-ov-file#app-timeouts
+    variables:
+      statement_timeout: 15s
+      lock_timeout: 10s
+    database: sails_production
+    username: <%= ENV.fetch('APP_DATABASE_USER', 'postgres') %>
+    password: <%= ENV.fetch("APP_DATABASE_PASSWORD", Rails.application.credentials.postgres&.password) %>
+  queue:
+    <<: *primary_production
+    database: sails_production_queue
+    migration_paths: db/queue_migrate
