@@ -18,7 +18,7 @@
 module Zoho
   class OauthServerinfoSerializer < AdhocSerializer
     def attributes
-      @attributes = { key:, location:, endpoint:, region: } unless defined?(@attributes)
+      @attributes = { key:, location:, endpoint:, region:, resource_url: } unless defined?(@attributes)
       @attributes.compact
     end
 
@@ -35,6 +35,10 @@ module Zoho
 
     def endpoint
       object.endpoint || 'https://accounts.zoho.com'
+    end
+
+    def resource_url
+      object.resource_url
     end
   end
 end
