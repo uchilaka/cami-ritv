@@ -2,15 +2,17 @@
 
 - [CAMI: Development guide](#cami-development-guide)
   - [Managing application secrets](#managing-application-secrets)
-    - [Testing emails](#testing-emails)
-    - [Using NGROK](#using-ngrok)
-      - [Update your NGROK token for your app environment](#update-your-ngrok-token-for-your-app-environment)
+    - [Using the Rails credentials command](#using-the-rails-credentials-command)
+    - [Configuring basic auth for `mission_control`](#configuring-basic-auth-for-mission_control)
+  - [Testing emails](#testing-emails)
+  - [Using NGROK](#using-ngrok)
+    - [Update your NGROK token for your app environment](#update-your-ngrok-token-for-your-app-environment)
       - [Instructions for Windows](#instructions-for-windows)
       - [Instructions on macOS](#instructions-on-macos)
-    - [Print key file](#print-key-file)
-    - [Handling fixture files](#handling-fixture-files)
-      - [Sanitizing an existing fixture file](#sanitizing-an-existing-fixture-file)
-      - [Converting a JSON fixture file to a YAML fixture file](#converting-a-json-fixture-file-to-a-yaml-fixture-file)
+  - [Print key file](#print-key-file)
+  - [Handling fixture files](#handling-fixture-files)
+    - [Sanitizing an existing fixture file](#sanitizing-an-existing-fixture-file)
+    - [Converting a JSON fixture file to a YAML fixture file](#converting-a-json-fixture-file-to-a-yaml-fixture-file)
 
 Notes on working with the application in a (local) dev environment.
 
@@ -28,6 +30,8 @@ To view help information about managing application credentials, run the followi
 bin/rails credentials:help
 ```
 
+### Using the Rails credentials command
+
 To edit the credentials file for your development environment using the rails credentials scripts
 and your command line, run the following code in your console:
 
@@ -35,7 +39,15 @@ and your command line, run the following code in your console:
 EDITOR=nano bin/rails credentials:edit --environment ${RAILS_ENV:-development}
 ```
 
-### Testing emails
+### Configuring basic auth for `mission_control`
+
+> Mission Control is a dashboard for Solid Queue jobs.
+
+```shell
+RAILS_ENV=development bin/rails mission_control:jobs:authentication:configure
+```
+
+## Testing emails
 
 > To enable email testing, set `SEND_EMAILS_ENABLED=yes` in your `.env.local` file.
 
@@ -47,13 +59,13 @@ docker compose up -d mailhog
 
 Your test inbox will be available at `http://localhost:8025`.
 
-### Using NGROK
+## Using NGROK
 
 > Be sure to follow [these instructions](https://ngrok.com/docs/getting-started/) to setup `ngrok` for your local environment.
 
 Run `bin/tunnel` to start up your development tunnel. You'll need this when testing features like SSO that require a public URL.
 
-#### Update your NGROK token for your app environment
+### Update your NGROK token for your app environment
 
 You can obtain your auth token from here: <https://dashboard.ngrok.com/get-started/your-authtoken>.
 
@@ -129,17 +141,17 @@ Now you can open a tunnel to your local environment by running:
 thor lx-cli:tunnel:open_all
 ```
 
-### Print key file
+## Print key file
 
 ```shell
 bin/thor help lx-cli:secrets:print_key
 ```
 
-### Handling fixture files
+## Handling fixture files
 
 A few helpful commands for handling fixture files.
 
-#### Sanitizing an existing fixture file
+### Sanitizing an existing fixture file
 
 ```shell
 # Show help menu for the sanitize command
@@ -149,7 +161,7 @@ bin/thor help lx-cli:fixtures:sanitize
 bin/thor lx-cli:fixtures:sanitize --file ./path/to/fixture.yml
 ```
 
-#### Converting a JSON fixture file to a YAML fixture file
+### Converting a JSON fixture file to a YAML fixture file
 
 You can review [this guide](https://stackoverflow.com/a/67610900) for more tips
 on using the `yq` command to transform (fixture) files.

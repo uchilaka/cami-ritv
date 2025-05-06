@@ -8,7 +8,7 @@ module PayPal
       @connection ||= Faraday.new(
         url: vendor_credentials.api_base_url,
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         }
       ) do |builder|
         builder.request :authorization, :basic,

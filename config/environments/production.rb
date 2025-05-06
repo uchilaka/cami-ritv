@@ -66,4 +66,9 @@ Rails.application.configure do
   #
   # Skip DNS rebinding protection for the default health check endpoint.
   # config.host_authorization = { exclude: ->(request) { request.path == "/up" } }
+
+  # TODO: Disable basic auth for mission_control - to do this, confirm that
+  #   in production, the route configured constraints for /admin/mission_control
+  #   are working as intended to guard /admin/* routes.
+  # config.mission_control.jobs.http_basic_auth_enabled = false
 end
