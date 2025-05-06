@@ -3,7 +3,7 @@
 class UpsertInvoiceRecordsJob < ApplicationJob
   queue_as :whenever
 
-  sidekiq_options retry: 3
+  retry_on StandardError, wait: :exponentially_longer, attempts: 3
 
   BATCH_LIMIT = 25
 
