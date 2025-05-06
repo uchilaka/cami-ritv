@@ -45,17 +45,3 @@ end
 # Flipper.register(:admins) do |actor|
 #  actor.respond_to?(:admin?) && actor.admin?
 # end
-
-Rails.application.config.after_initialize do |app|
-  current_features = Flipper.features.map(&:key).map(&:to_sym)
-  app.config_for(:features).each do |feature, options|
-    next if current_features.include?(feature)
-
-    Flipper.add(feature)
-    if options[:enabled]
-      Flipper.enable(feature)
-    else
-      Flipper.disable(feature)
-    end
-  end
-end
