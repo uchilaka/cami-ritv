@@ -12,6 +12,10 @@ default: &default
     enabled: false
   feat__services:
     enabled: false
+  feat__showcase:
+    enabled: false
+  feat__storybook:
+    enabled: false
   feat__invoices:
     enabled: true
   feat__filterable_billing_type_badge:
@@ -29,6 +33,8 @@ development: &development
   feat__filterable_billing_type_badge:
     enabled: true
   feat__sortable_invoice_index:
+    enabled: true
+  feat__showcase:
     enabled: true
 test:
   <<: *default

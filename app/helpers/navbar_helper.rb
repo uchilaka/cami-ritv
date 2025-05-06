@@ -140,14 +140,13 @@ module NavbarHelper
       #   Another argument could be made that services are needed to bundle products
       #   as an abstraction layer for what PayPal's invoice templates already do.
       { label: 'Services', path: '/services', admin: true },
-      { label: 'Features', path: '/admin/flipper', new_tab: true, admin: true, enabled: true },
-      { label: 'Sidekiq', path: '/admin/sidekiq', new_tab: true, admin: true, enabled: true },
-      { label: 'System Logs', url: system_log_url, admin: true, enabled: true },
+      { label: 'Features', path: '/admin/flipper', new_tab: true, admin: true },
+      { label: 'Sidekiq', path: '/admin/sidekiq', new_tab: true, admin: true },
+      { label: 'System Logs', url: system_log_url, admin: true },
       {
         label: 'Storybook',
         url: storybook_url,
         new_tab: true, admin: true,
-        enabled: Rails.env.development?,
       },
       # TODO: Update AppUtils to compose the application's URL based on whether
       #   the NGINX tunnel is running or not.
@@ -155,7 +154,6 @@ module NavbarHelper
         label: 'Test email inbox',
         url: test_inbox_url,
         admin: true,
-        enabled: Rails.env.development?,
       },
       {
         label: 'PayPal Dashboard',
