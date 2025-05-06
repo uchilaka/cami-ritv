@@ -8,6 +8,7 @@ RSpec.describe LarCity::CLI::TunnelCmd, type: :thor, devtool: true, skip_in_ci: 
   describe '#init' do
     before do
       allow(tunnel_cmd).to receive(:run)
+      allow(File).to receive(:exist?).with(anything).and_call_original
     end
 
     context 'when in test environment' do

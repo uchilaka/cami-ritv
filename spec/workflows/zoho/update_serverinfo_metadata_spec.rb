@@ -24,7 +24,7 @@ module Zoho
 
     describe '#call' do
       it 'creates or updates Zoho::OauthServerinfo records' do
-        expect { described_class.call }.to change(Zoho::OauthServerinfo, :count).by(8)
+        expect { described_class.call }.to change(Zoho::OauthServerinfo, :count).by(9)
       end
 
       it 'updates existing records without creating duplicates' do
@@ -38,7 +38,7 @@ module Zoho
           }
         )
 
-        expect { described_class.call }.to change(Zoho::OauthServerinfo, :count).by(7)
+        expect { described_class.call }.to change(Zoho::OauthServerinfo, :count).by(8)
 
         existing_record.reload
         expect(existing_record.region_name).to eq('United States of America')

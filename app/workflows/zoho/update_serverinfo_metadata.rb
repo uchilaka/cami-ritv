@@ -5,6 +5,7 @@ module Zoho
     include Interactor
 
     def call
+      input_region_alpha2 = context.region_alpha2
       metadata_map =
         Zoho::API::Account
           .serverinfo
@@ -15,12 +16,13 @@ module Zoho
           end
       Zoho::OauthServerinfo.transaction do
         metadata_map.each do |obj|
+          endpoint, region_name, region_alpha2, resource_url = obj[:value].values_at :endpoint,
+                                                                                     :region_name,
+                                                                                     :region_alpha2,
+                                                                                     :resource_url
+          next if input_region_alpha2.present? && input_region_alpha2 != region_alpha2
+
           config_key = obj[:key]
-          config_value = obj[:value]
-          endpoint, region_name, region_alpha2, resource_url = config_value.values_at :endpoint,
-                                                                                      :region_name,
-                                                                                      :region_alpha2,
-                                                                                      :resource_url
           record = Zoho::OauthServerinfo.find_or_initialize_by(key: config_key)
           record.endpoint = endpoint.to_s
           record.region_name = region_name.to_s

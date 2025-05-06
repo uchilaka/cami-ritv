@@ -2,8 +2,9 @@
 
 require 'lib/tasks/fixtures/zoho/serverinfo'
 
-if Rails.env.production?
+unless Rails.env.development?
   Rails.logger.info('Skipping seed file', env: Rails.env, class: 'Zoho::UpdateServerinfoMetadata')
-else
-  Fixtures::Zoho::Serverinfo.new.invoke(:load, [], verbose: Rails.env.development?)
+  return
 end
+
+Fixtures::Zoho::Serverinfo.new.invoke(:load, [], verbose: Rails.env.development?)

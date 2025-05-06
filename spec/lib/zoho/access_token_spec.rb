@@ -4,6 +4,10 @@ require 'rails_helper'
 
 module Zoho
   RSpec.describe AccessToken do
+    before do
+      Fixtures::Zoho::Serverinfo.new.invoke(:load, [], region_alpha2: 'US')
+    end
+
     describe '#generate' do
       subject { described_class.generate }
 

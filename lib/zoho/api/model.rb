@@ -38,7 +38,7 @@ module Zoho
         protected
 
         def valid_server_region?(region)
-          %w[EU].include?(region.to_s.strip.upcase)
+          %w[EU UK].include?(region.to_s.strip.upcase)
         end
 
         def valid_http_host?(url_or_hostname)
@@ -49,24 +49,15 @@ module Zoho
         private
 
         def regional_oauth_endpoint_url(region = 'us')
-          server_config = OauthServerinfo.having_region_alpha2(region).first
-          unless allowed_regions.include?(region.to_sym)
-            exception = ::LarCity::Errors::Unknown3rdPartyHostError.new('Unsupported 3rd party service region')
+          crm_oauth_server_config = OauthServerinfo.having_region_alpha2(region).first
+          unless crm_oauth_server_config.present?
+            exception =
+              ::LarCity::Errors::Unknown3rdPartyHostError
+                .new("Unsupported 3rd party service region: #{region}")
             raise exception
           end
 
-          response =
-            connection(endpoint: 'https://accounts.zoho.com')
-              .get('/oauth/serverinfo')
-          data = response.body || {}
-          url = data.dig('locations', region.to_s)
-          raise ::LarCity::Errors::Unknown3rdPartyHostError unless valid_http_host?(url)
-
-          if %r{https://accounts\.zoho\.(eu|uk|com)}.match?(url)
-            url
-          else
-            raise ::LarCity::Errors::Unknown3rdPartyHostError, 'Unexpected Zoho OAuth endpoint URL'
-          end
+          crm_oauth_server_config.endpoint
         end
 
         def allowed_regions

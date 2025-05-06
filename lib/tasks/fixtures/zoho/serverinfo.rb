@@ -24,7 +24,7 @@ module Fixtures
           return
         end
 
-        result = ::Zoho::UpdateServerinfoMetadata.call
+        result = ::Zoho::UpdateServerinfoMetadata.call(region_alpha2:)
         if result.success?
           say_success 'Metadata loaded successfully!'
         else
@@ -46,20 +46,6 @@ module Fixtures
       end
 
       no_commands do
-        def region_alpha2_or(default_region:)
-          if region_alpha2.blank?
-            say_warning 'Region not specified. Using default region.'
-            return default_region
-          end
-
-          unless %w[US EU IN AU JP UK CA SA].include?(region_alpha2)
-            say_error 'Invalid region specified. Using default region.'
-            return default_region
-          end
-
-          region_alpha2
-        end
-
         def region_alpha2
           options[:region].to_s.strip.upcase
         end

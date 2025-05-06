@@ -5,6 +5,10 @@ require 'rails_helper'
 module Zoho
   module API
     RSpec.describe Account do
+      before do
+        Fixtures::Zoho::Serverinfo.new.invoke(:load, [], region_alpha2: 'US')
+      end
+
       describe '.auth_endpoint_url' do
         subject { described_class.auth_endpoint_url }
 
