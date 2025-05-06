@@ -49,6 +49,7 @@ module Zoho
         private
 
         def regional_oauth_endpoint_url(region = 'us')
+          server_config = OauthServerinfo.having_region_alpha2(region).first
           unless allowed_regions.include?(region.to_sym)
             exception = ::LarCity::Errors::Unknown3rdPartyHostError.new('Unsupported 3rd party service region')
             raise exception

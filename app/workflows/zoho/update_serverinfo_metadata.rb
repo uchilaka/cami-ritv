@@ -22,10 +22,10 @@ module Zoho
                                                                                       :region_alpha2,
                                                                                       :resource_url
           record = Zoho::OauthServerinfo.find_or_initialize_by(key: config_key)
-          record.endpoint = endpoint
-          record.region_name = region_name
-          record.region_alpha2 = region_alpha2
-          record.resource_url = resource_url
+          record.endpoint = endpoint.to_s
+          record.region_name = region_name.to_s
+          record.region_alpha2 = region_alpha2.to_s
+          record.resource_url = resource_url.to_s
           record.save!
         end
       end

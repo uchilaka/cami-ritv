@@ -19,6 +19,10 @@ module Zoho
   class OauthServerinfo < Metadatum
     store_accessor :value, :endpoint, :region_alpha2, :region_name, :resource_url
 
+    scope :having_region_alpha2, lambda { |region_alpha2|
+      where("value ->> 'region_alpha2' = ?", region_alpha2.strip.to_s.upcase)
+    }
+
     after_initialize :lookup_region_name, if: -> { region_alpha2.present? }
 
     def lookup_region_name
