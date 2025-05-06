@@ -18,7 +18,7 @@ default: &default
     enabled: false
   feat__sortable_invoice_index:
     enabled: false
-development:
+development: &development
   <<: *default
   feat__dashboard:
     enabled: false
