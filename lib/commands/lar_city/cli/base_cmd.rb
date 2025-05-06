@@ -44,7 +44,7 @@ module LarCity
 
         def run(*args, inline: false)
           with_interruption_rescue do
-            cmd = args.join(' ')
+            cmd = args.compact.join(' ')
             if verbose? || dry_run?
               msg = <<~CMD
                 Executing#{dry_run? ? ' (dry-run)' : ''}: #{cmd}
@@ -80,6 +80,26 @@ module LarCity
         end
 
         protected
+
+        def say_info(message)
+          say(message, :cyan)
+        end
+
+        def say_warning(message)
+          say(message, :yellow)
+        end
+
+        def say_success(message)
+          say(message, :green)
+        end
+
+        def say_highlight(message)
+          say(message, :magenta)
+        end
+
+        def say_error(message)
+          say(message, :red)
+        end
 
         def things(count, name: 'item')
           name.pluralize(count)
