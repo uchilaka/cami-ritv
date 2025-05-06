@@ -2,7 +2,7 @@
   <h3 class="mb-5">Resend confirmation instructions</h3>
 
   <%= form_for(resource, as: resource_name, url: user_confirmation_path, html: { method: :post }) do |f| %>
-    <%= render "devise/shared/error_messages", resource: resource %>
+    <%= render "users/shared/error_messages", resource: resource %>
 
     <div class="field">
       <%= f.label :email, class: "label" %>
