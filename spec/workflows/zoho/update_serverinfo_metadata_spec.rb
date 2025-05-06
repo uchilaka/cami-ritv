@@ -43,7 +43,8 @@ module Zoho
         existing_record.reload
         expect(existing_record.region_name).to eq('United States of America')
         expect(existing_record.region_alpha2).to eq('US')
-        expect(existing_record.endpoint).to eq('https://accounts.zoho.com/oauth/serverinfo')
+        expect(existing_record.endpoint).to eq('https://accounts.zoho.com')
+        expect(existing_record.resource_url).to eq('https://accounts.zoho.com/oauth/serverinfo')
       end
 
       it 'raises an error if saving a record fails' do
