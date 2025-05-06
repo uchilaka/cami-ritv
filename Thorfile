@@ -12,4 +12,4 @@ require File.expand_path('config/environment', __dir__)
 # thor tasks. Note that they would not show up with a rake -T
 # but instead with a thor -T. Putting them in lib/tasks allows
 # them to live side by side with your legacy rake tasks.
-Dir['./lib/commands/**/*.{thor,rb}', './lib/tasks/**/*.{thor}'].each { |f| load f }
+Dir['./lib/commands/**/*.{thor,rb}', './lib/tasks/**/*.{thor,rb}'].each { |f| load f }

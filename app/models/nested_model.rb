@@ -1,5 +1,10 @@
 # frozen_string_literal: true
 
+# @deprecated Dependent classes should use store_model gem for
+#   serialization and deserialization of nested models.
+#   See: https://github.com/DmitryTsepelev/store_model
+#   This class is a placeholder for the future implementation of
+#   nested model functionality.
 class NestedModel
   include ActiveModel::API
   include ActiveModel::Serialization

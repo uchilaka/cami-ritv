@@ -76,7 +76,7 @@ const Home: FCWithLayout = () => {
   return (
     <>
       <BackgroundVideo />
-      <div className="relative isolate z-30 px-6 pt-[22rem] sm:pt-[36rem] lg:px-8 min-h-[var(--lc-min-hero-height)]">
+      <div className="relative isolate z-30 px-6 pt-[22rem] sm:pt-[36rem] md:pt-[26rem] lg:px-8 min-h-[var(--lc-min-hero-height)]">
         {/* Top Blur Shape */}
         <div
           ref={scrollBlurEl}

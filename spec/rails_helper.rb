@@ -13,7 +13,9 @@ require 'aasm/rspec'
 require 'shoulda/matchers'
 require 'shoulda/matchers/integrations/test_frameworks/rspec'
 require 'database_cleaner/active_record'
+require 'devise/test/integration_helpers'
 require 'vcr'
+require 'lib/zoho/credentials'
 
 # Requires supporting ruby files with custom matchers and macros, etc, in
 # spec/support/ and its subdirectories. Files matching `spec/**/*_spec.rb` are
@@ -47,12 +49,16 @@ VCR.configure do |vcr_config|
   # IMPORTANT: Enables automatic cassette naming based on tags
   vcr_config.configure_rspec_metadata!
 
+  # Filter out Zoho credentials (applies to all examples)
+  # vcr_config.filter_sensitive_data('<ZOHO_CLIENT_ID>') { Zoho::Credentials.client_id }
+  # vcr_config.filter_sensitive_data('<ZOHO_CLIENT_SECRET>') { Zoho::Credentials.client_secret }
+
   # Filter out Zoho credentials (applies only to examples tagged with :zoho_cassette)
-  # vcr_config.define_cassette_placeholder('<ZOHO_CLIENT_ID>', :zoho_cassette) { Zoho::Credentials.client_id }
-  # vcr_config.define_cassette_placeholder('<ZOHO_CLIENT_SECRET>', :zoho_cassette) { Zoho::Credentials.client_secret }
-  # vcr_config.define_cassette_placeholder('<ZOHO_AUTHORIZATION_HEADER>', :zoho_cassette) do |interaction|
-  #   interaction.request.headers['Authorization'].try(:first)
-  # end
+  vcr_config.define_cassette_placeholder('<ZOHO_CLIENT_ID>', :zoho_cassette) { Zoho::Credentials.client_id }
+  vcr_config.define_cassette_placeholder('<ZOHO_CLIENT_SECRET>', :zoho_cassette) { Zoho::Credentials.client_secret }
+  vcr_config.define_cassette_placeholder('<ZOHO_AUTHORIZATION_HEADER>', :zoho_cassette) do |interaction|
+    interaction.request.headers['Authorization'].try(:first)
+  end
 
   # Setup :before_record hook to intercept PII data and prevent it from leaking into the cassettes
   vcr_config.before_record(:obfuscate) do |interaction, cassette|
@@ -125,11 +131,11 @@ RSpec.configure do |config|
   config.include AbstractController::Translation, type: :view
   config.include AbstractController::Translation, type: :helper
 
-  # # Sample phone numbers
-  # config.include_context 'for phone number testing', real_world_data: true
-  #
-  # # Sample invoices
-  # config.include_context 'for invoice testing', preload_invoice_data: true
+  # Sample phone numbers
+  config.include_context 'for phone number testing', real_world_data: true
+
+  # Sample invoices
+  config.include_context 'for invoice testing', preload_invoice_data: true
 
   config.before(:suite) do
     if config.use_transactional_fixtures?
@@ -165,13 +171,13 @@ RSpec.configure do |config|
     DatabaseCleaner.start
   end
 
-  # config.around(:each) do |example|
-  #   # Conditionally load invoice sample data
-  #   load_sample_invoice_dataset if example.metadata[:preload_invoice_data]
-  #
-  #   # Run example
-  #   example.run
-  # end
+  config.around(:each) do |example|
+    # Conditionally load invoice sample data
+    load_sample_invoice_dataset if example.metadata[:preload_invoice_data]
+
+    # Run example
+    example.run
+  end
 
   config.append_after(:each) do
     DatabaseCleaner.clean

@@ -25,6 +25,12 @@ Rails.application.configure do
   # Change to :null_store to avoid any caching.
   config.cache_store = :memory_store
 
+  # Async jobs are run in the background using SolidQueue.
+  config.active_job.queue_adapter = :solid_queue
+  # TODO: Will explore migrating jobs to adopt SolidQueue incrementally
+  #   See https://github.com/rails/solid_queue?tab=readme-ov-file#incremental-adoption
+  # config.active_job.connects_to = { database: { writing: :queue } }
+
   # Store uploaded files on the local file system (see config/storage.yml for options).
   config.active_storage.service = :local
 
@@ -51,7 +57,7 @@ Rails.application.configure do
         port: ENV.fetch('SMTP_PORT', Rails.application.credentials.brevo.smtp_port),
         user_name: ENV.fetch('SMTP_USERNAME', Rails.application.credentials.brevo.smtp_user),
         password: ENV.fetch('SMTP_PASSWORD', Rails.application.credentials.brevo.smtp_password),
-        enable_starttls_auto: true
+        enable_starttls_auto: true,
       }
     else
       { address: 'localhost', port: 1025 }

@@ -35,8 +35,8 @@ class Account < ApplicationRecord
   #   re-initialized several times since then prior to the first deployment.
   self.ignored_columns += ['parent_account_id']
 
-  rolify
   resourcify
+  rolify
 
   include AASM
   include Discard::Model
@@ -72,7 +72,7 @@ class Account < ApplicationRecord
   #   `warning: already initialized constant Account::HABTM_Roles`
   #   However, without this line, the behavior of assigning
   #   roles to accounts on invoices breaks.
-  has_and_belongs_to_many :roles, inverse_of: :accounts, dependent: :destroy
+  # has_and_belongs_to_many :roles, dependent: :destroy
   has_and_belongs_to_many :members, class_name: 'User', join_table: 'accounts_users'
 
   # @deprecated use the direct "members" relationship instead. I guess we're

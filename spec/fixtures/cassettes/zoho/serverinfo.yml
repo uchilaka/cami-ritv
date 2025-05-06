@@ -1,0 +1,57 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://accounts.zoho.com/oauth/serverinfo
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Faraday v2.13.0
+  response:
+    status:
+      code: 200
+      message: ''
+    headers:
+      server:
+      - ZGS
+      date:
+      - Mon, 05 May 2025 10:36:05 GMT
+      content-type:
+      - application/json;charset=UTF-8
+      content-length:
+      - '332'
+      connection:
+      - keep-alive
+      set-cookie:
+      - zalb_b266a5bf57=a7f15cb1555106de5ac96d088b72e7c8; Path=/; Secure; HttpOnly,
+        iamcsr=eb8d8165-7cfa-4c75-ad88-256b068df9ae;path=/;SameSite=None;Secure;priority=high,
+        _zcsr_tmp=eb8d8165-7cfa-4c75-ad88-256b068df9ae;path=/;SameSite=Strict;Secure;priority=high
+      x-content-type-options:
+      - nosniff
+      x-frame-options:
+      - SAMEORIGIN
+      content-language:
+      - en-US
+      strict-transport-security:
+      - max-age=64072000; includeSubDomains; preload
+    body:
+      encoding: UTF-8
+      string: |-
+        {
+          "result": "success",
+          "locations": {
+            "eu": "https://accounts.zoho.eu",
+            "ae": "https://accounts.zoho.ae",
+            "au": "https://accounts.zoho.com.au",
+            "in": "https://accounts.zoho.in",
+            "jp": "https://accounts.zoho.jp",
+            "uk": "https://accounts.zoho.uk",
+            "us": "https://accounts.zoho.com",
+            "ca": "https://accounts.zohocloud.ca",
+            "sa": "https://accounts.zoho.sa"
+          }
+        }
+  recorded_at: Mon, 05 May 2025 10:36:05 GMT
+recorded_with: VCR 6.3.1
