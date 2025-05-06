@@ -10,7 +10,7 @@
 #     schedule: at 5am every day
 development:
   update_serverinfo_metadata:
-    class: UpdateServerinfoMetadataJob
+    class: Zoho::UpdateServerinfoMetadataJob
     queue: yeet
     # args: [ 1000, { batch_size: 500 } ]
     schedule: 0 5 * * 0 # every Sunday at 5am

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_05_05_130621) do
+ActiveRecord::Schema[8.0].define(version: 2025_05_06_014650) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -105,6 +105,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_05_130621) do
     t.uuid "user_id", null: false
     t.index ["jti"], name: "index_allowlisted_jwts_on_jti", unique: true
     t.index ["user_id"], name: "index_allowlisted_jwts_on_user_id"
+  end
+
+  create_table "data_migrations", primary_key: "version", id: :string, force: :cascade do |t|
   end
 
   create_table "flipper_features", force: :cascade do |t|

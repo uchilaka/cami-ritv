@@ -19,7 +19,7 @@ default: &default
   encoding: unicode
   # For details on connection pooling, see Rails configuration guide
   # https://guides.rubyonrails.org/configuring.html#database-pooling
-  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 3 } %>
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
   host: <%= ENV.fetch('APP_DATABASE_HOST', 'localhost') %>
   port: <%= ENV.fetch('APP_DATABASE_PORT', 5432) %>
   # Related issue: https://github.com/rails/rails/issues/38560
@@ -58,8 +58,8 @@ development:
     #min_messages: notice
   queue:
     <<: *primary_development
-    database: sails_development_queue
-    migration_paths: db/queue_migrate
+    # database: sails_development_queue
+    # migration_paths: db/queue_migrate
 
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".
@@ -103,5 +103,5 @@ production:
     password: <%= ENV.fetch("APP_DATABASE_PASSWORD", Rails.application.credentials.postgres&.password) %>
   queue:
     <<: *primary_production
-    database: sails_production_queue
-    migration_paths: db/queue_migrate
+    # database: sails_production_queue
+    # migration_paths: db/queue_migrate

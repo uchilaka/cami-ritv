@@ -55,6 +55,7 @@ Rails.application.configure do
 
   # Async jobs are run in the background using SolidQueue.
   config.active_job.queue_adapter = :solid_queue
+  config.solid_queue.connects_to = { database: { writing: :queue } }
   config.active_job.connects_to = { database: { writing: :queue } }
 
   # Enable DNS rebinding protection and other `Host` header attacks.
