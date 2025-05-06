@@ -1,0 +1,815 @@
+items:
+  - id: INV2-9E3C-DPSK-3H9Q-4VA6
+    status: SENT
+    detail:
+      currency_code: USD
+      note: Thank you for your business! Looking forward to collaborating with you as your Startup begins it's journey \
+      invoice_number: 2025-INV0056
+      invoice_date: "2025-01-10"
+      payment_term:
+        due_date: "2025-01-10"
+      viewed_by_recipient: false
+      group_draft: false
+      metadata:
+        create_time: "2025-01-10T10:23:26Z"
+    invoicer:
+      email_address: filiberto@funk.test
+    primary_recipients:
+      - billing_info:
+          business_name: Indigo Logistics
+          email_address: logistics@indigo.test
+    amount:
+      currency_code: USD
+      value: "200.00"
+    due_amount:
+      currency_code: USD
+      value: "0.00"
+    payments:
+      paid_amount:
+        currency_code: USD
+        value: "200.00"
+    links:
+      - href: https://api.paypal.com/v2/invoicing/invoices/INV2-9E3C-DPSK-3H9Q-4VA6
+        rel: self
+        method: GET
+    unilateral: false
+  - id: INV2-9E3C-DPSK-2H9Y-4VA6
+    status: PAID
+    detail:
+      currency_code: USD
+      note: Thank you for your business! Looking forward to collaborating with you as your Startup begins it's journey \
+      invoice_number: 2019-INV0056
+      invoice_date: "2019-06-14"
+      payment_term:
+        due_date: "2019-06-14"
+      viewed_by_recipient: false
+      group_draft: false
+      metadata:
+        create_time: "2019-06-14T10:23:26Z"
+    invoicer:
+      email_address: filiberto@funk.test
+    primary_recipients:
+      - billing_info:
+          business_name: Indigo Logistics
+          name:
+            given_name: Alexis
+            surname: Indigo
+            full_name: Avery
+          email_address: logistics@indigo.test
+    amount:
+      currency_code: USD
+      value: "200.00"
+    due_amount:
+      currency_code: USD
+      value: "0.00"
+    payments:
+      paid_amount:
+        currency_code: USD
+        value: "200.00"
+    links:
+      - href: https://api.paypal.com/v2/invoicing/invoices/INV2-9E3C-DPSK-2H9Y-4VA6
+        rel: self
+        method: GET
+    unilateral: false
+  - id: INV2-FHP4-DTGD-XFH7-5WBU
+    status: CANCELLED
+    detail:
+      currency_code: USD
+      note: "Hey Team! \r\n\r\nGoogle increased the price of G-Suite Basic from $5 / User / Mo. to $6 / User / Mo. starting May 2019\r\n\r\nThis is a pro-rated invoice to cover the difference from your paid invoice #2019-INV0012\r\n\r\nQuestions? Let us know at support@larcity.com"
+      invoice_number: 2019-INV0055
+      invoice_date: "2019-05-01"
+      payment_term:
+        due_date: "2019-05-01"
+      viewed_by_recipient: true
+      group_draft: false
+      metadata:
+        create_time: "2019-06-14T10:12:43Z"
+    invoicer:
+      email_address: lashawna_parisian@moore.test
+    primary_recipients:
+      - billing_info:
+          business_name: Indigo Logistics
+          name:
+            given_name: Alexis
+            surname: Indigo
+            full_name: Avery
+          email_address: logistics@indigo.test
+    amount:
+      currency_code: USD
+      value: "17.20"
+    due_amount:
+      currency_code: USD
+      value: "17.20"
+    links:
+      - href: https://api.paypal.com/v2/invoicing/invoices/INV2-FHP4-DTGD-XFH7-5WBU
+        rel: self
+        method: GET
+    unilateral: false
+  - id: INV2-HRJG-TB9Z-8CZW-9SFW
+    status: CANCELLED
+    detail:
+      currency_code: USD
+      note: "Hey Team - \r\n\r\nI've setup this monthly invoice for our G-Suite billing. The invoice is setup to allow partial payment so that we don't need an individual invoice for each user. \r\n\r\nIf you would like to pay for just your (1x) account, please enter the unit price displayed on the invoice as your payment amount. The invoice will stay open until the entire amount due is met by the team. \r\n\r\nI've included everyone setup on our Quup G-Suite service on the invoice. Let me know if you have any questions. \r\n\r\nCheers!"
+      invoice_number: 2019-INV0054
+      invoice_date: "2019-06-01"
+      payment_term:
+        due_date: "2019-06-01"
+      viewed_by_recipient: false
+      group_draft: false
+      metadata:
+        create_time: "2019-06-01T11:00:59Z"
+    invoicer:
+      email_address: kari@kub-lynch.test
+    primary_recipients:
+      - billing_info:
+          business_name: Tatum
+          email_address: wilber.nitzsche@rogahn.example
+    amount:
+      currency_code: USD
+      value: "10.00"
+    due_amount:
+      currency_code: USD
+      value: "10.00"
+    links:
+      - href: https://api.paypal.com/v2/invoicing/invoices/INV2-HRJG-TB9Z-8CZW-9SFW
+        rel: self
+        method: GET
+    recurring_Id: RI-56D78462GL467282P
+    unilateral: false
+  - id: INV2-MFMZ-A99Q-TLZT-X862
+    status: CANCELLED
+    detail:
+      currency_code: USD
+      note: "Hey Team - \r\n\r\nI've setup this monthly invoice for our G-Suite billing. The invoice is setup to allow partial payment so that we don't need an individual invoice for each user. \r\n\r\nIf you would like to pay for just your (1x) account, please enter the unit price displayed on the invoice as your payment amount. The invoice will stay open until the entire amount due is met by the team. \r\n\r\nI've included everyone setup on our Quup G-Suite service on the invoice. Let me know if you have any questions. \r\n\r\nCheers!"
+      invoice_number: 2019-INV0053
+      invoice_date: "2019-05-01"
+      payment_term:
+        due_date: "2019-05-01"
+      viewed_by_recipient: false
+      group_draft: false
+      metadata:
+        create_time: "2019-05-01T11:01:22Z"
+    invoicer:
+      email_address: cody.denesik@morissette.test
+    primary_recipients:
+      - billing_info:
+          business_name: Phoenix
+          email_address: landon_abbott@williamson-smith.example
+    amount:
+      currency_code: USD
+      value: "10.00"
+    due_amount:
+      currency_code: USD
+      value: "10.00"
+    links:
+      - href: https://api.paypal.com/v2/invoicing/invoices/INV2-MFMZ-A99Q-TLZT-X862
+        rel: self
+        method: GET
+    recurring_Id: RI-56D78462GL467282P
+    unilateral: false
+  - id: INV2-ECB7-2YMP-GVPT-Q7BH
+    status: CANCELLED
+    detail:
+      currency_code: USD
+      note: "Hey Team - \r\n\r\nI've setup this monthly invoice for our G-Suite billing. The invoice is setup to allow partial payment so that we don't need an individual invoice for each user. \r\n\r\nIf you would like to pay for just your (1x) account, please enter the unit price displayed on the invoice as your payment amount. The invoice will stay open until the entire amount due is met by the team. \r\n\r\nI've included everyone setup on our Quup G-Suite service on the invoice. Let me know if you have any questions. \r\n\r\nCheers!"
+      invoice_number: 2019-INV0052
+      invoice_date: "2019-04-01"
+      payment_term:
+        due_date: "2019-04-01"
+      viewed_by_recipient: false
+      group_draft: false
+      metadata:
+        create_time: "2019-04-01T11:00:56Z"
+    invoicer:
+      email_address: warren@hermann.test
+    primary_recipients:
+      - billing_info:
+          business_name: Robin
+          email_address: brigitte@murazik-graham.example
+    amount:
+      currency_code: USD
+      value: "10.00"
+    due_amount:
+      currency_code: USD
+      value: "10.00"
+    links:
+      - href: https://api.paypal.com/v2/invoicing/invoices/INV2-ECB7-2YMP-GVPT-Q7BH
+        rel: self
+        method: GET
+    recurring_Id: RI-56D78462GL467282P
+    unilateral: false
+  - id: INV2-HP54-4DUA-ZZ4X-AKNK
+    status: PAID
+    detail:
+      currency_code: USD
+      note: "Hi Chuji!\r\n\r\nYour current registration for 360supplychain.com is good until 09/2019."
+      invoice_number: 2019-INV0051
+      invoice_date: "2019-03-09"
+      payment_term:
+        due_date: "2019-03-09"
+      viewed_by_recipient: false
+      group_draft: false
+      metadata:
+        create_time: "2019-03-09T12:00:39Z"
+    invoicer:
+      email_address: cody@kilback-heidenreich.example
+    primary_recipients:
+      - billing_info:
+          business_name: Indigo Logistics
+          name:
+            given_name: Alexis
+            surname: Indigo
+            full_name: Avery
+          email_address: logistics@indigo.test
+    amount:
+      currency_code: USD
+      value: "12.00"
+    due_amount:
+      currency_code: USD
+      value: "0.00"
+    payments:
+      paid_amount:
+        currency_code: USD
+        value: "12.00"
+    links:
+      - href: https://api.paypal.com/v2/invoicing/invoices/INV2-HP54-4DUA-ZZ4X-AKNK
+        rel: self
+        method: GET
+    recurring_Id: RI-42C626788M529081F
+    unilateral: false
+  - id: INV2-J7PA-R9MM-DKCC-7NB4
+    status: PAID
+    detail:
+      currency_code: USD
+      note: "Hi Delali - \r\n\r\nI've confirmed the domain was renewed successfully! Soon as the invoice is actioned, I'll be updating the domain to give you full control of it through https://domains.google. \r\n\r\nHappy Holidays!\r\n\r\nUche"
+      invoice_number: 2018-INV0049
+      invoice_date: "2018-12-16"
+      payment_term:
+        due_date: "2018-12-16"
+      viewed_by_recipient: false
+      group_draft: false
+      metadata:
+        create_time: "2018-12-16T23:17:02Z"
+    invoicer:
+      email_address: ailene.veum@ratke.example
+    primary_recipients:
+      - billing_info:
+          name:
+            given_name: Greer
+            surname: Cameron
+            full_name: Phoenix
+          email_address: mohammad_ratke@keebler.test
+    amount:
+      currency_code: USD
+      value: "12.00"
+    due_amount:
+      currency_code: USD
+      value: "0.00"
+    payments:
+      paid_amount:
+        currency_code: USD
+        value: "12.00"
+    links:
+      - href: https://api.paypal.com/v2/invoicing/invoices/INV2-J7PA-R9MM-DKCC-7NB4
+        rel: self
+        method: GET
+    unilateral: false
+  - id: INV2-SXVE-DE6X-N4F6-V5Z7
+    status: PAID
+    detail:
+      currency_code: USD
+      note: "Hi Sammy! \r\n\r\nLet me know if you would like this domain name renewed. If not, it is set to lapse by December 24, 2018 and no action is required. \r\n\r\nCheers"
+      invoice_number: 2018-INV0048
+      invoice_date: "2018-12-16"
+      payment_term:
+        due_date: "2018-12-16"
+      viewed_by_recipient: false
+      group_draft: false
+      metadata:
+        create_time: "2018-12-16T21:13:08Z"
+    invoicer:
+      email_address: rene@oreilly-dickens.test
+    primary_recipients:
+      - billing_info:
+          business_name: Haven
+          name:
+            given_name: Emerson
+            surname: Ryan
+            full_name: River
+          email_address: denis_price@dibbert.test
+    amount:
+      currency_code: USD
+      value: "12.00"
+    due_amount:
+      currency_code: USD
+      value: "0.00"
+    payments:
+      paid_amount:
+        currency_code: USD
+        value: "12.00"
+    links:
+      - href: https://api.paypal.com/v2/invoicing/invoices/INV2-SXVE-DE6X-N4F6-V5Z7
+        rel: self
+        method: GET
+    recurring_Id: RI-71W40404Y76836012
+    unilateral: false
+  - id: INV2-AET3-SRKH-REPK-B8MT
+    status: PAID
+    detail:
+      currency_code: USD
+      note: "Please let us know if you have any questions @ support@larcity.com. \r\n\r\nLooking forward to making your online business experiences even better with custom email raised to the power of G-Suite."
+      invoice_number: 2019-INV0012
+      invoice_date: "2019-01-04"
+      payment_term:
+        due_date: "2019-01-04"
+      viewed_by_recipient: false
+      group_draft: false
+      metadata:
+        create_time: "2018-12-03T04:07:55Z"
+    invoicer:
+      email_address: berta@gutmann-shields.test
+    primary_recipients:
+      - billing_info:
+          business_name: Gray
+          email_address: elijah@prosacco-koepp.test
+    amount:
+      currency_code: USD
+      value: "120.00"
+    due_amount:
+      currency_code: USD
+      value: "0.00"
+    payments:
+      paid_amount:
+        currency_code: USD
+        value: "120.00"
+    links:
+      - href: https://api.paypal.com/v2/invoicing/invoices/INV2-AET3-SRKH-REPK-B8MT
+        rel: self
+        method: GET
+    unilateral: false
+  - id: INV2-QTKD-J3GT-34H6-EM9E
+    status: CANCELLED
+    detail:
+      currency_code: USD
+      note: "Hi Erin! \r\n\r\nI've configured the domain with the redirect we discussed (to Instagram) and added you as an admin for the domain, so whenever you are ready, you'll have the control you need. Feel free to reach out if you have any questions need help at that time! Stay in touch :)"
+      invoice_number: 2018-INV0046
+      invoice_date: "2018-01-19"
+      payment_term:
+        due_date: "2018-01-19"
+      viewed_by_recipient: false
+      group_draft: false
+      metadata:
+        create_time: "2018-01-20T02:57:00Z"
+    invoicer:
+      email_address: kesha@olson.example
+    primary_recipients:
+      - billing_info:
+          name:
+            given_name: Sutton
+            surname: Rory
+            full_name: Phoenix
+          email_address: myron.harris@parisian.test
+    amount:
+      currency_code: USD
+      value: "30.00"
+    due_amount:
+      currency_code: USD
+      value: "30.00"
+    links:
+      - href: https://api.paypal.com/v2/invoicing/invoices/INV2-QTKD-J3GT-34H6-EM9E
+        rel: self
+        method: GET
+    unilateral: false
+  - id: INV2-JCL6-CFC5-T3ZT-G8S8
+    status: PAID
+    detail:
+      currency_code: USD
+      note: Hi Chuji - Let me know your GMail address so I can add you as an admin for the domain as discussed. I can prepare an invoice for GMail for Business or any other services you decide on when you are ready. For now, this takes care of the domain parking with Google. Cheers!
+      invoice_number: 2018-INV0045
+      invoice_date: "2018-01-19"
+      payment_term:
+        due_date: "2018-01-19"
+      viewed_by_recipient: false
+      group_draft: false
+      metadata:
+        create_time: "2018-01-20T02:50:30Z"
+    invoicer:
+      email_address: wes_vonrueden@jacobi-rice.example
+    primary_recipients:
+      - billing_info:
+          email_address: logistics@indigo.test
+    amount:
+      currency_code: USD
+      value: "12.00"
+    due_amount:
+      currency_code: USD
+      value: "0.00"
+    payments:
+      paid_amount:
+        currency_code: USD
+        value: "12.00"
+    links:
+      - href: https://api.paypal.com/v2/invoicing/invoices/INV2-JCL6-CFC5-T3ZT-G8S8
+        rel: self
+        method: GET
+    unilateral: false
+  - id: INV2-VUJM-VEJW-FD3E-MFLR
+    status: CANCELLED
+    detail:
+      currency_code: USD
+      note: Let me know if you have any questions, and thank you for your business!
+      invoice_number: 2018-INV0044
+      invoice_date: "2018-10-31"
+      payment_term:
+        due_date: "2018-11-30"
+      viewed_by_recipient: false
+      group_draft: false
+      metadata:
+        create_time: "2018-01-13T05:25:14Z"
+    invoicer:
+      email_address: shaunta.price@heidenreich-ryan.example
+    primary_recipients:
+      - billing_info:
+          email_address: logistics@indigo.test
+    amount:
+      currency_code: USD
+      value: "364.00"
+    due_amount:
+      currency_code: USD
+      value: "364.00"
+    links:
+      - href: https://api.paypal.com/v2/invoicing/invoices/INV2-VUJM-VEJW-FD3E-MFLR
+        rel: self
+        method: GET
+    unilateral: false
+  - id: INV2-JT5J-QZ56-F6TC-QX2E
+    status: PAID
+    detail:
+      currency_code: USD
+      note: Let me know if you have any questions, and thank you for your business!
+      invoice_number: 2018-INV0042
+      invoice_date: "2018-01-12"
+      payment_term:
+        due_date: "2018-01-12"
+      viewed_by_recipient: false
+      group_draft: false
+      metadata:
+        create_time: "2018-01-12T19:39:13Z"
+    invoicer:
+      email_address: robt@green-schmidt.example
+    primary_recipients:
+      - billing_info:
+          email_address: zachary@walsh-sanford.example
+    amount:
+      currency_code: USD
+      value: "394.00"
+    due_amount:
+      currency_code: USD
+      value: "0.00"
+    payments:
+      paid_amount:
+        currency_code: USD
+        value: "394.00"
+    links:
+      - href: https://api.paypal.com/v2/invoicing/invoices/INV2-JT5J-QZ56-F6TC-QX2E
+        rel: self
+        method: GET
+    unilateral: false
+  - id: INV2-9V8K-PD8X-YHGR-B9UY
+    status: PAID
+    detail:
+      currency_code: USD
+      note: Your domain name expires July 29th, 2017. Please make the payment ASAP so I can renew your domain. The domain renewal is annual. Let me know if you have any questions @ support@larcity.com.
+      invoice_number: 2017-INV0021
+      invoice_date: "2017-07-01"
+      payment_term:
+        due_date: "2017-07-01"
+      viewed_by_recipient: false
+      group_draft: false
+      metadata:
+        create_time: "2017-07-02T03:14:53Z"
+    invoicer:
+      email_address: roosevelt.towne@morissette.test
+    primary_recipients:
+      - billing_info:
+          business_name: Story
+          name:
+            given_name: Morgan
+            surname: Alexis
+            full_name: Azariah
+          email_address: paris@bartoletti-gusikowski.example
+    amount:
+      currency_code: USD
+      value: "20.00"
+    due_amount:
+      currency_code: USD
+      value: "0.00"
+    payments:
+      paid_amount:
+        currency_code: USD
+        value: "20.00"
+    links:
+      - href: https://api.paypal.com/v2/invoicing/invoices/INV2-9V8K-PD8X-YHGR-B9UY
+        rel: self
+        method: GET
+    unilateral: false
+  - id: INV2-L9Y6-WA5T-GABS-NMUQ
+    status: PAID
+    detail:
+      currency_code: USD
+      note: Thank you for your business!
+      invoice_number: 2017-INV0020
+      invoice_date: "2017-04-11"
+      payment_term:
+        due_date: "2017-04-11"
+      viewed_by_recipient: false
+      group_draft: false
+      metadata:
+        create_time: "2017-04-12T03:58:25Z"
+    invoicer:
+      email_address: jere_mccullough@schiller-schuster.example
+    primary_recipients:
+      - billing_info:
+          email_address: maureen@carroll.test
+    amount:
+      currency_code: USD
+      value: "24.00"
+    due_amount:
+      currency_code: USD
+      value: "0.00"
+    payments:
+      paid_amount:
+        currency_code: USD
+        value: "24.00"
+    links:
+      - href: https://api.paypal.com/v2/invoicing/invoices/INV2-L9Y6-WA5T-GABS-NMUQ
+        rel: self
+        method: GET
+    unilateral: false
+  - id: INV2-WEY2-XKZE-KT8U-GBRJ
+    status: PAID
+    detail:
+      currency_code: USD
+      note: "Included in your invoice, is a discount for the first year use of aelng.org. Future year renewals will be billed at $20 / Yr.\r\n\r\nI've also comp'd the taxes as an additional courtesy for the the invoice mishap - hence the lower amount.\r\n\r\nThanks for your business!"
+      invoice_number: 2016-INV0017
+      invoice_date: "2017-01-22"
+      payment_term:
+        due_date: "2017-01-22"
+      viewed_by_recipient: false
+      group_draft: false
+      metadata:
+        create_time: "2017-01-23T03:58:41Z"
+    invoicer:
+      email_address: tawnya@spinka-funk.example
+    primary_recipients:
+      - billing_info:
+          email_address: leigh.hills@walter.test
+    amount:
+      currency_code: USD
+      value: "44.00"
+    due_amount:
+      currency_code: USD
+      value: "0.00"
+    payments:
+      paid_amount:
+        currency_code: USD
+        value: "44.00"
+    links:
+      - href: https://api.paypal.com/v2/invoicing/invoices/INV2-WEY2-XKZE-KT8U-GBRJ
+        rel: self
+        method: GET
+    unilateral: false
+  - id: INV2-P9NR-B9U2-NUY4-4UCH
+    status: PAID
+    detail:
+      currency_code: USD
+      invoice_number: 2016-INV0016
+      invoice_date: "2016-11-16"
+      payment_term:
+        due_date: "2016-11-16"
+      viewed_by_recipient: false
+      group_draft: false
+      metadata:
+        create_time: "2016-11-17T04:15:08Z"
+    invoicer:
+      email_address: tanja@reichert.test
+    primary_recipients:
+      - billing_info:
+          email_address: georgia@funk.example
+    amount:
+      currency_code: USD
+      value: "86.00"
+    due_amount:
+      currency_code: USD
+      value: "0.00"
+    payments:
+      paid_amount:
+        currency_code: USD
+        value: "86.00"
+    links:
+      - href: https://api.paypal.com/v2/invoicing/invoices/INV2-P9NR-B9U2-NUY4-4UCH
+        rel: self
+        method: GET
+    unilateral: false
+  - id: INV2-6SB3-FXWV-46S5-ADH8
+    status: CANCELLED
+    detail:
+      currency_code: USD
+      note: Let me know if you have any questions, and thank you for your business!
+      invoice_number: 2017-INV0019
+      invoice_date: "2017-04-11"
+      payment_term:
+        due_date: "2017-04-11"
+      viewed_by_recipient: false
+      group_draft: false
+      metadata:
+        create_time: "2016-11-16T13:07:55Z"
+    invoicer:
+      email_address: leo.pollich@heidenreich.test
+    primary_recipients:
+      - billing_info:
+          email_address: jeremy.stehr@lebsack.example
+    amount:
+      currency_code: USD
+      value: "215.63"
+    due_amount:
+      currency_code: USD
+      value: "215.63"
+    links:
+      - href: https://api.paypal.com/v2/invoicing/invoices/INV2-6SB3-FXWV-46S5-ADH8
+        rel: self
+        method: GET
+    unilateral: false
+  - id: INV2-MGTP-AX8W-MHKW-JXAL
+    status: PAID
+    detail:
+      currency_code: USD
+      note: This is the re-generated invoice. Sorry about the issues with Wave. The refund has been sent to you and should be reflecting shortly if your card was billed.
+      invoice_number: 201603-INV0011
+      invoice_date: "2016-04-15"
+      payment_term:
+        due_date: "2016-04-15"
+      viewed_by_recipient: false
+      group_draft: false
+      metadata:
+        create_time: "2016-04-15T19:07:07Z"
+    invoicer:
+      email_address: fermin@gutmann.example
+    primary_recipients:
+      - billing_info:
+          business_name: Shiloh
+          name:
+            given_name: Corey
+            surname: Lennox
+            full_name: Robin
+          email_address: ruben_quitzon@larkin-gleichner.test
+    amount:
+      currency_code: USD
+      value: "1075.00"
+    due_amount:
+      currency_code: USD
+      value: "0.00"
+    payments:
+      paid_amount:
+        currency_code: USD
+        value: "1075.00"
+    links:
+      - href: https://api.paypal.com/v2/invoicing/invoices/INV2-MGTP-AX8W-MHKW-JXAL
+        rel: self
+        method: GET
+    unilateral: false
+  - id: INV2-4V8P-XFF3-4XZ6-KDT2
+    status: PAID
+    detail:
+      currency_code: USD
+      invoice_number: 201603-INV0010
+      invoice_date: "2016-03-02"
+      payment_term:
+        due_date: "2016-03-02"
+      viewed_by_recipient: false
+      group_draft: false
+      metadata:
+        create_time: "2016-03-03T07:24:31Z"
+    invoicer:
+      email_address: chelsie.mckenzie@pfeffer-carter.example
+    primary_recipients:
+      - billing_info:
+          business_name: Oakley
+          name:
+            given_name: Denver
+            surname: Story
+            full_name: Landry
+          email_address: stacey@kunde.test
+    amount:
+      currency_code: USD
+      value: "228.44"
+    due_amount:
+      currency_code: USD
+      value: "0.00"
+    payments:
+      paid_amount:
+        currency_code: USD
+        value: "228.44"
+    links:
+      - href: https://api.paypal.com/v2/invoicing/invoices/INV2-4V8P-XFF3-4XZ6-KDT2
+        rel: self
+        method: GET
+    unilateral: false
+  - id: INV2-AQZB-X47N-F73R-RS6U
+    status: PAID
+    detail:
+      currency_code: USD
+      invoice_number: 201603-INV0009
+      invoice_date: "2016-03-02"
+      payment_term:
+        due_date: "2016-03-02"
+      viewed_by_recipient: false
+      group_draft: false
+      metadata:
+        create_time: "2016-03-03T07:21:47Z"
+    invoicer:
+      email_address: alonzo.schumm@effertz.example
+    primary_recipients:
+      - billing_info:
+          business_name: Marion
+          name:
+            given_name: Brooklyn
+            surname: Riley
+            full_name: Marion
+          email_address: verona@lebsack.example
+    amount:
+      currency_code: USD
+      value: "30.00"
+    due_amount:
+      currency_code: USD
+      value: "0.00"
+    payments:
+      paid_amount:
+        currency_code: USD
+        value: "30.00"
+    links:
+      - href: https://api.paypal.com/v2/invoicing/invoices/INV2-AQZB-X47N-F73R-RS6U
+        rel: self
+        method: GET
+    unilateral: false
+  - id: INV2-4UQH-48Y7-B4ZP-7NAS
+    status: CANCELLED
+    detail:
+      currency_code: USD
+      note: Instructions for using Shadowbox to update website content will be available via email later this week.
+      invoice_number: "0002"
+      invoice_date: "2015-04-24"
+      payment_term:
+        due_date: "2015-04-23"
+      viewed_by_recipient: false
+      group_draft: false
+      metadata:
+        create_time: "2015-04-23T12:28:07Z"
+    primary_recipients:
+      - billing_info:
+          email_address: kenton@murazik.example
+    amount:
+      currency_code: USD
+      value: "1057.50"
+    due_amount:
+      currency_code: USD
+      value: "1057.50"
+    links:
+      - href: https://api.paypal.com/v2/invoicing/invoices/INV2-4UQH-48Y7-B4ZP-7NAS
+        rel: self
+        method: GET
+    unilateral: false
+  - id: INV2-SYMT-EZ7X-GTUC-2FCG
+    status: CANCELLED
+    detail:
+      currency_code: USD
+      note: Instructions for using Shadowbox to update website content will be available via email later this week.
+      invoice_number: 201404-INV0008
+      invoice_date: "2015-04-24"
+      payment_term:
+        due_date: "2015-04-23"
+      viewed_by_recipient: false
+      group_draft: false
+      metadata:
+        create_time: "2015-04-23T12:28:06Z"
+    primary_recipients:
+      - billing_info:
+          email_address: porter@oconner-yundt.example
+    amount:
+      currency_code: USD
+      value: "1057.50"
+    due_amount:
+      currency_code: USD
+      value: "1057.50"
+    links:
+      - href: https://api.paypal.com/v2/invoicing/invoices/INV2-SYMT-EZ7X-GTUC-2FCG
+        rel: self
+        method: GET
+    unilateral: false
+links:
+  - href: https://api.paypal.com/v2/invoicing/invoices?page=2&page_size=25&total_required=false
+    rel: self
+    method: GET
+  - href: https://api.paypal.com/v2/invoicing/invoices?page=1&page_size=25&total_required=false
+    rel: prev
+    method: GET
