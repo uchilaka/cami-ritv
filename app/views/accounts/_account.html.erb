@@ -1,0 +1,58 @@
+<div id="<%= dom_id account %>" class="relative overflow-x-auto my-5">
+  <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+    <tbody>
+    <!-- Tax ID -->
+    <tr class="bg-white dark:bg-gray-800">
+      <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+        Tax ID
+      </th>
+      <td class="px-6 py-4">
+        <%= account.tax_id %>
+      </td>
+    </tr>
+
+    <!-- Display name -->
+    <tr class="bg-white dark:bg-gray-800">
+      <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+        Display name
+      </th>
+      <td class="px-6 py-4">
+        <%= account.display_name %>
+      </td>
+    </tr>
+
+    <!-- Slug -->
+    <tr class="bg-white dark:bg-gray-800">
+      <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+        Slug
+      </th>
+      <td class="px-6 py-4">
+        <%= account.slug %>
+      </td>
+    </tr>
+
+    <!-- Status -->
+    <tr class="bg-white dark:bg-gray-800">
+      <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+        Status
+      </th>
+      <td class="px-6 py-4">
+        <%= account.status %>
+      </td>
+    </tr>
+
+    <!-- Notes (Trix WYSIWYG) -->
+    <tr class="bg-white dark:bg-gray-800">
+      <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+        Notes
+      </th>
+      <td class="px-6 py-4">
+        <%= account.readme %>
+      </td>
+    </tr>
+  </table>
+</div>
+
+<div class="flex justify-end items-center my-5 space-x-2">
+  <%= yield :form_actions %>
+</div>

@@ -52,7 +52,7 @@ Fabricator(:user) do
     {
       image_url: Faker::Avatar.image,
       phone_e164: phone_number.e164,
-      phone_country: phone_number.country
+      phone_country: phone_number.country,
     }
   end
 end
@@ -63,7 +63,7 @@ Fabricator(:user_with_provider_profiles, from: :user) do
     {
       'google' => SecureRandom.alphanumeric(21),
       'apple' => SecureRandom.alphanumeric(21),
-      'whatsapp' => SecureRandom.alphanumeric(21)
+      'whatsapp' => SecureRandom.alphanumeric(21),
     }
   end
 

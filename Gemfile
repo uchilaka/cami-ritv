@@ -5,6 +5,7 @@ ruby '3.2.2'
 
 # Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
 gem 'rails', '~> 8.0'
+gem 'solid_queue'
 
 # Autoload dotenv in Rails https://github.com/bkeepers/dotenv
 # IMPORTANT: This should be loaded as early as possible
@@ -56,10 +57,17 @@ gem 'omniauth-google-oauth2', '~> 1.2'
 gem 'omniauth-rails_csrf_protection'
 gem 'rack-cors', '~> 2.0'
 
+# Not supported yet on Rails 8.0
+# gem 'active_record_extended'
+
+gem 'aasm'
+# Required by AASM
+gem 'after_commit_everywhere', '~> 1.6'
+
 gem 'active_model_serializers'
 gem 'bumbler'
 gem 'data_migrate', '~> 11.3'
-gem 'discard'
+gem 'discard', '~> 1.4'
 gem 'faraday'
 gem 'friendly_id', '~> 5.5'
 gem 'globalid', '~> 1.2'
@@ -71,6 +79,9 @@ gem 'phonelib'
 gem 'pundit', '~> 2.5'
 gem 'ransack', '~> 4.3'
 gem 'rolify', '~> 6.0'
+
+# Rationale: setup "staging" environments to be identical to production, distinguished by their domain name.
+gem 'sib-api-v3-sdk', groups: %i[production]
 
 gem 'flipper-active_record', '~> 1.3'
 gem 'flipper-api'
@@ -85,6 +96,9 @@ gem 'ostruct'
 
 # Simple, feature rich ascii table generation library https://github.com/tj/terminal-table
 gem 'terminal-table'
+
+gem 'nokogiri'
+gem 'reverse_markdown'
 
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem

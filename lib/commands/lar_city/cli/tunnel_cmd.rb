@@ -5,7 +5,7 @@ require 'open3'
 
 module LarCity
   module CLI
-  # Manage NGROK tunnels for dev testing of the app and rails API
+    # Manage NGROK tunnels for dev testing of the app and rails API
     class TunnelCmd < BaseCmd
       namespace 'tunnel'
 
@@ -37,7 +37,7 @@ module LarCity
       desc 'open_all', 'Open ngrok tunnels for the project'
       def open_all
         if auth_token_nil?
-          puts <<~ERROR
+          say_info <<~ERROR
             No ngrok auth token found. Please set NGROK_AUTH_TOKEN in your environment.#{' '}
             You will need an ngrok account to use this CLI command.#{' '}
             See https://dashboard.ngrok.com/get-started/your-authtoken for more information.
@@ -49,25 +49,18 @@ module LarCity
         # TODO: Make sure this works without issues on macOS
         invoke :init, [], verbose: Rails.env.development?
 
-        # TODO: Check for ngrok config file(s) and exit if they don't exist
-        config_files = []
-        app_config_file = File.join(project_root, 'config', 'ngrok.yml')
-        profile_config_file = ENV.fetch('NGROK_PROFILE_CONFIG_PATH', nil)
-        config_files << profile_config_file if profile_config_file.present? && File.exist?(profile_config_file)
-        config_files << app_config_file if app_config_file.present? && File.exist?(app_config_file)
-
         if verbose?
-          puts <<~BANNER
+          say_info <<~BANNER
             Starting ngrok tunnels for #{project_root}...
           BANNER
         end
 
-        if config_files.empty?
-          puts <<~ERROR
+        if proxy_config_files.empty? && !dry_run?
+          say_info <<~ERROR
             No ngrok config files found. Please create one at #{app_config_file} or #{profile_config_file}.
           ERROR
 
-          exit 1
+          return
         end
 
         if windows? || linux?
@@ -88,7 +81,29 @@ module LarCity
           run 'docker compose up tunnel'
         else
           run 'ngrok start --all',
-              "--config=#{config_files.join(',')}"
+              (proxy_config_files.empty? ? nil : "--config=#{proxy_config_files.join(',')}")
+        end
+      end
+
+      no_commands do
+        def proxy_config_files
+          unless defined?(@proxy_config_files)
+            # TODO: Check for ngrok config file(s) and exit if they don't exist
+            @proxy_config_files = []
+            if profile_config_file.present? && File.exist?(profile_config_file)
+              @proxy_config_files << profile_config_file
+            end
+            @proxy_config_files << app_config_file if app_config_file.present? && File.exist?(app_config_file)
+          end
+          @proxy_config_files || []
+        end
+
+        def app_config_file
+          File.join(project_root, 'config', 'ngrok.yml')
+        end
+
+        def profile_config_file
+          ENV.fetch('NGROK_PROFILE_CONFIG_PATH', nil)
         end
       end
 

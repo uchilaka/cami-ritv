@@ -1,0 +1,65 @@
+<%= form_with(model: account, class: "contents") do |form| %>
+<%= render "shared/error_messages", resource: form.object %>
+
+  <div class="grid md:grid-cols-2 md:gap-6">
+    <!-- Email -->
+    <div class="relative z-0 w-full my-5 group">
+      <%= form.label :email %>
+      <%= form.email_field :email, class: "block shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full" %>
+    </div>
+    <!-- Account Type -->
+    <div class="relative z-0 w-full my-5 group">
+      <%= form.label :type %>
+      <%= form.select(:type,
+                      options_for_select(account_type_options),
+                      {},
+                      class: "block shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full",
+                      disabled: !current_user&.admin?) %>
+    </div>
+  </div>
+
+
+  <!-- Display name -->
+  <div class="my-5">
+    <%= form.label :display_name %>
+    <%= form.text_field :display_name,
+                        class: "block shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full",
+                        readonly: !policy(form.object).edit? %>
+  </div>
+
+  <!-- Slug -->
+  <div class="my-5">
+    <%= form.label :slug %>
+    <%= form.text_field :slug, class: "block shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full" %>
+  </div>
+
+  <!--
+    Guide on making select boxes with ease:
+    https://guides.rubyonrails.org/form_helpers.html#making-select-boxes-with-ease
+    -->
+  <div class="my-5">
+    <%= form.label :status %>
+    <%= form.select(:status,
+                      options_for_select(account_status_options),
+                      {},
+                      class: "block shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full",
+                      disabled: !current_user&.admin?) %>
+  </div>
+
+  <!-- Tax ID -->
+  <div class="my-5">
+    <%= form.label :tax_id, t('labels.accounts.tax_id') %>
+    <%= form.text_field :tax_id, class: "block shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full" %>
+  </div>
+
+  <!-- Notes (Trix WYSIWYG) -->
+  <div class="my-5">
+    <%= form.label :readme, t('labels.accounts.notes') %>
+    <%= form.rich_text_area :readme, rows: 4, class: "block shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full" %>
+  </div>
+
+  <div class="flex justify-end items-center my-5 space-x-4">
+    <%= yield :form_actions %>
+    <%= form.submit class: primary_btn_classes("me-4 px-5 py-3 cursor-pointer") %>
+  </div>
+<% end %>
