@@ -1,0 +1,7 @@
+---
+- full_e164: '+441962713171'
+  country: 'GB'
+- full_e164: '+15032822000'
+  country: 'US'
+- full_e164: '+2347030936084'
+  country: 'NG'
