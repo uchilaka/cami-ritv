@@ -652,6 +652,23 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@hotwired/turbo-rails@npm:^8.0.13":
+  version: 8.0.13
+  resolution: "@hotwired/turbo-rails@npm:8.0.13"
+  dependencies:
+    "@hotwired/turbo": "npm:^8.0.13"
+    "@rails/actioncable": "npm:^7.0"
+  checksum: 10c0/3987981f08fdc56942e0f01daa3e53bff69edb167f7cdfc8d96841dbec9c86d89ba48d00d4a5fa296225dc0aee275d4a19a77bce89cf8fcd38b7e100799b73e8
+  languageName: node
+  linkType: hard
+
+"@hotwired/turbo@npm:^8.0.10, @hotwired/turbo@npm:^8.0.13":
+  version: 8.0.13
+  resolution: "@hotwired/turbo@npm:8.0.13"
+  checksum: 10c0/fc9fd58ce2e006ad2f9e3948cf1ec71f47187ce8115f03e531bab849d0e13abc94cd0067f0888f7064d730b4c1a8212101bfa6d55f6166c6ad2db275e280149a
+  languageName: node
+  linkType: hard
+
 "@humanfs/core@npm:^0.19.1":
   version: 0.19.1
   resolution: "@humanfs/core@npm:0.19.1"
@@ -819,10 +836,13 @@ __metadata:
     "@eslint/js": "npm:^9.24.0"
     "@headlessui/react": "npm:^2.2.1"
     "@heroicons/react": "npm:^2.2.0"
+    "@hotwired/turbo": "npm:^8.0.10"
+    "@hotwired/turbo-rails": "npm:^8.0.13"
     "@inertiajs/inertia": "npm:^0.11.0"
     "@inertiajs/inertia-react": "npm:^0.8.0"
     "@inertiajs/progress": "npm:^0.2.7"
     "@inertiajs/react": "npm:^2.0.8"
+    "@rails/actiontext": "npm:^8.0.0"
     "@tailwindcss/aspect-ratio": "npm:^0.4.2"
     "@tailwindcss/container-queries": "npm:^0.1.1"
     "@tailwindcss/forms": "npm:^0.5.10"
@@ -1088,6 +1108,33 @@ __metadata:
   version: 2.11.8
   resolution: "@popperjs/core@npm:2.11.8"
   checksum: 10c0/4681e682abc006d25eb380d0cf3efc7557043f53b6aea7a5057d0d1e7df849a00e281cd8ea79c902a35a414d7919621fc2ba293ecec05f413598e0b23d5a1e63
+  languageName: node
+  linkType: hard
+
+"@rails/actioncable@npm:^7.0":
+  version: 7.2.201
+  resolution: "@rails/actioncable@npm:7.2.201"
+  checksum: 10c0/65463467f1473f810273432b85a272798c8fbe6c8a200be4f8ecbced152deac7bc3f159cd3db7ce7ab05b34cce25582d384cf51f0028c3c2baf303186e0f24f5
+  languageName: node
+  linkType: hard
+
+"@rails/actiontext@npm:^8.0.0":
+  version: 8.0.200
+  resolution: "@rails/actiontext@npm:8.0.200"
+  dependencies:
+    "@rails/activestorage": "npm:>= 8.0.0-alpha"
+  peerDependencies:
+    trix: ^2.0.0
+  checksum: 10c0/6a3ab58587cf3b8b3a4a0bed0df446b18b97fb995a71f12a733140bc3788758ee6c3b5b78c22df116e19c32ceb061de425b3f201e7e474eb4f7067822248097b
+  languageName: node
+  linkType: hard
+
+"@rails/activestorage@npm:>= 8.0.0-alpha":
+  version: 8.0.200
+  resolution: "@rails/activestorage@npm:8.0.200"
+  dependencies:
+    spark-md5: "npm:^3.0.1"
+  checksum: 10c0/c5acd3f8affc9a85bd25bcee29573109063b5b7787a21a768e7e8482d40d8593a69b4cae948ade31ad5fb15bbda5c8d3073152efe629c9d4b31dd3e8c74b1a55
   languageName: node
   linkType: hard
 
@@ -5052,6 +5099,13 @@ __metadata:
   version: 1.2.1
   resolution: "source-map-js@npm:1.2.1"
   checksum: 10c0/7bda1fc4c197e3c6ff17de1b8b2c20e60af81b63a52cb32ec5a5d67a20a7d42651e2cb34ebe93833c5a2a084377e17455854fee3e21e7925c64a51b6a52b0faf
+  languageName: node
+  linkType: hard
+
+"spark-md5@npm:^3.0.1":
+  version: 3.0.2
+  resolution: "spark-md5@npm:3.0.2"
+  checksum: 10c0/3fd11735eac5e7d60d6006d99ac0a055f148a89e9baf5f0b51ac103022dec30556b44190b37f6737ca50f81e8e50dc13e724f9edf6290c412ff5ab2101ce7780
   languageName: node
   linkType: hard
 
