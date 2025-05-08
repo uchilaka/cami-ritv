@@ -26,23 +26,28 @@ module Navigable
               label: t('shared.navbar.home'),
               path: root_path,
               public: true,
+              order: 0,
             },
             {
               label: t('shared.navbar.dashboard'),
               path: '/app/dashboard',
+              order: 1,
             },
             {
               label: t('shared.navbar.invoices'),
               path: '/app/invoices',
+              order: 3,
             },
             {
               label: t('shared.navbar.demos'),
               path: '#',
               submenu: demo_sub_menu,
+              order: 4,
             },
             {
               label: t('shared.navbar.accounts'),
               path: accounts_path,
+              order: 2,
             },
             # {
             #   label: t('shared.navbar.services'),
@@ -58,8 +63,9 @@ module Navigable
               label: t('shared.navbar.about'),
               path: '/about-us',
               feature: true,
+              order: 0,
             },
-          ].map { |item| build_menu_item(item) }.filter(&:enabled)
+          ].map { |item| build_menu_item(item) }.filter(&:enabled).sort_by(&:order)
         end
     end
 

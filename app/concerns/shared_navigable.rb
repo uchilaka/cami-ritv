@@ -37,6 +37,7 @@ module SharedNavigable
       item[:enabled] ||= calculate_enabled(item)
       item[:admin] ||= false
       item[:public] ||= false
+      item[:order] ||= 99
       # Return a new Struct::NavbarItem instance
       Struct::NavbarItem.new(item)
     end
