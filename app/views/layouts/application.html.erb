@@ -13,8 +13,8 @@
 
         Visit the guide for more information: https://vite-ruby.netlify.app/guide/rails
       -->
-    <%= stylesheet_link_tag "application",
-                            "actiontext", media: 'all' %>
+    <%= stylesheet_link_tag "actiontext", media: "all" %>
+    <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
     <%= stylesheet_link_tag "application.tailwind", "data-turbo-track": "reload" %>
     <!--<script src="https://cdn.tailwindcss.com"></script>-->
   <% end %>

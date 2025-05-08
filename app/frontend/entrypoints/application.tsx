@@ -6,9 +6,7 @@ import { createInertiaApp } from "@inertiajs/react";
 import { InertiaProgress } from "@inertiajs/progress";
 import axios from "axios";
 
-// import "tailwindcss";
 import "flowbite/dist/flowbite.turbo";
-
 import "./main.scss";
 
 import Layout from "@/components/BasicLayout";
