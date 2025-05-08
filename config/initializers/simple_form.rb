@@ -93,7 +93,13 @@ SimpleForm.setup do |config|
   config.boolean_style = :nested
 
   # Default class for buttons
-  config.button_class = 'btn'
+  config.button_class = [
+    'bg-white dark:bg-gray-800',
+    'text-gray-900 dark:text-white border border-gray-300',
+    'focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100',
+    'font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2',
+    'dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700',
+  ].join(' ')
 
   # Method used to tidy up errors. Specify any Rails Array method.
   # :first lists the first message for each field.
@@ -104,7 +110,7 @@ SimpleForm.setup do |config|
   config.error_notification_tag = :div
 
   # CSS class to add for error notification helper.
-  config.error_notification_class = 'error_notification'
+  config.error_notification_class = 'text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400'
 
   # Series of attempts to detect a default label method for collection.
   # config.collection_label_methods = [ :to_label, :name, :title, :to_s ]
