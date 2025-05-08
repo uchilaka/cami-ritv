@@ -29,12 +29,7 @@
     </div>
   </td>
   <td class="px-6 py-4 text-end">
-    <%= turbo_frame_tag resource_dom_turbo_id(account) do %>
-      <!-- TODO: account list item actions -->
-      <div class="flex justify-end">
-        <%= link_to "View", show_modal_account_path(account), class: default_item_action_btn_classes %>
-        <%= link_to "Edit", edit_account_path(account), class: default_item_action_btn_classes %>
-      </div>
-    <% end %>
+    <!-- TODO: account list item actions -->
+    <%= render "list_item_actions", account: %>
   </td>
 </tr>
