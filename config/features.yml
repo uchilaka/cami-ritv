@@ -17,7 +17,7 @@ default: &default
   feat__storybook:
     enabled: false
   feat__invoices:
-    enabled: true
+    enabled: false
   feat__filterable_billing_type_badge:
     enabled: false
   feat__sortable_invoice_index:

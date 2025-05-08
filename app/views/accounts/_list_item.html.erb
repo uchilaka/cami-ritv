@@ -29,13 +29,12 @@
     </div>
   </td>
   <td class="px-6 py-4 text-end">
-    <div class="flex justify-end">
-      <%= button_tag "View",
-                     class: compose_class_names('action--view-account-summary', default_item_action_btn_classes),
-                     "data-resource-id": account.id.to_s,
-                     "data-modal-target-async": 'account--summary-modal',
-                     "data-modal-toggle-async": 'account--summary-modal' %>
-      <%= link_to "Edit", edit_account_path(account), class: default_item_action_btn_classes %>
-    </div>
+    <%= turbo_frame_tag resource_dom_turbo_id(account) do %>
+      <!-- TODO: account list item actions -->
+      <div class="flex justify-end">
+        <%= link_to "View", show_modal_account_path(account), class: default_item_action_btn_classes %>
+        <%= link_to "Edit", edit_account_path(account), class: default_item_action_btn_classes %>
+      </div>
+    <% end %>
   </td>
 </tr>

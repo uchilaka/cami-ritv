@@ -4,6 +4,10 @@ module ApplicationHelper
   include StyleHelper
   include DynamicDomElementCapable
 
+  def resource_dom_turbo_id(resource, action: :show)
+    "#{action}-#{resource.model_name.singular}-#{resource.id}--turbo-frame"
+  end
+
   def modal_dom_id(resource, content_type: nil)
     raise ArgumentError, "#{resource.class.name} MUST be Renderable" \
       unless resource.respond_to?(:modal_dom_id)
@@ -25,8 +29,7 @@ module ApplicationHelper
   end
 
   def page_title
-    Rails.application.config.application_short_name ||
-      Rails.application.class.module_parent_name
+    I18n.t('app.short_name') || Rails.application.class.module_parent_name
   end
 
   def crm_org_id
