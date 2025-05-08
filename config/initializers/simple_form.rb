@@ -14,10 +14,8 @@ SimpleForm.setup do |config|
   # stack. The options given below are used to wrap the
   # whole input.
   config.wrappers :default,
-                  class: :input,
-                  hint_class: :field_with_hint,
-                  error_class: :field_with_errors,
-                  valid_class: :field_without_errors do |b|
+                  class: 'mx-auto',
+                  hint_class: 'mt-2 text-sm text-gray-500 dark:text-gray-400' do |b|
     ## Extensions enabled by default
     # Any of these extensions can be disabled for a
     # given input by passing: `f.input EXTENSION_NAME => false`.
@@ -55,7 +53,25 @@ SimpleForm.setup do |config|
     b.optional :readonly
 
     ## Inputs
-    # b.use :input, class: 'input', error_class: 'is-invalid', valid_class: 'is-valid'
+    b.use :label,
+          class: 'block mb-2 text-sm font-medium',
+          error_class: 'text-red-700 dark:text-red-500'
+    b.use :input,
+          class: 'text-sm rounded-lg block w-full p-2.5 border',
+          error_class: [
+            'is-invalid bg-red-50 dark:bg-gray-700',
+            'border-red-500 focus:ring-red-500',
+            'focus:border-red-500 dark:border-red-500',
+            'text-red-900 dark:text-red-500',
+            'placeholder-red-700 dark:placeholder-red-500',
+          ].join(' '),
+          valid_class: [
+            'is-valid bg-green-50 dark:bg-gray-700',
+            'text-green-900 dark:text-green-400',
+            'placeholder-green-700 dark:placeholder-green-500',
+            'focus:ring-green-500 focus:border-green-500',
+            'border-green-500 dark:border-green-500',
+          ].join(' ')
     b.use :label_input
     b.use :hint,  wrap_with: { tag: :span, class: :hint }
     b.use :error, wrap_with: { tag: :span, class: :error }
