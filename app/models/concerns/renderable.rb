@@ -10,9 +10,9 @@ module Renderable
 
   module ClassMethods
     def modal_dom_id(resource:, content_type: nil)
-      return "#{resource.model_name.singular}-modal-#{resource.id}--#{content_type}" unless content_type.blank?
+      return "#{resource.model_name.singular}--#{content_type}--modal|#{resource.id}|" unless content_type.blank?
 
-      "#{resource.model_name.singular}-modal-#{resource.id}"
+      "#{resource.model_name.singular}--modal|#{resource.id}|"
     end
   end
 
