@@ -22,7 +22,7 @@
 
   <body class="min-h-full bg-white dark:bg-gray-800">
     <%= render "shared/navbar/index" %>
-    <main class="bg-white pt-40">
+    <main class="bg-white dark:bg-gray-800 pt-40">
       <div class="container flex flex-col flex-1 md:px-5 max-sm:px-2 mx-auto mt-0 mb-12 max-w-screen-xl">
         <%= yield %>
       </div>
@@ -30,5 +30,7 @@
     <%= render "shared/footer/full" %>
     <!-- Bootstrap all the Flowbite JS things -->
     <script src="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js"></script>
+    <!-- Pattern for including request-specific javascript -->
+    <%= yield :typescript_includes %>
   </body>
 </html>

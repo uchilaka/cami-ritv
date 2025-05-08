@@ -1,11 +1,9 @@
-<%= form_with(model: account, class: "contents") do |form| %>
-<%= render "shared/error_messages", resource: form.object %>
+<%= simple_form_for(account, class: "contents") do |form| %>
+  <%= render "shared/error_messages", resource: form.object %>
   <div class="grid md:grid-cols-2 md:gap-6">
     <!-- Email -->
-    <div class="relative z-0 w-full my-5 group">
-      <%= form.label :email %>
-      <%= form.email_field :email, class: "block shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full" %>
-    </div>
+    <%= form.input :email, wrapper_class: "w-full my-5 group" %>
+
     <!-- Account Type -->
     <div class="relative z-0 w-full my-5 group">
       <%= form.label :type %>

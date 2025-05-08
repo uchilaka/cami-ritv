@@ -54,10 +54,10 @@ SimpleForm.setup do |config|
 
     ## Inputs
     b.use :label,
-          class: 'block mb-2 text-sm font-medium',
+          # class: 'block mb-2 text-sm font-medium',
           error_class: 'text-red-700 dark:text-red-500'
     b.use :input,
-          class: 'text-sm rounded-lg block w-full p-2.5 border',
+          class: 'dark:text-white',
           error_class: [
             'is-invalid bg-red-50 dark:bg-gray-700',
             'border-red-500 focus:ring-red-500',
@@ -72,7 +72,7 @@ SimpleForm.setup do |config|
             'focus:ring-green-500 focus:border-green-500',
             'border-green-500 dark:border-green-500',
           ].join(' ')
-    b.use :label_input
+    # b.use :label_input
     b.use :hint,  wrap_with: { tag: :span, class: :hint }
     b.use :error, wrap_with: { tag: :span, class: :error }
 
@@ -135,7 +135,7 @@ SimpleForm.setup do |config|
   # config.label_text = lambda { |label, required, explicit_label| "#{required} #{label}" }
 
   # You can define the class to use on all labels. Default is nil.
-  # config.label_class = nil
+  config.label_class = 'block mb-2 text-sm font-medium'
 
   # You can define the default class to be used on forms. Can be overridden
   # with `html: { :class }`. Defaulting to none.
@@ -183,7 +183,7 @@ SimpleForm.setup do |config|
   # config.cache_discovery = !Rails.env.development?
 
   # Default class for inputs
-  # config.input_class = nil
+  config.input_class = 'rounded-md block w-full p-2.5 border'
 
   # Define the default class of the input wrapper of the boolean input.
   config.boolean_label_class = 'checkbox'
