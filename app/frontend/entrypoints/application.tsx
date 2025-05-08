@@ -31,7 +31,9 @@ document.addEventListener("turbo:frame-load", ({ target }) => {
       const hideModalActionForm = modalElement.querySelector<HTMLFormElement>(
         "form.hide-modal-action"
       );
-      const hideModalBtn = hideModalActionForm?.querySelector("button");
+      const hideModalBtn = hideModalActionForm?.querySelector(
+        "button[type=submit]"
+      );
       const modalOptions: ModalOptions = { closable: true };
       if (!modalElement) throw new Error("Modal element not found");
       // Initialize modal
