@@ -6,10 +6,12 @@ type THEME = 'dark' | 'light';
 
 const getCurrentScheme = (): THEME => {
   const savedTheme = localStorage.getItem('color-theme');
+  const systemSetDarkMode = window.matchMedia(
+    '(prefers-color-scheme: dark)'
+  ).matches;
   const prefersDarkScheme =
-    !('color-theme' in localStorage) &&
-    window.matchMedia('(prefers-color-scheme: dark)').matches;
-  console.debug({ prefersDarkScheme, savedTheme });
+    !('color-theme' in localStorage) && systemSetDarkMode;
+  console.debug({ systemSetDarkMode, prefersDarkScheme, savedTheme });
   // If the user has set a color scheme in localStorage, use that
   if (savedTheme) return savedTheme as THEME;
   // If the user has not set a color scheme, use the system preference
