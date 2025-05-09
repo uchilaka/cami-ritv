@@ -43,7 +43,7 @@
     "rubyLsp.rubyVersionManager": {
       "identifier": "asdf"
     },
-    "rubocop.commandPath": "${userHome}/.rbenv/shims/rubocop",
+    "rubocop.commandPath": "${userHome}/.asdf/shims/rubocop",
     "rubocop.mode": "enableViaGemfileOrMissingGemfile",
     "editor.mouseWheelZoom": true,
     "terminal.integrated.mouseWheelZoom": true,

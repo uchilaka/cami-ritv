@@ -1,1 +1,1 @@
-console.debug('accounts.ts loaded!')
+console.debug('<<< accounts.ts entrypoint loaded! >>>')
