@@ -1,13 +1,6 @@
-import React, { createElement, useEffect } from 'react';
+import { createElement } from 'react';
 import { createRoot } from 'react-dom/client';
-
-const DarkModeApp = () => {
-  useEffect(() => {
-    console.debug('<<< dark_mode_app.tsx entrypoint loaded! >>>');
-  }, []);
-
-  return <>Dark mode app</>;
-};
+import DarkModeApp from '@/features/DarkMode';
 
 const container = document.querySelector<HTMLDivElement>('#user-dropdown');
 if (container) {
@@ -24,4 +17,5 @@ if (container) {
   container.prepend(globalNavContainer);
   const root = createRoot(globalNavContainer);
   root.render(createElement(DarkModeApp));
+  console.debug('<<< dark_mode_app.tsx entrypoint loaded! >>>');
 }
