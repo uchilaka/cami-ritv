@@ -4,11 +4,6 @@ import DarkModeIcon from './svgs/DarkModeIcon';
 
 type THEME = 'dark' | 'light';
 
-const ThemeLabel: Record<THEME, string> = {
-  dark: 'Light Mode',
-  light: 'Dark Mode',
-};
-
 const getCurrentScheme = (): THEME => {
   const savedTheme = localStorage.getItem('color-theme');
   const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)');
@@ -33,11 +28,15 @@ const DarkModeApp = () => {
 
   useEffect(() => {
     document.documentElement.classList.toggle('dark', currentScheme === 'dark');
+    document.documentElement.classList.toggle(
+      'light',
+      currentScheme === 'light'
+    );
   }, [currentScheme]);
 
   return (
     <div className="min-w-[200px] flex justify-between content-center text-sm px-4 py-3 dark:text-white">
-      <label className="content-center">{ThemeLabel[currentScheme]}</label>
+      <label className="content-center">Theme</label>
       <button
         type="button"
         onClick={toggleTheme}

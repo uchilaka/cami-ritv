@@ -13,7 +13,7 @@
 
         Visit the guide for more information: https://vite-ruby.netlify.app/guide/rails
       -->
-    <%= vite_javascript_tag 'dark_mode_app.tsx' %>
+    <%= vite_javascript_tag 'theme_toggle_app.tsx' %>
     <%= stylesheet_link_tag "actiontext", media: "all" %>
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
     <%= stylesheet_link_tag "application.tailwind", "data-turbo-track": "reload" %>
@@ -21,7 +21,7 @@
   <% end %>
   <%= render "layouts/shared/head" %>
 
-  <body class="min-h-full bg-white dark:bg-gray-800">
+  <body class="min-h-full bg-white dark:bg-gray-800 light:bg-white">
     <%= render "shared/navbar/index" %>
     <main class="bg-white dark:bg-gray-800 pt-40">
       <div class="container flex flex-col flex-1 md:px-5 max-sm:px-2 mx-auto mt-0 mb-12 max-w-screen-xl">

@@ -1,6 +1,6 @@
 import { createElement } from 'react';
 import { createRoot } from 'react-dom/client';
-import DarkModeApp from '@/features/DarkMode';
+import ThemeToggleApp from '@/features/ThemeToggle';
 
 const container = document.querySelector<HTMLDivElement>('#user-dropdown');
 if (container) {
@@ -16,6 +16,6 @@ if (container) {
   globalNavContainer.id = 'global-nav';
   container.prepend(globalNavContainer);
   const root = createRoot(globalNavContainer);
-  root.render(createElement(DarkModeApp));
-  console.debug('<<< dark_mode_app.tsx entrypoint loaded! >>>');
+  root.render(createElement(ThemeToggleApp));
+  console.debug('<<< theme_toggle_app.tsx entrypoint loaded! >>>');
 }
