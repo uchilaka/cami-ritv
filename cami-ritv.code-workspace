@@ -38,12 +38,16 @@
     },
   ],
   "settings": {
+    "[ruby]": {
+      "editor.defaultFormatter": "Shopify.ruby-lsp",
+      "editor.formatOnSave": true
+    },
     "terminal.integrated.fontSize": 15,
     "window.zoomLevel": 0.125,
     "rubyLsp.rubyVersionManager": {
       "identifier": "asdf"
     },
-    "rubocop.commandPath": "${userHome}/.asdf/shims/rubocop",
+    "rubocop.commandPath": "${userHome}${pathSeparator}.asdf${pathSeparator}shims${pathSeparator}rubocop",
     "rubocop.mode": "enableViaGemfileOrMissingGemfile",
     "editor.mouseWheelZoom": true,
     "terminal.integrated.mouseWheelZoom": true,
