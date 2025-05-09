@@ -26,8 +26,8 @@ module NavbarHelper
   end
 
   def navbar_link_classes_for_current_page
-    'block py-2 px-3 text-white bg-blue-700 rounded md:bg-transparent md:text-blue-700 md:p-0 ' \
-      'md:dark:text-blue-500'
+    'block py-2 px-3 text-brand rounded md:bg-transparent md:text-brand md:p-0 ' \
+      'md:dark:text-brand'
   end
 
   def profile_link_classes
