@@ -1,5 +1,5 @@
 <% content_for :centered_form_layout do %>
-  <h3 class="mb-4">Log in</h3>
+  <h3 class="mb-4 dark:text-white">Log in</h3>
   <%= form_for(
         resource,
         as: resource_name,
@@ -32,7 +32,7 @@
     <%= render "shared/separator-with-text", content: "Other ways to sign in" %>
   </div>
 
-  <%= render "devise/shared/omniauth/links" %>
+  <%= render "users/shared/omniauth/links" %>
 
   <div class="mb-5">
     <%= render "shared/separator-with-text", content: "Need to do something else?" %>

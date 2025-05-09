@@ -1,16 +1,57 @@
+import "@hotwired/turbo-rails";
+import "@/utils/tent";
 import { createElement } from "react";
 import { createRoot } from "react-dom/client";
 import { createInertiaApp } from "@inertiajs/react";
 import { InertiaProgress } from "@inertiajs/progress";
+import { InstanceOptions, Modal, ModalOptions } from "flowbite";
 import axios from "axios";
 
-// import "tailwindcss";
 import "flowbite/dist/flowbite.turbo";
-
 import "./main.scss";
 
 import Layout from "@/components/BasicLayout";
 import { ReactNodeWithOptionalLayout, ResolvedComponent } from "@/@types";
+
+document.addEventListener("turbo:frame-render", ({ target }) => {
+  console.warn("<<< turbo:frame-render >>>");
+  console.debug({ target });
+});
+
+document.addEventListener("turbo:frame-load", ({ target }) => {
+  console.warn("<<< turbo:frame-load >>>");
+  console.debug({ target });
+  const modals = (target as HTMLElement).querySelectorAll<HTMLDivElement>(
+    ".flowbite-modal"
+  );
+  if (modals) {
+    console.debug(`Found ${modals.length} modal(s)`);
+    modals.forEach((modalElement) => {
+      console.debug({ modalElement });
+      const hideModalActionForm = modalElement.querySelector<HTMLFormElement>(
+        "form.hide-modal-action"
+      );
+      const hideModalBtn = hideModalActionForm?.querySelector(
+        "button[type=submit]"
+      );
+      const modalOptions: ModalOptions = { closable: true };
+      if (!modalElement) throw new Error("Modal element not found");
+      // Initialize modal
+      console.debug(`Initializing modal ${modalElement.id}`, { hideModalBtn });
+      const instanceOptions: InstanceOptions = {
+        id: modalElement.id,
+        override: true,
+      };
+      const modal = new Modal(modalElement, modalOptions, instanceOptions);
+      // When the turbo frame action (button) is triggered, hide the modal
+      hideModalBtn?.addEventListener("click", () => {
+        modal.hide();
+      });
+      // Assumes every incoming modal (via turbo:frame-load) is one that should be shown
+      modal.show();
+    });
+  }
+});
 
 document.addEventListener("DOMContentLoaded", () => {
   const csrfToken = document.querySelector<HTMLMetaElement>(

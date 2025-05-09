@@ -40,7 +40,7 @@ bin/rails g scaffold accounts display_name:string slug:string status:integer typ
       create      app/views/accounts
       create      app/views/accounts/index.html.erb
       create      app/views/accounts/edit.html.erb
-      create      app/views/accounts/show.html.erb
+      create      app/views/accounts/_show.html.erb
       create      app/views/accounts/new.html.erb
       create      app/views/accounts/_form.html.erb
       create      app/views/accounts/_account.html.erb
@@ -97,7 +97,7 @@ bin/rails g scaffold invoices \
       create      app/views/invoices
       create      app/views/invoices/index.html.erb
       create      app/views/invoices/edit.html.erb
-      create      app/views/invoices/show.html.erb
+      create      app/views/invoices/_show.html.erb
       create      app/views/invoices/new.html.erb
       create      app/views/invoices/_form.html.erb
       create      app/views/invoices/_invoice.html.erb

@@ -1,58 +1,37 @@
-<div id="<%= dom_id account %>" class="relative overflow-x-auto my-5">
-  <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-    <tbody>
+<div id="<%= dom_id account %>" class="relative my-5">
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
     <!-- Tax ID -->
-    <tr class="bg-white dark:bg-gray-800">
-      <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-        Tax ID
-      </th>
-      <td class="px-6 py-4">
-        <%= account.tax_id %>
-      </td>
-    </tr>
+    <div class="flex flex-col">
+      <label class="text-sm font-medium text-gray-900 dark:text-white">Tax ID</label>
+      <span class="text-gray-500 dark:text-gray-400"><%= account.tax_id %></span>
+    </div>
 
     <!-- Display name -->
-    <tr class="bg-white dark:bg-gray-800">
-      <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-        Display name
-      </th>
-      <td class="px-6 py-4">
-        <%= account.display_name %>
-      </td>
-    </tr>
+    <div class="flex flex-col">
+      <label class="text-sm font-medium text-gray-900 dark:text-white">Display name</label>
+      <span class="text-gray-500 dark:text-gray-400"><%= account.display_name %></span>
+    </div>
 
     <!-- Slug -->
-    <tr class="bg-white dark:bg-gray-800">
-      <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-        Slug
-      </th>
-      <td class="px-6 py-4">
-        <%= account.slug %>
-      </td>
-    </tr>
+    <div class="flex flex-col">
+      <label class="text-sm font-medium text-gray-900 dark:text-white">Slug</label>
+      <span class="text-gray-500 dark:text-gray-400"><%= account.slug %></span>
+    </div>
 
     <!-- Status -->
-    <tr class="bg-white dark:bg-gray-800">
-      <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-        Status
-      </th>
-      <td class="px-6 py-4">
-        <%= account.status %>
-      </td>
-    </tr>
+    <div class="flex flex-col">
+      <label class="text-sm font-medium text-gray-900 dark:text-white">Status</label>
+      <span class="text-gray-500 dark:text-gray-400"><%= account.status %></span>
+    </div>
 
     <!-- Notes (Trix WYSIWYG) -->
-    <tr class="bg-white dark:bg-gray-800">
-      <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-        Notes
-      </th>
-      <td class="px-6 py-4">
-        <%= account.readme %>
-      </td>
-    </tr>
-  </table>
+    <div class="flex flex-col md:col-span-2">
+      <label class="text-sm font-medium text-gray-900 dark:text-white">Notes</label>
+      <span class="text-gray-500 dark:text-gray-400"><%= account.readme %></span>
+    </div>
+  </div>
 </div>
 
-<div class="flex justify-end items-center my-5 space-x-2">
+<div class="flex my-5 md:justify-end md:items-center md:space-x-4">
   <%= yield :form_actions %>
 </div>

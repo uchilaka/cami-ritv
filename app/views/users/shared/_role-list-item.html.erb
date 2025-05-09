@@ -1,0 +1,16 @@
+<% privilege_level, role_label = role_params %>
+<% param_name ||= :roles %>
+<li class="w-full border-b border-gray-200 sm:border-b-0 sm:border-r dark:border-gray-600">
+  <div class="flex items-center ps-3">
+    <%= radio_button_tag "#{param_name}[#{resource_name}][]", role, nil, {
+      id: "horizontal-list-radio-#{role}",
+      class: "w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500",
+      disabled: privilege_level > global_privilege_level ? "disabled" : nil,
+      checked: most_privileged_role == role,
+    }  %>
+    <label for="horizontal-list-radio-<%= role %>"
+           class="w-full py-3 ms-2 text-sm font-medium <%= privilege_level > global_privilege_level ? "text-gray-300 dark:text-gray-600" : "text-gray-900 dark:text-gray-300" %>">
+      <%= role_label || role.to_s.titleize %>
+    </label>
+  </div>
+</li>

@@ -4,8 +4,6 @@
 default: &default
   feat__google_omniauth:
     enabled: true
-  feat__navbar_v2:
-    enabled: false
   feat__accounts:
     enabled: false
   feat__dashboard:
@@ -14,23 +12,29 @@ default: &default
     enabled: false
   feat__services:
     enabled: false
+  feat__showcase:
+    enabled: false
+  feat__storybook:
+    enabled: false
   feat__invoices:
-    enabled: true
+    enabled: false
   feat__filterable_billing_type_badge:
     enabled: false
   feat__sortable_invoice_index:
     enabled: false
-development:
+development: &development
   <<: *default
   feat__dashboard:
-    enabled: true
-  feat__navbar_v2:
-    enabled: true
+    enabled: false
   feat__accounts:
     enabled: true
+  feat__invoices:
+    enabled: false
   feat__filterable_billing_type_badge:
     enabled: true
   feat__sortable_invoice_index:
+    enabled: true
+  feat__showcase:
     enabled: true
 test:
   <<: *default

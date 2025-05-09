@@ -57,6 +57,7 @@
 /.idea
 /.env.development.local
 /.env*
+!/.env.development
 !/.envrc
 !/.env.example
 

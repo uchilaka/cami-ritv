@@ -1,0 +1,2 @@
+module Users::PasswordlessHelper
+end

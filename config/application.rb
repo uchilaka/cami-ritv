@@ -33,8 +33,8 @@ module Cami
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 7.0
 
-    config.application_name = 'Customer Account Management & Invoicing'
-    config.application_short_name = 'CAMI'
+    # config.application_name = 'Customer Account Management & Invoicing'
+    # config.application_short_name = 'C.A.M.I.'
 
     # Show full error reports?
     config.consider_all_requests_local = AppUtils.debug_mode?

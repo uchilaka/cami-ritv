@@ -37,6 +37,7 @@ gem 'sassc-rails', '~> 2.1'
 
 gem 'cssbundling-rails'
 gem 'inertia_rails'
+gem 'turbo-rails'
 # Setup guide https://v3.tailwindcss.com/docs/installation/using-postcss
 gem 'tailwindcss-rails', '~> 3.3'
 gem 'tailwindcss-ruby', '~> 3.4'
@@ -56,6 +57,7 @@ gem 'omniauth-apple', '~> 1.3'
 gem 'omniauth-google-oauth2', '~> 1.2'
 gem 'omniauth-rails_csrf_protection'
 gem 'rack-cors', '~> 2.0'
+gem 'simple_form', '~> 5.3'
 
 # Not supported yet on Rails 8.0
 # gem 'active_record_extended'
@@ -117,6 +119,9 @@ group :development, :test do
 end
 
 group :development do
+  # Ruby on Rails Live Reload https://github.com/railsjazz/rails_live_reload
+  gem 'rails_live_reload'
+
   # Speed up commands on slow machines / big apps https://github.com/rails/spring
   # gem "spring"
   # Use console on exceptions pages https://github.com/rails/web-console
