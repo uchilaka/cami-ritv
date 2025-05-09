@@ -15,9 +15,9 @@
 <% end %>
 
 <%- if devise_mapping.confirmable? && controller_name != 'confirmations' %>
-  <%= link_to "Didn't receive confirmation instructions?", new_confirmation_path(resource_name), class: "block py-0.5 mb-1" %><br>
+  <%= link_to "Didn't receive confirmation instructions?", new_confirmation_path(resource_name), class: "block py-0.5 mb-1 text-brand-500 hover:text-brand-700 focus:underline" %><br>
 <% end %>
 
 <%- if devise_mapping.lockable? && resource_class.unlock_strategy_enabled?(:email) && controller_name != 'unlocks' %>
-  <%= link_to "Didn't receive unlock instructions?", new_user_unlock_path(resource_name), class: "block py-0.5 mb-1" %><br>
+  <%= link_to "Didn't receive unlock instructions?", new_user_unlock_path(resource_name), class: "block py-0.5 text-brand-500 hover:text-brand-700 focus:underline" %><br>
 <% end %>
