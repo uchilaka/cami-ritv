@@ -47,6 +47,7 @@
     "rubyLsp.rubyVersionManager": {
       "identifier": "asdf"
     },
+    "rubocop.yjitEnabled": true,
     "rubocop.commandPath": "${userHome}${pathSeparator}.asdf${pathSeparator}shims${pathSeparator}rubocop",
     "rubocop.mode": "enableViaGemfileOrMissingGemfile",
     "editor.mouseWheelZoom": true,
