@@ -20,13 +20,12 @@ module NavbarHelper
   end
 
   def navbar_link_generic_classes
-    'block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 ' \
-      'dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white ' \
-      'md:dark:hover:bg-transparent dark:border-gray-700'
+    'block py-2 px-3 text-white rounded hover:text-warning-700 hover:bg-transparent md:hover:ring-0 md:hover:bg-transparent md:p-0 ' \
+      'md:hover:text-warning-700 hover:ring-2 hover:ring-warning-600'
   end
 
   def navbar_link_classes_for_current_page
-    'block py-2 px-3 text-brand rounded md:bg-transparent md:text-brand md:p-0 ' \
+    'block py-2 px-3 text-brand-700 hover:text-warning-700 rounded md:bg-transparent md:text-brand md:p-0 ' \
       'md:dark:text-brand'
   end
 
