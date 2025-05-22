@@ -239,6 +239,9 @@ GEM
     letter_opener (1.10.0)
       launchy (>= 2.2, < 4)
     lint_roller (1.1.0)
+    listen (3.9.0)
+      rb-fsevent (~> 0.10, >= 0.10.3)
+      rb-inotify (~> 0.9, >= 0.9.10)
     logger (1.7.0)
     logtail (0.1.17)
       msgpack (~> 1.0)
@@ -398,6 +401,11 @@ GEM
     rails-html-sanitizer (1.6.2)
       loofah (~> 2.21)
       nokogiri (>= 1.15.7, != 1.16.7, != 1.16.6, != 1.16.5, != 1.16.4, != 1.16.3, != 1.16.2, != 1.16.1, != 1.16.0.rc1, != 1.16.0)
+    rails_live_reload (0.4.0)
+      listen
+      nio4r
+      railties
+      websocket-driver
     rails_semantic_logger (4.17.0)
       rack
       railties (>= 5.1)
@@ -416,6 +424,9 @@ GEM
       activerecord (>= 6.1.5)
       activesupport (>= 6.1.5)
       i18n
+    rb-fsevent (0.11.2)
+    rb-inotify (0.11.1)
+      ffi (~> 1.0)
     rdoc (6.13.1)
       psych (>= 4.0.0)
     regexp_parser (2.10.0)
@@ -527,6 +538,9 @@ GEM
       addressable (~> 2.3, >= 2.3.0)
       json (~> 2.1, >= 2.1.0)
       typhoeus (~> 1.0, >= 1.0.1)
+    simple_form (5.3.1)
+      actionpack (>= 5.2)
+      activemodel (>= 5.2)
     snaky_hash (2.0.1)
       hashie
       version_gem (~> 1.1, >= 1.1.1)
@@ -657,6 +671,7 @@ DEPENDENCIES
   rack-cors (~> 2.0)
   rails (~> 8.0)
   rails-controller-testing
+  rails_live_reload
   rails_semantic_logger
   ransack (~> 4.3)
   reverse_markdown
@@ -676,12 +691,14 @@ DEPENDENCIES
   selenium-webdriver
   shoulda-matchers
   sib-api-v3-sdk
+  simple_form (~> 5.3)
   solid_queue
   sprockets-rails
   strong_migrations
   tailwindcss-rails (~> 3.3)
   tailwindcss-ruby (~> 3.4)
   terminal-table
+  turbo-rails
   tzinfo-data
   vcr (~> 6.2)
   vite_rails

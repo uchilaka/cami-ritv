@@ -131,6 +131,9 @@ RSpec.configure do |config|
   config.include AbstractController::Translation, type: :view
   config.include AbstractController::Translation, type: :helper
 
+  # Testing Jobs
+  config.include ActiveJob::TestHelper, type: :job
+
   # Sample phone numbers
   config.include_context 'for phone number testing', real_world_data: true
 

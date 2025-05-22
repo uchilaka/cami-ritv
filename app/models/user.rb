@@ -61,6 +61,29 @@ class User < ApplicationRecord
 
   rolify
 
+  # Alumnus->Product: Has been a customer or subscriber to a product or service in the past and is currently
+  #   NOT subscribed through any of the accounts they have access to.
+  # Customer->Product: Is currently subscribed or in active service with a product or vendor.
+  # Subscriber->Business: Opted-in for updates from a vendor or product but is not a customer or subscriber.
+  # Subscriber->Product: Opted-in for updates from a product or service but is not a customer or subscriber.
+  # Manager->Account: Has access to the admin panel and can manage users, products or other resources on an account.
+  # Manager: Has access to the admin panel and can manage users, products or other resources on any account.
+  # Admin->Account: Has access to the admin panel and can manage users, products or other resources on an account.
+  # Admin: Has access to the admin panel and can manage users, products or other resources on any account.
+  # User: Has access to the user dashboard and can manage their own account, invoices and subscriptions.
+  # :role => :privilege_level
+  SUPPORTED_ROLES = {
+    # role => [privilege_level, display_name]
+    admin: [100, 'Admin'],
+    manager: [90, 'Manager'],
+    subscriber: [80, 'Subscriber'],
+    alumnus: [70, 'Alum'],
+    customer: [60, 'Customer'],
+    user: [10, 'Default'],
+  }.freeze
+
+  SELF_SERVICE_ROLES = %i[admin manager subscriber user].freeze
+
   # Source code for confirmable: https://github.com/heartcombo/devise/blob/main/lib/devise/models/confirmable.rb
   # Guide on adding confirmable: https://github.com/heartcombo/devise/wiki/How-To:-Add-:confirmable-to-Users
   devise :database_authenticatable, :registerable, :rememberable, :validatable, :recoverable,

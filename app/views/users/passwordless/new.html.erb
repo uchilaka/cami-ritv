@@ -1,12 +1,12 @@
 <% content_for :centered_form_layout do %>
-  <h3 class="mb-4">Log in</h3>
-  <p class="my-4"><%= t('devise.passwordless.magic_link_cta') %></p>
+  <h3 class="mb-4 dark:text-white">Log in</h3>
+  <p class="my-4 dark:text-gray-400"><%= t('devise.passwordless.magic_link_cta') %></p>
 
   <%= form_for(
         resource,
         as: resource_name,
         url: user_session_path,
-        html: { class: "space-y-6" }
+        html: { class: "space-y-6 text-default-font" }
       ) do |f| %>
     <div class="field">
       <%= f.label :email, class: "label" %>
@@ -21,7 +21,7 @@
     <% end %>
 
     <div class="field">
-      <%= f.submit "Send me an access link", class: "btn btn-primary block w-full" %>
+      <%= f.submit "Send me an access link", class: "btn block bg-brand-primary hover:bg-brand-700 w-full" %>
     </div>
   <% end %>
   <div class="my-3">
