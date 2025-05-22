@@ -1,0 +1,116 @@
+{
+  "id": "69deecba-3f20-4169-8b27-e7e52fd8df85",
+  "displayName": "uche@larcity.com",
+  "slug": "eflc",
+  "type": "Individual",
+  "status": "guest",
+  "createdAt": "2024-10-03T06:20:43.806-04:00",
+  "updatedAt": "2024-10-03T06:20:43.806-04:00",
+  "url": "https://accounts.larcity.ngrok.dev/accounts/69deecba-3f20-4169-8b27-e7e52fd8df85.json",
+  "actions": {
+    "edit": {
+      "domId": "81baaf5e-d8f9-435e-b5ee-1cf047fbe756",
+      "httpMethod": "GET",
+      "label": "Edit",
+      "url": "https://accounts.larcity.ngrok.dev/accounts/69deecba-3f20-4169-8b27-e7e52fd8df85"
+    },
+    "delete": {
+      "domId": "c41fbfe0-56c9-4bec-b0b9-7771d4e865a6",
+      "httpMethod": "DELETE",
+      "label": "Delete",
+      "url": "https://accounts.larcity.ngrok.dev/accounts/69deecba-3f20-4169-8b27-e7e52fd8df85.json"
+    },
+    "show": {
+      "domId": "4bce00a4-cfac-4d61-a867-215897c49c03",
+      "httpMethod": "GET",
+      "label": "Back to accounts",
+      "url": "https://accounts.larcity.ngrok.dev/accounts"
+    },
+    "transactionsIndex": {
+      "domId": "3e21118b-cbbf-4ecb-b394-4c7ad1f427a4",
+      "httpMethod": "GET",
+      "label": "Transactions",
+      "url": "https://accounts.larcity.ngrok.dev/accounts/69deecba-3f20-4169-8b27-e7e52fd8df85/invoices"
+    },
+    "profilesIndex": {
+      "domId": "6103b100-d831-4d75-93fd-8002c98907ad",
+      "httpMethod": "GET",
+      "label": "Profiles",
+      "url": "https://accounts.larcity.ngrok.dev/accounts/69deecba-3f20-4169-8b27-e7e52fd8df85/profiles"
+    },
+    "showProfile": {
+      "domId": "32526794-42f8-4cd4-8fb2-fbe5c1f86c92",
+      "httpMethod": "GET",
+      "label": "Profile",
+      "url": "https://accounts.larcity.ngrok.dev/accounts/69deecba-3f20-4169-8b27-e7e52fd8df85/profiles/672ede4adc9518d226574a91"
+    }
+  },
+  "actionsList": [
+    {
+      "key": "edit",
+      "domId": "b8eef7ea-f203-49be-a905-ca494cbd45dd",
+      "httpMethod": "GET",
+      "label": "Edit",
+      "url": "https://accounts.larcity.ngrok.dev/accounts/69deecba-3f20-4169-8b27-e7e52fd8df85"
+    },
+    {
+      "key": "delete",
+      "domId": "a541b4bd-8d37-49a5-b959-6cd3c9abed80",
+      "httpMethod": "DELETE",
+      "label": "Delete",
+      "url": "https://accounts.larcity.ngrok.dev/accounts/69deecba-3f20-4169-8b27-e7e52fd8df85.json"
+    },
+    {
+      "key": "show",
+      "domId": "3ead52d1-4cbd-4ccd-b8bc-6a337fd990d6",
+      "httpMethod": "GET",
+      "label": "Back to accounts",
+      "url": "https://accounts.larcity.ngrok.dev/accounts"
+    },
+    {
+      "key": "transactions_index",
+      "domId": "e646d218-bca8-41e8-83c2-5b14d6d02328",
+      "httpMethod": "GET",
+      "label": "Transactions",
+      "url": "https://accounts.larcity.ngrok.dev/accounts/69deecba-3f20-4169-8b27-e7e52fd8df85/invoices"
+    },
+    {
+      "key": "profiles_index",
+      "domId": "03044cb3-de1d-412f-ac69-5e311eece3ee",
+      "httpMethod": "GET",
+      "label": "Profiles",
+      "url": "https://accounts.larcity.ngrok.dev/accounts/69deecba-3f20-4169-8b27-e7e52fd8df85/profiles"
+    },
+    {
+      "key": "show_profile",
+      "domId": "ca28c885-3c0a-4f80-8b57-17d00530309d",
+      "httpMethod": "GET",
+      "label": "Profile",
+      "url": "https://accounts.larcity.ngrok.dev/accounts/69deecba-3f20-4169-8b27-e7e52fd8df85/profiles/672ede4adc9518d226574a91"
+    }
+  ],
+  "givenName": "Uche",
+  "familyName": "Chilaka",
+  "phone": "+17405551234",
+  "profiles": [
+    {
+      "createdAt": "2024-11-08T23:00:10.599-05:00",
+      "updatedAt": "2024-11-09T11:44:13.020-05:00",
+      "givenName": "Uche",
+      "familyName": "Chilaka",
+      "lastSeenAt": "2024-11-08T23:00:07.446-05:00",
+      "id": "672ede4adc9518d226574a91",
+      "url": "https://accounts.larcity.ngrok.dev/accounts/69deecba-3f20-4169-8b27-e7e52fd8df85/profiles/672ede4adc9518d226574a91.json"
+    }
+  ],
+  "profile": {
+    "createdAt": "2024-11-08T23:00:10.599-05:00",
+    "updatedAt": "2024-11-09T11:44:13.020-05:00",
+    "givenName": "Uche",
+    "familyName": "Chilaka",
+    "lastSeenAt": "2024-11-08T23:00:07.446-05:00",
+    "id": "672ede4adc9518d226574a91",
+    "url": "https://accounts.larcity.ngrok.dev/accounts/69deecba-3f20-4169-8b27-e7e52fd8df85/profiles/672ede4adc9518d226574a91.json"
+  },
+  "invoices": []
+}

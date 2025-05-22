@@ -13,8 +13,8 @@ module LarCity
     class Entrypoint < BaseCmd
       namespace 'lx-cli'
 
-      # desc 'accounts [SUBCOMMAND]', 'Manage accounts'
-      # subcommand 'accounts', AccountsCmd
+      desc 'accounts [SUBCOMMAND]', 'Manage accounts'
+      subcommand 'accounts', AccountsCmd
 
       desc 'secrets [SUBCOMMAND]', 'Manage the secrets in the environment credentials file'
       subcommand 'secrets', SecretsCmd
@@ -22,11 +22,11 @@ module LarCity
       desc 'services [SUBCOMMAND]', 'Manage application dockerized services'
       subcommand 'services', ServicesCmd
 
-      # desc 'devkit [SUBCOMMAND]', 'A few developer tools for the project'
-      # subcommand 'devkit', DevkitCmd
-      #
-      # desc 'datakit [SUBCOMMAND]', 'A few tools for managing application data stores'
-      # subcommand 'datakit', DatakitCmd
+      desc 'devkit [SUBCOMMAND]', 'A few developer tools for the project'
+      subcommand 'devkit', DevkitCmd
+
+      desc 'datakit [SUBCOMMAND]', 'A few tools for managing application data stores'
+      subcommand 'datakit', DatakitCmd
 
       desc 'tunnel [SUBCOMMAND]', 'Manage the dev proxy tunnel (for testing the app with a public URL)'
       subcommand 'tunnel', TunnelCmd

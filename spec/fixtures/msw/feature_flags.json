@@ -1,0 +1,32 @@
+{
+  "features": {
+    "feat__google_omniauth": true,
+    "feat__navbar_v2": true,
+    "feat__accounts": true,
+    "feat__dashboard": true,
+    "feat__services": true,
+    "feat__products": true,
+    "feat__invoices": true,
+    "feat__filterable_billing_type_badge": true,
+    "feat__sortable_invoice_index": true,
+    "feat__invoice_filtering": false,
+    "feat__account_filtering": true,
+    "feat__shared_account_summary_modal": true,
+    "feat__editable_phone_numbers": true
+  },
+  "flags": [
+    "feat__google_omniauth",
+    "feat__navbar_v2",
+    "feat__accounts",
+    "feat__dashboard",
+    "feat__services",
+    "feat__products",
+    "feat__invoices",
+    "feat__filterable_billing_type_badge",
+    "feat__sortable_invoice_index",
+    "feat__invoice_filtering",
+    "feat__account_filtering",
+    "feat__shared_account_summary_modal",
+    "feat__editable_phone_numbers"
+  ]
+}

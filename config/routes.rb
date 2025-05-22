@@ -19,6 +19,12 @@ Rails.application.routes.draw do
   end
 
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
+  resources :invoices, except: %i[destroy] do
+    collection do
+      post :search
+    end
+  end
+
   resources :accounts, except: %i[destroy] do
     member do
       get :show_modal
@@ -52,4 +58,5 @@ Rails.application.routes.draw do
   draw :flipper
   draw :mission_control
   draw :swagger
+  draw :api_v1
 end
