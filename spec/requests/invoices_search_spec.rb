@@ -3,7 +3,7 @@
 require 'swagger_helper'
 
 RSpec.describe 'Invoice Search API', type: :request, feature: :invoicing do
-  xdescribe 'POST /invoices/search' do
+  describe 'POST /invoices/search' do
     let(:user) { Fabricate :user, email: Faker::Internet.email(name: 'logistics') }
     let(:other_user) { Fabricate :user, email: Faker::Internet.email(name: 'catering') }
 
