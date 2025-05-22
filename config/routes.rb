@@ -3,9 +3,6 @@
 require 'lib/admin_scope_constraint'
 
 Rails.application.routes.draw do
-  mount Rswag::Ui::Engine => '/api-docs'
-  mount Rswag::Api::Engine => '/api-docs'
-
   devise_for :users,
              controllers: {
                sessions: 'users/passwordless',
@@ -53,4 +50,6 @@ Rails.application.routes.draw do
   root 'lobby#landing_page'
 
   draw :flipper
+  draw :mission_control
+  draw :swagger
 end
