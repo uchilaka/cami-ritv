@@ -22,7 +22,7 @@ module AdministratorNavigable
         #   as an abstraction layer for what PayPal's invoice templates already do.
         { label: 'Services', path: '/services', admin: true },
         { label: 'Features', path: '/admin/flipper', new_tab: true, admin: true, enabled: true },
-        { label: 'Sidekiq', path: '/admin/sidekiq', new_tab: true, admin: true },
+        { label: 'Async Jobs', path: '/admin/jobs', new_tab: true, admin: true, enabled: true },
         { label: 'System Logs', url: system_log_url, admin: true, enabled: true },
         {
           label: 'Storybook',
