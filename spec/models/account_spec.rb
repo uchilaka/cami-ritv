@@ -74,7 +74,7 @@ RSpec.describe Account, type: :model do
 
     subject { account.modal_dom_id }
 
-    it { expect(subject).to eq "#{account.model_name.singular}-modal|#{account.id}|" }
+    it { expect(subject).to eq "#{account.model_name.singular}--modal|#{account.id}|" }
 
     context 'with content_type' do
       let(:content_type) { 'content' }

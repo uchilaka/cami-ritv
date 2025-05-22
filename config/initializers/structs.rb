@@ -29,5 +29,6 @@ Struct.new(
   :enabled,
   :public,
   :admin,
+  :order,
   keyword_init: true
 )

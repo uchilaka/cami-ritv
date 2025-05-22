@@ -13,6 +13,17 @@ module LarCity
                    enum: %w[all essential batteries-included],
                    default: 'all'
 
+      class_option :pid,
+                   type: :string,
+                   desc: 'The PID of the process to kill',
+                   required: true
+      desc 'kill_process', I18n.t('commands.services.kill_process.short_desc')
+      long_desc I18n.t('commands.services.kill_process.long_desc')
+      def kill_process
+        result = run 'kill -9', options[:pid]
+        say_highlight I18n.t('commands.services.kill_process.completed_msg', pid: options[:pid]) if result.nil?
+      end
+
       method_option :database,
                     type: :boolean,
                     desc: 'Use the database service',

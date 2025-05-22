@@ -68,7 +68,7 @@ module PayPal
       if @error_records.blank? && @fatal_error.nil?
         # TODO: Log processed records by ID
         Rails.logger.info 'Enqueuing UpsertInvoiceRecordsJob'
-        UpsertInvoiceRecordsJob.perform_in(15.seconds.from_now)
+        UpsertInvoiceRecordsJob.set(wait: 15.seconds.from_now).perform_later
       end
     end
 

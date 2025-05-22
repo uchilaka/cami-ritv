@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 class UpsertInvoiceRecordsJob < ApplicationJob
-  queue_as :whenever
+  queue_as server_queue_name
 
-  retry_on StandardError, wait: :exponentially_longer, attempts: 3
+  retry_on StandardError, wait: 15.seconds, attempts: 3
 
   BATCH_LIMIT = 25
 

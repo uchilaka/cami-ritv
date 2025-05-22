@@ -179,6 +179,6 @@ class Account < ApplicationRecord
   end
 
   def push_to_crm
-    Zoho::UpsertAccountJob.perform_async(id)
+    Zoho::UpsertAccountJob.set(wait: 5.seconds.from_now).perform_later(id)
   end
 end

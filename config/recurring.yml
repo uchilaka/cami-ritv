@@ -1,16 +1,23 @@
-# production:
-#   periodic_cleanup:
-#     class: CleanSoftDeletedRecordsJob
-#     queue: background
-#     args: [ 1000, { batch_size: 500 } ]
-#     schedule: every hour
-#   periodic_command:
-#     command: "SoftDeletedRecord.due.delete_all"
-#     priority: 2
-#     schedule: at 5am every day
+# On recurring tasks: https://github.com/rails/solid_queue?tab=readme-ov-file#recurring-tasks
 development:
   update_serverinfo_metadata:
     class: Zoho::UpdateServerinfoMetadataJob
     queue: yeet
     # args: [ 1000, { batch_size: 500 } ]
-    schedule: 0 5 * * 0 # every Sunday at 5am
+    schedule: "0 5 * * 0" # every Sunday at 5am
+
+  fetch_paypal_invoices_job:
+    class: PayPal::FetchInvoicesJob
+    queue: default
+    schedule: "*/15 5-9,12-13,18-22 * * 1-6 America/New_York" # At 05:45 from Monday to Saturday
+
+  upsert_invoice_records_job:
+    class: UpsertInvoiceRecordsJob
+    queue: yeet
+    schedule: "*/15 5-9,12-13,18-22 * * 1-6 America/New_York" # Every 15 minutes from 06:00 to 21:00 from Monday to Saturday
+
+  upsert_account_job:
+    class: Zoho::UpsertAccountJob
+    queue: yeet
+    # args: [ 1000, { batch_size: 500 } ]
+    schedule: "*/15 5-9,12-13,18-22 * * 1-6 America/New_York" # every 15 minutes from 9am to 10pm from Monday to Saturday

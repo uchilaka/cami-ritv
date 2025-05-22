@@ -12,7 +12,7 @@ module Renderable
     def modal_dom_id(resource:, content_type: nil)
       return "#{resource.model_name.singular}--#{content_type}--modal|#{resource.id}|" unless content_type.blank?
 
-      "#{resource.model_name.singular}-modal|#{resource.id}|"
+      "#{resource.model_name.singular}--modal|#{resource.id}|"
     end
   end
 
