@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class InvoicesController < ApplicationController
-  skip_before_action :verify_authenticity_token, only: %i[search]
+  # skip_before_action :verify_authenticity_token, only: %i[search]
 
   include MaybeAccountSpecific
 
