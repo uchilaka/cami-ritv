@@ -183,7 +183,7 @@ SimpleForm.setup do |config|
   # config.cache_discovery = !Rails.env.development?
 
   # Default class for inputs
-  config.input_class = 'rounded-md block w-full p-2.5 border'
+  config.input_class = 'rounded-md block w-full p-2.5 border dark:bg-gray-700'
 
   # Define the default class of the input wrapper of the boolean input.
   config.boolean_label_class = 'checkbox'
