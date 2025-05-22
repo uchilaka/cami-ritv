@@ -45,7 +45,6 @@ gem 'tailwindcss-ruby', '~> 3.4'
 gem 'vite_rails'
 
 # Use Active Storage variants https://guides.rubyonrails.org/active_storage_overview.html#transforming-images
-gem 'awesome_print'
 gem 'image_processing', '~> 1.2'
 
 # A fast image processing library with low memory needs
@@ -68,6 +67,7 @@ gem 'aasm'
 gem 'after_commit_everywhere', '~> 1.6'
 
 gem 'active_model_serializers'
+gem 'awesome_print'
 gem 'bumbler'
 gem 'data_migrate', '~> 11.3'
 gem 'discard', '~> 1.4'
