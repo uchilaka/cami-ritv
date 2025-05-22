@@ -2,7 +2,7 @@
   <h3>Resend unlock instructions</h3>
 
   <%= form_for(resource, as: resource_name, url: user_unlock_path(resource_name), html: { method: :post }) do |f| %>
-    <%= render "devise/shared/error_messages", resource: resource %>
+    <%= render "users/shared/error_messages", resource: resource %>
 
     <div class="field">
       <%= f.label :email %><br>

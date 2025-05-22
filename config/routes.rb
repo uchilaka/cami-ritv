@@ -22,7 +22,12 @@ Rails.application.routes.draw do
   end
 
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
-  resources :accounts, except: %i[destroy]
+  resources :accounts, except: %i[destroy] do
+    member do
+      get :show_modal
+      get :show_li_actions
+    end
+  end
 
   resources :demos, only: %i[] do
     collection do

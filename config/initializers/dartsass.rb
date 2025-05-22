@@ -4,6 +4,7 @@ require 'fileutils'
 
 dartsass_config_map = {
   'application.scss' => 'application.css',
+  'actiontext.scss' => 'actiontext.css',
 }
 
 # WIP: Prepare application stylesheet from template

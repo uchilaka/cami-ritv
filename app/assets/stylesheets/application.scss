@@ -13,9 +13,9 @@
  *= require_tree .
  *= require_self
  */
-@use "fontawesome";
-@use "global_vars";
-@use "lobby/landing_page";
+@use 'fontawesome';
+@use 'global_vars';
+@use 'lobby/landing_page';
 
 // From HTML5 style suite
 //@import "libs/vars";
@@ -38,7 +38,7 @@ footer img.logo {
 }
 
 .PhoneInput {
-  input[type="tel"] {
+  input[type='tel'] {
     border-width: 0;
   }
 }
@@ -50,7 +50,7 @@ footer img.logo {
 /***************** Demos Styling ******************/
 header {
   &.absolute {
-    nav[aria-label="Global"] {
+    nav[aria-label='Global'] {
       backdrop-filter: opacity(0.8) blur(10px);
     }
   }
@@ -64,3 +64,6 @@ header {
 //        mobile:    ( 481px,   736px  ),
 //        mobilep:   ( null,    480px  )
 //));
+
+@custom-variant dark (&:where(.dark, .dark *));
+@custom-variant light (&:where(.light, .light *));
