@@ -14,3 +14,8 @@ development:
     queue: yeet
     # args: [ 1000, { batch_size: 500 } ]
     schedule: 0 5 * * 0 # every Sunday at 5am
+  upsert_account_job:
+    class: Zoho::UpsertAccountJob
+    queue: yeet
+    # args: [ 1000, { batch_size: 500 } ]
+    schedule: "*/15 5-9,12-13,18-22 * * 1-6 America/New_York" # every 15 minutes from 9am to 10pm from Monday to Saturday
