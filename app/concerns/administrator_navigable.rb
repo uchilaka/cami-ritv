@@ -23,7 +23,23 @@ module AdministratorNavigable
         { label: 'Services', path: '/services', admin: true },
         { label: 'Features', path: '/admin/flipper', new_tab: true, admin: true, enabled: true },
         { label: 'Async Jobs', path: '/admin/jobs', new_tab: true, admin: true, enabled: true },
+        # TODO: Update the destination of this managed link to CAMI 2.0 project once all
+        #   the v1.0 stuff has been cut over to the 2.0 project (same-ish stuff, but now
+        #   with InertiaJs driving the primary design for how data gets delivered to
+        #   frontend components/SPAs
+        {
+          label: 'Work in progress',
+          url: 'https://bit.ly/larcity-cami-wip',
+          new_tab: true,
+          admin: true,
+          enabled: true,
+        },
         { label: 'System Logs', url: system_log_url, admin: true, enabled: true },
+        {
+          label: 'Managed Links',
+          url: 'https://app.bitly.com/BicibKENyrf/links',
+          new_tab: true, admin: true, enabled: true,
+        },
         {
           label: 'Storybook',
           url: storybook_url,
