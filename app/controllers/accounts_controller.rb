@@ -22,7 +22,14 @@ class AccountsController < ApplicationController
   # GET /accounts/1 or /accounts/1.json
   def show; end
 
-  def show_modal; end
+  def show_modal
+    if account.last_sent_to_crm_at
+      human_readable_time = account.last_sent_to_crm_at.strftime('%B %d, %Y %I:%M %p')
+      flash_notice = I18n.t('models.account.sync_to_crm_success', human_readable_time:)
+      # Set a rails flash message to be displayed in the modal
+      flash.now[:notice] = flash_notice
+    end
+  end
 
   def show_li_actions; end
 
