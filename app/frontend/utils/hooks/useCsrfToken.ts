@@ -1,15 +1,21 @@
-import { useRef, useState, useCallback } from 'react'
+import { useRef, useState, useCallback } from 'react';
 
 const getCsrfTokenElement = () => {
-  return document.querySelector<HTMLMetaElement>('meta[name="csrf-token"]')
-}
+  return document.querySelector<HTMLMetaElement>('meta[name="csrf-token"]');
+};
 
 export default function useCsrfToken() {
-  const csrfTokenMetaTagRef = useRef<HTMLMetaElement | null>(getCsrfTokenElement())
+  const csrfTokenMetaTagRef = useRef<HTMLMetaElement | null>(
+    getCsrfTokenElement()
+  );
   const extractCsrfTokenFromMetaTag = useCallback(() => {
-    return csrfTokenMetaTagRef.current?.getAttribute('content')
-  }, [])
-  const [csrfToken, setCsrfToken] = useState<string>(extractCsrfTokenFromMetaTag() ?? '')
+    return csrfTokenMetaTagRef.current?.getAttribute('content');
+  }, []);
+  const [csrfToken, setCsrfToken] = useState<string>(
+    extractCsrfTokenFromMetaTag() ?? ''
+  );
 
-  return { csrfToken, setCsrfToken }
+  console.debug({ csrfToken });
+
+  return { csrfToken, setCsrfToken };
 }
