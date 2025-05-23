@@ -19,7 +19,7 @@
     <%= stylesheet_link_tag "application.tailwind", "data-turbo-track": "reload" %>
     <!--<script src="https://cdn.tailwindcss.com"></script>-->
   <% end %>
-  <%= render "layouts/shared/head" %>
+  <%= render partial: "layouts/shared/head", locals: { expect_flash_of_unstyled_content: true } %>
 
   <body class="min-h-full bg-white dark:bg-default-background">
     <%= render "shared/navbar/index" %>

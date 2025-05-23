@@ -1,38 +1,46 @@
-import React, { FC, ReactEventHandler, useEffect, useState } from 'react'
-import { useFeatureFlagsContext } from '@/components/FeatureFlagsProvider'
-import { Invoice } from './types'
-import FilterableBadge from './InvoiceBadge/FilterableBadge'
-import StaticBadge from './InvoiceBadge/StaticBadge'
-import InvoiceDueDate from './InvoiceDueDate'
-import InvoiceActionsMenu from './InvoiceActionsMenu'
-import InvoiceableInfo from './InvoiceableInfo'
-import InvoiceListItemLabel from './InvoiceListItemLabel'
+import React, { FC, ReactEventHandler, useEffect, useState } from 'react';
+import { useFeatureFlagsContext } from '@/components/FeatureFlagsProvider';
+import { Invoice } from './types';
+import FilterableBadge from './InvoiceBadge/FilterableBadge';
+import StaticBadge from './InvoiceBadge/StaticBadge';
+import InvoiceDueDate from './InvoiceDueDate';
+import InvoiceActionsMenu from './InvoiceActionsMenu';
+import InvoiceableInfo from './InvoiceableInfo';
+import InvoiceListItemLabel from './InvoiceListItemLabel';
 
 interface InvoiceItemProps {
-  invoice: Invoice
-  onToggleSelect: ReactEventHandler<HTMLInputElement>
-  loading?: boolean
-  selected?: boolean
+  invoice: Invoice;
+  onToggleSelect: ReactEventHandler<HTMLInputElement>;
+  loading?: boolean;
+  selected?: boolean;
 }
 
-const InvoiceListItem: FC<InvoiceItemProps> = ({ invoice, loading, selected: defaultSelected, onToggleSelect }) => {
-  const { isEnabled } = useFeatureFlagsContext()
-  const [selected, setSelected] = useState<boolean>(defaultSelected ?? false)
-  const { vendorRecordId, status, dueAt } = invoice
+const InvoiceListItem: FC<InvoiceItemProps> = ({
+  invoice,
+  loading,
+  selected: defaultSelected,
+  onToggleSelect,
+}) => {
+  const { isEnabled } = useFeatureFlagsContext();
+  const [selected, setSelected] = useState<boolean>(defaultSelected ?? false);
+  const { vendorRecordId, status, dueAt } = invoice;
 
   const handleSelectionChange = (ev: React.ChangeEvent<HTMLInputElement>) => {
-    ev.persist()
-    setSelected(ev.currentTarget.checked)
-    onToggleSelect(ev)
-  }
+    ev.persist();
+    setSelected(ev.currentTarget.checked);
+    onToggleSelect(ev);
+  };
 
   useEffect(() => {
     if (invoice?.id && defaultSelected !== selected) {
-      console.debug(`InvoiceListItem ${invoice.id} received change to defaultSelected:`, defaultSelected)
-      setSelected(defaultSelected ?? false)
+      console.debug(
+        `InvoiceListItem ${invoice.id} received change to defaultSelected:`,
+        defaultSelected
+      );
+      setSelected(defaultSelected ?? false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [defaultSelected])
+  }, [defaultSelected]);
 
   return (
     <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
@@ -54,8 +62,14 @@ const InvoiceListItem: FC<InvoiceItemProps> = ({ invoice, loading, selected: def
           </label>
         </div>
       </td>
-      <th scope="row" className="flex items-center px-6 py-4 text-gray-900 whitespace-nowrap dark:text-white">
-        <InvoiceListItemLabel invoice={invoice} filterableBillingType={isEnabled('filterable_billing_type_badge')} />
+      <th
+        scope="row"
+        className="flex items-center px-6 py-4 text-gray-900 whitespace-nowrap dark:text-white"
+      >
+        <InvoiceListItemLabel
+          invoice={invoice}
+          filterableBillingType={isEnabled('filterable_billing_type_badge')}
+        />
       </th>
       <td className="px-6 py-4">
         <InvoiceableInfo invoice={invoice} />
@@ -67,7 +81,9 @@ const InvoiceListItem: FC<InvoiceItemProps> = ({ invoice, loading, selected: def
         <div className="flex items-center">{status}</div>
       </td>
       <td className="px-6 py-4">
-        <div className="flex items-center justify-end">{invoice.amount?.formattedValue}</div>
+        <div className="flex items-center justify-end">
+          {invoice.amount?.formattedValue}
+        </div>
       </td>
       <td className="px-6 py-4 text-end">
         <div className="flex justify-end">
@@ -82,7 +98,7 @@ const InvoiceListItem: FC<InvoiceItemProps> = ({ invoice, loading, selected: def
         </div>
       </td>
     </tr>
-  )
-}
+  );
+};
 
-export default InvoiceListItem
+export default InvoiceListItem;

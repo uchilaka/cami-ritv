@@ -13,13 +13,12 @@ import InvoicingVendorPicker from '../InvoicingVendorPicker';
 import { VendorType } from '../types';
 import { useFeatureFlagsContext } from '@/components/FeatureFlagsProvider';
 import LoadingAnimation from '@/components/LoadingAnimation';
-import ButtonLink from '@/components/Button/ButtonLink';
 import { emitInvoiceSelectedEvent } from '@/utils/events';
 import { useAppStateContext } from '@/utils/store/AppStateProvider';
 
 const InvoiceSearch: FC<ComponentProps<'div'>> = () => {
-  let { store } = useAppStateContext();
-  let {
+  const { store } = useAppStateContext();
+  const {
     invoicesMap,
     selectedInvoicesMap: initialSelectedMap,
     setInvoices,

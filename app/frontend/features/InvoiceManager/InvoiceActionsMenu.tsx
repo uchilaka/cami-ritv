@@ -1,35 +1,42 @@
-import React, { FC } from 'react'
-import { Dropdown } from 'flowbite'
-import { Invoice } from './types'
+import React, { FC } from 'react';
+import { Dropdown } from 'flowbite';
+import { Invoice } from './types';
 
 interface ActionsMenuProps {
-  invoice: Invoice
+  invoice: Invoice;
 }
 
-const AT_OR_PAST_SENT_STATUSES: Invoice['status'][] = ['PAID', 'OVERDUE', 'SENT']
+const AT_OR_PAST_SENT_STATUSES: Invoice['status'][] = [
+  'PAID',
+  'OVERDUE',
+  'SENT',
+];
 
 const InvoiceActionsMenu: FC<ActionsMenuProps> = ({ invoice }) => {
-  const { status, account, paymentVendorURL } = invoice
-  const showAction = invoice?.actions?.show
-  const actionsMenuControlId = `actions-menu-control--${invoice.id}`
-  const actionsMenuId = `actions-menu--${invoice.id}`
-  const invoiceHasBeenSent = AT_OR_PAST_SENT_STATUSES.includes(status)
-  const linkAccountLabel = account ? 'Update account' : 'Link account'
-  const manageLabel = status === 'PAID' ? 'Review' : 'Manage'
-  const sendInvoiceLabel = invoiceHasBeenSent ? 'Re-send' : 'Send'
-  const invoiceCanBeSent = account && status !== 'PAID'
+  const { status, account, paymentVendorURL } = invoice;
+  const showAction = invoice?.actions?.show;
+  const actionsMenuControlId = `actions-menu-control--${invoice.id}`;
+  const actionsMenuId = `actions-menu--${invoice.id}`;
+  const invoiceHasBeenSent = AT_OR_PAST_SENT_STATUSES.includes(status);
+  const linkAccountLabel = account ? 'Update account' : 'Link account';
+  const manageLabel = status === 'PAID' ? 'Review' : 'Manage';
+  const sendInvoiceLabel = invoiceHasBeenSent ? 'Re-send' : 'Send';
+  const invoiceCanBeSent = account && status !== 'PAID';
 
-  const controlRef = React.useRef<HTMLButtonElement>(null)
-  const menuRef = React.useRef<HTMLDivElement>(null)
+  const controlRef = React.useRef<HTMLButtonElement>(null);
+  const menuRef = React.useRef<HTMLDivElement>(null);
 
   React.useEffect(() => {
-    if (!controlRef.current || !menuRef.current) return
+    if (!controlRef.current || !menuRef.current) return;
 
-    const control = controlRef.current
-    const menu = menuRef.current
+    const control = controlRef.current;
+    const menu = menuRef.current;
 
-    new Dropdown(menu, control, { placement: 'left-start', triggerType: 'click' })
-  }, [controlRef, menuRef])
+    new Dropdown(menu, control, {
+      placement: 'left-start',
+      triggerType: 'click',
+    });
+  }, [controlRef, menuRef]);
 
   return (
     <>
@@ -49,7 +56,10 @@ const InvoiceActionsMenu: FC<ActionsMenuProps> = ({ invoice }) => {
         ref={menuRef}
         className="w-44 z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow dark:bg-gray-700"
       >
-        <ul className="py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownLeftButton">
+        <ul
+          className="py-2 text-sm text-gray-700 dark:text-gray-200"
+          aria-labelledby="dropdownLeftButton"
+        >
           {invoiceCanBeSent && (
             <li>
               <a
@@ -104,7 +114,7 @@ const InvoiceActionsMenu: FC<ActionsMenuProps> = ({ invoice }) => {
         </ul>
       </div>
     </>
-  )
-}
+  );
+};
 
-export default InvoiceActionsMenu
+export default InvoiceActionsMenu;
