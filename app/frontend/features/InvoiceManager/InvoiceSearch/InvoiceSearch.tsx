@@ -60,12 +60,12 @@ const InvoiceSearch: FC<ComponentProps<'div'>> = () => {
 
   return (
     <>
-      <div className="flex justify-between items-center mb-6">
+      {/* <div className="flex justify-between items-center mb-6">
         <h1 className="font-bold text-4xl">Invoices</h1>
         <ButtonLink variant="primary" href="/invoices/new">
           New Invoice
         </ButtonLink>
-      </div>
+      </div> */}
       <InvoicingVendorPicker onChange={vendorSelectionHandler} />
       <div className="flex items-center justify-between flex-column flex-wrap md:flex-row space-y-4 md:space-y-0 p-4 dark:bg-gray-900">
         <div className="flex flex-row space-x-4">
