@@ -9,5 +9,10 @@ namespace :api, defaults: { format: :json } do
         get :countries_map, defaults: { format: :json }
       end
     end
+    resources :invoices, only: %i[] do
+      collection do
+        post :search
+      end
+    end
   end
 end

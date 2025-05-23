@@ -4,6 +4,28 @@ info:
   title: API V1
   version: v1
 paths:
+  "/api/v1/invoices/search.json":
+    post:
+      summary: Retrieves all invoices
+      tags:
+      - Invoices
+      parameters: []
+      responses:
+        '200':
+          description: invoices found
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  "$ref": "#/components/schemas/invoice"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              oneOf:
+              - "$ref": "#/components/schemas/invoice_search_params"
+              - "$ref": "#/components/schemas/invoice_search_params_with_array_mode"
   "/invoices/search.json":
     post:
       summary: Retrieves all invoices
