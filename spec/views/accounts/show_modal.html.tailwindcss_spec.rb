@@ -20,12 +20,30 @@ RSpec.describe 'accounts/show_modal', type: :view do
     assign(:account, account)
   end
 
-  it 'renders attributes in <p>' do
-    render
-    expect(rendered).to match(/Display Name/)
-    expect(rendered).to match(/slugtastic/)
-    expect(rendered).to match(/2/)
-    expect(rendered).to match(/01-123456789/)
-    expect(rendered).to match(/MyText/)
+  context 'renders attributes' do
+    it 'renders display name' do
+      render
+      expect(rendered).to match(/Display Name/)
+    end
+
+    it 'renders slug' do
+      render
+      expect(rendered).to match(/slugtastic/)
+    end
+
+    it 'renders status' do
+      render
+      expect(rendered).to match(/2/)
+    end
+
+    it 'renders tax id' do
+      render
+      expect(rendered).to match(/01-123456789/)
+    end
+
+    it 'renders readme' do
+      render
+      expect(rendered).to match(/MyText/)
+    end
   end
 end
