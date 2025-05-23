@@ -12,7 +12,7 @@ class InvoicesController < ApplicationController
 
   load_console
 
-  before_action :set_invoice, only: %i[show edit update destroy]
+  before_action :set_invoice, only: %i[show show_modal edit update destroy]
 
   # GET /invoices or /invoices.json
   def index
@@ -33,6 +33,8 @@ class InvoicesController < ApplicationController
 
   # GET /invoices/1 or /invoices/1.json
   def show; end
+
+  def show_modal; end
 
   # GET /invoices/new
   def new

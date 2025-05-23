@@ -136,6 +136,12 @@ class Invoice < ApplicationRecord
     end
   end
 
+  def resource_url(_, args = {})
+    url_method_name = :show_modal_invoice_url
+    args.merge!(protocol: :https) if AppUtils.use_secure_protocol?
+    send(url_method_name, self, **args)
+  end
+
   # @deprecated Use `amount_currency` or `due_amount_currency` instead
   def currency_code
     amount_currency

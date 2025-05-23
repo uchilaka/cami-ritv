@@ -75,6 +75,8 @@ const InvoiceActionsMenu: FC<ActionsMenuProps> = ({ invoice }) => {
             {showAction && (
               <a
                 href={showAction.url}
+                data-turbo={true}
+                data-turbo-frame="invoice-show-modal"
                 className="flex justify-between items-center px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
                 rel="noreferrer"
               >

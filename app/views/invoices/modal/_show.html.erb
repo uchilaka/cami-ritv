@@ -1,0 +1,28 @@
+<% modal_id = modal_dom_id(@invoice, content_type: "show") %>
+<%= turbo_frame_tag "invoice-show-modal" do %>
+  <div
+    id="<%= modal_id %>" tabindex="-1" aria-hidden="true"
+    class="flowbite-modal hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full"
+    data-modal-placement="center-center">
+    <div class="relative p-4 w-full max-w-2xl max-h-full bg-white rounded-lg">
+      <!-- Modal content -->
+
+      <!-- Modal body -->
+      <div class="p-4 md:p-5 space-y-4">
+        <% if notice.present? %>
+          <p class="py-2 px-3 bg-green-50 mb-5 text-green-500 font-medium rounded-lg inline-block" id="notice"><%= notice %></p>
+        <% end %>
+
+        <%= render @invoice %>
+
+        <div class="flex w-full items-center justify-end mt-2">
+          <%= link_to "Back to invoices", invoices_path, class: secondary_btn_classes("py-3 px-5") %>
+          <%= link_to "Edit", edit_invoice_path(@invoice), class: secondary_btn_classes("ml-2 py-3 px-5") %>
+          <div class="inline-block ml-2">
+            <%= button_to "Destroy", @invoice, method: :delete, class: secondary_btn_classes("py-3 px-5", style: :danger) %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+<% end %>
