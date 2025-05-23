@@ -8,12 +8,12 @@ module FooterHelper
         'https://fontawesome.com/search',
       ],
       [
-        t('shared.footer.flowbite_icons'),
-        'https://flowbite.com/icons/',
+        t('shared.footer.flowbite_blocks'),
+        'https://flowbite.com/blocks/',
       ],
       [
-        t('shared.footer.flowbite_integration_guide'),
-        'https://flowbite.com/docs/getting-started/rails/',
+        t('shared.footer.flowbite_icons'),
+        'https://flowbite.com/icons/',
       ],
       [
         t('shared.footer.component_library'),
@@ -26,14 +26,6 @@ module FooterHelper
       [
         t('shared.footer.tailwind_blocks'),
         'https://tailwindcss.com/plus/ui-blocks',
-      ],
-      [
-        t('shared.footer.tailwind_theming'),
-        'https://v3.tailwindcss.com/docs/theme',
-      ],
-      [
-        t('shared.footer.wai_aria_guide'),
-        'https://w3c.github.io/aria',
       ],
       [
         t('shared.footer.paypal_sandbox_guide'),

@@ -53,7 +53,13 @@ module AdministratorNavigable
           admin: true,
         },
         {
-          label: 'Analytics',
+          label: 'Analytics Dashboard',
+          url: 'https://analytics.google.com/analytics/web/#/p256599245/reports/intelligenthome',
+          admin: true,
+          enabled: true,
+        },
+        {
+          label: 'Analytics Admin',
           url: 'https://analytics.google.com/analytics/web/#/a47459054p256599245/admin',
           admin: true,
           enabled: true,

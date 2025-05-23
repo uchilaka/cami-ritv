@@ -59,6 +59,7 @@ en:
       registration: "Settings"
     footer:
       flowbite_icons: 'Flowbite Icons'
+      flowbite_blocks: 'Flowbite Blocks'
       flowbite_integration_guide: 'Flowbite Integration Guide'
       tailwind_flex: 'Tailwind Flex'
       tailwind_blocks: 'Tailwind UI Blocks'
@@ -68,7 +69,9 @@ en:
       mongoid_docs: 'Mongoid Documentation (v8.1)'
       component_library: 'Component Library'
       paypal_sandbox_guide: 'PayPal Sandbox Testing Guide'
+      open_source_guides: 'Open Source Guides'
       ruby_doc: 'Ruby Documentation'
+      rails_guides: 'Rails Guides (v8)'
       wai_aria_guide: 'Accessibility Guide (WAI-ARIA)'
       zoho_crm_api_guide: 'Zoho CRM API Guide (v7)'
 

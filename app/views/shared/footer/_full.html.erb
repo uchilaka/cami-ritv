@@ -29,6 +29,16 @@
           </ul>
         </div>
         <div>
+          <h2 class="mb-6 text-sm font-semibold text-gray-900 uppercase dark:text-white">Guides</h2>
+          <ul class="text-gray-600 dark:text-gray-400">
+            <% developer_menu.each do |item| %>
+              <li class="mb-4">
+                <%= link_to item[:label], item[:path] || item[:url], class: 'hover:underline', target: '_blank' %>
+              </li>
+            <% end %>
+          </ul>
+        </div>
+        <div>
           <h2 class="mb-6 text-sm font-semibold text-gray-900 uppercase dark:text-white">Follow us</h2>
           <ul class="text-gray-600 dark:text-gray-400">
             <li class="mb-4">
@@ -38,9 +48,8 @@
               <a href="https://discord.gg/4eeurUVvTy" class="hover:underline">Discord</a>
             </li>
           </ul>
-        </div>
-        <div>
-          <h2 class="mb-6 text-sm font-semibold text-gray-900 uppercase dark:text-white">Legal</h2>
+
+          <h2 class="my-6 text-sm font-semibold text-gray-900 uppercase dark:text-white">Legal</h2>
           <ul class="text-gray-600 dark:text-gray-400">
             <li class="mb-4">
               <a href="/app/legal/privacy" class="hover:underline me-4 md:me-6"><%= t('accessibility.footer.privacy') %></a>
