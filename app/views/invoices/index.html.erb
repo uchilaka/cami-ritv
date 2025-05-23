@@ -1,7 +1,7 @@
 <% content_for(:typescript_includes) do %>
   <%= vite_javascript_tag "invoice_search_app.tsx" %>
 <% end %>
-<div class="w-full min-h-[var(--lc-min-form-height)]">
+<div class="w-full dark:text-white min-h-[var(--lc-min-form-height)]">
   <% if notice.present? %>
     <p class="py-2 px-3 bg-green-50 mb-5 text-green-500 font-medium rounded-lg inline-block" id="notice"><%= notice %></p>
   <% end %>

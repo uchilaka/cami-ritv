@@ -82,4 +82,23 @@ module StyleHelper
   def compose_class_names(*args)
     args.map { |arg| arg.is_a?(Hash) ? arg.map { |k, v| k if v }.compact : arg }.flatten.compact.join(' ')
   end
+
+  def input_class_names(*, style: :default)
+    append_classes = [
+      'border shadow block rounded-md outline-none px-3 py-2 mt-2 w-full',
+    ]
+    case style
+    when :success
+      append_classes.append('text-green-700 dark:text-green-500 dark:bg-gray-700')
+    when :danger
+      append_classes.append(
+        'bg-red-50 border border-red-500 text-red-900 placeholder-red-700',
+        'focus:ring-red-500 dark:bg-gray-700 focus:border-red-500',
+        'dark:text-red-500 dark:placeholder-red-500 dark:border-red-500'
+      )
+    else
+      append_classes.append('border-gray-400 dark:bg-gray-700 focus:border-brand-700 focus:ring-brand-700')
+    end
+    compose_class_names(*, *append_classes)
+  end
 end

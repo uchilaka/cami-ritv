@@ -15,7 +15,5 @@ export default function useCsrfToken() {
     extractCsrfTokenFromMetaTag() ?? ''
   );
 
-  console.debug({ csrfToken });
-
   return { csrfToken, setCsrfToken };
 }
