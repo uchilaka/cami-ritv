@@ -32,6 +32,24 @@ module DeveloperNavigable
           public: true,
         },
         {
+          label: t('shared.footer.paypal_sandbox_guide'),
+          url: 'https://developer.paypal.com/tools/sandbox/',
+          section: 'Guides',
+          public: true,
+        },
+        {
+          label: t('shared.footer.zoho_crm_api_guide'),
+          url: 'https://www.zoho.com/crm/developer/docs/api/v7/?crmprod=1',
+          section: 'Guides',
+          public: true,
+        },
+        {
+          label: t('shared.footer.ruby_doc'),
+          url: 'https://www.ruby-lang.org/en/documentation/',
+          section: 'Guides',
+          public: true,
+        },
+        {
           label: t('shared.footer.rails_guides'),
           url: 'https://guides.rubyonrails.org/v8.0/index.html',
           section: 'Guides',
