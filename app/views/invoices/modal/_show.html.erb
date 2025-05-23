@@ -16,10 +16,11 @@
         <%= render @invoice %>
 
         <div class="flex w-full items-center justify-end mt-2">
-          <%= link_to "Back to invoices", invoices_path, class: secondary_btn_classes("py-3 px-5") %>
-          <%= link_to "Edit", edit_invoice_path(@invoice), class: secondary_btn_classes("ml-2 py-3 px-5") %>
+          <%= link_to "Back to invoices", invoices_path, "data-turbo": false, class: secondary_btn_classes("py-3 px-5") %>
+          <%= link_to "Edit", edit_invoice_path(@invoice), "data-turbo": false, class: secondary_btn_classes("ml-2 py-3 px-5") %>
           <div class="inline-block ml-2">
-            <%= button_to "Destroy", @invoice, method: :delete, class: secondary_btn_classes("py-3 px-5", style: :danger) %>
+            <!-- TODO: could destroy buttons be implemented as a turbo action of some kind? -->
+            <%= button_to "Destroy", @invoice, method: :delete, "data-turbo": false, class: secondary_btn_classes("py-3 px-5", style: :danger) %>
           </div>
         </div>
       </div>
