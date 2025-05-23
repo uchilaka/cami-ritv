@@ -53,6 +53,12 @@ module AdministratorNavigable
           admin: true,
         },
         {
+          label: 'Analytics',
+          url: 'https://analytics.google.com/analytics/web/#/a47459054p256599245/admin',
+          admin: true,
+          enabled: true,
+        },
+        {
           label: 'PayPal Dashboard',
           url: paypal_developer_dashboard_url,
           admin: true,
