@@ -54,6 +54,7 @@
     "terminal.integrated.mouseWheelZoom": true,
     "editor.defaultFormatter": "esbenp.prettier-vscode",
     "editor.codeActionsOnSave": {
+      "source.fixAll.markdownlint": "explicit",
       "source.fixAll.prettier": "explicit"
     },
     "[typescript]": {
