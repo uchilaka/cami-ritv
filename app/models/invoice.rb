@@ -137,7 +137,7 @@ class Invoice < ApplicationRecord
   end
 
   def resource_url(_, args = {})
-    url_method_name = :show_modal_invoice_url
+    url_method_name = args[:action] == :show ? :show_modal_invoice_url : :invoice_url
     args.merge!(protocol: :https) if AppUtils.use_secure_protocol?
     send(url_method_name, self, **args)
   end

@@ -226,7 +226,7 @@ RSpec.describe Invoice, type: :model do
 
       it { expect(subject.actions.dig(:back, :url)).to match(%r{/invoices\?locale=en$}) }
       it { expect(subject.actions.dig(:edit, :url)).to match(%r{/invoices/#{subject.id}\?locale=en$}) }
-      it { expect(subject.actions.dig(:show, :url)).to match(%r{/invoices/#{subject.id}\?locale=en$}) }
+      it { expect(subject.actions.dig(:show, :url)).to match(%r{/invoices/#{subject.id}\/show_modal\?locale=en$}) }
     end
 
     pending 'when invoice is sent'
