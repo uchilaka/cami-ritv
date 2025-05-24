@@ -33,22 +33,22 @@ module LarCity
           # Request middleware runs before the request is made
           conn.request :retry, retry_options
           conn.request :json
-          
+
           # Response middleware parses the response
           conn.response :json, content_type: /\bjson$/
           conn.response :raise_error
-          
+
           # Use the default adapter (Net::HTTP)
           conn.adapter Faraday.default_adapter
-          
+
           # Set default headers
           conn.headers['User-Agent'] = "LarCity/#{LarCity::VERSION} (Ruby #{RUBY_VERSION})"
           conn.headers['Accept'] = 'application/json'
         end
       end
-      
+
       private
-      
+
       # Default retry options for HTTP requests
       # @return [Hash] Retry configuration
       def retry_options
@@ -67,7 +67,7 @@ module LarCity
             Faraday::TimeoutError,
             Errno::ETIMEDOUT,
             Net::OpenTimeout,
-            SocketError
+            SocketError,
           ]
         }
       end

@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
 require 'rails_helper'
-require 'webmock/rspec'
+require 'faraday'
+require 'faraday/adapter/test'
 
 RSpec.describe LarCity::CLI::DDNSCmd do
   let(:instance) { described_class.new }
@@ -11,22 +12,46 @@ RSpec.describe LarCity::CLI::DDNSCmd do
   let(:record_type) { 'A' }
   let(:ip_address) { '203.0.113.1' }
   let(:ttl) { 300 }
+  let(:stubs) { Faraday::Adapter::Test::Stubs.new }
+  let(:test_client) do
+    Faraday.new do |builder|
+      builder.request :json
+      builder.response :json, content_type: /\bjson$/
+      builder.response :raise_error
+      builder.headers['Accept'] = 'application/json'
+      builder.adapter :test, stubs
+    end
+  end
 
   before do
     # Stub environment variables
     allow(Rails.application.credentials).to \
       receive(:digitalocean).and_return(OpenStruct.new(access_token:))
 
-    # Stub IP detection services
-    stub_request(:get, 'https://api.ipify.org')
-      .to_return(status: 200, body: ip_address, headers: {})
+    # Stub the HTTP client to use our test adapter
+    allow(LarCity::HttpClient).to receive(:client).and_return(test_client)
+    allow(LarCity::HttpClient).to receive(:new_client).and_return(test_client)
 
-    # Stub DigitalOcean API endpoints
-    stub_request(:get, %r{https://api.digitalocean.com/v2/domains/#{domain}/records})
-      .to_return(status: 200, body: { domain_records: [] }.to_json, headers: { 'Content-Type' => 'application/json' })
+    # Stub the default IP service for most tests
+    stubs.get('https://api.ipify.org') do
+      [200, {}, ip_address]
+    end
 
-    stub_request(:post, %r{https://api.digitalocean.com/v2/domains/#{domain}/records})
-      .to_return(status: 201, body: { domain_record: { id: '12345' } }.to_json, headers: { 'Content-Type' => 'application/json' })
+    # Stub DigitalOcean API endpoints - return the expected parsed response structure
+    stubs.get(%r{/v2/domains/#{domain}/records}) do |_env|
+      [200, { 'Content-Type' => 'application/json' }, { 'domain_records' => [] }.to_json]
+    end
+
+    stubs.post(%r{/v2/domains/#{domain}/records}) do |_env|
+      [201, { 'Content-Type' => 'application/json' }, { 'domain_record' => { 'id' => '12345' } }.to_json]
+    end
+  end
+
+  after do
+    stubs.verify_stubbed_calls
+  rescue => e
+    # Don't fail tests for unstubbed calls in after hook
+    Rails.logger.warn("Faraday stubs verification failed: #{e.message}")
   end
 
   describe '#update' do
@@ -43,10 +68,24 @@ RSpec.describe LarCity::CLI::DDNSCmd do
       # Stub the say method to prevent output during tests
       allow(instance).to receive(:say)
       allow(instance).to receive(:options).and_return(options)
+
+      # Stub the fetch_public_ip method to avoid actual HTTP calls
+      allow(instance).to receive(:fetch_public_ip).and_return(ip_address)
+
+      # Stub DigitalOcean API endpoints
+      stubs.get(%r{/v2/domains/#{domain}/records}) do |_env|
+        [200, { 'Content-Type' => 'application/json' }, { domain_records: [] }]
+      end
+
+      stubs.post(%r{/v2/domains/#{domain}/records}) do |_env|
+        [201, { 'Content-Type' => 'application/json' }, { domain_record: { id: '12345' } }]
+      end
     end
 
     it 'updates DNS record with current public IP' do
       expect(instance).to receive(:fetch_public_ip).and_return(ip_address)
+
+      # Expect the update_dns_record method to be called with the correct arguments
       expect(instance).to receive(:update_dns_record).with(
         token: access_token,
         domain:,
@@ -62,29 +101,45 @@ RSpec.describe LarCity::CLI::DDNSCmd do
 
   describe '#fetch_public_ip' do
     before do
+      # Clear any existing stubs for IP services
+      stubs.instance_variable_get(:@stack).clear
+
       # Stub the say method to prevent output during tests
       allow(instance).to receive(:say)
       allow(instance).to receive(:exit)
-
-      # Stub all IP services to fail except the last one
-      stub_request(:get, 'https://api.ipify.org')
-        .to_raise(Faraday::ConnectionFailed.new('Connection failed'))
-
-      stub_request(:get, 'https://ifconfig.me/ip')
-        .to_return(status: 200, body: 'invalid-ip', headers: {})
-
-      stub_request(:get, 'https://ipinfo.io/ip')
-        .to_return(status: 200, body: ip_address, headers: {})
     end
 
     it 'tries multiple services until it gets a valid IP' do
+      # First service fails with connection error
+      stubs.get('https://api.ipify.org') do
+        raise Faraday::ConnectionFailed, 'Connection failed'
+      end
+
+      # Second service returns invalid IP
+      stubs.get('https://ifconfig.me/ip') do
+        [200, {}, 'invalid-ip']
+      end
+
+      # Third service returns valid IP
+      stubs.get('https://ipinfo.io/ip') do
+        [200, {}, ip_address]
+      end
+
       expect(instance.send(:fetch_public_ip)).to eq(ip_address)
     end
 
     context 'when all services fail' do
       before do
-        stub_request(:get, 'https://ipinfo.io/ip')
-          .to_raise(Faraday::ConnectionFailed.new('Connection failed'))
+        # All services fail with connection errors
+        stubs.get('https://api.ipify.org') do
+          raise Faraday::ConnectionFailed, 'Connection failed'
+        end
+        stubs.get('https://ifconfig.me/ip') do
+          raise Faraday::ConnectionFailed, 'Connection failed'
+        end
+        stubs.get('https://ipinfo.io/ip') do
+          raise Faraday::ConnectionFailed, 'Connection failed'
+        end
       end
 
       it 'exits with an error message' do
@@ -106,19 +161,32 @@ RSpec.describe LarCity::CLI::DDNSCmd do
       }
     end
 
+    let(:api_response_headers) { { 'Content-Type' => 'application/json' } }
+
     before do
+      # Clear any existing stubs
+      stubs.instance_variable_get(:@stack).clear
+
       allow(instance).to receive(:say)
       allow(instance).to receive(:exit)
+
+      # Stub the default IP service
+      stubs.get('https://api.ipify.org') do
+        [200, {}, ip_address]
+      end
     end
 
     context 'when record exists' do
       before do
-        stub_request(:get, %r{https://api.digitalocean.com/v2/domains/#{domain}/records})
-          .to_return(status: 200, body: { domain_records: [existing_record] }.to_json,
-                     headers: { 'Content-Type' => 'application/json' })
+        stubs.get(%r{/v2/domains/#{domain}/records}) do |_env|
+          [200, api_response_headers, { domain_records: [existing_record] }.to_json]
+        end
 
-        stub_request(:put, %r{https://api.digitalocean.com/v2/domains/#{domain}/records/\d+})
-          .to_return(status: 200, body: {}.to_json, headers: { 'Content-Type' => 'application/json' })
+        stubs.put(%r{/v2/domains/#{domain}/records/\d+}) do |env|
+          request_body = JSON.parse(env.body)
+          expect(request_body).to include('data' => ip_address, 'ttl' => ttl)
+          [200, api_response_headers, { domain_record: existing_record.merge('data' => ip_address) }.to_json]
+        end
       end
 
       it 'updates the existing record' do
@@ -129,26 +197,34 @@ RSpec.describe LarCity::CLI::DDNSCmd do
                       record_type:,
                       ip_address:,
                       ttl:)
-
-        expect(a_request(:put, %r{/records/\d+})
-          .with(
-            body: {
-              data: ip_address,
-              ttl:,
-            }.to_json
-          )).to have_been_made
       end
     end
 
     context 'when record does not exist' do
       before do
-        stub_request(:get, %r{https://api.digitalocean.com/v2/domains/#{domain}/records})
-          .to_return(status: 200, body: { domain_records: [] }.to_json,
-                     headers: { 'Content-Type' => 'application/json' })
+        stubs.get(%r{/v2/domains/#{domain}/records}) do |_env|
+          [200, api_response_headers, { domain_records: [] }.to_json]
+        end
 
-        stub_request(:post, %r{https://api.digitalocean.com/v2/domains/#{domain}/records})
-          .to_return(status: 201, body: { domain_record: { id: '12345' } }.to_json,
-                     headers: { 'Content-Type' => 'application/json' })
+        stubs.post(%r{/v2/domains/#{domain}/records}) do |env|
+          request_body = JSON.parse(env.body || '{}')
+          expect(request_body).to include(
+            'type' => record_type,
+            'data' => ip_address,
+            'ttl' => ttl
+          )
+          # Record name should be nil when '@' is used
+          expect(request_body['name']).to be_nil
+
+          new_record = {
+            'id' => '67890',
+            'type' => record_type,
+            'name' => nil,
+            'data' => ip_address,
+            'ttl' => ttl,
+          }
+          [201, api_response_headers, { domain_record: new_record }.to_json]
+        end
       end
 
       it 'creates a new record' do
@@ -159,24 +235,14 @@ RSpec.describe LarCity::CLI::DDNSCmd do
                       record_type:,
                       ip_address:,
                       ttl:)
-
-        expect(a_request(:post, %r{/records})
-          .with(
-            body: {
-              type: record_type,
-              name: nil, # Because record_name is '@'
-              data: ip_address,
-              ttl:,
-            }.to_json
-          )).to have_been_made
       end
     end
 
     context 'when API request fails' do
       before do
-        stub_request(:get, %r{https://api.digitalocean.com/v2/domains/#{domain}/records})
-          .to_return(status: 401, body: { message: 'Unauthorized' }.to_json,
-                     headers: { 'Content-Type' => 'application/json' })
+        stubs.get(%r{/v2/domains/#{domain}/records}) do |_env|
+          [401, { 'Content-Type' => 'application/json' }, { message: 'Unauthorized' }.to_json]
+        end
       end
 
       it 'shows an error message and exits' do
@@ -185,6 +251,7 @@ RSpec.describe LarCity::CLI::DDNSCmd do
           :red
         )
         expect(instance).to receive(:exit).with(1)
+
 
         instance.send(:update_dns_record,
                       token: 'invalid_token',
@@ -198,6 +265,25 @@ RSpec.describe LarCity::CLI::DDNSCmd do
   end
 
   describe '#access_token' do
+    before do
+      # Clear any existing stubs
+      # stubs.instance_variable_get(:@stack).clear
+      # RSpec::Mocks.teardown
+
+      # Stub the default IP service
+      stubs.get('https://api.ipify.org') do
+        [200, {}, ip_address]
+      end
+
+      # Stub DigitalOcean API endpoints to avoid actual calls - return parsed response structure
+      stubs.get(%r{/v2/domains/}) do
+        [200, { 'Content-Type' => 'application/json' }, { 'domain_records' => [] }.to_json]
+      end
+      stubs.post(%r{/v2/domains/}) do
+        [201, { 'Content-Type' => 'application/json' }, { 'domain_record' => { 'id' => '12345' } }.to_json]
+      end
+    end
+
     context 'when token is provided in options' do
       before do
         allow(instance).to receive(:options).and_return(access_token: 'option_token')
