@@ -41,6 +41,11 @@ module AdministratorNavigable
           new_tab: true, admin: true, enabled: true,
         },
         {
+          label: 'Secrets Vault',
+          url: 'https://bitwarden.com/download/',
+          new_tab: true, admin: true,
+        },
+        {
           label: 'Storybook',
           url: storybook_url,
           new_tab: true, admin: true,
@@ -51,6 +56,7 @@ module AdministratorNavigable
           label: 'Test email inbox',
           url: test_inbox_url,
           admin: true,
+          enabled: true,
         },
         {
           label: 'Analytics Dashboard',
