@@ -5,6 +5,7 @@
     "skipLibCheck": true,
     "module": "ESNext",
     "moduleResolution": "bundler",
+    "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "allowJs": true,
     "strict": true,
@@ -20,5 +21,6 @@
     "config/tailwind.config.js",
     "tailwind.config.js",
     "postcss.config.mjs",
+    "eslint.config.mjs"
   ]
 }

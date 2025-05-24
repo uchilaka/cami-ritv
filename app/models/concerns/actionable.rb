@@ -74,15 +74,15 @@ module Actionable
           dom_id: SecureRandom.uuid,
           http_method: 'GET',
           label: "Back to #{resource_name.pluralize}",
-          url: resources_url
-        }
+          url: resources_url,
+        },
       }
       if destroyable?
         @actions[:delete] = {
           dom_id: SecureRandom.uuid,
           http_method: 'DELETE',
           label: 'Delete',
-          url: resource_url(resource, format: :json)
+          url: resource_url(resource, action: :delete, format: :json),
         }
       end
       if readable?
@@ -90,7 +90,7 @@ module Actionable
           dom_id: SecureRandom.uuid,
           http_method: 'GET',
           label: "#{resource_name} details",
-          url: resource_url(resource)
+          url: resource_url(resource, action: :show),
         }
       end
       if editable?
@@ -98,7 +98,7 @@ module Actionable
           dom_id: SecureRandom.uuid,
           http_method: 'GET',
           label: 'Edit',
-          url: resource_url(resource)
+          url: resource_url(resource, action: :edit),
         }
       end
       @actions

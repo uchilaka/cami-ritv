@@ -133,6 +133,7 @@ RSpec.configure do |config|
 
   # Testing Jobs
   config.include ActiveJob::TestHelper, type: :job
+  config.include ActiveJob::TestHelper, feature: :invoicing
 
   # Sample phone numbers
   config.include_context 'for phone number testing', real_world_data: true

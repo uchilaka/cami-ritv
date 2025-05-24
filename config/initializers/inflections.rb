@@ -21,4 +21,5 @@ ActiveSupport::Inflector.inflections(:en) do |inflect|
   inflect.acronym 'PII'
   inflect.acronym 'SSL'
   inflect.acronym 'VAT'
+  inflect.acronym 'CRM'
 end

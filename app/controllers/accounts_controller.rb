@@ -7,7 +7,7 @@ class AccountsController < ApplicationController
   end
 
   # load_account :all, optional: true, id_keys: %i[account_id id]
-  load_account %i[show show_modal show_li_actions edit update destroy],
+  load_account %i[show show_modal show_li_actions edit update update_crm destroy],
                optional: false, id_keys: %i[account_id id]
 
   load_console
@@ -22,7 +22,16 @@ class AccountsController < ApplicationController
   # GET /accounts/1 or /accounts/1.json
   def show; end
 
-  def show_modal; end
+  def show_modal
+    # rubocop:disable Style/GuardClause
+    if account.last_sent_to_crm_at
+      human_readable_time = account.last_sent_to_crm_at.strftime('%B %d, %Y %I:%M %p')
+      flash_notice = I18n.t('models.account.sync_to_crm_success', human_readable_time:)
+      # Set a rails flash message to be displayed in the modal
+      flash.now[:notice] = flash_notice
+    end
+    # rubocop:enable Style/GuardClause
+  end
 
   def show_li_actions; end
 
@@ -77,6 +86,22 @@ class AccountsController < ApplicationController
     end
   end
 
+  def push
+    result = Zoho::API::Account.upsert(account)
+    response_data = Zoho::API::Account.sync_callback!(result, account:)
+    respond_to do |format|
+      if response_data[:code] == 'SUCCESS'
+        format.html { redirect_to account_url(@account), notice: 'Account was successfully updated.' }
+        format.json { render :show, status: :ok, location: @account }
+      else
+        format.html { render :show, status: :bad_request, location: @account }
+        format.json do
+          render json: { errors: account.errors.full_messages }, status: :unprocessable_entity
+        end
+      end
+    end
+  end
+
   # DELETE /accounts/1 or /accounts/1.json
   def destroy
     @account.destroy!
@@ -108,10 +133,12 @@ class AccountsController < ApplicationController
   end
 
   def update_params
-    params.permit(
-      account: [*update_account_param_keys, { metadata: {} }],
-      profile: create_profile_param_keys
-    )
+    params
+      .permit(
+        %i[integration],
+        account: [*update_account_param_keys, { metadata: {} }],
+        profile: create_profile_param_keys
+      )
   end
 
   def update_account_param_keys

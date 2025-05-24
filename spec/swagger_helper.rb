@@ -27,11 +27,134 @@ RSpec.configure do |config|
           url: 'https://{defaultHost}',
           variables: {
             defaultHost: {
-              default: 'www.example.com'
+              default: 'accounts.larcity.local'
             }
           }
         }
-      ]
+      ],
+      components: {
+        securitySchemes: {
+          bearer_auth: {
+            type: :http,
+            scheme: :bearer,
+          },
+          basic_auth: {
+            type: :http,
+            scheme: :basic,
+          }
+        },
+        schemas: {
+          account: {
+            type: :object,
+            properties: {
+              id: { type: :string },
+              displayName: { type: :string },
+              email: { type: :string },
+              status: { type: :string },
+              taxId: { type: :string, nullable: true },
+              type: { type: :string },
+            },
+            required: %i[id displayName email status]
+          },
+          contact: {
+            type: :object,
+            properties: {
+              displayName: { type: :string },
+              familyName: { type: :string },
+              givenName: { type: :string },
+              email: { type: :string },
+              type: { type: :string },
+            },
+            required: %i[displayName email]
+          },
+          money: {
+            type: :object,
+            properties: {
+              currencyCode: { type: :string },
+              formattedValue: { type: :string },
+              value: { type: :number },
+              valueInCents: { type: :integer },
+            },
+            required: %i[currencyCode formattedValue value valueInCents]
+          },
+          invoice: {
+            type: :object,
+            properties: {
+              id: { type: :string },
+              account: {
+                '$ref' => '#/components/schemas/account',
+                nullable: true
+              },
+              contacts: {
+                type: :array,
+                items: { '$ref' => '#/components/schemas/contact' }
+              },
+              status: { type: :string },
+              invoiceNumber: { type: :string },
+              currencyCode: { type: :string },
+              createdAt: { type: :string, format: 'date-time' },
+              dueAt: { type: :string, format: 'date-time', nullable: true },
+              paidAt: { type: :string, format: 'date-time', nullable: true },
+              amount: { '$ref' => '#/components/schemas/money' },
+              dueAmount: { '$ref' => '#/components/schemas/money' },
+              paymentVendorURL: { type: :string },
+            },
+            required: %i[id account contacts status invoiceNumber currencyCode createdAt dueAt amount dueAmount]
+          },
+          invoice_search_params: {
+            type: :object,
+            properties: {
+              q: { type: :string, nullable: true },
+              mode: { type: :string, nullable: true },
+              f: {
+                type: :object,
+                nullable: true,
+                properties: {
+                  field: { type: :string },
+                  value: { type: :string }
+                }
+              },
+              s: {
+                type: :object,
+                nullable: true,
+                properties: {
+                  field: { type: :string },
+                  direction: { type: :string }
+                }
+              }
+            }
+          },
+          invoice_search_params_with_array_mode: {
+            type: :object,
+            properties: {
+              q: { type: :string, nullable: true },
+              mode: { type: :string, nullable: true },
+              f: {
+                type: :array,
+                nullable: true,
+                items: {
+                  type: :object,
+                  properties: {
+                    field: { type: :string },
+                    value: { type: :string }
+                  }
+                }
+              },
+              s: {
+                type: :array,
+                nullable: true,
+                items: {
+                  type: :object,
+                  properties: {
+                    field: { type: :string },
+                    direction: { type: :string }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   }
 
