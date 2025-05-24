@@ -16,6 +16,7 @@ module LarCity
       option :domain, type: :string, aliases: '-d', required: true, desc: 'Domain name (e.g., example.com)'
       option :record, type: :string, aliases: '-r', default: '@', desc: 'Record name (e.g., @ or subdomain)'
       option :type, type: :string, aliases: '-y', default: 'A', desc: 'Record type (A, AAAA, etc.)'
+      option :ttl, type: :numeric, default: 300, desc: 'Time to live in seconds (default: 300)'
 
       # Updates a DNS record with the current public IP address
       # @return [void]
@@ -29,7 +30,14 @@ module LarCity
           exit 1
         end
 
-        update_dns_record(token, options[:domain], options[:record], options[:type], public_ip)
+        update_dns_record(
+          token,
+          options[:domain],
+          options[:record],
+          options[:type],
+          public_ip,
+          options[:ttl].to_i
+        )
       end
 
       no_commands do
@@ -66,8 +74,9 @@ module LarCity
         # @param record_name [String] Record name (e.g., '@' for root, 'www' for subdomain)
         # @param record_type [String] Record type (A, AAAA, etc.)
         # @param ip_address [String] IP address to set
+        # @param ttl [Integer] Time to live in seconds (default: 300)
         # @return [void]
-        def update_dns_record(token, domain, record_name, record_type, ip_address)
+        def update_dns_record(token, domain, record_name, record_type, ip_address, ttl = 300)
           client = LarCity::HttpClient.new_client
           client.headers['Authorization'] = "Bearer #{token}"
 
@@ -86,7 +95,10 @@ module LarCity
               # Update existing record
               client.put(
                 "https://api.digitalocean.com/v2/domains/#{domain}/records/#{record['id']}",
-                { data: ip_address }.to_json
+                { 
+                  data: ip_address,
+                  ttl: ttl
+                }.to_json
               )
               say "Successfully updated #{record_type} record #{record_name}.#{domain} to #{ip_address}", :green
             else
@@ -97,7 +109,7 @@ module LarCity
                   type: record_type,
                   name: (record_name == '@' ? nil : record_name),
                   data: ip_address,
-                  ttl: 300
+                  ttl: ttl
                 }.to_json
               )
               say "Successfully created #{record_type} record #{record_name}.#{domain} with IP #{ip_address}", :green
