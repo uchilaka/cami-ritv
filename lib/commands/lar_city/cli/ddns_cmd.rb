@@ -31,12 +31,12 @@ module LarCity
         end
 
         update_dns_record(
-          token,
-          options[:domain],
-          options[:record],
-          options[:type],
-          public_ip,
-          options[:ttl].to_i
+          token: token,
+          domain: options[:domain],
+          record_name: options[:record],
+          record_type: options[:type],
+          ip_address: public_ip,
+          ttl: options[:ttl].to_i
         )
       end
 
@@ -69,6 +69,7 @@ module LarCity
         end
 
         # Updates or creates a DNS record in DigitalOcean
+        # 
         # @param token [String] DigitalOcean API token
         # @param domain [String] Domain name
         # @param record_name [String] Record name (e.g., '@' for root, 'www' for subdomain)
@@ -76,7 +77,14 @@ module LarCity
         # @param ip_address [String] IP address to set
         # @param ttl [Integer] Time to live in seconds (default: 300)
         # @return [void]
-        def update_dns_record(token, domain, record_name, record_type, ip_address, ttl = 300)
+        def update_dns_record(
+          token:,
+          domain:,
+          record_name:,
+          record_type: 'A',
+          ip_address:,
+          ttl: 300
+        )
           client = LarCity::HttpClient.new_client
           client.headers['Authorization'] = "Bearer #{token}"
 
