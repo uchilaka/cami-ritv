@@ -10,6 +10,7 @@ abort("The Rails environment is running in production mode!") if Rails.env.produ
 require 'rspec/rails'
 # Add additional requires below this line. Rails is not loaded until this point!
 require 'aasm/rspec'
+require 'webmock/rspec'
 require 'shoulda/matchers'
 require 'shoulda/matchers/integrations/test_frameworks/rspec'
 require 'database_cleaner/active_record'
@@ -184,7 +185,8 @@ RSpec.configure do |config|
 
   config.append_after(:each) do
     DatabaseCleaner.clean
-
+    # Reset all webmocks
+    WebMock.reset!
     # Clean up all test double state
     RSpec::Mocks.teardown
   end
