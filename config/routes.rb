@@ -3,6 +3,19 @@
 require 'lib/admin_scope_constraint'
 
 Rails.application.routes.draw do
+  namespace :api do
+    namespace :v2, defaults: { format: :json } do
+      namespace :crm do
+        resource :accounts, only: [] do
+          member do
+            put ':id', as: :update, action: :update
+            patch ':id', action: :update
+          end
+        end
+      end
+    end
+  end
+
   devise_for :users,
              controllers: {
                sessions: 'users/passwordless',

@@ -7,7 +7,7 @@ class AccountsController < ApplicationController
   end
 
   # load_account :all, optional: true, id_keys: %i[account_id id]
-  load_account %i[show show_modal show_li_actions edit update destroy],
+  load_account %i[show show_modal show_li_actions edit update update_crm destroy],
                optional: false, id_keys: %i[account_id id]
 
   load_console
@@ -23,12 +23,14 @@ class AccountsController < ApplicationController
   def show; end
 
   def show_modal
+    # rubocop:disable Style/GuardClause
     if account.last_sent_to_crm_at
       human_readable_time = account.last_sent_to_crm_at.strftime('%B %d, %Y %I:%M %p')
       flash_notice = I18n.t('models.account.sync_to_crm_success', human_readable_time:)
       # Set a rails flash message to be displayed in the modal
       flash.now[:notice] = flash_notice
     end
+    # rubocop:enable Style/GuardClause
   end
 
   def show_li_actions; end
@@ -82,6 +84,11 @@ class AccountsController < ApplicationController
         end
       end
     end
+  end
+
+  def update_crm
+    # TODO: Use Faraday to call UPDATE /api/v2/crm/accounts/:id
+    #   with the account's data
   end
 
   # DELETE /accounts/1 or /accounts/1.json
