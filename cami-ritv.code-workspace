@@ -5,8 +5,24 @@
       "name": "Rails"
     },
     {
+      "path": "./app/models/",
+      "name": "Rails/Models"
+    },
+    {
       "path": "./app/views/",
       "name": "Rails/Views"
+    },
+    {
+      "path": "./app/controllers/",
+      "name": "Rails/Controllers"
+    },
+    {
+      "path": "./lib/commands/",
+      "name": "Rails/Commands"
+    },
+    {
+      "path": "./app/jobs/",
+      "name": "Rails/Jobs"
     },
     {
       "path": "./app/frontend/__tests__/",
@@ -54,6 +70,7 @@
     "terminal.integrated.mouseWheelZoom": true,
     "editor.defaultFormatter": "esbenp.prettier-vscode",
     "editor.codeActionsOnSave": {
+      "source.fixAll.markdownlint": "explicit",
       "source.fixAll.prettier": "explicit"
     },
     "[typescript]": {
