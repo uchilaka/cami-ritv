@@ -4,9 +4,9 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 ruby '3.2.2'
 
 # Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
+gem 'mission_control-jobs'
 gem 'rails', '~> 8.0'
 gem 'solid_queue'
-gem 'mission_control-jobs'
 
 # Autoload dotenv in Rails https://github.com/bkeepers/dotenv
 # IMPORTANT: This should be loaded as early as possible
@@ -146,5 +146,5 @@ group :test do
   gem 'selenium-webdriver'
   gem 'shoulda-matchers'
   gem 'vcr', '~> 6.2'
+  gem 'webmock'
 end
-

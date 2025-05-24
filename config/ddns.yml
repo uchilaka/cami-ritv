@@ -6,14 +6,14 @@ shared:
     - domain: larcity.org
       content: nas-1.ho
       type: A
-      ttl: 1800
+      ttl: 900
 
     - domain: larcity.org
       content: nas-2.ho
       type: A
-      ttl: 1800
+      ttl: 900
 
     - domain: larcity.org
       content: accounts.staging
       type: A
-      ttl: 1800
+      ttl: 900
