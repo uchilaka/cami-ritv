@@ -86,8 +86,20 @@ class AccountsController < ApplicationController
     end
   end
 
-  def update_crm
-    # TODO: Use Faraday to call UPDATE /api/v2/crm/accounts/:id with the account's data
+  def push
+    result = Zoho::API::Account.upsert(account)
+    response_data = Zoho::API::Account.sync_callback!(result, account:)
+    respond_to do |format|
+      if response_data[:code] == 'SUCCESS'
+        format.html { redirect_to account_url(@account), notice: 'Account was successfully updated.' }
+        format.json { render :show, status: :ok, location: @account }
+      else
+        format.html { render :show, status: :bad_request, location: @account }
+        format.json do
+          render json: { errors: account.errors.full_messages }, status: :unprocessable_entity
+        end
+      end
+    end
   end
 
   # DELETE /accounts/1 or /accounts/1.json
@@ -121,10 +133,12 @@ class AccountsController < ApplicationController
   end
 
   def update_params
-    params.permit(
-      account: [*update_account_param_keys, { metadata: {} }],
-      profile: create_profile_param_keys
-    )
+    params
+      .permit(
+        %i[integration],
+        account: [*update_account_param_keys, { metadata: {} }],
+        profile: create_profile_param_keys
+      )
   end
 
   def update_account_param_keys

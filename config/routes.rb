@@ -46,6 +46,7 @@ Rails.application.routes.draw do
     member do
       get :show_modal
       get :show_li_actions
+      put 'update/:integration', as: :update_integration, action: :push
     end
   end
 
