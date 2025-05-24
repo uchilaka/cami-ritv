@@ -63,12 +63,10 @@ module LarCity
             Faraday::BadRequestError,
             Faraday::ServerError,
             Faraday::ParsingError,
-            Faraday::ConnectionFailed,
-            Faraday::TimeoutError,
             Errno::ETIMEDOUT,
             Net::OpenTimeout,
             SocketError,
-          ]
+          ],
         }
       end
     end
