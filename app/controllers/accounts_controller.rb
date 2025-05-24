@@ -87,8 +87,7 @@ class AccountsController < ApplicationController
   end
 
   def update_crm
-    # TODO: Use Faraday to call UPDATE /api/v2/crm/accounts/:id
-    #   with the account's data
+    # TODO: Use Faraday to call UPDATE /api/v2/crm/accounts/:id with the account's data
   end
 
   # DELETE /accounts/1 or /accounts/1.json
