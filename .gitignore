@@ -55,8 +55,8 @@
 # IDE specific files
 # IDE files
 /.idea
-/.env.development.local
 /.env*
+!/.env.development.local
 !/.env.development
 !/.envrc
 !/.env.example
