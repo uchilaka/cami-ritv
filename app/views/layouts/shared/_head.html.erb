@@ -1,3 +1,4 @@
+<% expect_flash_of_unstyled_content = local_assigns[:expect_flash_of_unstyled_content] %>
 <head>
   <title>LarCity :: <%= page_title %></title>
   <link rel="icon" type="image/png" href="<%= image_url('logo@1024px.png') %>">
@@ -6,7 +7,9 @@
   <%= csrf_meta_tags %>
   <%= csp_meta_tag %>
 
-  <style>html{visibility: hidden;opacity:0;}</style>
+  <% if expect_flash_of_unstyled_content %>
+    <style>html{visibility: hidden;opacity:0;}</style>
+  <% end %>
 
   <%= yield :head %>
 </head>

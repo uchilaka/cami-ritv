@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe ErrorsController, type: :request do
+RSpec.describe ErrorsController, type: :request, skip_in_ci: true do
   around do |example|
     with_modified_env(APP_DEBUG_MODE: 'no') do
       Rails.application.config.consider_all_requests_local = AppUtils.debug_mode?

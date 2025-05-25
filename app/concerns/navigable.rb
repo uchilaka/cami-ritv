@@ -35,7 +35,7 @@ module Navigable
             },
             {
               label: t('shared.navbar.invoices'),
-              path: '/app/invoices',
+              path: '/invoices',
               order: 3,
             },
             {

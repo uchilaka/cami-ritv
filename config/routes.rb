@@ -3,6 +3,19 @@
 require 'lib/admin_scope_constraint'
 
 Rails.application.routes.draw do
+  namespace :api do
+    namespace :v2, defaults: { format: :json } do
+      namespace :crm do
+        resource :accounts, only: [] do
+          member do
+            put ':id', as: :update, action: :update
+            patch ':id', action: :update
+          end
+        end
+      end
+    end
+  end
+
   devise_for :users,
              controllers: {
                sessions: 'users/passwordless',
@@ -19,11 +32,22 @@ Rails.application.routes.draw do
   end
 
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
+  resources :invoices, except: %i[destroy] do
+    member do
+      get :show_modal
+    end
+
+    collection do
+      post :search
+    end
+  end
+
   resources :accounts, except: %i[destroy] do
     member do
       get :show_modal
       get :navigate_to_crm_modal
       get :show_li_actions
+      put 'update/:integration', as: :update_integration, action: :push
     end
   end
 
@@ -53,4 +77,5 @@ Rails.application.routes.draw do
   draw :flipper
   draw :mission_control
   draw :swagger
+  draw :api_v1
 end

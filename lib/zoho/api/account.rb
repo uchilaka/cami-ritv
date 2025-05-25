@@ -62,6 +62,25 @@ module Zoho
           super
         end
 
+        def sync_callback!(result, account:)
+          info = result.dig('data', 0)
+          code, action = info&.values_at('code', 'action')
+          if code == ResponseCodes::SUCCESS
+            remote_crm_id = info.dig('details', 'id')
+            case action
+            when 'insert'
+              account.update!(remote_crm_id:, last_sent_to_crm_at: Time.zone.now)
+            else
+              Rails.logger.warn('An unsupported action occurred against a Zoho account record', result:)
+            end
+          else
+            Rails.logger.error('Failed to upsert Zoho account record', result:)
+          end
+          { code:, action:, info: }
+        end
+
+        private
+
         def module_name
           name.to_s.split('::').last.pluralize.capitalize
         end

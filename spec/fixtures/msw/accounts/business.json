@@ -1,0 +1,121 @@
+{
+  "id": "2376cef0-6738-4a0f-b597-88d7b879f19b",
+  "displayName": "elibacollections.com",
+  "slug": "bamb",
+  "type": "Business",
+  "status": "guest",
+  "createdAt": "2024-10-03T06:20:43.608-04:00",
+  "updatedAt": "2024-10-03T06:20:43.608-04:00",
+  "url": "https://accounts.larcity.ngrok.dev/accounts/2376cef0-6738-4a0f-b597-88d7b879f19b.json",
+  "actions": {
+    "edit": {
+      "domId": "7392f033-b275-4ac1-807b-e5f53d33a9f3",
+      "httpMethod": "GET",
+      "label": "Edit",
+      "url": "https://accounts.larcity.ngrok.dev/accounts/2376cef0-6738-4a0f-b597-88d7b879f19b"
+    },
+    "delete": {
+      "domId": "fbfa2cd8-2a1b-4e6b-837a-7ce41675037f",
+      "httpMethod": "DELETE",
+      "label": "Delete",
+      "url": "https://accounts.larcity.ngrok.dev/accounts/2376cef0-6738-4a0f-b597-88d7b879f19b.json"
+    },
+    "show": {
+      "domId": "7f221af3-b90a-4a49-8e4d-7e871c99ce5c",
+      "httpMethod": "GET",
+      "label": "Back to accounts",
+      "url": "https://accounts.larcity.ngrok.dev/accounts"
+    },
+    "transactionsIndex": {
+      "domId": "dad60166-f429-46f8-bb6a-18808814e113",
+      "httpMethod": "GET",
+      "label": "Transactions",
+      "url": "https://accounts.larcity.ngrok.dev/accounts/2376cef0-6738-4a0f-b597-88d7b879f19b/invoices"
+    },
+    "profilesIndex": {
+      "domId": "adb70440-7943-43e0-8fe4-19834a0eef15",
+      "httpMethod": "GET",
+      "label": "Profiles",
+      "url": "https://accounts.larcity.ngrok.dev/accounts/2376cef0-6738-4a0f-b597-88d7b879f19b/profiles"
+    },
+    "showProfile": {
+      "domId": "1ef2ca91-0c3b-47b7-b0a4-2a72598bd3d8",
+      "httpMethod": "GET",
+      "label": "Profile",
+      "url": "https://accounts.larcity.ngrok.dev/accounts/2376cef0-6738-4a0f-b597-88d7b879f19b/profiles/66fe6ffbdc9518194eaf3eae"
+    }
+  },
+  "actionsList": [
+    {
+      "key": "edit",
+      "domId": "673ee4d1-fe23-4a94-b129-fe0e99cec5ac",
+      "httpMethod": "GET",
+      "label": "Edit",
+      "url": "https://accounts.larcity.ngrok.dev/accounts/2376cef0-6738-4a0f-b597-88d7b879f19b"
+    },
+    {
+      "key": "delete",
+      "domId": "8798dba2-bbb6-41a5-8ced-7f68f15764ee",
+      "httpMethod": "DELETE",
+      "label": "Delete",
+      "url": "https://accounts.larcity.ngrok.dev/accounts/2376cef0-6738-4a0f-b597-88d7b879f19b.json"
+    },
+    {
+      "key": "show",
+      "domId": "e3bfc1ec-a610-471e-a483-7be202279045",
+      "httpMethod": "GET",
+      "label": "Back to accounts",
+      "url": "https://accounts.larcity.ngrok.dev/accounts"
+    },
+    {
+      "key": "transactions_index",
+      "domId": "2710e410-4906-47be-8e32-156ccdf0410a",
+      "httpMethod": "GET",
+      "label": "Transactions",
+      "url": "https://accounts.larcity.ngrok.dev/accounts/2376cef0-6738-4a0f-b597-88d7b879f19b/invoices"
+    },
+    {
+      "key": "profiles_index",
+      "domId": "4f525d1e-7200-4773-ba44-0c7c7a46d43e",
+      "httpMethod": "GET",
+      "label": "Profiles",
+      "url": "https://accounts.larcity.ngrok.dev/accounts/2376cef0-6738-4a0f-b597-88d7b879f19b/profiles"
+    },
+    {
+      "key": "show_profile",
+      "domId": "84880a24-6abc-4860-8690-52ab01d03115",
+      "httpMethod": "GET",
+      "label": "Profile",
+      "url": "https://accounts.larcity.ngrok.dev/accounts/2376cef0-6738-4a0f-b597-88d7b879f19b/profiles/66fe6ffbdc9518194eaf3eae"
+    }
+  ],
+  "email": "essegbjw@gmail.com",
+  "phone": "+16145555555",
+  "profiles": [
+    {
+      "createdAt": "2024-10-03T06:20:43.642-04:00",
+      "updatedAt": "2024-10-03T06:20:43.642-04:00",
+      "email": "essegbjw@gmail.com",
+      "id": "66fe6ffbdc9518194eaf3eae",
+      "url": "https://accounts.larcity.ngrok.dev/accounts/2376cef0-6738-4a0f-b597-88d7b879f19b/profiles/66fe6ffbdc9518194eaf3eae.json"
+    }
+  ],
+  "isVendor": false,
+  "invoices": [
+    {
+      "id": "66fe6ec7dc9518194eaf3e6e",
+      "vendorRecordId": "INV2-9V8K-PD8X-YHGR-B9UY",
+      "number": "2017-INV0021",
+      "amount": {
+        "value": 20,
+        "currencyCode": "USD"
+      },
+      "status": "PAID",
+      "createdAt": "2024-10-03T06:15:35.892-04:00",
+      "updatedAt": "2024-10-03T06:20:43.635-04:00",
+      "invoicedAt": "2017-07-01T00:00:00-04:00",
+      "dueAt": "2017-07-01T00:00:00-04:00",
+      "url": "https://accounts.larcity.ngrok.dev/invoices/66fe6ec7dc9518194eaf3e6e.json"
+    }
+  ]
+}
