@@ -7,7 +7,7 @@ class AccountsController < ApplicationController
   end
 
   # load_account :all, optional: true, id_keys: %i[account_id id]
-  load_account %i[show show_modal show_li_actions edit update destroy],
+  load_account %i[show show_modal navigate_to_crm_modal show_li_actions edit update destroy],
                optional: false, id_keys: %i[account_id id]
 
   load_console
@@ -23,6 +23,8 @@ class AccountsController < ApplicationController
   def show; end
 
   def show_modal; end
+
+  def navigate_to_crm_modal; end
 
   def show_li_actions; end
 
