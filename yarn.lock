@@ -576,10 +576,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@eslint/js@npm:9.24.0, @eslint/js@npm:^9.24.0":
+"@eslint/js@npm:9.24.0":
   version: 9.24.0
   resolution: "@eslint/js@npm:9.24.0"
   checksum: 10c0/efe22e29469e4140ac3e2916be8143b1bcfd1084a6edf692b7a58a3e54949d53c67f7f979bc0a811db134d9cc1e7bff8aa71ef1376b47eecd7e226b71206bb36
+  languageName: node
+  linkType: hard
+
+"@eslint/js@npm:^9.27.0":
+  version: 9.27.0
+  resolution: "@eslint/js@npm:9.27.0"
+  checksum: 10c0/79b219ceda79182732954b52f7a494f49995a9a6419c7ae0316866e324d3706afeb857e1306bb6f35a4caaf176a5174d00228fc93d36781a570d32c587736564
   languageName: node
   linkType: hard
 
@@ -884,7 +891,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@larcity/cami@workspace:."
   dependencies:
-    "@eslint/js": "npm:^9.24.0"
+    "@eslint/js": "npm:^9.27.0"
     "@headlessui/react": "npm:^2.2.1"
     "@heroicons/react": "npm:^2.2.0"
     "@hotwired/turbo": "npm:^8.0.10"
