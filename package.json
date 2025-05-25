@@ -17,7 +17,7 @@
     "test:watch": "vitest --watch",
     "keys:gpg-list": "gpg --list-secret-keys --keyid-format LONG",
     "keys:status": "git-crypt status -e",
-    "keys:lock": "git-crypt lock -k $GITCRYPT_KEY_FILE",
+    "keys:lock": "git-crypt lock",
     "keys:unlock": "git-crypt unlock $GITCRYPT_KEY_FILE"
   },
   "dependencies": {
