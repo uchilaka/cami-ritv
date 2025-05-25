@@ -185,7 +185,6 @@ RSpec.configure do |config|
 
   config.append_after(:each) do
     DatabaseCleaner.clean
-
     # Clean up all test double state
     RSpec::Mocks.teardown
   end

@@ -15,7 +15,11 @@
     "lint": "eslint",
     "test:rspec": "RAILS_ENV=test bundle exec rspec",
     "test": "vitest",
-    "test:watch": "vitest --watch"
+    "test:watch": "vitest --watch",
+    "keys:gpg-list": "gpg --list-secret-keys --keyid-format LONG",
+    "keys:status": "git-crypt status -e",
+    "keys:lock": "git-crypt lock",
+    "keys:unlock": "git-crypt unlock $GITCRYPT_KEY_FILE"
   },
   "dependencies": {
     "@hotwired/turbo": "^8.0.10",

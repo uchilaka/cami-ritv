@@ -15,6 +15,7 @@ ActiveSupport::Inflector.inflections(:en) do |inflect|
   # inflect.acronym "RESTful"
   inflect.acronym 'URL'
   inflect.acronym 'API'
+  inflect.acronym 'DDNS'
   inflect.acronym 'CAMI'
   inflect.acronym 'CLI'
   inflect.acronym 'HTML'
