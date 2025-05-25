@@ -32,3 +32,4 @@ Run `yarn keys:unlock` to unlock the encrypted files.
   - [ ] `unquote` and other global built-in functions are deprecated and will be removed in Dart Sass 3.0.0.
     Use `string.unquote` instead.
 - [ ] Review propshaft as an asset pipeline (alt to currently configured `sprocket-rails`) - [recommended by the 37Signals team](https://github.com/rails/mission_control-jobs?tab=readme-ov-file#api-only-apps-or-apps-using-vite_rails-and-other-asset-pipelines-outside-rails) as compatible with mission control for `vite_rails`/API-only apps: <https://github.com/rails/propshaft>
+- [ ] Troubleshooting Ruby LSP (server keeps failing in VSCode/Windsurf): <https://shopify.github.io/ruby-lsp/troubleshooting.html>

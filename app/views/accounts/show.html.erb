@@ -4,7 +4,7 @@
       <p class="py-2 px-3 bg-green-50 mb-5 text-green-500 font-medium rounded-lg inline-block" id="notice"><%= notice %></p>
     <% end %>
     <!-- Account form header -->
-    <%= render 'accounts/account-header', { account: @account, title: "Account" } %>
+    <%= render 'accounts/account_header', { account: @account, title: "Account" } %>
 
     <% content_for :form_actions do %>
       <%= link_to "Back to accounts", accounts_path, class: secondary_btn_classes("px-5 py-3 md:me-2") %>

@@ -1,4 +1,4 @@
-<% modal_id = modal_dom_id(@account, content_type: "show") %>
+<% modal_id = modal_dom_id(@account, content_type: "external_link_portal") %>
 <%= turbo_frame_tag resource_dom_turbo_id(@account, action: "manage-show-or-edit") do %>
   <div
     id="<%= modal_id %>" tabindex="-1" aria-hidden="true"
@@ -10,7 +10,7 @@
         <!-- Modal header -->
         <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600 border-gray-200">
           <%= render "accounts/modal/header" %>
-          <!-- Hide modal action (IMPORTANT: only works when launched from account list items action) -->
+          <!-- Hide modal action (IMPORTANT: only works when launched from accounts list action) -->
           <form class="hide-modal-action" action="<%= show_li_actions_account_path(@account) %>">
             <button
               type="submit"
@@ -28,14 +28,6 @@
           <% if notice.present? %>
             <p class="py-2 px-3 bg-green-50 mb-5 text-green-500 font-medium rounded-lg inline-block" id="notice"><%= notice %></p>
           <% end %>
-          <!-- Modal form actions -->
-          <% content_for :form_actions do %>
-            <%= link_to "Back to accounts", accounts_path, "data-turbo": false, class: secondary_btn_classes %>
-            <%= button_to "Delete", @account, "data-turbo": false, method: :delete, class: secondary_btn_classes(style: :danger) %>
-            <%= link_to "Edit", edit_account_path(@account), "data-turbo": false, class: primary_btn_classes %>
-          <% end %>
-
-          <%= render @account %>
         </div>
       </div>
     </div>

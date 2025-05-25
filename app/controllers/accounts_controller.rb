@@ -7,7 +7,7 @@ class AccountsController < ApplicationController
   end
 
   # load_account :all, optional: true, id_keys: %i[account_id id]
-  load_account %i[show show_modal show_li_actions edit update push destroy],
+  load_account %i[show edit update destroy push show_modal navigate_to_crm_modal show_li_actions],
                optional: false, id_keys: %i[account_id id]
 
   load_console
@@ -32,6 +32,8 @@ class AccountsController < ApplicationController
     end
     # rubocop:enable Style/GuardClause
   end
+
+  def navigate_to_crm_modal; end
 
   def show_li_actions; end
 

@@ -37,6 +37,16 @@ class Account < ApplicationRecord
   #   re-initialized several times since then prior to the first deployment.
   self.ignored_columns += ['parent_account_id']
 
+  # Class methods
+  def self.ransackable_attributes(_auth_object = nil)
+    %w[display_name email slug tax_id]
+  end
+
+  def self.ransackable_associations(_auth_object = nil)
+    %w[invoices members rich_text_readme roles]
+  end
+  # End of class methods
+
   resourcify
   rolify
 
@@ -159,19 +169,21 @@ class Account < ApplicationRecord
     members << user
   end
 
-  # Class methods
-  def self.ransackable_attributes(_auth_object = nil)
-    %w[display_name email slug tax_id]
-  end
+  # TODO: Add specs for this method
+  def crm_url
+    return nil if remote_crm_id.blank?
 
-  def self.ransackable_associations(_auth_object = nil)
-    %w[invoices members rich_text_readme roles]
+    crm_resource_url("tab/Accounts/#{remote_crm_id}")
   end
-
-  protected
 
   def crm_relevant_changes?
-    email_changed? || display_name_changed? || readme_changed? || tax_id_changed? || phone_changed?
+    email_changed? || display_name_changed? || readme_body_changed? || tax_id_changed? || phone_changed?
+  end
+
+  def readme_body_changed?
+    return false if readme.blank?
+
+    readme.body_changed?
   end
 
   private
@@ -181,6 +193,8 @@ class Account < ApplicationRecord
   end
 
   def push_to_crm
-    Zoho::UpsertAccountJob.set(wait: 5.seconds.from_now).perform_later(id)
+    return unless Flipper.enabled?(:feat__push_updates_to_crm)
+
+    Zoho::UpsertAccountJob.set(wait: 5.seconds).perform_later(id)
   end
 end
