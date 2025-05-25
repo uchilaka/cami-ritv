@@ -7,7 +7,7 @@ class AccountsController < ApplicationController
   end
 
   # load_account :all, optional: true, id_keys: %i[account_id id]
-  load_account %i[show show_modal show_li_actions edit update update_crm destroy],
+  load_account %i[show show_modal show_li_actions edit update push destroy],
                optional: false, id_keys: %i[account_id id]
 
   load_console

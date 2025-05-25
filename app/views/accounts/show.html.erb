@@ -1,15 +1,18 @@
-<div class="mx-auto md:w-2/3 w-full flex">
-  <div class="mx-auto md:min-w-[480px]">
+<div class="flex min-h-[var(--lc-min-form-height)] flex-col justify-center items-center">
+  <div class="w-full md:mx-auto md:min-w-[480px] lg:max-w-lg">
     <% if notice.present? %>
       <p class="py-2 px-3 bg-green-50 mb-5 text-green-500 font-medium rounded-lg inline-block" id="notice"><%= notice %></p>
     <% end %>
     <!-- Account form header -->
     <%= render 'accounts/account-header', { account: @account, title: "Account" } %>
-    
+
     <% content_for :form_actions do %>
-      <%= link_to "Back to accounts", accounts_path, class: secondary_btn_classes %>
-      <%= button_to "Delete", @account, method: :delete, class: secondary_btn_classes(style: :danger) %>
-      <%= link_to "Edit", edit_account_path(@account), class: primary_btn_classes %>
+      <%= link_to "Back to accounts", accounts_path, class: secondary_btn_classes("px-5 py-3 md:me-2") %>
+      <%= button_to "Push to CRM",
+                    update_integration_account_path(@account, 'crm'),
+                    method: :put, class: secondary_btn_classes("px-5 py-3 w-full md:w-auto md:me-2") %>
+      <%= button_to "Delete", @account, method: :delete, class: secondary_btn_classes("px-5 py-3 w-full md:w-auto md:me-2", style: :danger) %>
+      <%= link_to "Edit", edit_account_path(@account), class: primary_btn_classes("px-5 py-3 md:me-0") %>
     <% end %>
 
     <%= render @account %>
