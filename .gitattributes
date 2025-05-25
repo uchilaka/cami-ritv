@@ -14,10 +14,7 @@ config/credentials/*.yml.enc diff=rails_credentials
 config/credentials.yml.enc diff=rails_credentials
 
 # Encrypt sensitive files using git-crypt
-.env.development* filter=git-crypt diff=git-crypt
-.env.local filter=git-crypt diff=git-crypt
-.env.test filter=git-crypt diff=git-crypt
-.env filter=git-crypt diff=git-crypt
+.env.* filter=git-crypt diff=git-crypt
 spec/fixtures/pii/** filter=git-crypt diff=git-crypt
 db/development/postgres/downloads/**/*.sql filter=git-crypt diff=git-crypt
 

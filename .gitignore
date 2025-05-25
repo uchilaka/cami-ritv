@@ -56,9 +56,7 @@
 /.idea
 
 # Environment variable files
-/.env*
-!/.env.development.local
-!/.env.development
+/.env.test.local
 !/.envrc
 !/.env.example
 
