@@ -53,13 +53,17 @@
 *.local
 
 # IDE specific files
-# IDE files
 /.idea
+
+# Environment variable files
 /.env*
 !/.env.development.local
 !/.env.development
 !/.envrc
 !/.env.example
+
+# Include .git-crypt files
+!/.git-crypt/**/*
 
 # General
 .DS_Store
