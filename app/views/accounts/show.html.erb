@@ -7,10 +7,10 @@
     <%= render 'accounts/account_header', { account: @account, title: "Account" } %>
 
     <% content_for :form_actions do %>
-      <%= link_to "Back to accounts", accounts_path, class: secondary_btn_classes("px-5 py-3 md:me-2") %>
+      <%= link_to "Back to accounts", accounts_path, class: secondary_btn_classes("px-5 py-3") %>
       <%= button_to "Push to CRM",
                     update_integration_account_path(@account, 'crm'),
-                    method: :put, class: secondary_btn_classes("px-5 py-3 w-full md:w-auto md:me-2") %>
+                    method: :put, class: secondary_btn_classes("px-5 py-3 w-full md:w-auto") %>
       <%= button_to "Delete", @account, method: :delete, class: secondary_btn_classes("px-5 py-3 w-full md:w-auto md:me-2", style: :danger) %>
       <%= link_to "Edit", edit_account_path(@account), class: primary_btn_classes("px-5 py-3 md:me-0") %>
     <% end %>
