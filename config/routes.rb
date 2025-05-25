@@ -22,6 +22,7 @@ Rails.application.routes.draw do
   resources :accounts, except: %i[destroy] do
     member do
       get :show_modal
+      get :navigate_to_crm_modal
       get :show_li_actions
     end
   end

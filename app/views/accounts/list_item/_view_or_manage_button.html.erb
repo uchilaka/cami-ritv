@@ -1,0 +1,15 @@
+<% if account.crm_url.present? %>
+  <!-- TODO: use Turbo frames to load a modal about navigating to an external URL -->
+  <!--
+  <%= button_tag "Manage",
+                 class: compose_class_names('action--manage-account', default_item_action_btn_classes),
+                 "data-resource-id": account.id.to_s,
+                 "data-external-resource-url": account.crm_url,
+                 "data-modal-target-async": 'offsite-link--modal',
+                 "data-modal-toggle-async": 'offsite-link--modal' %>
+  -->
+  <%= link_to "Manage", navigate_to_crm_modal_account_path(account),
+              "data-turbo": true, class: default_item_action_btn_classes %>
+<% end %>
+<%= link_to "View", show_modal_account_path(account),
+            "data-turbo": true, class: default_item_action_btn_classes %>

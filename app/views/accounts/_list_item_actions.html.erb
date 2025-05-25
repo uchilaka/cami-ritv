@@ -1,7 +1,0 @@
-<!-- TODO: account list item actions -->
-<%= turbo_frame_tag resource_dom_turbo_id(account) do %>
-<div class="flex justify-end">
-  <%= link_to "View", show_modal_account_path(account), "data-turbo": true, class: default_item_action_btn_classes %>
-  <%= link_to "Edit", edit_account_path(account), "data-turbo": false, class: default_item_action_btn_classes %>
-</div>
-<% end %>
