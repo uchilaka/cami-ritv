@@ -32,6 +32,8 @@
 require 'rails_helper'
 
 RSpec.describe Account, type: :model do
+  include_context 'for phone number testing'
+
   subject { Fabricate :account }
 
   # around do |example|
@@ -259,6 +261,176 @@ RSpec.describe Account, type: :model do
             eq 'accounts_display_name_or_accounts_email_cont'
         end
       end
+    end
+  end
+
+  describe '#add_member' do
+    let(:account) { Fabricate(:account) }
+    let(:user) { Fabricate(:user) }
+
+    it 'adds a user to the account members' do
+      expect {
+        account.add_member(user)
+      }.to change { account.members.count }.by(1)
+
+      expect(account.members).to include(user)
+    end
+  end
+
+  describe '#crm_url' do
+    let(:account) { Fabricate(:account, remote_crm_id: '12345') }
+
+    before do
+      allow(Rails.application.credentials).to receive(:zoho).and_return(double(org_id: '877691058'))
+    end
+
+    it 'returns the CRM URL when remote_crm_id is present' do
+      expect(account.crm_url).to eq("https://crm.zoho.com/crm/org877691058/tab/Accounts/12345")
+    end
+
+    it 'returns nil when remote_crm_id is blank' do
+      account.update!(remote_crm_id: nil)
+      expect(account.crm_url).to be_nil
+    end
+  end
+
+  describe '#crm_relevant_changes?' do
+    let(:account) { Fabricate(:account) }
+
+    # No changes initially
+    it { expect(account.send(:crm_relevant_changes?)).to be_falsey }
+
+    # Changes to attributes that are not relevant for CRM
+    it { expect { account.slug = Faker::Internet.slug }.not_to(change { account.send(:crm_relevant_changes?) }) }
+
+    # Changes to attributes that are relevant for CRM
+    it do
+      expect { account.email = 'new@example.com' }.to \
+        change { account.send(:crm_relevant_changes?) }.from(false).to(true)
+    end
+
+    it do
+      expect { account.display_name = Faker::Name.gender_neutral_first_name }.to \
+        change { account.send(:crm_relevant_changes?) }.from(false).to(true)
+    end
+
+    it do
+      expect { account.readme = Faker::Lorem.paragraph }.to \
+        change { account.send(:crm_relevant_changes?) }.from(false).to(true)
+    end
+
+    it do
+      expect { account.tax_id = Faker::Company.ein }.to \
+        change { account.send(:crm_relevant_changes?) }.from(false).to(true)
+    end
+
+    it do
+      expect { account.phone = PhoneNumber.new(value: sample_phone_numbers.sample, resource: account) }.to \
+        change { account.send(:crm_relevant_changes?) }.from(false).to(true)
+    end
+  end
+
+  describe '#format_tax_id' do
+    let(:account) { Fabricate.build(:account, tax_id: 'ax-12345') }
+
+    it 'upcases the tax_id before validation' do
+      account.valid?
+      expect(account.tax_id).to eq('AX-12345')
+    end
+  end
+
+  describe '#push_to_crm' do
+    let(:account) { Fabricate(:account) }
+
+    before do
+      ActiveJob::Base.queue_adapter = :test
+      ActiveJob::Base.queue_adapter.enqueued_jobs.clear
+
+      # Add the feature flag if it doesn't exist
+      Flipper.add(:feat__push_updates_to_crm) unless Flipper.exist?(:feat__push_updates_to_crm)
+
+      # Enable the feature flag by default
+      Flipper.enable(:feat__push_updates_to_crm)
+    end
+
+    it 'enqueues a Zoho::UpsertAccountJob with the correct parameters' do
+      expect {
+        account.send(:push_to_crm)
+      }.to have_enqueued_job(Zoho::UpsertAccountJob)
+        .with(account.id)
+        .on_queue('critical')
+        .at(a_value_within(1.second).of(5.seconds.from_now))
+    end
+
+    it 'does not enqueue job when feature flag is disabled' do
+      Flipper.disable(:feat__push_updates_to_crm)
+
+      expect {
+        account.send(:push_to_crm)
+      }.not_to have_enqueued_job(Zoho::UpsertAccountJob)
+    end
+  end
+
+  describe '#primary_users_confirmed?' do
+    it 'returns true by default' do
+      account = Fabricate(:account)
+      expect(account.primary_users_confirmed?).to be true
+    end
+  end
+
+  describe '#readme_body_changed?' do
+    let(:initial_content) { 'Initial readme content' }
+    let(:account) { Fabricate(:account, readme: initial_content) }
+
+    it 'returns true when the readme body has changed' do
+      account.readme = 'New readme content'
+      expect(account.readme_body_changed?).to be_truthy
+    end
+
+    it 'returns false when the readme body has not changed' do
+      account.readme = initial_content
+      expect(account.readme_body_changed?).to be_falsey
+    end
+  end
+
+  describe '#readme' do
+    let(:account) { Fabricate(:account) }
+
+    it 'returns the readme content' do
+      account.readme = Faker::Lorem.paragraph
+      expect(account.readme).to be_a(ActionText::RichText)
+    end
+
+    it 'is nil by default' do
+      expect(account.readme).to be_nil
+    end
+
+    it 'supports ActiveModel::Dirty *_changed?' do
+      account.readme = 'New readme content'
+      expect(account.readme&.send(:body_changed?)).to be_truthy
+    end
+
+    it do
+      account.readme = '**New** readme content'
+      expect(account.readme.to_s).to include('**New** readme content')
+    end
+
+    pending "Supports markdown input and HTML output that's safe-ish to render"
+  end
+
+  describe '.ransackable_attributes' do
+    it 'returns searchable attributes' do
+      expect(described_class.ransackable_attributes).to match_array(
+        %w[display_name email slug tax_id]
+      )
+    end
+  end
+
+  describe '.ransackable_associations' do
+    it 'returns searchable associations' do
+      expect(described_class.ransackable_associations).to match_array(
+        %w[invoices members rich_text_readme roles]
+      )
     end
   end
 end
