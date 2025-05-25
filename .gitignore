@@ -62,9 +62,6 @@
 !/.envrc
 !/.env.example
 
-# Include .git-crypt files
-!/.git-crypt/**/*
-
 # General
 .DS_Store
 .AppleDouble
