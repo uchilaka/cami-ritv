@@ -21,3 +21,9 @@ development:
     queue: yeet
     # args: [ 1000, { batch_size: 500 } ]
     schedule: "*/15 5-9,12-13,18-22 * * 1-6 America/New_York" # every 15 minutes from 9am to 10pm from Monday to Saturday
+
+  ddns_update_job:
+    class: DDNSUpdateJob
+    queue: yeet
+    # args: [ 1000, { batch_size: 500 } ]
+    schedule: "every 15 minutes America/New_York" # every 15 minutes

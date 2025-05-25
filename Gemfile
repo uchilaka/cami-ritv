@@ -4,9 +4,9 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 ruby '3.2.2'
 
 # Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
+gem 'mission_control-jobs'
 gem 'rails', '~> 8.0'
 gem 'solid_queue'
-gem 'mission_control-jobs'
 
 # Autoload dotenv in Rails https://github.com/bkeepers/dotenv
 # IMPORTANT: This should be loaded as early as possible
@@ -71,7 +71,8 @@ gem 'awesome_print'
 gem 'bumbler'
 gem 'data_migrate', '~> 11.3'
 gem 'discard', '~> 1.4'
-gem 'faraday'
+gem 'faraday', '~> 2.13'
+gem 'faraday-retry'
 gem 'friendly_id', '~> 5.5'
 gem 'globalid', '~> 1.2'
 gem 'interactor', '~> 3.1'
@@ -146,4 +147,3 @@ group :test do
   gem 'shoulda-matchers'
   gem 'vcr', '~> 6.2'
 end
-

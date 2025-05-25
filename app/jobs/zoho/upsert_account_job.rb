@@ -21,7 +21,7 @@ module Zoho
         remote_crm_id = info.dig('details', 'id')
         case action
         when 'insert'
-          account.update(remote_crm_id:)
+          account&.update(remote_crm_id:)
         else
           Rails.logger.warn('An unsupported action occurred against a Zoho account record', result:)
         end
