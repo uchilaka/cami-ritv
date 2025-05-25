@@ -53,11 +53,10 @@
 *.local
 
 # IDE specific files
-# IDE files
 /.idea
-/.env.development.local
-/.env*
-!/.env.development
+
+# Environment variable files
+/.env.test.local
 !/.envrc
 !/.env.example
 
