@@ -906,7 +906,7 @@ __metadata:
     "@types/lodash.omit": "npm:^4"
     "@types/lodash.uniqby": "npm:^4"
     "@types/node": "npm:^22.14.1"
-    "@types/react": "npm:^19.1.1"
+    "@types/react": "npm:^19.1.6"
     "@types/react-dom": "npm:^19.1.2"
     "@vitejs/plugin-react": "npm:^4.4.0"
     autoprefixer: "npm:^10.4.21"
@@ -1999,12 +1999,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:^19.1.1":
-  version: 19.1.1
-  resolution: "@types/react@npm:19.1.1"
+"@types/react@npm:^19.1.6":
+  version: 19.1.6
+  resolution: "@types/react@npm:19.1.6"
   dependencies:
     csstype: "npm:^3.0.2"
-  checksum: 10c0/d22417857460ade4250806135a3d1e2558737a7ae76f120f88afbc6419ab04312977a5208a70d4f85059b9493c0f1f16c9ba1483aa8ea1dad581da666c95773e
+  checksum: 10c0/8b10b198e28997b3c57559750f8bcf5ae7b33c554b16b6f4fe2ece1d4de6a2fc8cb53e7effe08ec9cb939d2f479eb97c5e08aac2cf83b10a90164fe451cc8ea2
   languageName: node
   linkType: hard
 
