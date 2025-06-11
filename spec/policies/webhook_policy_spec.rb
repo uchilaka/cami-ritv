@@ -1,5 +1,8 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
+# Pundit rspec examples: https://github.com/varvet/pundit?tab=readme-ov-file#rspec
 RSpec.describe WebhookPolicy, type: :policy do
   let(:user) { User.new }
 
