@@ -9,6 +9,6 @@
 #  updated_at         :datetime         not null
 #
 Fabricator(:webhook) do
-  url                "MyString"
-  verification_token "MyString"
+  url                { sequence(:url) { |i| Faker::Internet.url(host: "app.vendor-#{i}.dev") } }
+  verification_token { SecureRandom.alphanumeric(24) }
 end

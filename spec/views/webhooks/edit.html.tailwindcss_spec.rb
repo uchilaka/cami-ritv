@@ -1,15 +1,12 @@
 require 'rails_helper'
 
 RSpec.describe "webhooks/edit", type: :view do
-  let(:webhook) {
-    Webhook.create!(
-      url: "MyString",
-      verification_token: "MyString"
-    )
-  }
+  let(:admin_user) { Fabricate(:admin) }
+  let(:webhook) { Fabricate(:webhook) }
 
   before(:each) do
     assign(:webhook, webhook)
+    sign_in admin_user
   end
 
   it "renders the edit webhook form" do
