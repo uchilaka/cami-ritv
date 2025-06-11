@@ -30,6 +30,12 @@ module Zoho
             perform_enqueued_jobs
           end.to(change { record.reload.remote_crm_id })
         end
+
+        it do
+          expect do
+            described_class.perform_now(record.id)
+          end.to(change { record.reload.last_sent_to_crm_at })
+        end
       end
     end
   end

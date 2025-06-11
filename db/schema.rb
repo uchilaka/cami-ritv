@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_05_06_014650) do
+ActiveRecord::Schema[8.0].define(version: 2025_05_23_075739) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -33,8 +33,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_06_014650) do
     t.datetime "updated_at", null: false
     t.uuid "parent_id"
     t.datetime "discarded_at"
+    t.datetime "last_sent_to_crm_at"
     t.index ["discarded_at"], name: "index_accounts_on_discarded_at"
     t.index ["email"], name: "by_account_email_if_set", unique: true, where: "(email IS NOT NULL)", nulls_not_distinct: true
+    t.index ["last_sent_to_crm_at"], name: "index_accounts_on_last_sent_to_crm_at"
   end
 
   create_table "accounts_metadata", id: false, force: :cascade do |t|

@@ -7,7 +7,7 @@
                             "actiontext", media: 'all' %>
   <!-- <script src="https://cdn.tailwindcss.com"></script>-->
   <% end %>
-  <%= render "layouts/shared/head" %>
+  <%= render partial: "layouts/shared/head", locals: { expect_flash_of_unstyled_content: false } %>
 
   <body class="h-full">
     <main class="flex min-h-full flex-col justify-center items-center px-6 py-0 lg:px-8">

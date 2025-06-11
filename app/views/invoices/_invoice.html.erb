@@ -1,0 +1,76 @@
+<div id="<%= dom_id invoice %>">
+  <section class="flex justify-between items-center mb-6">
+    <!-- Invoice Number -->
+    <h1 class="font-bold text-4xl">Invoice #<%= invoice.invoice_number %></h1>
+
+    <!-- Invoice Status Badge -->
+    <span id="invoice-status" class="<%= compose_class_names("me-2 px-2.5 py-0.5 rounded-sm text-2xl", {
+      "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300": invoice.paid?,
+      "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300": invoice.sent? && !invoice.past_due?,
+      "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300": invoice.past_due?
+    }) %>"><%= invoice.status.to_s.upcase %></span>
+  </section>
+
+  <p class="my-5">
+    <% if invoice.invoiceable.is_a?(Account) %>
+      <strong class="block font-medium mb-1">Account ID:</strong>
+    <% elsif invoice.invoiceable.is_a?(User) %>
+      <strong class="block font-medium mb-1">User ID:</strong>
+    <% end %>
+    <%= invoice.invoiceable&.id %>
+  </p>
+
+  <p class="my-5">
+    <strong class="block font-medium mb-1">Issued at:</strong>
+    <%= invoice.issued_at %>
+  </p>
+
+  <p class="my-5">
+    <strong class="block font-medium mb-1">Due at:</strong>
+    <%= invoice.due_at %>
+  </p>
+
+  <p class="my-5">
+    <strong class="block font-medium mb-1">Paid at:</strong>
+    <%= invoice.paid_at %>
+  </p>
+
+  <p class="my-5">
+    <strong class="block font-medium mb-1">Amount:</strong>
+    <%= invoice.amount %>
+  </p>
+
+  <p class="my-5">
+    <strong class="block font-medium mb-1">Due amount:</strong>
+    <%= invoice.due_amount %>
+  </p>
+
+  <p class="my-5">
+    <strong class="block font-medium mb-1">Notes:</strong>
+    <%= invoice.notes %>
+  </p>
+
+  <div class="my-5">
+    <%= render "shared/separator-with-text", content: "Metadata" %>
+  </div>
+
+  <div class="my-5" data-accordion="collapse">
+    <!-- Accordion: Accounts -->
+    <%= render('shared/accordion-item', id: 'accordion--accounts', title: "Accounts", top: true) do %>
+      <%= render('shared/readonly-textarea', id: 'invoice-accounts', label: 'Accounts',
+                 value: JSON.pretty_generate(invoice.metadata['accounts'])) %>
+    <% end %>
+
+    <!-- Accordion: Payments -->
+    <%= render('shared/accordion-item', id: 'accordion--payments', title: "Payments") do %>
+      <%= render('shared/readonly-textarea', id: 'invoice-payments', label: 'Payments',
+                 value: JSON.pretty_generate(invoice.payments)) %>
+    <% end %>
+
+    <!-- Accordion: Metadata -->
+    <%= render('shared/accordion-item', id: 'accordion--metadata', title: "Metadata", bottom: true) do %>
+      <%= render('shared/readonly-textarea', id: 'invoice-metadata', label: 'Metadata',
+                 rows: 40, value: JSON.pretty_generate(invoice.metadata)) %>
+    <% end %>
+  </div>
+</div>
