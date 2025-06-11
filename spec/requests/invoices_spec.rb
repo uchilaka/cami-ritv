@@ -170,7 +170,7 @@ RSpec.describe 'Invoices API', type: :request do
       invoice = Invoice.create! valid_attributes
       expect do
         delete invoice_url(invoice)
-      end.to change(Invoice, :count).by(-1)
+      end.to change(Invoice.kept, :count).by(-1)
     end
 
     it 'redirects to the invoices list' do

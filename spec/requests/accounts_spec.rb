@@ -535,7 +535,7 @@ RSpec.describe '/accounts', type: :request, real_world_data: true do
       account = Account.create! valid_attributes
       expect do
         delete account_url(account)
-      end.to change(Account, :count).by(-1)
+      end.to change(Account.kept, :count).by(-1)
     end
 
     it 'redirects to the accounts list' do

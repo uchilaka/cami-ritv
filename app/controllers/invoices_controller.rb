@@ -74,10 +74,10 @@ class InvoicesController < ApplicationController
 
   # DELETE /invoices/1 or /invoices/1.json
   def destroy
-    @invoice.destroy!
+    @invoice.discard!
 
     respond_to do |format|
-      format.html { redirect_to invoices_path, status: :see_other, notice: 'Invoice was successfully destroyed.' }
+      format.html { redirect_to invoices_path, status: :see_other, notice: 'Invoice was successfully discarded.' }
       format.json { head :no_content }
     end
   end

@@ -10,6 +10,7 @@ class InvoicePolicy < ApplicationPolicy
         scope.all
       else
         scope
+          .kept
           .where(
             invoiceable: Account
                            .includes(:members)
@@ -17,6 +18,7 @@ class InvoicePolicy < ApplicationPolicy
           )
           .or(
             scope
+              .kept
               .where(invoiceable: user)
           )
       end
