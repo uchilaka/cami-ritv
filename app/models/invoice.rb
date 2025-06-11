@@ -7,6 +7,7 @@
 #  id                        :uuid             not null, primary key
 #  amount_cents              :integer          default(0), not null
 #  amount_currency           :string           default("USD"), not null
+#  discarded_at              :datetime
 #  due_amount_cents          :integer          default(0), not null
 #  due_amount_currency       :string           default("USD"), not null
 #  due_at                    :datetime
@@ -31,6 +32,7 @@
 #
 # Indexes
 #
+#  index_invoices_on_discarded_at                         (discarded_at)
 #  index_invoices_on_invoiceable                          (invoiceable_type,invoiceable_id)
 #  index_invoices_on_invoiceable_type_and_invoiceable_id  (invoiceable_type,invoiceable_id)
 #
@@ -38,9 +40,10 @@ class Invoice < ApplicationRecord
   resourcify
 
   include AASM
-  include Searchable
   include Actionable
+  include Discard::Model
   include Renderable
+  include Searchable
 
   supported_actions :show
 

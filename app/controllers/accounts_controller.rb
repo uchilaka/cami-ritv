@@ -106,10 +106,10 @@ class AccountsController < ApplicationController
 
   # DELETE /accounts/1 or /accounts/1.json
   def destroy
-    @account.destroy!
+    @account.discard!
 
     respond_to do |format|
-      format.html { redirect_to accounts_path, status: :see_other, notice: 'Account was successfully destroyed.' }
+      format.html { redirect_to accounts_path, status: :see_other, notice: 'Account was successfully discarded.' }
       format.json { head :no_content }
     end
   end

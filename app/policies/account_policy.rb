@@ -37,11 +37,12 @@ class AccountPolicy < ApplicationPolicy
           .where(users: { id: user.id })
           .or(
             Account
+              .kept
               .where(
                 roles: {
                   name: %w[customer contact],
                   users: { id: user.id },
-                  resource_type: 'Account'
+                  resource_type: 'Account',
                 }
               )
           )
