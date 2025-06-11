@@ -81,3 +81,4 @@ en:
       invalid_password: "is not a valid password"
       invalid_username: "%{value} is not a valid username"
       invalid_phone_number: "%{value} is not a valid phone number"
+      invalid_url: "%{value} is not a valid URL"
