@@ -12,13 +12,26 @@
   <% end %>
 
   <div class="my-5">
-    <%= form.label :url %>
-    <%= form.text_field :url, class: ["block shadow rounded-md border outline-none px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": webhook.errors[:url].none?, "border-red-400 focus:outline-red-600": webhook.errors[:url].any?}] %>
+    <%= form.label :slug %>
+    <%= form.text_field :slug, class: ["block shadow rounded-md border outline-none px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": webhook.errors[:slug].none?, "border-red-400 focus:outline-red-600": webhook.errors[:slug].any?}] %>
   </div>
+
+  <% if webhook.persisted? %>
+    <div class="my-5">
+      <%= form.label :url %>
+      <%= form.text_field :url, readonly: true, class: "block shadow rounded-md border outline-none px-3 py-2 mt-2 w-full" %>
+    </div>
+  <% end %>
 
   <div class="my-5">
     <%= form.label :verification_token %>
     <%= form.text_field :verification_token, class: ["block shadow rounded-md border outline-none px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": webhook.errors[:verification_token].none?, "border-red-400 focus:outline-red-600": webhook.errors[:verification_token].any?}] %>
+  </div>
+
+  <!-- Notes (Trix WYSIWYG) -->
+  <div class="my-5 dark:bg-gray-700">
+    <%= form.label :readme, t('labels.accounts.notes') %>
+    <%= form.rich_text_area :readme, rows: 4, class: "block shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full" %>
   </div>
 
   <div class="inline">

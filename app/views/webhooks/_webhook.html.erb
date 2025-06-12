@@ -1,5 +1,9 @@
 <div id="<%= dom_id webhook %>">
   <p class="my-5">
+    <strong class="block font-medium mb-1">Slug:</strong>
+    <%= webhook.slug %>
+  </p>
+  <p class="my-5">
     <strong class="block font-medium mb-1">URL:</strong>
     <%= webhook.url %>
   </p>
@@ -7,4 +11,8 @@
     <strong class="block font-medium mb-1">Verification token:</strong>
     <%= webhook.verification_token %>
   </p>
+  <div class="my-5">
+    <strong class="block font-medium mb-1">Readme:</strong>
+    <%= webhook.readme.to_s %>
+  </div>
 </div>

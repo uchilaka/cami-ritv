@@ -372,10 +372,12 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_11_090542) do
   end
 
   create_table "webhooks", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
-    t.string "url"
+    t.string "slug"
     t.string "verification_token"
+    t.text "readme"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["slug"], name: "index_webhooks_on_slug", unique: true
   end
 
   add_foreign_key "accounts", "accounts", column: "parent_id", validate: false

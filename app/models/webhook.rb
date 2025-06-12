@@ -5,19 +5,35 @@
 # Table name: webhooks
 #
 #  id                 :uuid             not null, primary key
-#  url                :string
+#  readme             :text
+#  slug               :string
 #  verification_token :string
 #  created_at         :datetime         not null
 #  updated_at         :datetime         not null
 #
+# Indexes
+#
+#  index_webhooks_on_slug  (slug) UNIQUE
+#
 class Webhook < ApplicationRecord
+  extend FriendlyId
+
   encrypts :verification_token, deterministic: true
 
-  validates :url,
-            presence: true,
-            format: {
-              with: URI::DEFAULT_PARSER.make_regexp(%w[http https]),
-              message: I18n.t('validators.errors.invalid_url'),
-            }
+  has_rich_text :readme
+
+  friendly_id :slug, use: :slugged
+
+  validates :slug, presence: true, uniqueness: true, length: { maximum: 64 }
   validates :verification_token, presence: true
+
+  def url
+    "https://#{hostname}/api/v2/webhooks/#{slug}/events"
+  end
+
+  protected
+
+  def hostname
+    ENV.fetch('HOSTNAME')
+  end
 end
