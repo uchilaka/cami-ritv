@@ -11,14 +11,20 @@ class ApplicationPolicy
   end
 
   def index?
+    return true if user.admin?
+
     false
   end
 
   def show?
+    return true if user.admin?
+
     false
   end
 
   def create?
+    return true if user.admin?
+
     false
   end
 
@@ -27,6 +33,8 @@ class ApplicationPolicy
   end
 
   def update?
+    return true if user.admin?
+
     false
   end
 
@@ -35,6 +43,8 @@ class ApplicationPolicy
   end
 
   def destroy?
+    return true if user.admin?
+
     false
   end
 

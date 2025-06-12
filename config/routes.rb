@@ -3,6 +3,7 @@
 require 'lib/admin_scope_constraint'
 
 Rails.application.routes.draw do
+  resources :webhooks
   namespace :api do
     namespace :v2, defaults: { format: :json } do
       namespace :crm do

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_11_083108) do
+ActiveRecord::Schema[8.0].define(version: 2025_06_11_090542) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -369,6 +369,15 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_11_083108) do
     t.string "event", null: false
     t.text "object"
     t.index ["item_type", "item_id"], name: "index_versions_on_item_type_and_item_id"
+  end
+
+  create_table "webhooks", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.string "slug"
+    t.string "verification_token"
+    t.text "readme"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["slug"], name: "index_webhooks_on_slug", unique: true
   end
 
   add_foreign_key "accounts", "accounts", column: "parent_id", validate: false
