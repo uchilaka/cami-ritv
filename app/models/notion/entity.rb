@@ -38,6 +38,7 @@ module Notion
       # self.id ||= args.dig(:data, :id)
       # self.type ||= args[:type] || @data[:type]
       # self.type ||= @data[:type]
+      @errors = ActiveModel::Errors.new(self)
     end
 
     def attributes

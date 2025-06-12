@@ -5,8 +5,14 @@
 #   See: https://github.com/DmitryTsepelev/store_model
 #   This class is a placeholder for the future implementation of
 #   nested model functionality.
-class NestedModel < LarCity::AbstractModel
+class NestedModel
+  include ActiveModel::API
+  include ActiveModel::Validations
+  include ActiveModel::Serialization
   include ActiveModel::Dirty
+
+  # extend ActiveModel::Callbacks
+  # extend ActiveModel::Validations::Callbacks
 
   attr_accessor :resource, :resource_attribute_name
 
