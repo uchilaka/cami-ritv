@@ -14,6 +14,15 @@ Rails.application.routes.draw do
           end
         end
       end
+
+      resources :webhooks, only: [] do
+        post ':slug/events',
+             constraints: { slug: /[a-zA-Z0-9\-_]+/ },
+             controller: :'webhooks/events',
+             on: :collection,
+             action: :create,
+             as: :events
+      end
     end
   end
 
