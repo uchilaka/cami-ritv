@@ -13,6 +13,12 @@ RSpec.describe 'webhooks/show', type: :view do
     render
   end
 
+  around do |example|
+    with_modified_env(HOSTNAME: 'accounts.larcity.test') do
+      example.run
+    end
+  end
+
   it 'renders attributes in <p>' do
     expect(rendered).to match(/URL/)
     expect(rendered).to match(/Verification token/)

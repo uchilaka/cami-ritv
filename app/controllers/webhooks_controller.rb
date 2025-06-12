@@ -61,19 +61,7 @@ class WebhooksController < ApplicationController
 
   # Use callbacks to share common setup or constraints between actions.
   def set_webhook
-    # id, slug = identifiers.values_at(:id, :slug)
-    # @webhook =
-    #   if slug.present?
-    #     Webhook.find_by(slug:)
-    #   else
-    #     Webhook.find_by(slug: id) || Webhook.find(id)
-    #   end
-    # authorize @webhook
-    @webhook = authorize Webhook.friendly.find(identifiers[:id])
-  end
-
-  def identifiers
-    params.permit(:id, :slug)
+    @webhook = authorize Webhook.friendly.find(params.expect(:id))
   end
 
   # Only allow a list of trusted parameters through.

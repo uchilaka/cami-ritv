@@ -9,6 +9,12 @@ RSpec.describe "webhooks/index", type: :view do
     sign_in admin_user
   end
 
+  around do |example|
+    with_modified_env(HOSTNAME: 'accounts.larcity.test') do
+      example.run
+    end
+  end
+
   it "renders a list of webhooks" do
     render
     cell_selector = 'div>p'

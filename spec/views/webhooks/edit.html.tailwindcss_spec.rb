@@ -9,6 +9,12 @@ RSpec.describe "webhooks/edit", type: :view do
     sign_in admin_user
   end
 
+  around do |example|
+    with_modified_env(HOSTNAME: 'accounts.larcity.test') do
+      example.run
+    end
+  end
+
   it "renders the edit webhook form" do
     render
 
