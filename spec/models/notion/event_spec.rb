@@ -28,11 +28,11 @@ describe Notion::Event do
 
   subject(:event) { described_class.new(data: event_data) }
 
+  before { event.valid? }
+
   it { expect(event.parent).to be_a(Notion::Database) }
 
   describe 'validations' do
-    # before { event.valid? }
-
     it { is_expected.to be_valid }
     it { expect(event.errors.full_messages).to match_array([]) }
     it { is_expected.to validate_presence_of(:type) }

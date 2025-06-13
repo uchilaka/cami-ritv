@@ -3,14 +3,13 @@
 module LarCity
   class AbstractModel
     include AutoSerializable
-    include ActiveModel::API
     # https://guides.rubyonrails.org/v8.0/active_model_basics.html#attributes
-    # include ActiveModel::Model
+    include ActiveModel::Model
     # include ActiveModel::Conversion
     include ActiveModel::Attributes
     include ActiveModel::Validations
     include ActiveModel::Serialization
-    include ActiveModel::Dirty
+    # include ActiveModel::Dirty
 
     # https://guides.rubyonrails.org/v8.0/active_model_basics.html#callbacks
     extend ActiveModel::Callbacks

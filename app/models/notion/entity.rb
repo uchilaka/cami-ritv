@@ -5,6 +5,8 @@ module Notion
     attribute :id, :string
     attribute :type, :string
 
+    define_callbacks :initialize, :validation
+
     attr_accessor :data
 
     # Class methods
@@ -46,7 +48,7 @@ module Notion
       # self.id ||= args.dig(:data, :id)
       # self.type ||= args[:type] || @data[:type]
       # self.type ||= @data[:type]
-      # @errors = ActiveModel::Errors.new(self)
+      @errors = ActiveModel::Errors.new(self)
     end
 
     def deserializable_attributes
