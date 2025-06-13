@@ -17,6 +17,4 @@
 #
 class Metadatum < ApplicationRecord
   has_and_belongs_to_many :accounts, join_table: 'accounts_metadata'
-
-  store :value, coder: JSON
 end

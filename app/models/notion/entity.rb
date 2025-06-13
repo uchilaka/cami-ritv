@@ -21,8 +21,7 @@ module Notion
 
     def initialize(args = {})
       super
-      # args.deep_symbolize_keys!
-      @data = args[:data] || {}
+      @data = (args[:data] || {}).to_h.deep_symbolize_keys
       # clear_attribute_changes(attributes.keys)
 
       attributes.each_key do |k|

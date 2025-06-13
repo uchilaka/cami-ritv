@@ -17,7 +17,6 @@ module LarCity
 
     def initialize(args = {})
       super
-      # args.deep_symbolize_keys!
     end
 
     def attributes
