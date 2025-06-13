@@ -35,9 +35,6 @@ module API
 
           def set_event
             @event = ::Notion::Event.new(webhook_event_params)
-            # @event.slug = slug
-            # @event.verification_token = verification_token
-            # @event.webhook = @webhook
             @event.validate!
           rescue ActiveModel::ValidationError => e
             render json: { errors: e.message }, status: :unprocessable_entity
@@ -59,12 +56,12 @@ module API
                   :subscription_id,
                   :integration_id,
                   :attempt_number,
-                  entity: [:id, :type],
+                  entity: %i[id type],
                   data: [
-                    parent: [:id, :type]
+                    parent: %i[id type],
                   ],
                   authors: [
-                    [:id, :type]
+                    %i[id type],
                   ],
                 ]
               )

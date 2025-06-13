@@ -24,13 +24,15 @@ RSpec.describe 'API::V2::Webhooks::Notion::Events', type: :request do
       }
 
       response '200', 'event processed' do
+        let(:testing_id) { SecureRandom.hex(4) }
         let(:event_data) do
           {
+            id: SecureRandom.uuid,
             timestamp: Time.current.iso8601,
-            workspace_id: 'workspace-123',
+            workspace_id: "workspace-#{testing_id}",
             workspace_name: 'Test Workspace',
-            subscription_id: 'subscription-123',
-            integration_id: 'integration-123',
+            subscription_id: "subscription-#{testing_id}",
+            integration_id: "integration-#{testing_id}",
             attempt_number: 1,
             type: 'page.created',
             data: {
