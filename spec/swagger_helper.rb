@@ -44,6 +44,50 @@ RSpec.configure do |config|
           }
         },
         schemas: {
+          notion_entity: {
+            type: :object,
+            properties: {
+              id: { type: :string },
+              type: {
+                type: :string,
+                pattern: '^(page|database|person)$'
+              },
+            },
+            required: %w[id type],
+          },
+          notion_event: {
+            type: :object,
+            properties: {
+              id: { type: :string },
+              timestamp: { type: :string, format: 'date-time' },
+              workspace_id: { type: :string },
+              workspace_name: { type: :string },
+              subscription_id: { type: :string },
+              integration_id: { type: :string },
+              attempt_number: { type: :integer },
+              authors: {
+                type: :array,
+                items: { '$ref' => '#/components/schemas/notion_entity' },
+              },
+              data: {
+                type: :object,
+                properties: {
+                  parent: {
+                    ref: '#/components/schemas/notion_entity',
+                  }
+                },
+                required: %w[parent]
+              },
+              type: {
+                type: :string,
+                pattern: '^(page.created|page.content_updated|page.deleted|page.moved|page.properties_updated|database.content_updated|database.schema_updated|database.deleted)$'
+              },
+              entity: {
+                '$ref' => '#/components/schemas/notion_entity',
+              }
+            },
+            required: %w[id data type integration_id attempt_number]
+          },
           account: {
             type: :object,
             properties: {

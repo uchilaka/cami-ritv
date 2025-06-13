@@ -10,7 +10,7 @@ module Notion
     attr_accessor :data
 
     def supported_types
-      %w[page database user]
+      %w[page database person]
     end
 
     validates :type, presence: true, inclusion: { in: lambda(&:supported_types) }
