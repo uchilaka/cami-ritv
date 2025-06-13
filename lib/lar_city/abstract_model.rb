@@ -2,17 +2,24 @@
 
 module LarCity
   class AbstractModel
+    include AutoSerializable
+    include ActiveModel::API
     # https://guides.rubyonrails.org/v8.0/active_model_basics.html#attributes
-    include ActiveModel::Model
+    # include ActiveModel::Model
     # include ActiveModel::Conversion
     include ActiveModel::Attributes
     include ActiveModel::Validations
     include ActiveModel::Serialization
-    include AutoSerializable
+    include ActiveModel::Dirty
 
     # https://guides.rubyonrails.org/v8.0/active_model_basics.html#callbacks
-    # extend ActiveModel::Callbacks
-    # extend ActiveModel::Validations::Callbacks
+    extend ActiveModel::Callbacks
+    extend ActiveModel::Validations::Callbacks
+
+    def initialize(args = {})
+      super
+      args.deep_symbolize_keys!
+    end
 
     def attributes
       raise NotImplementedError, "#{self.class} must implement the attributes method"

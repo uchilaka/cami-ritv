@@ -4,10 +4,11 @@ require 'rails_helper'
 
 describe Notion::Event do
   let(:event_id) { SecureRandom.uuid }
+  let(:event_type) { 'page.created' }
   let(:event_data) do
     {
       id: event_id,
-      type: 'page.created',
+      type: event_type,
       entity: {
         id: SecureRandom.uuid,
         type: 'page',
@@ -30,13 +31,21 @@ describe Notion::Event do
   it { expect(event.parent).to be_a(Notion::Database) }
 
   describe 'validations' do
-    before { event.valid? }
+    # before { event.valid? }
 
     it { is_expected.to be_valid }
+    it { expect(event.errors.full_messages).to match_array([]) }
     it { is_expected.to validate_presence_of(:type) }
 
     context 'with invalid attributes' do
       describe '#data' do
+        context 'with nil data' do
+          subject(:event) { described_class.new(data: nil, type: 'database.content_updated') }
+
+          it { is_expected.to be_invalid }
+          it { expect(event.errors[:type]).to be_empty }
+        end
+
         it 'is invalid with a nil data' do
           invalid_event = described_class.new(type: 'page.created', data: nil)
           expect(invalid_event).not_to be_valid
@@ -79,7 +88,7 @@ describe Notion::Event do
 
   describe 'attributes' do
     it 'has a type' do
-      expect(event.type).to eq('page.created')
+      expect(event.type).to eq(event_data[:type])
     end
 
     it 'has an entity as an Entity object' do
@@ -139,8 +148,38 @@ describe Notion::Event do
   end
 
   describe '#attributes' do
+    let(:event_data) do
+      {
+        id: event_id,
+        type: 'database.content_updated',
+        workspace_name: 'Test Workspace',
+        workspace_id: SecureRandom.uuid,
+        subscription_id: SecureRandom.uuid,
+        integration_id: SecureRandom.uuid,
+        attempt_number: 2,
+      }
+    end
+
+    it { is_expected.to have_attributes(event_data) }
+
     it 'returns a hash' do
       expect(event.attributes).to be_a(Hash)
+    end
+
+    context 'with string keys' do
+      let(:event_data) do
+        {
+          id: event_id,
+          type: 'page.content_updated',
+          workspace_name: 'Test Workspace',
+          workspace_id: SecureRandom.uuid,
+          subscription_id: SecureRandom.uuid,
+          integration_id: SecureRandom.uuid,
+          attempt_number: 2,
+        }.stringify_keys
+      end
+
+      it { is_expected.to have_attributes(event_data) }
     end
   end
 

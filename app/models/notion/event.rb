@@ -11,8 +11,6 @@ module Notion
 
     attr_accessor :entity, :parent, :authors
 
-    validates :data, presence: true
-
     # Class methods
     def self.supported_types
       %w[
@@ -27,30 +25,9 @@ module Notion
       ].freeze
     end
 
-    def initialize(args = {})
-      super
-      self.timestamp ||= Time.current
-      # attributes.each_key do |k|
-      #   attr_value = args[k] || args.dig(:data, k)
-      #   next unless attr_value.present?
-      #
-      #   case k
-      #   when :entity
-      #     deserialize_entity(attr_value)
-      #   when :parent
-      #     deserialize_parent(attr_value)
-      #   else
-      #     instance_variable_set(:"@#{k}", attr_value)
-      #   end
-      # end
-      deserialize_entity(@entity || @data[:entity])
-      deserialize_parent(@parent || @data[:parent])
-      deserialize_authors(@authors || @data[:authors])
-      @authors ||= []
-      @errors = ActiveModel::Errors.new(self)
-    end
+    validates :data, presence: true
+    validates :type, presence: true, inclusion: { in: supported_types }
 
-    define_model_callbacks :initialize, :validation
 
     def attributes
       {
@@ -68,6 +45,32 @@ module Notion
     def deserializable_attributes
       %w[entity parent authors]
     end
+
+    def initialize(args = {})
+      super
+      self.timestamp ||= Time.current
+      # attributes.each_key do |k|
+      #   attr_value = args[k] || args.dig(:data, k)
+      #   next unless attr_value.present?
+      #
+      #   # case k
+      #   # when :entity
+      #   #   deserialize_entity(attr_value)
+      #   # when :parent
+      #   #   deserialize_parent(attr_value)
+      #   # else
+      #   #   instance_variable_set(:"@#{k}", attr_value)
+      #   # end
+      #   instance_variable_set(:"@#{k}", attr_value)
+      # end
+      deserialize_entity(@entity || @data[:entity])
+      deserialize_parent(@parent || @data[:parent])
+      deserialize_authors(@authors || @data[:authors])
+      @authors ||= []
+      # @errors = ActiveModel::Errors.new(self)
+    end
+
+    # define_model_callbacks :initialize, :validation
 
     # def authors
     #   @authors ||=

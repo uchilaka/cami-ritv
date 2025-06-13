@@ -8,16 +8,21 @@ module Notion
     attr_accessor :data
 
     # Class methods
-    def self.supported_types
-      %w[page database user].freeze
-    end
+    # def self.supported_types
+    #   %w[page database user].freeze
+    # end
 
-    validates :type, presence: true, inclusion: { in: supported_types }
+    validates :type, presence: true, inclusion: { in: %w[page database user] }
+
+    def attributes
+      { id:, type: }
+    end
 
     def initialize(args = {})
       super
-      args.deep_symbolize_keys!
+      # args.deep_symbolize_keys!
       @data = args[:data] || {}
+      # clear_attribute_changes(attributes.keys)
 
       attributes.each_key do |k|
         attr_value = args[k] || @data[k]
@@ -32,17 +37,16 @@ module Notion
         # else
         #   instance_variable_set(:"@#{k}", attr_value)
         # end
-        instance_variable_set(:"@#{k}", attr_value)
+        # instance_variable_set(:"@#{k}", attr_value)
+        send("#{k}=", attr_value)
       end
+
+      # define_model_callbacks :initialize, :validation
 
       # self.id ||= args.dig(:data, :id)
       # self.type ||= args[:type] || @data[:type]
       # self.type ||= @data[:type]
-      @errors = ActiveModel::Errors.new(self)
-    end
-
-    def attributes
-      { id:, type: }
+      # @errors = ActiveModel::Errors.new(self)
     end
 
     def deserializable_attributes
