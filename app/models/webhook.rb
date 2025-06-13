@@ -18,9 +18,7 @@
 class Webhook < ApplicationRecord
   extend FriendlyId
 
-  store :data,
-        accessors: %i[integration_id integration_name],
-        coder: JSON
+  store_accessor :data, %i[integration_id integration_name]
 
   encrypts :verification_token, deterministic: true
 

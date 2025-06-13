@@ -44,4 +44,28 @@ RSpec.describe Webhook, type: :model do
       expect(webhook.url).to eq("https://larcity.test/api/v2/webhooks/#{webhook.slug}/events")
     end
   end
+
+  describe '#integration_id' do
+    it 'returns the integration ID from data' do
+      webhook.data = { integration_id: 'integration-123' }
+      expect(webhook.integration_id).to eq('integration-123')
+    end
+
+    it 'returns nil if integration_id is not set' do
+      webhook.data = {}
+      expect(webhook.integration_id).to be_nil
+    end
+  end
+
+  describe '#integration_name' do
+    it 'returns the integration name from data' do
+      webhook.data = { integration_name: 'Notion' }
+      expect(webhook.integration_name).to eq('Notion')
+    end
+
+    it 'returns nil if integration_name is not set' do
+      webhook.data = {}
+      expect(webhook.integration_name).to be_nil
+    end
+  end
 end
