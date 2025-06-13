@@ -5,10 +5,11 @@ module API
     module Webhooks
       module Notion
         class EventsController < ApplicationController
-          # prepend_before_action :set_webhook, only: %i[create]
-          skip_before_action :authenticate_user!
-          skip_before_action :verify_authenticity_token
           before_action :set_event, only: %i[create]
+          skip_before_action :authenticate_user!
+          skip_forgery_protection only: %i[create]
+          # skip_before_action :verify_authenticity_token, only: %i[create]
+          prepend_before_action :set_webhook, only: %i[create]
 
           # TODO: Validate event payload
           #   https://developers.notion.com/reference/webhooks#step-3-validating-event-payloads-recommended
@@ -25,12 +26,11 @@ module API
           private
 
           def request_signature_header
-            headers['X-Notion-Signature']
+            request.headers['HTTP_X_NOTION_SIGNATURE']
           end
 
           def set_webhook
-            # TODO: Verification tokens aren't sent with each request
-            @webhook = ::Webhook.find_by(slug: 'notion', verification_token:)
+            @webhook = ::Webhook.find_by(slug: 'notion')
           end
 
           def set_event
@@ -67,6 +67,7 @@ module API
               )
           end
 
+          # Only sent during webhook setup for verification
           def verification_token
             webhook_verification_params[:verification_token]
           end
