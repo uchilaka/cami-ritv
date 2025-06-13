@@ -5,7 +5,7 @@
 # Table name: webhooks
 #
 #  id                 :uuid             not null, primary key
-#  readme             :text
+#  data               :jsonb
 #  slug               :string
 #  verification_token :string
 #  created_at         :datetime         not null
@@ -18,13 +18,20 @@
 class Webhook < ApplicationRecord
   extend FriendlyId
 
+  store :data,
+        accessors: %i[integration_id integration_name],
+        coder: JSON
+
   encrypts :verification_token, deterministic: true
 
   has_rich_text :readme
 
   friendly_id :slug, use: :slugged
 
-  validates :slug, presence: true, uniqueness: true, length: { maximum: 64 }
+  validates :slug,
+            presence: true,
+            uniqueness: { case_sensitive: true },
+            length: { maximum: 64 }
   validates :verification_token, presence: true
 
   def url

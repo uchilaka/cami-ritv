@@ -39,6 +39,11 @@ module Navigable
               order: 3,
             },
             {
+              label: t('shared.navbar.webhooks'),
+              path: '/webhooks',
+              order: 5,
+            },
+            {
               label: t('shared.navbar.demos'),
               path: '#',
               submenu: demo_sub_menu,

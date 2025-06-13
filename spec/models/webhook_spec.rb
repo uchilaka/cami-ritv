@@ -3,7 +3,7 @@
 # Table name: webhooks
 #
 #  id                 :uuid             not null, primary key
-#  readme             :text
+#  data               :jsonb
 #  slug               :string
 #  verification_token :string
 #  created_at         :datetime         not null
@@ -24,6 +24,8 @@ RSpec.describe Webhook, type: :model do
 
   describe 'validations' do
     it { is_expected.to validate_presence_of(:slug) }
+    it { is_expected.to validate_uniqueness_of(:slug) }
+    it { is_expected.to validate_length_of(:slug).is_at_most(64) }
     it { is_expected.to validate_presence_of(:verification_token) }
   end
 
