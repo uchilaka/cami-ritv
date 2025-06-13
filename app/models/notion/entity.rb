@@ -9,12 +9,11 @@ module Notion
 
     attr_accessor :data
 
-    # Class methods
-    # def self.supported_types
-    #   %w[page database user].freeze
-    # end
+    def supported_types
+      %w[page database user]
+    end
 
-    validates :type, presence: true, inclusion: { in: %w[page database user] }
+    validates :type, presence: true, inclusion: { in: lambda(&:supported_types) }
 
     def attributes
       { id:, type: }
@@ -31,15 +30,7 @@ module Notion
         next if deserializable_attributes.include?(k)
         next unless attr_value.present?
 
-        # case k
-        # when :entity
-        #   deserialize_entity(attr_value)
-        # when :parent
-        #   deserialize_parent(attr_value)
-        # else
-        #   instance_variable_set(:"@#{k}", attr_value)
-        # end
-        # instance_variable_set(:"@#{k}", attr_value)
+        # instance_variable_set("@#{k}", attr_value)
         send("#{k}=", attr_value)
       end
 

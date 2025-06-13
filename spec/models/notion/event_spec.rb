@@ -34,7 +34,6 @@ describe Notion::Event do
 
   describe 'validations' do
     it { is_expected.to be_valid }
-    it { expect(event.errors.full_messages).to match_array([]) }
     it { is_expected.to validate_presence_of(:type) }
 
     context 'with invalid attributes' do

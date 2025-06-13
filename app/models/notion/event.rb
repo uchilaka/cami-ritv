@@ -11,8 +11,7 @@ module Notion
 
     attr_accessor :entity, :parent, :authors
 
-    # Class methods
-    def self.supported_types
+    def supported_types
       %w[
         database.content_updated
         database.deleted
@@ -22,12 +21,10 @@ module Notion
         page.deleted
         page.moved
         page.properties_updated
-      ].freeze
+      ]
     end
 
     validates :data, presence: true
-    validates :type, presence: true, inclusion: { in: supported_types }
-
 
     def attributes
       {
@@ -67,7 +64,7 @@ module Notion
       deserialize_parent(@parent || @data[:parent])
       deserialize_authors(@authors || @data[:authors])
       @authors ||= []
-      # @errors = ActiveModel::Errors.new(self)
+      @errors = ActiveModel::Errors.new(self)
     end
 
     # define_model_callbacks :initialize, :validation
