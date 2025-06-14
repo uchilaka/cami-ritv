@@ -3,6 +3,8 @@
 class ApplicationRecord < ActiveRecord::Base
   primary_abstract_class
 
+  before_action :set_paper_trail_whodunnit
+
   def serializable_hash(options = {})
     if (serializer_class = serializer_class_presence)
       serializer_class.new(self, options).serializable_hash.with_indifferent_access
