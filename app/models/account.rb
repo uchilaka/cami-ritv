@@ -49,6 +49,8 @@ class Account < ApplicationRecord
   end
   # End of class methods
 
+  has_paper_trail
+
   resourcify
   rolify
 

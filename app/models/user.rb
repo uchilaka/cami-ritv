@@ -46,6 +46,8 @@ class User < ApplicationRecord
   include Devise::JWT::RevocationStrategies::Allowlist
   include Discard::Model
 
+  has_paper_trail
+
   class << self
     # Docs on Devise passwordless customization: https://github.com/abevoelker/devise-passwordless#customization
     def passwordless_login_within
