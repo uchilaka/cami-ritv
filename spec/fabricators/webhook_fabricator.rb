@@ -14,6 +14,13 @@
 #  index_webhooks_on_slug  (slug) UNIQUE
 #
 Fabricator(:webhook) do
-  slug               { sequence(:slug) { |i| "webhook-#{i}" } }
+  transient :integration
+  slug               do |attrs|
+    if attrs[:integration] == :notion
+      :notion
+    else
+      sequence(:slug) { |i| "webhook-#{i}" }
+    end
+  end
   verification_token { SecureRandom.alphanumeric(24) }
 end

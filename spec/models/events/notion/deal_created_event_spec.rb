@@ -2,15 +2,23 @@
 
 require 'rails_helper'
 
-RSpec.describe Notion::DealCreated, type: :model do
+RSpec.describe Notion::DealCreatedEvent, type: :model do
   let(:metadatum) { Fabricate(:metadatum, key: 'notion.deal_created') }
+  let(:webhook) { Fabricate(:webhook, integration: :notion) }
 
   subject(:event) { Fabricate(:deal_created_event, integration: :notion, metadatum:) }
 
-  it { is_expected.to have_attributes(metadatum:) }
+  before do
+    event.eventable = webhook
+    event.save!
+  end
 
   describe 'associations' do
-    it { should belong_to(:metadatum).optional.dependent(:destroy) }
+    it { is_expected.to be_valid }
+    it { is_expected.to belong_to(:eventable).optional }
+    it { is_expected.to have_one(:metadatum).optional.dependent(:destroy) }
+    it { is_expected.to have_attributes(metadatum:) }
+    it { is_expected.to have_attributes(eventable: webhook) }
   end
 
   describe 'inheritance' do
