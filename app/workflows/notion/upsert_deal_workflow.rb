@@ -28,7 +28,7 @@ module Notion
         entity: entity.serializable_hash,
         **context.event.serializable_hash,
       }
-      metadatum = ::Notion::WebhookEventMetadatum.create!(key: "notion.#{event_data['type']}", value: event_data)
+      metadatum = ::Notion::WebhookEventMetadatum.create!(key: "notion.#{context.event.type}", value: event_data)
       system_event = klass_type.constantize.create!(metadatum:)
       system_event.eventable = context.webhook
       system_event.save!
