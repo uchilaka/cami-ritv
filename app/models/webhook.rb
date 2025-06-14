@@ -18,6 +18,8 @@
 class Webhook < ApplicationRecord
   extend FriendlyId
 
+  store_accessor :data, %i[integration_id integration_name]
+
   encrypts :verification_token, deterministic: true
 
   has_rich_text :readme
@@ -26,7 +28,10 @@ class Webhook < ApplicationRecord
 
   has_many :generic_events, as: :eventable, dependent: :nullify
 
-  validates :slug, presence: true, uniqueness: true, length: { maximum: 64 }
+  validates :slug,
+            presence: true,
+            uniqueness: { case_sensitive: false },
+            length: { maximum: 64 }
   validates :verification_token, presence: true
 
   def url

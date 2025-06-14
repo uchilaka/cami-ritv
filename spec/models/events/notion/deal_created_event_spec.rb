@@ -7,9 +7,9 @@ RSpec.describe Notion::DealCreatedEvent, type: :model do
   let(:integration_id) { SecureRandom.uuid }
   let(:entity_id) { SecureRandom.uuid }
   let(:metadatum) do
-    Fabricate(:metadatum,
+    Fabricate(:notion_webhook_event_metadatum,
               key: 'notion.deal_created',
-              value: { integration_id:, database_id: })
+              value: { integration_id:, database_id:, entity_id: })
   end
   let(:webhook) { Fabricate(:webhook, integration: :notion) }
 
@@ -20,15 +20,17 @@ RSpec.describe Notion::DealCreatedEvent, type: :model do
     event.save!
   end
 
-  xit { is_expected.to have_attributes(entity_id:) }
-  xit { is_expected.to have_attributes(integration_id:) }
-  xit { is_expected.to have_attributes(database_id:) }
-  xit { is_expected.to have_attributes(remote_record_id: entity_id) }
+  it { is_expected.to have_attributes(entity_id:) }
+  it { is_expected.to have_attributes(integration_id:) }
+  it { is_expected.to have_attributes(database_id:) }
+  it { is_expected.to have_attributes(remote_record_id: entity_id) }
 
   describe 'associations' do
     it { is_expected.to be_valid }
     it { is_expected.to belong_to(:eventable).optional }
-    it { is_expected.to have_one(:metadatum).optional.dependent(:destroy) }
+    it { is_expected.to accept_nested_attributes_for(:metadatum) }
+    it { is_expected.to have_attributes(metadatum:) }
+    xit { is_expected.to have_one(:metadatum).optional.dependent(:destroy) }
     it { is_expected.to have_attributes(metadatum:) }
     it { is_expected.to have_attributes(eventable: webhook) }
   end

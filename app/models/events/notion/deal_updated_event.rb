@@ -17,23 +17,8 @@
 #  index_generic_events_on_eventable  (eventable_type,eventable_id)
 #
 module Notion
-  class DealCreatedEvent < ::GenericEvent
+  class DealUpdatedEvent < ::GenericEvent
     include AASM
-
-    # TODO: Require this after implementing the workflow for
-    #   capturing Notion deal CRUD events which should include
-    #   entity_id, integration_id, database_id, type and other
-    #   relevant fields to inform an async job to create a deal
-    #   in the system.
-    has_one :metadatum, lambda {
-      where(appendable_type: 'Notion::WebhookEventMetadatum')
-    }, inverse_of: :appendable, dependent: :destroy
-
-    accepts_nested_attributes_for :metadatum
-
-    delegate :entity_id, :integration_id, :database_id, to: :metadatum
-
-    alias remote_record_id entity_id
 
     aasm column: :status do
       state :pending, initial: true

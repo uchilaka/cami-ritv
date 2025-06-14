@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: metadata
@@ -16,8 +18,12 @@
 #  index_for_zoho_oauth_serverinfo_metadata  (((value ->> 'region_alpha2'::text)))
 #  index_metadata_on_appendable              (appendable_type,appendable_id)
 #
-Fabricator(:metadatum)
+module Notion
+  class WebhookEventMetadatum < ::Metadatum
+    has_one :generic_event, foreign_key: :metadatum_id, dependent: :destroy
 
-Fabricator(:notion_webhook_event_metadatum, from: :metadatum) do
-  type 'Notion::WebhookEventMetadatum'
+    store_accessor :value, %i[integration_id entity_id database_id]
+
+    accepts_nested_attributes_for :generic_event
+  end
 end

@@ -14,6 +14,10 @@ Rails.application.routes.draw do
           end
         end
       end
+
+      namespace :webhooks, only: [] do
+        post 'notion/events', controller: 'notion/events', action: :create
+      end
     end
   end
 

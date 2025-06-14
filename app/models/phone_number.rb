@@ -3,14 +3,28 @@
 # JSONB modeling guide:
 # https://betacraft.com/2023-06-08-active-model-jsonb-column/#:~:text=Bringing%20it%20all%20together
 class PhoneNumber < NestedModel
-  attr_accessor :value,
-                :full_e164,
-                :full_international,
-                :number_purpose,
-                :number_type,
-                :country
+  include ActiveModel::Attributes
 
-  define_attribute_methods :value
+  attribute :value, :string
+  attribute :full_e164, :string
+  attribute :full_international, :string
+  attribute :number_purpose, :string
+  attribute :number_type, :string
+  attribute :country, :string
+
+  # attr_accessor :value,
+  #               :full_e164,
+  #               :full_international,
+  #               :number_purpose,
+  #               :number_type,
+  #               :country
+
+  # define_attribute_methods :value
+
+  # Class methods
+  def self.supported_types
+    %i[mobile fixed_line fixed_or_mobile personal_number fax other]
+  end
 
   def initialize(args = {})
     super
@@ -24,12 +38,6 @@ class PhoneNumber < NestedModel
             if: :should_validate_possibility?
 
   validate :parse_number_value_and_type
-
-  class << self
-    def supported_types
-      %i[mobile fixed_line fixed_or_mobile personal_number fax other]
-    end
-  end
 
   def update(attributes = {})
     assign_attributes(attributes) if attributes
@@ -67,12 +75,12 @@ class PhoneNumber < NestedModel
 
   def attributes
     {
-      'value' => nil,
-      'full_e164' => nil,
-      'full_international' => nil,
-      'number_purpose' => nil,
-      'number_type' => nil,
-      'country' => nil
+      value:,
+      full_e164:,
+      full_international:,
+      number_purpose:,
+      number_type:,
+      country:,
     }
   end
 end
