@@ -20,6 +20,8 @@ class Webhook < ApplicationRecord
 
   store_accessor :data, %i[integration_id integration_name]
 
+  has_many :generic_events, as: :eventable, dependent: :nullify
+
   encrypts :verification_token, deterministic: true
 
   has_rich_text :readme

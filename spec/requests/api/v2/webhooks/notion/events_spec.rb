@@ -4,8 +4,11 @@ require 'swagger_helper'
 
 RSpec.describe 'API::V2::Webhooks::Notion::Events', type: :request do
   path '/api/v2/webhooks/notion/events' do
+    let(:deal_database_id) { SecureRandom.uuid }
+    let(:integration_id) { SecureRandom.uuid }
+    let(:integration_name) { 'CAMI Lab Integration' }
     before do
-      Fabricate(:notion_webhook)
+      Fabricate(:notion_webhook, data: { integration_id:, integration_name:, deal_database_id: })
       allow(ActiveSupport::SecurityUtils).to \
         receive(:secure_compare).and_return(true)
     end
@@ -48,7 +51,7 @@ RSpec.describe 'API::V2::Webhooks::Notion::Events', type: :request do
             type: 'page.created',
             data: {
               parent: {
-                id: SecureRandom.uuid,
+                id: deal_database_id,
                 type: 'database',
               },
             },

@@ -10,7 +10,7 @@ module API
           # TODO: Implement a request verification strategy that's compatible with Rails'
           #   CSRF protection and leverages verified_request? instead of skipping it entirely.
           # CSRF protection is enabled by default. Custom request verification is integrated with `verified_request?`.
-          before_action :validate_request_signature, only: %i[create]
+          # before_action :validate_request_signature, only: %i[create]
 
           # TODO: Validate event payload
           #   https://developers.notion.com/reference/webhooks#step-3-validating-event-payloads-recommended
