@@ -22,9 +22,9 @@ class Webhook < ApplicationRecord
 
   has_rich_text :readme
 
-  has_many :generic_events, as: :eventable, dependent: :nullify
-
   friendly_id :slug, use: :slugged
+
+  has_many :generic_events, as: :eventable, dependent: :nullify
 
   validates :slug, presence: true, uniqueness: true, length: { maximum: 64 }
   validates :verification_token, presence: true
