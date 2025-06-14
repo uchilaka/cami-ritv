@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_14_085030) do
+ActiveRecord::Schema[8.0].define(version: 2025_06_14_172751) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -195,7 +195,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_14_085030) do
     t.jsonb "value", default: {}
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "appendable_type"
+    t.uuid "appendable_id"
     t.index "((value ->> 'region_alpha2'::text))", name: "index_for_zoho_oauth_serverinfo_metadata"
+    t.index ["appendable_type", "appendable_id"], name: "index_metadata_on_appendable"
   end
 
   create_table "roles", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
