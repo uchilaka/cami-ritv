@@ -129,7 +129,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_14_085030) do
   end
 
   create_table "generic_events", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
-    t.string "type"
+    t.string "type", null: false
+    t.string "status"
     t.uuid "eventable_id"
     t.string "eventable_type"
     t.uuid "metadatum_id"

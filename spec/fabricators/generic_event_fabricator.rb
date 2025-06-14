@@ -4,7 +4,8 @@
 #
 #  id             :uuid             not null, primary key
 #  eventable_type :string
-#  type           :string
+#  status         :string
+#  type           :string           not null
 #  created_at     :datetime         not null
 #  updated_at     :datetime         not null
 #  eventable_id   :uuid
@@ -20,7 +21,26 @@
 #  fk_rails_...  (metadatum_id => metadata.id)
 #
 Fabricator(:generic_event) do
-  type           ""
-  eventable_id   ""
-  eventable_type "MyString"
+  transient :integration
+end
+
+Fabricator(:deal_created_event, from: :generic_event) do
+  metadatum { Fabricate(:metadatum, key: 'deal_created') }
+  status { 'pending' }
+
+  type do |attrs|
+    if attrs[:integration] == :notion
+      'Notion::DealCreated'
+    else
+      'Generic::DealCreated'
+    end
+  end
+
+  integration do |attrs|
+    if attrs[:integration].present?
+      attrs[:integration]
+    elsif /^Notion::/.match?(attrs[:type])
+      :notion
+    end
+  end
 end

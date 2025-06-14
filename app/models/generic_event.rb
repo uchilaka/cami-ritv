@@ -4,7 +4,8 @@
 #
 #  id             :uuid             not null, primary key
 #  eventable_type :string
-#  type           :string
+#  status         :string
+#  type           :string           not null
 #  created_at     :datetime         not null
 #  updated_at     :datetime         not null
 #  eventable_id   :uuid
@@ -20,4 +21,5 @@
 #  fk_rails_...  (metadatum_id => metadata.id)
 #
 class GenericEvent < ApplicationRecord
+  attribute :type, :string, default: 'GenericEvent'
 end
