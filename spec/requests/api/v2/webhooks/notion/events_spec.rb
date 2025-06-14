@@ -4,6 +4,17 @@ require 'swagger_helper'
 
 RSpec.describe 'API::V2::Webhooks::Notion::Events', type: :request do
   path '/api/v2/webhooks/notion/events' do
+    before do
+      Fabricate(:notion_webhook)
+      allow(ActiveSupport::SecurityUtils).to \
+        receive(:secure_compare).and_return(true)
+    end
+
+    after do
+      allow(ActiveSupport::SecurityUtils).to \
+        receive(:secure_compare).and_call_original
+    end
+
     post 'Creates a Notion webhook event' do
       tags 'Webhooks'
       consumes 'application/json'

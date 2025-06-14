@@ -17,3 +17,8 @@ Fabricator(:webhook) do
   slug               { sequence(:slug) { |i| "webhook-#{i}" } }
   verification_token { SecureRandom.alphanumeric(24) }
 end
+
+Fabricator(:notion_webhook, from: :webhook) do
+  slug               { 'notion' }
+  data               { { integration_id: SecureRandom.uuid, integration_name: 'Notion Integration' } }
+end
