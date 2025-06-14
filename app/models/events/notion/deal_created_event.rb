@@ -23,7 +23,7 @@
 #  fk_rails_...  (metadatum_id => metadata.id)
 #
 module Notion
-  class DealCreated < GenericEvent
+  class DealCreatedEvent < GenericEvent
     include AASM
 
     # TODO: Require this after implementing the workflow for
@@ -31,7 +31,11 @@ module Notion
     #   entity_id, integration_id, database_id, type and other
     #   relevant fields to inform an async job to create a deal
     #   in the system.
-    belongs_to :metadatum, optional: true, dependent: :destroy
+    has_one :metadatum, as: :appendable, dependent: :destroy
+
+    delegate :entity_id, :integration_id, :database_id, to: :metadatum
+
+    alias remote_record_id entity_id
 
     aasm column: :status do
       state :pending, initial: true

@@ -22,4 +22,6 @@
 #
 class GenericEvent < ApplicationRecord
   attribute :type, :string, default: 'GenericEvent'
+
+  belongs_to :eventable, polymorphic: true, optional: true
 end
