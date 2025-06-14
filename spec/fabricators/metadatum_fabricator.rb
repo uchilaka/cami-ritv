@@ -17,3 +17,7 @@
 #  index_metadata_on_appendable              (appendable_type,appendable_id)
 #
 Fabricator(:metadatum)
+
+Fabricator(:notion_webhook_event_metadatum, from: :metadatum) do
+  type 'Notion::WebhookEventMetadatum'
+end
