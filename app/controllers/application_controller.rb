@@ -6,7 +6,7 @@ class ApplicationController < ActionController::Base
   include Pundit::Authorization
   include SitewideContextAware
 
-  # before_action :set_paper_trail_whodunnit
+  before_action :set_paper_trail_whodunnit
 
   # For more on action controller filters, see https://guides.rubyonrails.org/action_controller_overview.html#filters
   before_action :configure_permitted_parameters, if: :devise_controller?
