@@ -11,16 +11,10 @@
 #  created_at     :datetime         not null
 #  updated_at     :datetime         not null
 #  eventable_id   :uuid
-#  metadatum_id   :uuid
 #
 # Indexes
 #
-#  index_generic_events_on_eventable     (eventable_type,eventable_id)
-#  index_generic_events_on_metadatum_id  (metadatum_id)
-#
-# Foreign Keys
-#
-#  fk_rails_...  (metadatum_id => metadata.id)
+#  index_generic_events_on_eventable  (eventable_type,eventable_id)
 #
 module Notion
   class DealCreatedEvent < ::GenericEvent
@@ -31,7 +25,11 @@ module Notion
     #   entity_id, integration_id, database_id, type and other
     #   relevant fields to inform an async job to create a deal
     #   in the system.
-    has_one :metadatum, as: :appendable, dependent: :destroy
+    has_one :metadatum, lambda {
+      where(appendable_type: 'Notion::WebhookEventMetadatum')
+    }, inverse_of: :appendable, dependent: :destroy
+
+    accepts_nested_attributes_for :metadatum
 
     delegate :entity_id, :integration_id, :database_id, to: :metadatum
 
