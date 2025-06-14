@@ -9,7 +9,7 @@ module API
           skip_before_action :authenticate_user!
           # TODO: Implement a request verification strategy that's compatible with Rails'
           #   CSRF protection and leverages verified_request? instead of skipping it entirely.
-          skip_forgery_protection only: %i[create]
+          # CSRF protection is enabled by default. Custom request verification is integrated with `verified_request?`.
           before_action :validate_request_signature, only: %i[create]
 
           # TODO: Validate event payload
@@ -84,10 +84,12 @@ module API
           end
 
           def verified_request?
-            result =
-              ::Notion::VerifyRequestWorkflow
-                .call(webhook:, signature_header: request_signature_header)
-            result.success?
+            super || begin
+              result =
+                ::Notion::VerifyRequestWorkflow
+                  .call(webhook:, signature_header: request_signature_header)
+              result.success?
+            end
           end
 
           def validate_request_signature
