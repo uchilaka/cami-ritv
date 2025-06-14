@@ -81,9 +81,7 @@ module API
           end
 
           def is_trusted_request?
-            # (UTF-8) sha256=56ff3c6e975d6ebc973882a5223c6daf7f655294d7b64a72f5e662317253d859
             expected_signature = generate_expected_signature
-            # (ASCII-8BIT) sha256=7482396002976ad1005dfb6b8eb7de70e30d48f76a8a124f4d3dfe1a2fec3d97
             signature_header = request_signature_header
             ActiveSupport::SecurityUtils.secure_compare(expected_signature, signature_header)
           end
