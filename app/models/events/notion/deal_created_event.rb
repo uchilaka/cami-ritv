@@ -23,7 +23,7 @@
 #  fk_rails_...  (metadatum_id => metadata.id)
 #
 module Notion
-  class DealCreated < GenericEvent
+  class DealCreatedEvent < ::GenericEvent
     include AASM
 
     # TODO: Require this after implementing the workflow for

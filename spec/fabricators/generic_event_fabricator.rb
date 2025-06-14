@@ -30,9 +30,9 @@ Fabricator(:deal_created_event, from: :generic_event) do
 
   type do |attrs|
     if attrs[:integration] == :notion
-      'Notion::DealCreated'
+      'Notion::DealCreatedEvent'
     else
-      'Generic::DealCreated'
+      'Generic::DealCreatedEvent'
     end
   end
 

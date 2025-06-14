@@ -9,20 +9,34 @@ module Notion
       context.database = context.event.parent
       context.remote_record_id = context.entity.id
 
-      # # Assuming you have a method to upsert the entity in Notion
-      # result = Notion::EntityService.upsert(notion_entity)
-      #
-      # if result.success?
-      #   context.notion_entity = result.entity
-      # else
-      #   context.fail!(error: result.error)
-      # end
+      case context.event.type
+      when 'page.created'
+        context.system_event = ::Notion::DealCreatedEvent.new(
+          metadatum: {
+            remote_record_id: context.remote_record_id,
+            database: context.database.serializable_hash,
+            **context.event.serializable_hash,
+          }
+        )
+      when 'page.properties_updated'
+        context.system_event = ::Notion::DealUpdatedEvent.new(
+          metadatum: {
+            remote_record_id: context.remote_record_id,
+            database: context.database.serializable_hash,
+            **context.event.serializable_hash,
+          }
+        )
+      else
+        error =
+          I18n.t('workflows.upsert_deal_workflow.errors.unsupported_event_type', event_type: context.event.type)
+        fail!(error:)
+      end
     ensure
-      event_id = context.event.id
+      remote_event_id = context.event.id
       status = context.success? ? 'success' : 'failure'
       log_message =
         I18n.t('workflows.upsert_deal_workflow.completed.log', status:, slug: 'fake-deal-slug')
-      Rails.logger.info(log_message, event_id:)
+      Rails.logger.info(log_message, remote_event_id:, system_event: context.system_event&.serializable_hash)
     end
   end
 end

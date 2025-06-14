@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe Notion::DealCreated, type: :model do
+RSpec.describe Notion::DealCreatedEvent, type: :model do
   let(:metadatum) { Fabricate(:metadatum, key: 'notion.deal_created') }
 
   subject(:event) { Fabricate(:deal_created_event, integration: :notion, metadatum:) }

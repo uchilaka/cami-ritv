@@ -83,19 +83,11 @@ module API
             webhook_verification_params[:verification_token]
           end
 
-          def generate_expected_signature
-            verification_token = webhook.verification_token
-            body_json = JSON.generate({ 'verification_token' => verification_token })
-            digest = OpenSSL::HMAC.hexdigest('SHA256', verification_token, body_json)
-            "sha256=#{digest}"
-          end
-
           def verified_request?
-            return true if Flipper.enabled?(:feat__notion_webhook_skip_signature_validation)
-
-            expected_signature = generate_expected_signature
-            signature_header = request_signature_header
-            ActiveSupport::SecurityUtils.secure_compare(expected_signature, signature_header)
+            result =
+              ::Notion::VerifyRequestWorkflow
+                .call(webhook:, signature_header: request_signature_header)
+            result.success?
           end
 
           def validate_request_signature

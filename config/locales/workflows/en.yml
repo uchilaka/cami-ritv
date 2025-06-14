@@ -17,6 +17,11 @@ en:
         generic: "An error occurred while creating the user"
         token_conflict: "The %{provider} access token does not match the expected value %{context}"
     upsert_deal_workflow:
+      errors:
+        generic: "An error occurred while processing the deal workflow"
+        missing_required_fields: "Required fields are missing for the deal workflow"
+        invalid_status: "The provided status %{status} is not valid for the deal workflow"
+        unsupported_event_type: "The event type %{event_type} is not supported for the deal workflow"
       completed:
         message: "Deal workflow completed successfully"
         log: "Deal workflow completed with status %{status} for deal %{slug}"
