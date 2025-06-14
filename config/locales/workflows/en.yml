@@ -16,3 +16,7 @@ en:
       errors:
         generic: "An error occurred while creating the user"
         token_conflict: "The %{provider} access token does not match the expected value %{context}"
+    upsert_deal_workflow:
+      completed:
+        message: "Deal workflow completed successfully"
+        log: "Deal workflow completed with status %{status} for deal %{slug}"

@@ -7,6 +7,10 @@ module LarCity
     class DevkitCmd < BaseCmd
       namespace 'devkit'
 
+      method_option :force,
+                    desc: 'Force an upsert operation on any matching webhook (by vendor)',
+                    type: :boolean,
+                    default: false
       method_option :vendor,
                     desc: 'The vendor to use for the devkit',
                     type: :string,
@@ -18,8 +22,8 @@ module LarCity
         with_interruption_rescue do
           case options[:vendor]
           when 'notion'
-            integration_id, verification_token =
-              Rails.application.credentials.notion&.values_at :integration_id, :verification_token
+            integration_id, verification_token, deal_database_id =
+              Rails.application.credentials.notion&.values_at :integration_id, :verification_token, :deal_database_id
             ::Webhook.transaction do
               webhook =
                 ::Webhook
@@ -27,10 +31,20 @@ module LarCity
                     slug: options[:vendor],
                     verification_token:
                   )
-              if webhook.new_record?
-                webhook.integration_id = integration_id
-                webhook.save!
-                say "⚡ Webhook for #{options[:vendor]} has been set up successfully.", :green
+              updates = { integration_id:, deal_database_id: }.compact
+              if verbose?
+                ap webhook, options: { indent: 2 } if webhook.persisted?
+                say "Setting up webhook for #{options[:vendor]} with the following updates:", :magenta
+                ap updates, options: { indent: 2 }
+              end
+              if webhook.new_record? || options[:force]
+                webhook.data = { integration_id:, deal_database_id: }.compact
+                if webhook.changed?
+                  webhook.save!
+                  say "⚡ Webhook for #{options[:vendor]} has been set up successfully.", :green
+                else
+                  say "💅🏾 Webhook for #{options[:vendor]} is already set up and no changes were made.", :cyan
+                end
               else
                 say "🙅🏾‍♂️Webhook for #{options[:vendor]} already exists.", :yellow
               end

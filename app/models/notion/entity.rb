@@ -9,8 +9,12 @@ module Notion
 
     attr_accessor :data
 
-    def supported_types
+    def self.supported_types
       %w[page database person]
+    end
+
+    def supported_types
+      self.class.supported_types
     end
 
     validates :type, presence: true, inclusion: { in: lambda(&:supported_types) }

@@ -7,20 +7,30 @@ module API
         class EventsController < ApplicationController
           before_action :set_event, only: %i[create]
           skip_before_action :authenticate_user!
+          # TODO: Implement a request verification strategy that's compatible with Rails'
+          #   CSRF protection and leverages verified_request? instead of skipping it entirely.
           skip_forgery_protection only: %i[create]
           before_action :validate_request_signature, only: %i[create]
 
           # TODO: Validate event payload
           #   https://developers.notion.com/reference/webhooks#step-3-validating-event-payloads-recommended
           def create
+            case @event.type
+            when 'page.created', 'page.properties_updated', 'page.deleted'
+              if @event.parent.id == webhook.data['deal_database_id']
+                ::Notion::UpsertDealWorkflow.call(event: @event, webhook:)
+              else
+                Rails.logger.warn(
+                  "Unhandled notion #{@event.type} event for parent type #{@event.parent.type}",
+                  @event.serializable_hash
+                )
+              end
+            else
+              Rails.logger.warn("Unhandled notion #{@event.type} event", @event.serializable_hash)
+            end
+
             head :ok
           end
-
-          # protected
-          #
-          # def verified_request?
-          #   @webhook.present?
-          # end
 
           protected
 
@@ -80,7 +90,7 @@ module API
             "sha256=#{digest}"
           end
 
-          def is_trusted_request?
+          def verified_request?
             return true if Flipper.enabled?(:feat__notion_webhook_skip_signature_validation)
 
             expected_signature = generate_expected_signature
@@ -89,9 +99,7 @@ module API
           end
 
           def validate_request_signature
-            unless is_trusted_request?
-              render json: { error: 'Invalid signature' }, status: :unauthorized
-            end
+            render json: { error: 'Invalid signature' }, status: :unauthorized unless verified_request?
           end
         end
       end

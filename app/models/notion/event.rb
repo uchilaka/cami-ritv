@@ -11,7 +11,7 @@ module Notion
 
     attr_accessor :entity, :parent, :authors
 
-    def supported_types
+    def self.supported_types
       %w[
         database.content_updated
         database.deleted

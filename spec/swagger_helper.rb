@@ -50,10 +50,13 @@ RSpec.configure do |config|
               id: { type: :string },
               type: {
                 type: :string,
-                pattern: '^(page|database|person)$'
+                pattern: '^(page|database|person|block)$'
               },
             },
             required: %w[id type],
+          },
+          notion_block: {
+            '$ref' => '#/components/schemas/notion_entity',
           },
           notion_event: {
             type: :object,
@@ -74,6 +77,13 @@ RSpec.configure do |config|
                 properties: {
                   parent: {
                     ref: '#/components/schemas/notion_entity',
+                  },
+                  updated_blocks: {
+                    type: :array,
+                    nullable: true,
+                    items: {
+                      '$ref' => '#/components/schemas/notion_block',
+                    }
                   }
                 },
                 required: %w[parent]
