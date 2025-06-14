@@ -75,7 +75,7 @@ module API
 
           def generate_expected_signature
             verification_token = webhook.verification_token
-            body_json = JSON.generate(verification_token:)
+            body_json = JSON.generate({ 'verification_token' => verification_token })
             digest = OpenSSL::HMAC.hexdigest('SHA256', verification_token, body_json)
             "sha256=#{digest}"
           end
