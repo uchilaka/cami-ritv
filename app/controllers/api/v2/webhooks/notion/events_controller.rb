@@ -81,6 +81,8 @@ module API
           end
 
           def is_trusted_request?
+            return true if Flipper.enabled?(:feat__notion_webhook_skip_signature_validation)
+
             expected_signature = generate_expected_signature
             signature_header = request_signature_header
             ActiveSupport::SecurityUtils.secure_compare(expected_signature, signature_header)
