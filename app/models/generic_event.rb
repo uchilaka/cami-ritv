@@ -24,10 +24,4 @@ class GenericEvent < ApplicationRecord
   attribute :type, :string, default: 'GenericEvent'
 
   belongs_to :eventable, polymorphic: true, optional: true
-  # TODO: Require this after implementing the workflow for
-  #   capturing Notion deal CRUD events which should include
-  #   entity_id, integration_id, database_id, type and other
-  #   relevant fields to inform an async job to create a deal
-  #   in the system.
-  belongs_to :metadatum, optional: true, dependent: :destroy
 end

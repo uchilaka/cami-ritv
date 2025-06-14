@@ -20,17 +20,17 @@ class Webhook < ApplicationRecord
 
   store_accessor :data, %i[integration_id integration_name]
 
-  has_many :generic_events, as: :eventable, dependent: :nullify
-
   encrypts :verification_token, deterministic: true
 
   has_rich_text :readme
 
   friendly_id :slug, use: :slugged
 
+  has_many :generic_events, as: :eventable, dependent: :nullify
+
   validates :slug,
             presence: true,
-            uniqueness: { case_sensitive: true },
+            uniqueness: { case_sensitive: false },
             length: { maximum: 64 }
   validates :verification_token, presence: true
 

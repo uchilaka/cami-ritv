@@ -3,14 +3,34 @@
 require 'rails_helper'
 
 RSpec.describe Notion::DealCreatedEvent, type: :model do
-  let(:metadatum) { Fabricate(:metadatum, key: 'notion.deal_created') }
+  let(:database_id) { SecureRandom.uuid }
+  let(:integration_id) { SecureRandom.uuid }
+  let(:entity_id) { SecureRandom.uuid }
+  let(:metadatum) do
+    Fabricate(:metadatum,
+              key: 'notion.deal_created',
+              value: { integration_id:, database_id: })
+  end
+  let(:webhook) { Fabricate(:webhook, integration: :notion) }
 
   subject(:event) { Fabricate(:deal_created_event, integration: :notion, metadatum:) }
 
-  it { is_expected.to have_attributes(metadatum:) }
+  before do
+    event.eventable = webhook
+    event.save!
+  end
+
+  xit { is_expected.to have_attributes(entity_id:) }
+  xit { is_expected.to have_attributes(integration_id:) }
+  xit { is_expected.to have_attributes(database_id:) }
+  xit { is_expected.to have_attributes(remote_record_id: entity_id) }
 
   describe 'associations' do
-    it { should belong_to(:metadatum).optional.dependent(:destroy) }
+    it { is_expected.to be_valid }
+    it { is_expected.to belong_to(:eventable).optional }
+    it { is_expected.to have_one(:metadatum).optional.dependent(:destroy) }
+    it { is_expected.to have_attributes(metadatum:) }
+    it { is_expected.to have_attributes(eventable: webhook) }
   end
 
   describe 'inheritance' do

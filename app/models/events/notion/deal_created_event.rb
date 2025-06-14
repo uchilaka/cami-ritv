@@ -26,6 +26,17 @@ module Notion
   class DealCreatedEvent < ::GenericEvent
     include AASM
 
+    # TODO: Require this after implementing the workflow for
+    #   capturing Notion deal CRUD events which should include
+    #   entity_id, integration_id, database_id, type and other
+    #   relevant fields to inform an async job to create a deal
+    #   in the system.
+    has_one :metadatum, as: :appendable, dependent: :destroy
+
+    delegate :entity_id, :integration_id, :database_id, to: :metadatum
+
+    alias remote_record_id entity_id
+
     aasm column: :status do
       state :pending, initial: true
       state :processing
