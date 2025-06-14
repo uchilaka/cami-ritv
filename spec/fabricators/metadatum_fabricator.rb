@@ -13,5 +13,4 @@
 #
 #  index_for_zoho_oauth_serverinfo_metadata  (((value ->> 'region_alpha2'::text)))
 #
-Fabricator(:metadatum) do
-end
+Fabricator(:metadatum)

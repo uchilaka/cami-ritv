@@ -5,7 +5,7 @@
 # Table name: webhooks
 #
 #  id                 :uuid             not null, primary key
-#  readme             :text
+#  data               :jsonb
 #  slug               :string
 #  verification_token :string
 #  created_at         :datetime         not null
