@@ -37,6 +37,8 @@
 #  index_invoices_on_invoiceable_type_and_invoiceable_id  (invoiceable_type,invoiceable_id)
 #
 class Invoice < ApplicationRecord
+  has_paper_trail
+
   resourcify
 
   include AASM
