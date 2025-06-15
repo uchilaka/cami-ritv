@@ -18,18 +18,28 @@ module API
             case @event.type
             when 'page.created', 'page.properties_updated', 'page.deleted'
               if @event.parent.id == webhook.data['deal_database_id']
-                ::Notion::UpsertDealWorkflow.call(event: @event, webhook:)
+                result = ::Notion::UpsertDealWorkflow.call(event: @event, webhook:)
+                if result.success?
+                  head :ok
+                else
+                  Rails.logger.error(
+                    "Failed to process Notion event: #{@event.type}",
+                    error: result.error,
+                    event: @event.serializable_hash
+                  )
+                  head :server_error
+                end
               else
                 Rails.logger.warn(
                   "Unhandled notion #{@event.type} event for parent type #{@event.parent.type}",
                   @event.serializable_hash
                 )
+                head :unprocessable_entity
               end
             else
               Rails.logger.warn("Unhandled notion #{@event.type} event", @event.serializable_hash)
+              head :unprocessable_entity
             end
-
-            head :ok
           end
 
           protected

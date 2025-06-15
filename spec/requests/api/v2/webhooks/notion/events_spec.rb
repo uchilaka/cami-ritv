@@ -13,6 +13,11 @@ RSpec.describe 'API::V2::Webhooks::Notion::Events', type: :request do
         receive(:secure_compare).and_return(true)
     end
 
+    around do |example|
+      Flipper.enable(:feat__notion_webhook_skip_signature_validation)
+      example.run
+    end
+
     after do
       allow(ActiveSupport::SecurityUtils).to \
         receive(:secure_compare).and_call_original

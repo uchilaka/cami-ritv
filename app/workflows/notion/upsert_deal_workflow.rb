@@ -31,7 +31,11 @@ module Notion
       metadatum = ::Notion::WebhookEventMetadatum.create!(key: "notion.#{context.event.type}", value: event_data)
       system_event = klass_type.constantize.create!(metadatum:)
       system_event.eventable = context.webhook
-      system_event.save!
+      if system_event.valid?
+        system_event.save!
+      else
+        fail!(error: system_event.error.full_messages)
+      end
     ensure
       remote_event_id = context.event.id
       status = context.success? ? 'success' : 'failure'

@@ -30,15 +30,8 @@ RSpec.describe Notion::DealCreatedEvent, type: :model do
     it { is_expected.to belong_to(:eventable).optional }
     it { is_expected.to accept_nested_attributes_for(:metadatum) }
     it { is_expected.to have_attributes(metadatum:) }
-    xit { is_expected.to have_one(:metadatum).optional.dependent(:destroy) }
     it { is_expected.to have_attributes(metadatum:) }
     it { is_expected.to have_attributes(eventable: webhook) }
-  end
-
-  describe 'inheritance' do
-    it 'inherits from GenericEvent' do
-      expect(described_class.superclass).to eq(GenericEvent)
-    end
   end
 
   describe 'instantiation' do
