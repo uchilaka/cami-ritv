@@ -6,7 +6,7 @@ module Notion
 
     def call
       entity = context.event.entity
-      database = context.event.parent
+      database = context.database
       remote_record_id = entity.id
 
       klass_type =
@@ -18,15 +18,25 @@ module Notion
         else
           error =
             I18n.t('workflows.upsert_deal_workflow.errors.unsupported_event_type', event_type: context.event.type)
-          fail!(error:)
+          context.fail!(error:)
         end
-      return if context.failed?
+      return if context.failure?
 
+      event_type, timestamp, workspace_id, workspace_name, integration_id, attempt_number =
+        context
+          .event
+          .serializable_hash
+          .values_at('type', 'timestamp', 'workspace_id', 'workspace_name', 'integration_id', 'attempt_number')
       event_data = {
-        remote_record_id:,
         database: database.serializable_hash,
         entity: entity.serializable_hash,
-        **context.event.serializable_hash,
+        type: event_type,
+        timestamp:,
+        remote_record_id:,
+        workspace_id:,
+        workspace_name:,
+        integration_id:,
+        attempt_number:,
       }
       metadatum = ::Notion::WebhookEventMetadatum.create!(key: "notion.#{context.event.type}", value: event_data)
       system_event = klass_type.constantize.create!(metadatum:)
@@ -34,7 +44,7 @@ module Notion
       if system_event.valid?
         system_event.save!
       else
-        fail!(error: system_event.error.full_messages)
+        context.fail!(error: system_event.error.full_messages)
       end
     ensure
       remote_event_id = context.event.id

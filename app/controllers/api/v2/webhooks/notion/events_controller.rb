@@ -15,31 +15,10 @@ module API
           # TODO: Validate event payload
           #   https://developers.notion.com/reference/webhooks#step-3-validating-event-payloads-recommended
           def create
-            case @event.type
-            when 'page.created', 'page.properties_updated', 'page.deleted'
-              if @event.parent.id == webhook.data['deal_database_id']
-                result = ::Notion::UpsertDealWorkflow.call(event: @event, webhook:)
-                if result.success?
-                  head :ok
-                else
-                  Rails.logger.error(
-                    "Failed to process Notion event: #{@event.type}",
-                    error: result.error,
-                    event: @event.serializable_hash
-                  )
-                  head :server_error
-                end
-              else
-                Rails.logger.warn(
-                  "Unhandled notion #{@event.type} event for parent type #{@event.parent.type}",
-                  @event.serializable_hash
-                )
-                head :unprocessable_entity
-              end
-            else
-              Rails.logger.warn("Unhandled notion #{@event.type} event", @event.serializable_hash)
-              head :unprocessable_entity
-            end
+            result =
+              ::Notion::HandlePageEventWorkflow.call(webhook:, event: @event)
+            http_status = result.response_http_status || :server_error
+            head http_status
           end
 
           protected

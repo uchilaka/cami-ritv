@@ -23,5 +23,13 @@ en:
         invalid_status: "The provided status %{status} is not valid for the deal workflow"
         unsupported_event_type: "The event type %{event_type} is not supported for the deal workflow"
       completed:
-        message: "Deal workflow completed successfully"
-        log: "Deal workflow completed with status %{status} for deal %{slug}"
+        message: "Deal workflow %{status}"
+        log: "Deal workflow %{status} for deal %{slug}"
+    handle_notion_page_event_workflow:
+      errors:
+        generic: "An error occurred while processing the Notion page event workflow"
+        invalid_or_missing_event: "Invalid or missing event for the Notion page event workflow"
+        unsupported_event_type: "The event type %{event_type} is not supported for the Notion page event workflow"
+      completed:
+        message: "Notion page %{event_type} event workflow %{status}"
+        log: "Notion page %{event_type} event workflow %{status} for page %{page}"
