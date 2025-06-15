@@ -6,17 +6,10 @@ RSpec.describe 'API::V2::Webhooks::Notion::Events', type: :request do
   let(:deal_database_id) { SecureRandom.uuid }
   let(:integration_id) { SecureRandom.uuid }
   let(:integration_name) { 'CAMI Lab Integration' }
-  let(:request_headers) { {} }
+  let(:verification_token) { SecureRandom.hex(24) }
 
   path '/api/v2/webhooks/notion/events' do
-    let(:request_signature_header) do
-      {
-        'X-Notion-Signature' => 'valid-signature', # This should be a valid signature for the test
-      }
-    end
-    let(:request_headers) do
-      { **request_signature_header }
-    end
+    let(:'X-Notion-Signature') { 'valid-notion-request-signature' }
 
     before do
       Fabricate(:notion_webhook, data: { integration_id:, integration_name:, deal_database_id: })
@@ -39,17 +32,8 @@ RSpec.describe 'API::V2::Webhooks::Notion::Events', type: :request do
       consumes 'application/json'
       produces 'application/json'
 
-      parameter name: :request_headers, in: :header, required: true,
-                description: 'Signature header for Notion webhook verification',
-                schema: {
-                  type: :object,
-                  properties: {
-                    'X-Notion-Signature': {
-                      type: :string,
-                      description: 'Signature header for Notion webhook verification',
-                    },
-                  },
-                }
+      parameter name: :'X-Notion-Signature', in: :header, type: :string, required: true,
+                description: 'Signature header for Notion webhook verification'
 
       parameter name: :event_params, in: :body, schema: {
         type: :object,
@@ -125,9 +109,7 @@ RSpec.describe 'API::V2::Webhooks::Notion::Events', type: :request do
 
     it 'validates the Notion verification token' do
       # TODO: Update the JSON schema to support the verification token with everything else nullable
-      valid_event_params = {
-        verification_token: SecureRandom.hex(24),
-      }
+      valid_event_params = { verification_token: }
 
       post('/api/v2/webhooks/notion/events', params: valid_event_params, headers:)
       expect(response).to have_http_status(:ok)

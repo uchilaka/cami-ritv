@@ -19,6 +19,11 @@ module LarCity
                     required: true
       desc 'setup_webhooks', 'Setup webhooks for the project'
       def setup_webhooks
+        if Rails.env.test?
+          say_highlight('🚫 Skipping webhook setup in test environment')
+          return
+        end
+
         with_interruption_rescue do
           case options[:vendor]
           when 'notion'
@@ -46,7 +51,7 @@ module LarCity
                   say "💅🏾 Webhook for #{options[:vendor]} is already set up and no changes were made.", :cyan
                 end
               else
-                say "🙅🏾‍♂️Webhook for #{options[:vendor]} already exists.", :yellow
+                say "🙅🏾‍♂️ Webhook for #{options[:vendor]} already exists.", :yellow
               end
               raise ActiveRecord::Rollback if dry_run?
             end

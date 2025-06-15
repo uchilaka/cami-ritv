@@ -29,12 +29,16 @@ development: &development
   feat__accounts:
     enabled: true
   feat__invoices:
-    enabled: false
+    enabled: true
   feat__filterable_billing_type_badge:
     enabled: true
   feat__sortable_invoice_index:
     enabled: true
   feat__showcase:
+    enabled: true
+  feat__webhooks:
+    enabled: true
+  feat__notion_webhook_skip_signature_validation:
     enabled: true
 test:
   <<: *default
