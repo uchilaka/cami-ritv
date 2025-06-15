@@ -1,9 +1,7 @@
 # frozen_string_literal: true
 
 require 'rails_helper'
-require 'commands/lar_city/cli/base_cmd'
-
-load_lib_script 'commands', 'features_cmd', ext: 'thor'
+require 'commands/features_cmd'
 
 RSpec.describe FeaturesCmd do
   describe '#init' do
