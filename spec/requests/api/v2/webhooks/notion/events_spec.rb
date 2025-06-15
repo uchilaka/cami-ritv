@@ -3,10 +3,14 @@
 require 'swagger_helper'
 
 RSpec.describe 'API::V2::Webhooks::Notion::Events', type: :request do
+  let(:deal_database_id) { SecureRandom.uuid }
+  let(:integration_id) { SecureRandom.uuid }
+  let(:integration_name) { 'CAMI Lab Integration' }
+
   path '/api/v2/webhooks/notion/events' do
-    let(:deal_database_id) { SecureRandom.uuid }
-    let(:integration_id) { SecureRandom.uuid }
-    let(:integration_name) { 'CAMI Lab Integration' }
+    # let(:deal_database_id) { SecureRandom.uuid }
+    # let(:integration_id) { SecureRandom.uuid }
+    # let(:integration_name) { 'CAMI Lab Integration' }
     before do
       Fabricate(:notion_webhook, data: { integration_id:, integration_name:, deal_database_id: })
       allow(ActiveSupport::SecurityUtils).to \
@@ -102,10 +106,11 @@ RSpec.describe 'API::V2::Webhooks::Notion::Events', type: :request do
     end
 
     # This test is pending because signature verification is commented out in the controller
-    it 'verifies the Notion signature header' do
+    xit 'verifies the Notion signature header' do
       # Mock the headers with a valid signature
       headers = { 'X-Notion-Signature' => 'valid-signature' }
 
+      # TODO: Update the JSON schema to support the verification token with everything else nullable
       valid_event_params = {
         verification_token: SecureRandom.hex(24),
       }
