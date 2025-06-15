@@ -33,3 +33,12 @@ en:
       completed:
         message: "Notion page %{event_type} event workflow %{status}"
         log: "Notion page %{event_type} event workflow %{status} for page %{page}"
+    register_notion_verification_token_workflow:
+      errors:
+        generic: "An error occurred while registering the Notion verification token"
+        missing_webhook: "The Notion webhook has not been set up for %{environment}"
+        missing_token: "The Notion verification token is missing"
+        invalid_token: "The Notion verification token is invalid"
+      completed:
+        message: "Notion verification token registered successfully"
+        log: "Notion verification token registered by user %{email} for workspace %{workspace}"

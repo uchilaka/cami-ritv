@@ -16,7 +16,11 @@ module API
           #   https://developers.notion.com/reference/webhooks#step-3-validating-event-payloads-recommended
           def create
             result =
-              ::Notion::HandlePageEventWorkflow.call(webhook:, event: @event)
+              if request_verification_token.present?
+                ::Notion::RegisterVerificationTokenWorkflow.call(webhook:)
+              else
+                ::Notion::HandlePageEventWorkflow.call(webhook:, event: @event)
+              end
             http_status = result.response_http_status || :server_error
             head http_status
           end

@@ -7,8 +7,30 @@ module Notion
     include Interactor
 
     def call
-      # Logic to register the verification token goes here.
-      # This could involve saving the token to a database or sending it to an external service.
+      webhook = context.webhook
+      if webhook.nil?
+        message =
+          I18n.t(
+            'workflows.register_notion_verification_token_workflow.errors.missing_webhook',
+            environment: Rails.env
+          )
+        context.fail!(message)
+        return
+      end
+
+      verification_token = context.verification_token
+      if verification_token.blank?
+        message =
+          I18n.t(
+            'workflows.register_notion_verification_token_workflow.errors.missing_token',
+            environment: Rails.env
+          )
+        context.fail!(message)
+        return
+      end
+
+      webhook.update(verification_token:)
+      webhook.start_review
     end
   end
 end

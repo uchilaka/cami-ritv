@@ -18,6 +18,8 @@
 class Webhook < ApplicationRecord
   extend FriendlyId
 
+  include AASM
+
   store_accessor :data, %i[integration_id integration_name]
 
   encrypts :verification_token, deterministic: true
@@ -27,6 +29,26 @@ class Webhook < ApplicationRecord
   friendly_id :slug, use: :slugged
 
   has_many :generic_events, as: :eventable, dependent: :nullify
+
+  aasm column: :status do
+    state :pending_review, initial: true
+    state :active
+    state :disabled
+
+    # TODO: implement callback to (async) job to send a notification to the admin user to review the webhook.
+    #   See callback example(s): https://github.com/aasm/aasm?tab=readme-ov-file#callbacks
+    event :start_review do
+      transitions from: %i[active disabled], to: :pending_review
+    end
+
+    event :disable do
+      transitions from: :active, to: :disabled
+    end
+
+    event :enable do
+      transitions from: %i[pending_review disabled], to: :active, guard: :verified?
+    end
+  end
 
   validates :slug,
             presence: true,
@@ -42,5 +64,9 @@ class Webhook < ApplicationRecord
 
   def hostname
     ENV.fetch('HOSTNAME')
+  end
+
+  def verified?
+    verification_token.present?
   end
 end
