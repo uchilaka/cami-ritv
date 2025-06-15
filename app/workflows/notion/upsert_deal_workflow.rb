@@ -16,9 +16,9 @@ module Notion
         when 'page.properties_updated'
           'Notion::DealUpdatedEvent'
         else
-          error =
-            I18n.t('workflows.upsert_deal_workflow.errors.unsupported_event_type', event_type: context.event.type)
-          context.fail!(error:)
+          message =
+            I18n.t('workflows.upsert_notion_deal_workflow.errors.unsupported_event_type', event_type: context.event.type)
+          context.fail!(message:)
         end
       return if context.failure?
 
@@ -44,13 +44,17 @@ module Notion
       if system_event.valid?
         system_event.save!
       else
-        context.fail!(error: system_event.error.full_messages)
+        message = I18n.t(
+          'workflows.upsert_notion_deal_workflow.errors.invalid_event_data',
+          event_type:
+        )
+        context.fail!(message:, errors: system_event.error.full_messages)
       end
     ensure
       remote_event_id = context.event.id
       status = context.success? ? 'success' : 'failure'
       log_message =
-        I18n.t('workflows.upsert_deal_workflow.completed.log', status:, slug: 'fake-deal-slug')
+        I18n.t('workflows.upsert_notion_deal_workflow.completed.log', status:, slug: 'fake-deal-slug')
       Rails.logger.info(log_message, remote_event_id:, system_event: system_event&.serializable_hash)
     end
   end

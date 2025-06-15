@@ -14,7 +14,7 @@ module Notion
             'workflows.register_notion_verification_token_workflow.errors.missing_webhook',
             environment: Rails.env
           )
-        context.fail!(message)
+        context.fail!(message:)
       end
 
       if context.success?
@@ -25,7 +25,7 @@ module Notion
               'workflows.register_notion_verification_token_workflow.errors.missing_token',
               environment: Rails.env
             )
-          context.fail!(message)
+          context.fail!(message:)
         end
       end
 

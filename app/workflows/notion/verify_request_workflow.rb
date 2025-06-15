@@ -16,7 +16,7 @@ module Notion
           )
       return true if Flipper.enabled?(:feat__notion_webhook_skip_signature_validation)
 
-      fail!(error: 'Invalid signature') unless result
+      fail!(message: 'Invalid signature') unless result
     end
 
     private

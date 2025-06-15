@@ -25,6 +25,16 @@ en:
       completed:
         message: "Deal workflow %{status}"
         log: "Deal workflow %{status} for deal %{slug}"
+    upsert_notion_deal_workflow:
+      errors:
+        generic: "An error occurred while processing the Notion deal workflow"
+        missing_required_fields: "Required fields are missing for the Notion deal workflow"
+        invalid_status: "The provided status %{status} is not valid for the Notion deal workflow"
+        invalid_event_data: "The %{event_type} event data is invalid for the Notion deal workflow"
+        unsupported_event_type: "The event type %{event_type} is not supported for the Notion deal workflow"
+      completed:
+        message: "Notion deal workflow %{status}"
+        log: "Notion deal workflow %{status} for deal %{slug}"
     handle_notion_page_event_workflow:
       errors:
         generic: "An error occurred while processing the Notion page event workflow"

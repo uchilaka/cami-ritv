@@ -6,19 +6,18 @@ RSpec.describe 'API::V2::Webhooks::Notion::Events', type: :request do
   let(:deal_database_id) { SecureRandom.uuid }
   let(:integration_id) { SecureRandom.uuid }
   let(:integration_name) { 'CAMI Lab Integration' }
-  let(:request_signature_header) do
-    {
-      'X-Notion-Signature' => 'valid-signature', # This should be a valid signature for the test
-    }
-  end
+  let(:request_headers) { {} }
 
   path '/api/v2/webhooks/notion/events' do
+    let(:request_signature_header) do
+      {
+        'X-Notion-Signature' => 'valid-signature', # This should be a valid signature for the test
+      }
+    end
     let(:request_headers) do
       { **request_signature_header }
     end
-    # let(:deal_database_id) { SecureRandom.uuid }
-    # let(:integration_id) { SecureRandom.uuid }
-    # let(:integration_name) { 'CAMI Lab Integration' }
+
     before do
       Fabricate(:notion_webhook, data: { integration_id:, integration_name:, deal_database_id: })
       allow(ActiveSupport::SecurityUtils).to \
@@ -117,19 +116,14 @@ RSpec.describe 'API::V2::Webhooks::Notion::Events', type: :request do
     end
   end
 
-  # This context is for tests that don't fit neatly in the Swagger documentation
-  # but still need to be tested
+  # NOTE: This context is for tests that don't fit neatly in the Swagger documentation
+  #   but still need to be tested
   context 'when a verification_token is sent' do
-    # before do
-    #   Fabricate(:notion_webhook, data: { integration_id:, integration_name:, deal_database_id: })
-    #   allow(ActiveSupport::SecurityUtils).to \
-    #     receive(:secure_compare).and_return(true)
-    # end
+    before do
+      Fabricate(:notion_webhook, data: { integration_id:, integration_name:, deal_database_id: })
+    end
 
-    xit 'validates the Notion verification token' do
-      # # Mock the headers with a valid signature
-      # headers = { 'X-Notion-Signature' => 'valid-signature' }
-
+    it 'validates the Notion verification token' do
       # TODO: Update the JSON schema to support the verification token with everything else nullable
       valid_event_params = {
         verification_token: SecureRandom.hex(24),
