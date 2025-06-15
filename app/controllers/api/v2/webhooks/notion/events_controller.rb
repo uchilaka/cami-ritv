@@ -17,7 +17,8 @@ module API
           def create
             result =
               if request_verification_token.present?
-                ::Notion::RegisterVerificationTokenWorkflow.call(webhook:)
+                ::Notion::RegisterVerificationTokenWorkflow
+                  .call(webhook:, verification_token: request_verification_token)
               else
                 ::Notion::HandlePageEventWorkflow.call(webhook:, event: @event)
               end
