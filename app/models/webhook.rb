@@ -33,14 +33,15 @@ class Webhook < ApplicationRecord
   has_many :generic_events, as: :eventable, dependent: :nullify
 
   aasm column: :status do
-    state :pending_review, initial: true
+    state :draft, initial: true
+    state :pending_review
     state :active
     state :disabled
 
     # TODO: implement callback to (async) job to send a notification to the admin user to review the webhook.
     #   See callback example(s): https://github.com/aasm/aasm?tab=readme-ov-file#callbacks
     event :start_review do
-      transitions from: %i[active disabled], to: :pending_review
+      transitions from: %i[active disabled draft], to: :pending_review
     end
 
     event :disable do
@@ -48,7 +49,7 @@ class Webhook < ApplicationRecord
     end
 
     event :enable do
-      transitions from: %i[pending_review disabled], to: :active, guard: :verified?
+      transitions from: %i[draft pending_review disabled], to: :active, guard: :verified?
     end
   end
 

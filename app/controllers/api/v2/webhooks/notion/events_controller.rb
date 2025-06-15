@@ -5,7 +5,7 @@ module API
     module Webhooks
       module Notion
         class EventsController < ApplicationController
-          before_action :set_event, only: %i[create]
+          # before_action :set_event, only: %i[create]
           skip_before_action :authenticate_user!
           # TODO: Implement a request verification strategy that's compatible with Rails'
           #   CSRF protection and leverages verified_request? instead of skipping it entirely.
@@ -20,16 +20,23 @@ module API
                 ::Notion::RegisterVerificationTokenWorkflow
                   .call(webhook:, verification_token: request_verification_token)
               else
-                ::Notion::HandlePageEventWorkflow.call(webhook:, event: @event)
+                event.validate!
+                ::Notion::HandlePageEventWorkflow.call(webhook:, event:)
               end
             http_status = result.response_http_status || :server_error
             head http_status
+          rescue ActiveModel::ValidationError => e
+            render json: { errors: e.message }, status: :unprocessable_entity
           end
 
           protected
 
           def webhook
             @webhook ||= ::Webhook.find_by(slug: 'notion')
+          end
+
+          def event
+            @event ||= ::Notion::Event.new(webhook_event_params)
           end
 
           private
@@ -46,7 +53,7 @@ module API
           end
 
           def webhook_verification_params
-            params.expect(:verification_token)
+            params.permit(:verification_token)
           end
 
           def webhook_event_params
@@ -79,6 +86,8 @@ module API
 
           def verified_request?
             super || begin
+              return true if request_verification_token.present?
+
               result =
                 ::Notion::VerifyRequestWorkflow
                   .call(webhook:, signature_header: request_signature_header)

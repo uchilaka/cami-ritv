@@ -6,8 +6,16 @@ RSpec.describe 'API::V2::Webhooks::Notion::Events', type: :request do
   let(:deal_database_id) { SecureRandom.uuid }
   let(:integration_id) { SecureRandom.uuid }
   let(:integration_name) { 'CAMI Lab Integration' }
+  let(:request_signature_header) do
+    {
+      'X-Notion-Signature' => 'valid-signature', # This should be a valid signature for the test
+    }
+  end
 
   path '/api/v2/webhooks/notion/events' do
+    let(:request_headers) do
+      { **request_signature_header }
+    end
     # let(:deal_database_id) { SecureRandom.uuid }
     # let(:integration_id) { SecureRandom.uuid }
     # let(:integration_name) { 'CAMI Lab Integration' }
@@ -32,6 +40,18 @@ RSpec.describe 'API::V2::Webhooks::Notion::Events', type: :request do
       consumes 'application/json'
       produces 'application/json'
 
+      parameter name: :request_headers, in: :header, required: true,
+                description: 'Signature header for Notion webhook verification',
+                schema: {
+                  type: :object,
+                  properties: {
+                    'X-Notion-Signature': {
+                      type: :string,
+                      description: 'Signature header for Notion webhook verification',
+                    },
+                  },
+                }
+
       parameter name: :event_params, in: :body, schema: {
         type: :object,
         properties: {
@@ -42,6 +62,7 @@ RSpec.describe 'API::V2::Webhooks::Notion::Events', type: :request do
           },
           event: {
             '$ref': '#/components/schemas/notion_event',
+            nullable: true,
           },
         },
       }
@@ -98,17 +119,16 @@ RSpec.describe 'API::V2::Webhooks::Notion::Events', type: :request do
 
   # This context is for tests that don't fit neatly in the Swagger documentation
   # but still need to be tested
-  context 'when validating Notion signature' do
-    before do
-      Fabricate(:notion_webhook, data: { integration_id:, integration_name:, deal_database_id: })
-      allow(ActiveSupport::SecurityUtils).to \
-        receive(:secure_compare).and_return(true)
-    end
+  context 'when a verification_token is sent' do
+    # before do
+    #   Fabricate(:notion_webhook, data: { integration_id:, integration_name:, deal_database_id: })
+    #   allow(ActiveSupport::SecurityUtils).to \
+    #     receive(:secure_compare).and_return(true)
+    # end
 
-    # This test is pending because signature verification is commented out in the controller
-    xit 'verifies the Notion signature header' do
-      # Mock the headers with a valid signature
-      headers = { 'X-Notion-Signature' => 'valid-signature' }
+    xit 'validates the Notion verification token' do
+      # # Mock the headers with a valid signature
+      # headers = { 'X-Notion-Signature' => 'valid-signature' }
 
       # TODO: Update the JSON schema to support the verification token with everything else nullable
       valid_event_params = {

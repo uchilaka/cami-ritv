@@ -6,7 +6,7 @@ class AddStatusToWebhooks < ActiveRecord::Migration[8.0]
 
   def change
     add_column :webhooks, :status, :string,
-               null: false, default: 'pending_review', if_not_exists: true
+               null: false, if_not_exists: true
     add_index :webhooks, :status, algorithm: :concurrently, if_not_exists: true
 
     # reversible do |dir|

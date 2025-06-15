@@ -17,6 +17,7 @@
 #
 Fabricator(:webhook) do
   transient :integration
+  status            { :draft }
   slug               do |attrs|
     if attrs[:integration] == :notion
       :notion
