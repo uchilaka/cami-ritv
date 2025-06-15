@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_14_192226) do
+ActiveRecord::Schema[8.0].define(version: 2025_06_15_104824) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -390,7 +390,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_14_192226) do
     t.jsonb "data", default: {}
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "status", default: "pending_review", null: false
     t.index ["slug"], name: "index_webhooks_on_slug", unique: true
+    t.index ["status"], name: "index_webhooks_on_status"
   end
 
   add_foreign_key "accounts", "accounts", column: "parent_id", validate: false

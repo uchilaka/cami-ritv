@@ -95,12 +95,14 @@ RSpec.describe 'API::V2::Webhooks::Notion::Events', type: :request do
   # This context is for tests that don't fit neatly in the Swagger documentation
   # but still need to be tested
   context 'when validating Notion signature' do
-    # This test is pending because signature verification is commented out in the controller
-    xit 'verifies the Notion signature header' do
-      # Mock the webhook verification
-      webhook = instance_double('Webhook')
-      allow(Webhook).to receive(:find_by).and_return(webhook)
+    before do
+      Fabricate(:notion_webhook, data: { integration_id:, integration_name:, deal_database_id: })
+      allow(ActiveSupport::SecurityUtils).to \
+        receive(:secure_compare).and_return(true)
+    end
 
+    # This test is pending because signature verification is commented out in the controller
+    it 'verifies the Notion signature header' do
       # Mock the headers with a valid signature
       headers = { 'X-Notion-Signature' => 'valid-signature' }
 

@@ -15,22 +15,28 @@ module Notion
             environment: Rails.env
           )
         context.fail!(message)
-        return
       end
 
-      verification_token = context.verification_token
-      if verification_token.blank?
-        message =
-          I18n.t(
-            'workflows.register_notion_verification_token_workflow.errors.missing_token',
-            environment: Rails.env
-          )
-        context.fail!(message)
+      if context.success?
+        verification_token = context.verification_token
+        if verification_token.blank?
+          message =
+            I18n.t(
+              'workflows.register_notion_verification_token_workflow.errors.missing_token',
+              environment: Rails.env
+            )
+          context.fail!(message)
+        end
+      end
+
+      if context.failure?
+        context.response_http_status = :unprocessable_entity
         return
       end
 
       webhook.update(verification_token:)
       webhook.start_review
+      context.response_http_status = :ok
     end
   end
 end
