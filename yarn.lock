@@ -939,7 +939,7 @@ __metadata:
     "@types/react-dom": "npm:^19.1.2"
     "@vitejs/plugin-react": "npm:^4.4.0"
     autoprefixer: "npm:^10.4.21"
-    axios: "npm:^0.27.0"
+    axios: "npm:^1.10.0"
     browserslist: "npm:^4.24.4"
     clsx: "npm:^2.1.1"
     comment-json: "npm:^4.2.5"
@@ -2647,13 +2647,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"axios@npm:^0.27.0":
-  version: 0.27.2
-  resolution: "axios@npm:0.27.2"
+"axios@npm:^1.10.0":
+  version: 1.10.0
+  resolution: "axios@npm:1.10.0"
   dependencies:
-    follow-redirects: "npm:^1.14.9"
+    follow-redirects: "npm:^1.15.6"
     form-data: "npm:^4.0.0"
-  checksum: 10c0/76d673d2a90629944b44d6f345f01e58e9174690f635115d5ffd4aca495d99bcd8f95c590d5ccb473513f5ebc1d1a6e8934580d0c57cdd0498c3a101313ef771
+    proxy-from-env: "npm:^1.1.0"
+  checksum: 10c0/2239cb269cc789eac22f5d1aabd58e1a83f8f364c92c2caa97b6f5cbb4ab2903d2e557d9dc670b5813e9bcdebfb149e783fb8ab3e45098635cd2f559b06bd5d8
   languageName: node
   linkType: hard
 
@@ -4044,7 +4045,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"follow-redirects@npm:^1.14.0, follow-redirects@npm:^1.14.9, follow-redirects@npm:^1.15.6":
+"follow-redirects@npm:^1.14.0, follow-redirects@npm:^1.15.6":
   version: 1.15.9
   resolution: "follow-redirects@npm:1.15.9"
   peerDependenciesMeta:
