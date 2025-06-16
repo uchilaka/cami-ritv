@@ -1,16 +1,22 @@
+<% deal_database_id ||= Rails.application.credentials.notion&.deal_database_id %>
 <div id="<%= dom_id webhook %>" class="relative my-5">
   <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left">
     <!-- Slug -->
     <div class="flex flex-col">
       <label class="text-sm font-medium text-gray-900 dark:text-white">Slug</label>
-      <span class="text-gray-500 dark:text-gray-400"><%= webhook.slug %></span>
+      <span class="text-gray-500 dark:text-gray-400">
+        <code><%= webhook.slug %></code>
+      </span>
     </div>
 
-    <!-- Verification token -->
-    <div class="flex flex-col">
-      <%= render('shared/readonly-input',
-                 id: 'verification-token', label: 'Verification token', value: webhook.verification_token) %>
-    </div>
+    <% if deal_database_id %>
+      <!-- Deal Database ID -->
+      <!-- TODO: Implement tool tip on where this is configured in (e.g. accessor in Rails credentials) -->
+      <div class="flex flex-col">
+        <%= render('shared/readonly-input',
+                   id: 'database-id', label: 'Deal Database ID', value: deal_database_id) %>
+      </div>
+    <% end %>
 
     <!-- URL -->
     <div class="flex flex-col md:col-span-2">
@@ -19,11 +25,26 @@
     </div>
 
     <% if webhook.dashboard_url %>
+      <!-- Dashboard URL -->
       <div class="flex flex-col md:col-span-2">
         <label class="text-sm font-medium text-gray-900 dark:text-white">Dashboard URL</label>
-        <span class="text-gray-500 dark:text-gray-400"><%= link_to webhook.dashboard_url, webhook.dashboard_url %></span>
+        <span class="text-gray-500 dark:text-gray-400">
+          <%= link_to webhook.dashboard_url, webhook.dashboard_url, target: '_blank' %>
+        </span>
       </div>
     <% end %>
+
+    <!-- Verification token -->
+    <div class="flex flex-col">
+      <%= render('shared/readonly-input',
+                 id: 'verification-token', label: 'Verification token', value: webhook.verification_token) %>
+    </div>
+
+    <!-- API Key -->
+    <div class="flex flex-col">
+      <%= render('shared/readonly-input',
+                 id: 'notion-api-key', label: 'API key', value: Rails.application.credentials.notion&.secret_key) %>
+    </div>
 
     <!-- Readme WYSIWYG -->
     <div class="flex flex-col md:col-span-2">
