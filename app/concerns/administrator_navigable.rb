@@ -93,7 +93,7 @@ module AdministratorNavigable
           url: notion_webhook.dashboard_url,
           admin: true,
         },
-      ].compact.map { |item| build_menu_item(item) }.filter(&:enabled)
+      ].select(&:itself).map { |item| build_menu_item(item) }.filter(&:enabled)
     end
 
     private
