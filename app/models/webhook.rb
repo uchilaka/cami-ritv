@@ -22,7 +22,7 @@ class Webhook < ApplicationRecord
 
   include AASM
 
-  store_accessor :data, %i[integration_id integration_name]
+  store_accessor :data, %i[integration_id integration_name dashboard_url]
 
   encrypts :verification_token, deterministic: true
 

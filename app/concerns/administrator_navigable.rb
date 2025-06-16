@@ -88,7 +88,18 @@ module AdministratorNavigable
           admin: true,
           enabled: true,
         },
-      ].map { |item| build_menu_item(item) }.filter(&:enabled)
+        notion_webhook.present? && {
+          label: 'Notion Integration Dashboard',
+          url: notion_webhook.dashboard_url,
+          admin: true,
+        },
+      ].compact.map { |item| build_menu_item(item) }.filter(&:enabled)
+    end
+
+    private
+
+    def notion_webhook
+      @notion_webhook ||= Webhook.friendly.find('notion', allow_nil: true)
     end
   end
 end

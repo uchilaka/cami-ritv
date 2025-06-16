@@ -3,6 +3,8 @@
 class WebhooksController < ApplicationController
   before_action :set_webhook, only: %i[show edit update destroy]
 
+  load_console
+
   # GET /webhooks or /webhooks.json
   def index
     @webhooks = policy_scope(Webhook)
@@ -66,6 +68,6 @@ class WebhooksController < ApplicationController
 
   # Only allow a list of trusted parameters through.
   def webhook_params
-    params.expect(webhook: %i[slug readme integration_id integration_name verification_token])
+    params.expect(webhook: %i[slug readme integration_id integration_name dashboard_url verification_token])
   end
 end

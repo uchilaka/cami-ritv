@@ -1,4 +1,4 @@
-<%= form_with(model: webhook, class: "contents") do |form| %>
+<%= simple_form_for(webhook, class: "contents") do |form| %>
   <% if webhook.errors.any? %>
     <div id="error_explanation" class="bg-red-50 text-red-500 px-3 py-2 font-medium rounded-md mt-3">
       <h2><%= pluralize(webhook.errors.count, "error") %> prohibited this webhook from being saved:</h2>
@@ -17,28 +17,22 @@
   </div>
 
   <% if webhook.persisted? %>
-    <div class="my-5">
-      <%= form.label :url %>
-      <%= form.text_field :url, readonly: true, class: "block shadow rounded-md border outline-none px-3 py-2 mt-2 w-full" %>
-    </div>
+    <%= form.input :url, wrapper_class: "w-full my-5", readonly: true %>
   <% end %>
 
-  <div class="my-5">
-    <%= form.label :verification_token %>
-    <%= form.text_field :verification_token, class: ["block shadow rounded-md border outline-none px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": webhook.errors[:verification_token].none?, "border-red-400 focus:outline-red-600": webhook.errors[:verification_token].any?}] %>
-  </div>
+  <!-- Dashboard URL -->
+  <%= form.input :dashboard_url, wrapper_class: "w-full my-5" %>
 
-  <!-- integration_id -->
-  <div class="my-5">
-    <%= form.label :integration_id %>
-    <%= form.text_field :integration_id, class: ["block shadow rounded-md border outline-none px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": webhook.errors[:integration_id].none?, "border-red-400 focus:outline-red-600": webhook.errors[:integration_id].any?}] %>
-  </div>
+  <!-- Verification token -->
+  <%= form.input :verification_token, wrapper_class: "w-full my-5" %>
 
   <!-- Integration Name -->
   <div class="my-5">
-    <%= form.label :integration_name %>
-    <%= form.text_field :integration_name, class: ["block shadow rounded-md border outline-none px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": webhook.errors[:integration_name].none?, "border-red-400 focus:outline-red-600": webhook.errors[:integration_name].any?}] %>
+    <%= form.label "Integration Identifier (UUID)" %>
+    <%= form.text_field :integration_id, class: input_class_names %>
   </div>
+
+  <%= form.input :integration_name, wrapper_class: "w-full my-5" %>
 
   <!-- Notes (Trix WYSIWYG) -->
   <div class="my-5 dark:bg-gray-700">

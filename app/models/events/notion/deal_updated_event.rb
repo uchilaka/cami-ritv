@@ -18,6 +18,8 @@
 #
 module Notion
   class DealUpdatedEvent < BaseEvent
+    has_one :metadatum, as: :appendable, dependent: :destroy
+
     # See SO recommendation: https://stackoverflow.com/a/9463495/3726759
     def self.model_name
       GenericEvent.model_name

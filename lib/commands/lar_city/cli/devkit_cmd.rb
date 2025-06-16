@@ -29,6 +29,7 @@ module LarCity
           when 'notion'
             integration_id, verification_token, deal_database_id =
               Rails.application.credentials.notion&.values_at :integration_id, :verification_token, :deal_database_id
+            dashboard_url = "https://www.notion.so/profile/integrations/internal/#{integration_id}"
             ::Webhook.transaction do
               webhook =
                 ::Webhook
@@ -36,7 +37,7 @@ module LarCity
                     slug: options[:vendor],
                     verification_token:
                   )
-              updates = { integration_id:, deal_database_id: }.compact
+              updates = { integration_id:, deal_database_id:, dashboard_url: }.compact
               if verbose?
                 ap webhook, options: { indent: 2 } if webhook.persisted?
                 say "Setting up webhook for #{options[:vendor]} with the following updates:", :magenta

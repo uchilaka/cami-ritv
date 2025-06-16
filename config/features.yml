@@ -40,6 +40,8 @@ development: &development
     enabled: true
   feat__notion_webhook_skip_signature_validation:
     enabled: true
+  feat__notion_integration_dashboard:
+    enabled: true
 test:
   <<: *default
 production:
