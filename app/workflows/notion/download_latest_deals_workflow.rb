@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 module Notion
+  # TODO: TDD for this workflow to be used to download the latest deals from Notion.
+  #   It isn't yet tested - assume nothing works correctly 😅.
   class DownloadLatestDealsWorkflow
     include Interactor
 
