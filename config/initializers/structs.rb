@@ -32,3 +32,27 @@ Struct.new(
   :order,
   keyword_init: true
 )
+# TODO: Implement a deal model for integrations with Zoho / a Notion deal database
+#   - Calculate :days_since_last_contact based on the last_contacted_at field
+#   - Add corresponding roles on the deal for upserted app contacts: :owner,
+#     :decision_maker, :contact
+#   - Add corresponding deal stages: :lead, :qualified, :proposal, :negotiation,
+#     :won, :lost
+#   - Add corresponding deal types: :new_business, :renewal, :expansion
+#   - Add corresponding deal sources: e.g. :webinar, :referral, :outbound, :inbound,
+#     :partner
+Struct.new(
+  'Deal',
+  :remote_system_id,
+  :name,
+  :deal_stage,
+  :created_at,
+  :updated_at,
+  :last_contacted_at,
+  :lead_source,
+  :notes,
+  :priority_level,
+  :deal_value,
+  :expected_close_at,
+  keyword_init: true
+)
