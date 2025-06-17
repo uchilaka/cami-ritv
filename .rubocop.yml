@@ -26,6 +26,11 @@ AllCops:
     - 'config/initializers/devise.rb'
 #  NewCops: enable
 
+# https://docs.rubocop.org/rubocop/cops_style.html#stylehashaslastarrayitem
+Style/HashAsLastArrayItem:
+    Enabled: true
+    EnforcedStyle: no_braces
+
 # Recommended styles
 # For more information: https://docs.rubocop.org/rubocop/versioning.html
 Gemspec/DeprecatedAttributeAssignment: # new in 1.30

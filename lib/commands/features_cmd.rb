@@ -7,6 +7,11 @@ class FeaturesCmd < LarCity::CLI::BaseCmd
 
   desc 'init', 'Initialize app features, reverse merging default states'
   def init
+    if Rails.env.test?
+      say_highlight('🚫 Skipping feature initialization in test environment')
+      return
+    end
+
     # current_features = Flipper.features.map(&:key).map(&:to_sym)
     Rails.application.config_for(:features).each do |feature, options|
       # next if current_features.include?(feature)
