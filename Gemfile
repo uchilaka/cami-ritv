@@ -114,7 +114,7 @@ group :development, :test do
   gem 'fabrication'
   gem 'faker'
   gem 'open3'
-  gem 'rspec-rails', '~> 7'
+  gem 'rspec-rails', '~> 8'
   gem 'rswag-specs'
   gem 'rubocop', require: false
   gem 'rubocop-rails-omakase', require: false
