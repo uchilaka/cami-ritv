@@ -1,7 +1,7 @@
 <!-- TODO: account list item actions -->
 <%= turbo_frame_tag resource_dom_turbo_id(account, action: "manage-show-or-edit") do %>
   <div class="flex justify-end">
-    <%= render 'accounts/list_item/view_or_manage_button', account: %>
+    <%= render partial: 'accounts/list_item/view_or_manage_button', locals: { account: } %>
     <%= link_to "Edit", edit_account_path(account), "data-turbo": false, class: default_item_action_btn_classes %>
   </div>
 <% end %>

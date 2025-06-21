@@ -48,6 +48,10 @@ Rails.application.routes.draw do
   end
 
   resources :accounts, except: %i[destroy] do
+    collection do
+      get :context_menu
+    end
+
     member do
       get :show_modal
       get :navigate_to_crm_modal

@@ -8,6 +8,10 @@
 <%= vite_typescript_tag 'accounts' %>
 <% end %>
 
+<% content_for :app_context_nav do %>
+  <%= render partial: 'accounts/context_menu', locals: { accounts: @accounts } %>
+<% end %>
+
 <div class="w-full min-h-[var(--lc-min-form-height)]">
   <% if notice.present? %>
   <p class="py-2 px-3 bg-green-50 mb-5 text-green-500 font-medium rounded-lg inline-block" id="notice"><%= notice %></p>
@@ -19,9 +23,9 @@
   </div>
 
   <div id="accounts" class="relative overflow-x-auto shadow-md sm:rounded-lg">
-    <div class="flex items-center justify-between flex-column flex-wrap md:flex-row space-y-4 md:space-y-0 pb-4 dark:bg-gray-800">
-      <%= render partial: 'accounts/filters/segment', locals: {} %>
-      <%= form_with do |f| %>
+    <%= form_with do |f| %>
+      <div class="flex items-center justify-between flex-column flex-wrap md:flex-row space-y-4 md:space-y-0 pb-4 dark:bg-gray-800">
+        <%= render partial: 'accounts/filters/segment', locals: {} %>
         <label for="table-search" class="sr-only">Search</label>
         <div class="relative">
           <div class="absolute inset-y-0 rtl:inset-r-0 start-0 flex items-center ps-3 pointer-events-none">
@@ -37,40 +41,40 @@
                              ),
                              placeholder: t('labels.accounts.search'),
                              disabled: !account_search_enabled? %>
-<!--          <input type="text" id="table-search-accounts" class="block p-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="<%#= t('labels.accounts.search') %>" disabled="disabled">-->
+          <!--          <input type="text" id="table-search-accounts" class="block p-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="<%#= t('labels.accounts.search') %>" disabled="disabled">-->
         </div>
-      <% end %>
-    </div>
+      </div>
+    <% end %>
     <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
       <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-        <tr>
-          <th scope="col" class="p-4">
-            <div class="flex items-center">
-              <input id="checkbox-all-search" type="checkbox" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
-              <label for="checkbox-all-search" class="sr-only">checkbox</label>
-            </div>
-          </th>
-          <th scope="col" class="px-6 py-3">
-            Name
-          </th>
-          <!--
-        <th scope="col" class="px-6 py-3">
-          Position
+      <tr>
+        <th scope="col" class="p-4">
+          <div class="flex items-center">
+            <input id="checkbox-all-search" type="checkbox" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+            <label for="checkbox-all-search" class="sr-only">checkbox</label>
+          </div>
         </th>
-        -->
-          <th scope="col" class="px-6 py-3">
-            Type
-          </th>
-          <th scope="col" class="px-6 py-3">
-            Status
-          </th>
-          <th scope="col" class="px-6 py-3 flex justify-end">
-            Action
-          </th>
-        </tr>
+        <th scope="col" class="px-6 py-3">
+          Name
+        </th>
+        <!--
+      <th scope="col" class="px-6 py-3">
+        Position
+      </th>
+      -->
+        <th scope="col" class="px-6 py-3">
+          Type
+        </th>
+        <th scope="col" class="px-6 py-3">
+          Status
+        </th>
+        <th scope="col" class="px-6 py-3 flex justify-end">
+          Action
+        </th>
+      </tr>
       </thead>
       <tbody>
-        <%= render partial: 'accounts/list_item/index', collection: @accounts, as: :account %>
+      <%= render partial: 'accounts/list_item/index', collection: @accounts, as: :account %>
       </tbody>
     </table>
   </div>

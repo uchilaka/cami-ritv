@@ -34,6 +34,9 @@
       "@/*": [
         "./app/frontend/*"
       ],
+      "@/controllers/*": [
+        "./app/javascript/controllers/*"
+      ],
       "@/components/*": [
         "./app/frontend/components/*"
       ],

@@ -1,6 +1,6 @@
-import React from 'react'
-import { withAccountProvider } from './AccountProvider'
-import withAllTheProviders from '@/components/withAllTheProviders'
+import React from 'react';
+import { withAccountProvider } from './AccountProvider';
+import withAllTheProviders from '@/components/withAllTheProviders';
 
 const AccountContextMenu = () => {
   return (
@@ -28,7 +28,7 @@ const AccountContextMenu = () => {
         </div>{' '}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default withAllTheProviders(withAccountProvider(AccountContextMenu))
+export default withAllTheProviders(withAccountProvider(AccountContextMenu));

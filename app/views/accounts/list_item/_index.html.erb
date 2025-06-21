@@ -1,8 +1,18 @@
 <tr class="<%= compose_class_names({ "opacity-25": account.parent.present? }, "bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600") %>">
   <td class="w-4 p-4">
     <div class="flex items-center">
-      <input id="checkbox-table-search-1" type="checkbox" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
-      <label for="checkbox-table-search-1" class="sr-only">checkbox</label>
+      <%= form_with(
+            url: context_menu_accounts_path, method: "get",
+            "data-turbo-frame": "account-context-menu-frame",
+            data: { controller: "submit-form", action: "change->submit-form#submit" }) do |f| %>
+        <%= f.check_box "accounts[#{account.id}][selected]",
+                        checked: false,
+                        "data-turbo-frame": "account-context-menu-frame",
+                        "data-action": "change->submit-form#submit",
+                        class: "w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" %>
+        <!-- <input id="checkbox-table-search-1" data-turbo-frame="account-context-menu-frame" type="checkbox" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">-->
+        <label for="checkbox-table-search-1" class="sr-only">checkbox</label>
+      <% end %>
     </div>
   </td>
   <th scope="row" class="flex items-center px-6 py-4 text-gray-900 whitespace-nowrap dark:text-white">
@@ -30,6 +40,6 @@
   </td>
   <td class="px-6 py-4 text-end">
     <!-- TODO: account list item actions -->
-    <%= render "accounts/list_item/actions", account: %>
+    <%= render partial: "accounts/list_item/actions", locals: { account: } %>
   </td>
 </tr>

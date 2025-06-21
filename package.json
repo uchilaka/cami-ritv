@@ -22,6 +22,7 @@
     "keys:unlock": "git-crypt unlock $GITCRYPT_KEY_FILE"
   },
   "dependencies": {
+    "@hotwired/stimulus": "^3.2.2",
     "@hotwired/turbo": "^8.0.10",
     "@hotwired/turbo-rails": "^8.0.13",
     "@inertiajs/react": "^2.0.8",
@@ -44,6 +45,7 @@
     "lodash.omit": "^4.5.0",
     "lodash.uniqby": "^4.7.0",
     "react-cookie": "^8.0.1",
+    "react-router-dom": "^7.6.2",
     "snakecase-keys": "^8.0.1",
     "styled-components": "^6.1.18",
     "trix": "^2.1.14",
