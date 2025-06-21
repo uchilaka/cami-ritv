@@ -13,6 +13,7 @@
     "emitDeclarationOnly": true
   },
   "include": [
+    "app/javascript/controllers",
     "app/frontend/utils"
   ],
   "files": [

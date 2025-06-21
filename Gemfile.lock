@@ -697,6 +697,7 @@ DEPENDENCIES
   simple_form (~> 5.3)
   solid_queue
   sprockets-rails
+  stimulus-rails
   strong_migrations
   tailwindcss-rails (~> 3.3)
   tailwindcss-ruby (~> 3.4)

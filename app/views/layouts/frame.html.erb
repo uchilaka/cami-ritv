@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+  <%= content_for :head do %>
+    <%= vite_client_tag %>
+    <%= vite_react_refresh_tag %>
+    <%= vite_javascript_tag 'application.tsx' %>
+    <%= stylesheet_link_tag "actiontext", media: "all" %>
+    <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+    <%= stylesheet_link_tag "application.tailwind", "data-turbo-track": "reload" %>
+  <% end %>
+  <%= render partial: "layouts/shared/head", locals: { expect_flash_of_unstyled_content: true } %>
+  <body>
+  <%= yield %>
+  </body>
+</html>

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AccountsController < ApplicationController
   include MaybeAccountSpecific
   include LarCity::ProfileParameterUtils
@@ -22,7 +24,13 @@ class AccountsController < ApplicationController
   # GET /accounts/1 or /accounts/1.json
   def show; end
 
+  def context_menu
+    # Set the layout
+    render layout: 'frame'
+  end
+
   def show_modal
+    render layout: 'frame'
     # rubocop:disable Style/GuardClause
     if account.last_sent_to_crm_at
       human_readable_time = account.last_sent_to_crm_at.strftime('%B %d, %Y %I:%M %p')

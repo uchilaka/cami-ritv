@@ -40,6 +40,7 @@ gem 'sassc-rails', '~> 2.1'
 gem 'cssbundling-rails'
 gem 'inertia_rails'
 gem 'turbo-rails'
+gem 'stimulus-rails'
 # Setup guide https://v3.tailwindcss.com/docs/installation/using-postcss
 gem 'tailwindcss-rails', '~> 3.3'
 gem 'tailwindcss-ruby', '~> 3.4'
