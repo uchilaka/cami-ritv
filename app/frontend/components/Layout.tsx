@@ -1,6 +1,6 @@
-import React, { FC, ReactNode } from "react";
-import { InertiaLink } from "@inertiajs/inertia-react";
-import { LayoutProps } from "@/@types";
+import React, { FC, ReactNode } from 'react';
+import { InertiaLink } from '@inertiajs/inertia-react';
+import { LayoutProps } from '@/@types';
 
 const Layout: FC<LayoutProps> = ({ children }) => {
   return (
@@ -12,7 +12,7 @@ const Layout: FC<LayoutProps> = ({ children }) => {
               <div className="flex-shrink-0 flex items-center">
                 <svg
                   className="block fill-current"
-                  style={{ height: "25px", color: "#9553e9" }}
+                  style={{ height: '25px', color: '#9553e9' }}
                   viewBox="0 0 275.3 50.5"
                 >
                   <path d="M231.2 16.1h-17.8l17.2 17.2-17.2 17.2h17.8l17.2-17.2z"></path>
@@ -44,5 +44,6 @@ const Layout: FC<LayoutProps> = ({ children }) => {
     </>
   );
 };
+const InertiaDefaultLayout = (page: ReactNode) => <Layout>{page}</Layout>;
 
-export default (page: ReactNode) => <Layout>{page}</Layout>;
+export default InertiaDefaultLayout;
