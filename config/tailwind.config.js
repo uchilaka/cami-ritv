@@ -5,7 +5,7 @@
 
 // Demo Emerald theme, customized @ https://www.subframe.com/library/theme
 const theme = {
-  darkMode: 'class',
+  darkMode: 'selector',
   extend: {
     colors: {
       brand: {
