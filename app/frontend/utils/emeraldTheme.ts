@@ -1,7 +1,7 @@
 import { createTheme } from 'flowbite-react';
 
 export const EmeraldTheme = createTheme({
-  darkMode: 'class',
+  darkMode: 'selector',
   extend: {
     colors: {
       brand: {
