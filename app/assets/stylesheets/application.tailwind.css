@@ -2,5 +2,5 @@
 @tailwind components;
 @tailwind utilities;
 
-/* TODO: input.css - is this a file that exists someplace where this ought to reside? */
+/* Theme variant */
 @custom-variant dark (&:where(.dark, .dark *));

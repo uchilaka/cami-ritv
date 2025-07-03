@@ -31,7 +31,12 @@ module Notion
 
     accepts_nested_attributes_for :metadatum
 
-    delegate :entity_id, :integration_id, :database_id, to: :metadatum
+    delegate :entity_id,
+             :integration_id,
+             :database_id,
+             :workspace_id,
+             :workspace_name,
+             :remote_record_id, to: :metadatum
 
     alias remote_record_id entity_id
 

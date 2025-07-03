@@ -22,8 +22,27 @@ module Notion
   class WebhookEventMetadatum < ::Metadatum
     # has_one :generic_event, foreign_key: :metadatum_id, dependent: :destroy
 
-    store_accessor :value, %i[integration_id entity_id database_id]
+    store_accessor :value, %i[
+      integration_id
+      entity_id
+      database_id
+      workspace_id
+      workspace_name
+      remote_record_id
+    ]
 
     # accepts_nested_attributes_for :generic_event
+
+    def entity_id
+      super.presence || (value || {}).dig('entity', 'id')
+    end
+
+    def database_id
+      super.presence || (value || {}).dig('database', 'id')
+    end
+
+    def integration_id
+      super.presence || (value || {})['integration_id']
+    end
   end
 end
