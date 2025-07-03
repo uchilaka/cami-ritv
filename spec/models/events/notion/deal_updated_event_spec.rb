@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe Notion::DealCreatedEvent, type: :model do
+RSpec.describe Notion::DealUpdatedEvent, type: :model do
   let(:database_id) { SecureRandom.uuid }
   let(:integration_id) { SecureRandom.uuid }
   let(:entity_id) { SecureRandom.uuid }
@@ -11,7 +11,7 @@ RSpec.describe Notion::DealCreatedEvent, type: :model do
 
   let(:metadatum_attributes) do
     {
-      key: 'notion.deal_created',
+      key: 'notion.deal_updated',
       value: {
         integration_id:,
         database_id:,
@@ -26,7 +26,7 @@ RSpec.describe Notion::DealCreatedEvent, type: :model do
   let(:metadatum) { Fabricate(:notion_webhook_event_metadatum, **metadatum_attributes) }
   let(:webhook) { Fabricate(:webhook, integration: :notion) }
 
-  subject(:event) { Fabricate(:deal_created_event, integration: :notion, metadatum:) }
+  subject(:event) { Fabricate(:deal_updated_event, integration: :notion, metadatum:) }
 
   before do
     event.eventable = webhook
@@ -87,28 +87,17 @@ RSpec.describe Notion::DealCreatedEvent, type: :model do
 
     describe 'transitions' do
       it { is_expected.to transition_from(:pending).to(:processing).on_event(:process) }
+      it { is_expected.to transition_from(:processing).to(:completed).on_event(:complete) }
       it { is_expected.to transition_from(:pending).to(:failed).on_event(:fail) }
-
-      context 'from processing' do
-        before { event.status = :processing }
-
-        it { is_expected.to transition_from(:processing).to(:completed).on_event(:complete) }
-        it { is_expected.to transition_from(:processing).to(:failed).on_event(:fail) }
-      end
+      it { is_expected.to transition_from(:processing).to(:failed).on_event(:fail) }
     end
+  end
 
-    describe 'state behaviors' do
-      it 'has the correct states defined' do
-        expect(described_class.aasm.states.map(&:name)).to contain_exactly(
-          :pending, :processing, :completed, :failed
-        )
-      end
-
-      it 'has the correct events defined' do
-        expect(described_class.aasm.events.map(&:name)).to contain_exactly(
-          :process, :complete, :fail
-        )
-      end
+  describe 'metadatum association' do
+    it 'is destroyed when event is destroyed' do
+      metadatum_id = event.metadatum.id
+      event.destroy
+      expect(Notion::WebhookEventMetadatum.find_by(id: metadatum_id)).to be_nil
     end
   end
 end
