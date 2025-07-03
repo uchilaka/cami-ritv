@@ -1,7 +1,7 @@
 /** @type {import('tailwindcss').Config} */
 
 // Demo Emerald theme, customized @ https://www.subframe.com/library/theme
-import theme from '../app/frontend/utils/emeraldTheme';
+import emeraldTheme from '../app/frontend/utils/emeraldTheme';
 
 /* eslint-disable no-undef */
 /* eslint-disable @typescript-eslint/no-require-imports */
@@ -38,6 +38,11 @@ export const plugins = [
 
 export default {
   content,
-  theme,
+  theme: {
+    darkMode: 'selector',
+    extend: {
+      ...emeraldTheme,
+    },
+  },
   plugins,
 };
