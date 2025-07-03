@@ -2,13 +2,12 @@
 
 require 'rails_helper'
 
-RSpec.describe Notion::DealUpdatedEventSerializer, type: :serializer do
+RSpec.describe Notion::DealCreatedEventSerializer, type: :serializer do
   let(:metadatum) do
-    Fabricate(:notion_webhook_event_metadatum, variant: :deal_updated)
+    Fabricate(:notion_webhook_event_metadatum, variant: :deal_created)
   end
-
   let(:deal_event) do
-    Fabricate(:deal_updated_event, integration: :notion)
+    Fabricate(:deal_created_event, integration: :notion)
   end
 
   subject { described_class.new(deal_event) }

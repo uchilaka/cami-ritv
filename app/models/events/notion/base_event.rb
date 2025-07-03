@@ -36,7 +36,9 @@ module Notion
              :database_id,
              :workspace_id,
              :workspace_name,
-             :remote_record_id, to: :metadatum
+             :remote_record_id,
+             :database,
+             :entity, to: :metadatum
 
     alias remote_record_id entity_id
 

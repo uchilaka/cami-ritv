@@ -29,6 +29,8 @@ module Notion
       workspace_id
       workspace_name
       remote_record_id
+      entity
+      database
     ]
 
     # accepts_nested_attributes_for :generic_event

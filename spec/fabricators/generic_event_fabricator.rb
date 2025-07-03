@@ -19,7 +19,6 @@ Fabricator(:generic_event) do
 end
 
 Fabricator(:deal_created_event, from: :generic_event) do
-  metadatum { Fabricate(:metadatum, key: 'deal_created') }
   status { 'pending' }
 
   type do |attrs|
@@ -35,6 +34,42 @@ Fabricator(:deal_created_event, from: :generic_event) do
       attrs[:integration]
     elsif /^Notion::/.match?(attrs[:type])
       :notion
+    end
+  end
+
+  metadatum do |attrs|
+    if attrs[:integration] == :notion
+      Fabricate(:notion_webhook_event_metadatum, variant: :deal_created)
+    else
+      Fabricate(:metadatum)
+    end
+  end
+end
+
+Fabricator(:deal_updated_event, from: :generic_event) do
+  status { 'pending' }
+
+  type do |attrs|
+    if attrs[:integration] == :notion
+      'Notion::DealUpdatedEvent'
+    else
+      'Generic::DealUpdatedEvent'
+    end
+  end
+
+  integration do |attrs|
+    if attrs[:integration].present?
+      attrs[:integration]
+    elsif /^Notion::/.match?(attrs[:type])
+      :notion
+    end
+  end
+
+  metadatum do |attrs|
+    if attrs[:integration] == :notion
+      Fabricate(:notion_webhook_event_metadatum, variant: :deal_updated)
+    else
+      Fabricate(:metadatum)
     end
   end
 end
