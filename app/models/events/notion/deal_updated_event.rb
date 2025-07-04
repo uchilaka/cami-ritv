@@ -23,14 +23,6 @@ module Notion
       GenericEvent.model_name
     end
 
-    validates :entity_id, presence: true, if: -> { metadatum&.entity_id.blank? }
-    validates :integration_id, presence: true, if: -> { metadatum&.integration_id.blank? }
-    validates :database_id, presence: true, if: -> { metadatum&.database_id.blank? }
-    validates :workspace_id, presence: true, if: -> { metadatum&.workspace_id.blank? }
-    validates :workspace_name, presence: true, if: -> { metadatum&.workspace_name.blank? }
-    validates :remote_record_id, presence: true, if: -> { metadatum&.remote_record_id.blank? }
-    validates :attempt_number,
-              numericality: { only_integer: true, greater_than_or_equal_to: 1 },
-              if: -> { metadatum&.attempt_number.blank? }
+    validates_with DealEventValidator
   end
 end

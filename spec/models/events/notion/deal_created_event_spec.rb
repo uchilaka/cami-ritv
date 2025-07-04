@@ -8,6 +8,7 @@ RSpec.describe Notion::DealCreatedEvent, type: :model do
   let(:entity_id) { SecureRandom.uuid }
   let(:workspace_id) { "ws_#{SecureRandom.hex(8)}" }
   let(:subscription_id) { "sub_#{SecureRandom.hex(8)}" }
+  let(:attempt_number) { 3 }
 
   let(:metadatum_attributes) do
     {
@@ -19,7 +20,7 @@ RSpec.describe Notion::DealCreatedEvent, type: :model do
         workspace_id:,
         workspace_name: 'Test Workspace',
         subscription_id:,
-        attempt_number: 3,
+        attempt_number:,
       },
     }
   end
@@ -36,6 +37,7 @@ RSpec.describe Notion::DealCreatedEvent, type: :model do
     it { is_expected.to have_attributes(database_id:) }
     it { is_expected.to have_attributes(remote_record_id: entity_id) }
     it { is_expected.to have_attributes(workspace_id:) }
+    it { is_expected.to have_attributes(attempt_number:) }
   end
 
   describe 'associations' do
@@ -44,6 +46,54 @@ RSpec.describe Notion::DealCreatedEvent, type: :model do
     it { is_expected.to accept_nested_attributes_for(:metadatum) }
     it { is_expected.to have_attributes(metadatum:) }
     it { is_expected.to have_attributes(eventable: webhook) }
+  end
+
+  describe 'validations' do
+    context 'when metadatum is present' do
+      it { is_expected.to be_valid }
+    end
+
+    context 'when metadatum is missing' do
+      subject(:invalid_event) { described_class.new(metadatum: nil) }
+
+      it 'is not valid' do
+        expect(invalid_event).not_to be_valid
+        expect(invalid_event.errors[:metadatum]).to include("can't be blank")
+      end
+    end
+
+    context 'when metadatum has missing attributes' do
+      let(:metadatum) { Fabricate(:notion_webhook_event_metadatum, variant: :deal_created, value: {}) }
+      subject(:event) { described_class.new(metadatum:) }
+
+      it 'validates presence of required attributes' do
+        expect(event).not_to be_valid
+        expect(event.errors[:entity_id]).to include("can't be blank")
+        expect(event.errors[:integration_id]).to include("can't be blank")
+        expect(event.errors[:database_id]).to include("can't be blank")
+        expect(event.errors[:remote_record_id]).to include("can't be blank")
+      end
+    end
+
+    describe '#attempt_number' do
+      context 'when invalid' do
+        let(:attempt_number) { 0 }
+
+        it do
+          expect { subject }.to \
+            raise_error(ActiveRecord::RecordInvalid, /Attempt number must be an integer greater than or equal to 1/)
+        end
+      end
+
+      context 'when missing' do
+        let(:attempt_number) { nil }
+
+        it do
+          expect { subject }.to \
+            raise_error(ActiveRecord::RecordInvalid, /Attempt number must be an integer greater than or equal to 1/)
+        end
+      end
+    end
   end
 
   describe 'instantiation' do
