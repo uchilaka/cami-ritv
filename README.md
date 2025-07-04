@@ -24,6 +24,7 @@ Run `yarn keys:unlock` to unlock the encrypted files.
 
 ## Future work
 
+- [ ] Google Workspace IAM Identity Provider for AWS: https://docs.aws.amazon.com/singlesignon/latest/userguide/gs-gwp.html
 - [ ] Implement dark mode switcher: <https://flowbite.com/docs/customize/dark-mode/#dark-mode-switcher>
 - [ ] Implement a Simple Form config (with Flowbite): <https://github.com/heartcombo/simple_form?tab=readme-ov-file#installation>
 - [ ] Evaluate if using the `cssbundling-rails` gem is needed for asset fingerprinting support in stylesheets: <https://github.com/rails/cssbundling-rails?tab=readme-ov-file#how-does-this-compare-to-tailwindcss-rails-and-dartsass-rails>
