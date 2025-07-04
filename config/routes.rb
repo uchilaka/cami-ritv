@@ -3,7 +3,6 @@
 require 'lib/admin_scope_constraint'
 
 Rails.application.routes.draw do
-  resources :webhooks
   namespace :api do
     namespace :v2, defaults: { format: :json } do
       namespace :crm do
@@ -71,6 +70,15 @@ Rails.application.routes.draw do
       get 'work-with-us', to: 'demos#work_with_us'
     end
   end
+
+  resources :webhooks
+
+  namespace :webhooks do
+    namespace :notion do
+      resources :events, only: %i[index show]
+    end
+  end
+
 
   get '/about-us', to: 'lobby#about_us'
   get '/consultation/:subject', to: 'lobby#consultation'
