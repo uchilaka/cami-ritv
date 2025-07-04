@@ -30,6 +30,10 @@ RSpec.describe Notion::DealCreatedEvent, type: :model do
 
   subject(:event) { Fabricate(:deal_created_event, integration: :notion, metadatum:, eventable: webhook) }
 
+  describe '#variant' do
+    it { expect(event.variant).to eq('deal_created') }
+  end
+
   describe 'attributes' do
     it { is_expected.to be_valid }
     it { is_expected.to have_attributes(entity_id:) }

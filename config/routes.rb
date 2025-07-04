@@ -71,14 +71,9 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :webhooks
-
-  namespace :webhooks do
-    namespace :notion do
-      resources :events, only: %i[index show]
-    end
+  resources :webhooks do
+    resources :events, only: %i[index show]
   end
-
 
   get '/about-us', to: 'lobby#about_us'
   get '/consultation/:subject', to: 'lobby#consultation'

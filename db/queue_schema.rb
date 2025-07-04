@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_15_104824) do
+ActiveRecord::Schema[8.0].define(version: 2025_07_04_173016) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -135,7 +135,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_15_104824) do
     t.string "eventable_type"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "slug"
     t.index ["eventable_type", "eventable_id"], name: "index_generic_events_on_eventable"
+    t.index ["slug"], name: "index_generic_events_on_slug", unique: true
   end
 
   create_table "identity_provider_profiles", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|

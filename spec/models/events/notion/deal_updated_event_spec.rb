@@ -30,6 +30,10 @@ RSpec.describe Notion::DealUpdatedEvent, type: :model do
 
   subject(:event) { Fabricate(:deal_updated_event, integration: :notion, metadatum:, eventable: webhook) }
 
+  describe '#variant' do
+    it { expect(event.variant).to eq('deal_updated') }
+  end
+
   describe 'attributes' do
     it { is_expected.to be_valid }
     it { is_expected.to have_attributes(entity_id:) }
@@ -54,17 +58,20 @@ RSpec.describe Notion::DealUpdatedEvent, type: :model do
     end
 
     context 'when metadatum is missing' do
-      subject(:invalid_event) { described_class.new(metadatum: nil) }
+      subject(:event) { Fabricate.build(:deal_updated_event, integration: :notion, metadatum:, eventable: webhook) }
 
-      it 'is not valid' do
-        expect(invalid_event).not_to be_valid
-        expect(invalid_event.errors[:metadatum]).to include("can't be blank")
-      end
+      let(:metadatum) { nil }
+
+      before { event.valid? }
+
+      it { is_expected.not_to be_valid }
+      it { expect(event.errors[:metadatum]).to include("can't be blank") }
     end
 
     context 'when metadatum has missing attributes' do
+      subject(:event) { Fabricate.build(:deal_updated_event, integration: :notion, metadatum:, eventable: webhook) }
+
       let(:metadatum) { Fabricate(:notion_webhook_event_metadatum, variant: :deal_created, value: {}) }
-      subject(:event) { described_class.new(metadatum:) }
 
       before { event.valid? }
 

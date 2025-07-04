@@ -20,8 +20,6 @@
 #
 module Notion
   class WebhookEventMetadatum < ::Metadatum
-    # has_one :generic_event, foreign_key: :metadatum_id, dependent: :destroy
-
     store_accessor :value, %i[
       integration_id
       entity_id
@@ -34,7 +32,7 @@ module Notion
       database
     ]
 
-    # accepts_nested_attributes_for :generic_event
+    alias :remote_record_id entity_id
 
     def entity_id
       super.presence || (value || {}).dig('entity', 'id')
@@ -50,6 +48,16 @@ module Notion
 
     def attempt_number
       super.presence || (value || {})['attempt_number']
+    end
+
+    def variant
+      (value || {})['type']
+    end
+
+    private
+
+    def safe_value
+      value || {}
     end
   end
 end

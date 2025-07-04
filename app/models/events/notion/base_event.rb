@@ -6,6 +6,7 @@
 #
 #  id             :uuid             not null, primary key
 #  eventable_type :string
+#  slug           :string
 #  status         :string
 #  type           :string           not null
 #  created_at     :datetime         not null
@@ -15,26 +16,14 @@
 # Indexes
 #
 #  index_generic_events_on_eventable  (eventable_type,eventable_id)
+#  index_generic_events_on_slug       (slug) UNIQUE
 #
 module Notion
   class BaseEvent < ::GenericEvent
     include AASM
 
-    # TODO: Require this after implementing the workflow for
-    #   capturing Notion deal CRUD events which should include
-    #   entity_id, integration_id, database_id, type and other
-    #   relevant fields to inform an async job to create a deal
-    #   in the system.
-    # has_one :metadatum, lambda {
-    #   where(appendable_type: 'Notion::WebhookEventMetadatum')
-    # }, inverse_of: :appendable, dependent: :destroy
-
-    has_one :metadatum, as: :appendable, dependent: :destroy
-
-
-    accepts_nested_attributes_for :metadatum
-
-    delegate :entity_id,
+    delegate :variant,
+             :entity_id,
              :integration_id,
              :database_id,
              :workspace_id,
@@ -42,8 +31,6 @@ module Notion
              :attempt_number,
              :database,
              :entity, to: :metadatum
-
-    alias remote_record_id entity_id
 
     aasm column: :status do
       state :pending, initial: true
@@ -62,6 +49,12 @@ module Notion
       event :fail do
         transitions from: %i[pending processing], to: :failed
       end
+    end
+
+    def variant
+      return nil if metadatum.blank?
+
+      metadatum.key.split('.').last
     end
   end
 end
