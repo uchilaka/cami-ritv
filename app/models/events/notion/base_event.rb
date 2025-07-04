@@ -25,9 +25,12 @@ module Notion
     #   entity_id, integration_id, database_id, type and other
     #   relevant fields to inform an async job to create a deal
     #   in the system.
-    has_one :metadatum, lambda {
-      where(appendable_type: 'Notion::WebhookEventMetadatum')
-    }, inverse_of: :appendable, dependent: :destroy
+    # has_one :metadatum, lambda {
+    #   where(appendable_type: 'Notion::WebhookEventMetadatum')
+    # }, inverse_of: :appendable, dependent: :destroy
+
+    has_one :metadatum, as: :appendable, dependent: :destroy
+
 
     accepts_nested_attributes_for :metadatum
 
@@ -37,6 +40,7 @@ module Notion
              :workspace_id,
              :workspace_name,
              :remote_record_id,
+             :attempt_number,
              :database,
              :entity, to: :metadatum
 

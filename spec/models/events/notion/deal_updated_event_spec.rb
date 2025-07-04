@@ -19,6 +19,7 @@ RSpec.describe Notion::DealUpdatedEvent, type: :model do
         workspace_id:,
         workspace_name: 'Test Workspace',
         subscription_id:,
+        attempt_number: 6,
       },
     }
   end
@@ -62,6 +63,7 @@ RSpec.describe Notion::DealUpdatedEvent, type: :model do
     it { expect(event.integration_id).to eq(integration_id) }
     it { expect(event.database_id).to eq(database_id) }
     it { expect(event.remote_record_id).to eq(entity_id) }
+    it { expect(event.attempt_number).to eq(6) }
   end
 
   describe 'state machine' do

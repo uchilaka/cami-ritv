@@ -15,6 +15,7 @@ module API
           # TODO: Validate event payload
           #   https://developers.notion.com/reference/webhooks#step-3-validating-event-payloads-recommended
           def create
+            # TODO: Look into why page.created events are not capturing any metadata
             result =
               if request_verification_token.present?
                 ::Notion::RegisterVerificationTokenWorkflow
@@ -26,6 +27,7 @@ module API
             http_status = result.response_http_status || :server_error
             head http_status
           rescue ActiveModel::ValidationError => e
+            Rails.logger.error('Failed to process Notion event', webhook_event_params:, message: e.message)
             render json: { errors: e.message }, status: :unprocessable_entity
           end
 

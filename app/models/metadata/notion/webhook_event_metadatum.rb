@@ -29,6 +29,7 @@ module Notion
       workspace_id
       workspace_name
       remote_record_id
+      attempt_number
       entity
       database
     ]
@@ -45,6 +46,10 @@ module Notion
 
     def integration_id
       super.presence || (value || {})['integration_id']
+    end
+
+    def attempt_number
+      super.presence || (value || {})['attempt_number']
     end
   end
 end
