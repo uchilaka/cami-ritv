@@ -7,7 +7,7 @@ RSpec.describe Notion::DealCreatedEventSerializer, type: :serializer do
     Fabricate(:notion_webhook_event_metadatum, variant: :deal_created)
   end
   let(:deal_event) do
-    Fabricate(:deal_created_event, integration: :notion)
+    Fabricate(:deal_created_event, integration: :notion, metadatum:)
   end
 
   subject { described_class.new(deal_event) }

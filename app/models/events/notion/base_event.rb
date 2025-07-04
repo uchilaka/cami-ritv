@@ -39,7 +39,6 @@ module Notion
              :database_id,
              :workspace_id,
              :workspace_name,
-             :remote_record_id,
              :attempt_number,
              :database,
              :entity, to: :metadatum

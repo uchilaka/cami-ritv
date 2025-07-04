@@ -19,7 +19,7 @@ module Notion
     end
 
     def validate_required_attributes(record)
-      %i[entity_id integration_id database_id remote_record_id].each do |attr|
+      %i[entity_id database_id workspace_id workspace_name].each do |attr|
         record.errors.add(attr, :blank, message: "can't be blank") if record.send(attr).blank?
       end
     end

@@ -8,7 +8,7 @@ RSpec.describe Notion::DealUpdatedEventSerializer, type: :serializer do
   end
 
   let(:deal_event) do
-    Fabricate(:deal_updated_event, integration: :notion)
+    Fabricate(:deal_updated_event, integration: :notion, metadatum:)
   end
 
   subject { described_class.new(deal_event) }

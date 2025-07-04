@@ -45,6 +45,7 @@ Fabricator(:notion_webhook_event_metadatum, from: :metadatum) do
         'workspace_id' => 'workspace-id-789',
         'workspace_name' => 'Test Workspace',
         'subscription_id' => 'subscription-id-101112',
+        'attempt_number' => 1,
       }
     when :deal_updated
       {
@@ -54,6 +55,7 @@ Fabricator(:notion_webhook_event_metadatum, from: :metadatum) do
         'workspace_id' => 'updated-workspace-id-789',
         'workspace_name' => 'Updated Workspace',
         'subscription_id' => 'updated-subscription-id-101112',
+        'attempt_number' => 2,
       }
     else
       {}

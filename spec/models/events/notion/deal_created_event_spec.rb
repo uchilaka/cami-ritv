@@ -66,12 +66,26 @@ RSpec.describe Notion::DealCreatedEvent, type: :model do
       let(:metadatum) { Fabricate(:notion_webhook_event_metadatum, variant: :deal_created, value: {}) }
       subject(:event) { described_class.new(metadatum:) }
 
-      it 'validates presence of required attributes' do
+      before { event.valid? }
+
+      it 'is not valid' do
         expect(event).not_to be_valid
+      end
+
+      it 'requires entity_id' do
         expect(event.errors[:entity_id]).to include("can't be blank")
-        expect(event.errors[:integration_id]).to include("can't be blank")
+      end
+
+      it 'requires database_id' do
         expect(event.errors[:database_id]).to include("can't be blank")
-        expect(event.errors[:remote_record_id]).to include("can't be blank")
+      end
+
+      it 'requires workspace_id' do
+        expect(event.errors[:workspace_id]).to include("can't be blank")
+      end
+
+      it 'requires workspace_name' do
+        expect(event.errors[:workspace_name]).to include("can't be blank")
       end
     end
 
