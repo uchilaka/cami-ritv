@@ -43,3 +43,6 @@ elsif OS.mac?
   cask 'rancher'
 end
 cask 'keepassxc'
+cask 'claude'
+cask 'notion'
+cask '1password'
