@@ -24,7 +24,6 @@ Run `yarn keys:unlock` to unlock the encrypted files.
 
 ## Future work
 
-- [ ] Dark mode switcher: https://flowbite.com/docs/customize/dark-mode/#dark-mode-switcher
 - [ ] Google Workspace IAM Identity Provider for AWS: https://docs.aws.amazon.com/singlesignon/latest/userguide/gs-gwp.html
 - [ ] Implement dark mode switcher: <https://flowbite.com/docs/customize/dark-mode/#dark-mode-switcher>
 - [ ] Implement a Simple Form config (with Flowbite): <https://github.com/heartcombo/simple_form?tab=readme-ov-file#installation>
