@@ -47,7 +47,7 @@ class GenericEvent < ApplicationRecord
   # End FriendlyId helper methods
 
   def eventable_slug
-    eventable.slug
+    eventable&.slug
   end
 
   def variant
