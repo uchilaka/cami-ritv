@@ -10,6 +10,7 @@
 #  confirmed_at           :datetime
 #  current_sign_in_at     :datetime
 #  current_sign_in_ip     :string
+#  discarded_at           :datetime
 #  email                  :string           default(""), not null
 #  encrypted_password     :string           default(""), not null
 #  failed_attempts        :integer          default(0), not null
@@ -36,6 +37,7 @@
 # Indexes
 #
 #  index_users_on_confirmation_token    (confirmation_token) UNIQUE
+#  index_users_on_discarded_at          (discarded_at)
 #  index_users_on_email                 (email) UNIQUE
 #  index_users_on_reset_password_token  (reset_password_token) UNIQUE
 #  index_users_on_unlock_token          (unlock_token) UNIQUE
@@ -52,7 +54,7 @@ Fabricator(:user) do
     {
       image_url: Faker::Avatar.image,
       phone_e164: phone_number.e164,
-      phone_country: phone_number.country
+      phone_country: phone_number.country,
     }
   end
 end
@@ -63,7 +65,7 @@ Fabricator(:user_with_provider_profiles, from: :user) do
     {
       'google' => SecureRandom.alphanumeric(21),
       'apple' => SecureRandom.alphanumeric(21),
-      'whatsapp' => SecureRandom.alphanumeric(21)
+      'whatsapp' => SecureRandom.alphanumeric(21),
     }
   end
 

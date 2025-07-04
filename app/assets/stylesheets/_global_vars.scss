@@ -1,0 +1,7 @@
+:root {
+  --lc-min-hero-height: 80dvh;
+  --lc-min-form-height: 64svh;
+  --lc-overlay-text-shadow-offset: 5px;
+  // @deprecated use --lc-min-hero-height instead
+  --min-h-with-footer-peek: 80dvh;
+}

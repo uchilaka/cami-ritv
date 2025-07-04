@@ -29,6 +29,7 @@
     "forceConsistentCasingInFileNames": true,
     /* Module resolution */
     "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
     "paths": {
       "@/*": [
         "./app/frontend/*"

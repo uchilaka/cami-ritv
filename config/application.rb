@@ -20,9 +20,7 @@ require 'active_support/core_ext/integer/time'
 # See https://stackoverflow.com/a/837593/3726759
 $LOAD_PATH.unshift(Dir.pwd)
 
-require 'lib/app_utils'
-require 'lib/virtual_office_manager'
-require 'lib/log_utils'
+require 'lib/lar_city'
 
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
@@ -33,8 +31,8 @@ module Cami
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 7.0
 
-    config.application_name = 'Customer Account Management & Invoicing'
-    config.application_short_name = 'CAMI'
+    # config.application_name = 'Customer Account Management & Invoicing'
+    # config.application_short_name = 'C.A.M.I.'
 
     # Show full error reports?
     config.consider_all_requests_local = AppUtils.debug_mode?

@@ -10,7 +10,17 @@
 #   inflect.uncountable %w( fish sheep )
 # end
 
-# These inflection rules are supported but not enabled by default:
-# ActiveSupport::Inflector.inflections(:en) do |inflect|
-#   inflect.acronym "RESTful"
-# end
+# Customizing inflections https://guides.rubyonrails.org/autoloading_and_reloading_constants.html#customizing-inflections
+ActiveSupport::Inflector.inflections(:en) do |inflect|
+  # inflect.acronym "RESTful"
+  inflect.acronym 'URL'
+  inflect.acronym 'API'
+  inflect.acronym 'DDNS'
+  inflect.acronym 'CAMI'
+  inflect.acronym 'CLI'
+  inflect.acronym 'HTML'
+  inflect.acronym 'PII'
+  inflect.acronym 'SSL'
+  inflect.acronym 'VAT'
+  inflect.acronym 'CRM'
+end

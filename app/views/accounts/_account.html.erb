@@ -1,0 +1,37 @@
+<div id="<%= dom_id account %>" class="relative my-5">
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left">
+    <!-- Tax ID -->
+    <div class="flex flex-col">
+      <label class="text-sm font-medium text-gray-900 dark:text-white">Tax ID</label>
+      <span class="text-gray-500 dark:text-gray-400"><%= account.tax_id %></span>
+    </div>
+
+    <!-- Display name -->
+    <div class="flex flex-col">
+      <label class="text-sm font-medium text-gray-900 dark:text-white">Display name</label>
+      <span class="text-gray-500 dark:text-gray-400"><%= account.display_name %></span>
+    </div>
+
+    <!-- Slug -->
+    <div class="flex flex-col">
+      <label class="text-sm font-medium text-gray-900 dark:text-white">Slug</label>
+      <span class="text-gray-500 dark:text-gray-400"><%= account.slug %></span>
+    </div>
+
+    <!-- Status -->
+    <div class="flex flex-col">
+      <label class="text-sm font-medium text-gray-900 dark:text-white">Status</label>
+      <span class="text-gray-500 dark:text-gray-400"><%= account.status %></span>
+    </div>
+
+    <!-- Notes (Trix WYSIWYG) -->
+    <div class="flex flex-col md:col-span-2">
+      <label class="text-sm font-medium text-gray-900 dark:text-white">Notes</label>
+      <span class="text-gray-500 dark:text-gray-400"><%= account.readme %></span>
+    </div>
+  </div>
+</div>
+
+<div class="my-5 flex flex-col md:flex-row md:justify-end md:items-center md:space-x-4">
+  <%= yield :form_actions %>
+</div>

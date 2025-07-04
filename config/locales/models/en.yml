@@ -1,6 +1,7 @@
 en:
   models:
     account:
+      sync_to_crm_success: "Last sent to CRM at %{human_readable_time}"
       errors:
         user_limit_exceeded: "cannot have more than one user"
     invoice:

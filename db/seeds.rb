@@ -12,4 +12,4 @@
 Dir[Rails.root.join('lib', 'tasks', 'fixtures', '*.thor')].each { |file| load file }
 
 # Load all seed files in db/seeds
-Dir[Rails.root.join('db', 'seeds', '**', '*.rb')].sort.each { |seed| load seed }
+Dir[Rails.root.join('db', 'seeds', '**', '*.rb')].each { |seed| load seed }

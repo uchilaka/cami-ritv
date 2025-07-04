@@ -5,7 +5,7 @@ import {
   ServerIcon,
 } from "@heroicons/react/20/solid";
 import { FCWithLayout } from "@/@types";
-import DemoLayout from "@/components/DemoLayout";
+import DemoLayout from "@/components/BasicLayout";
 import { FeatureConfig, FeatureProps, GenericHeroIcon } from "./@types";
 
 const featureIcons: Record<string, GenericHeroIcon> = {
@@ -28,7 +28,7 @@ const FeatureWithProductScreenshot: FCWithLayout<FeatureProps> = ({
 }) => {
   const features = buildFeatures(featureConfigs);
   return (
-    <div className="overflow-hidden py-24 sm:py-32">
+    <div className="overflow-hidden py-24 sm:py-32 bg-[radial-gradient(45rem_50rem_at_top,theme(colors.indigo.100),white)]">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="mx-auto grid max-w-2xl grid-cols-1 gap-x-8 gap-y-16 sm:gap-y-20 lg:mx-0 lg:max-w-none lg:grid-cols-2">
           <div className="lg:pt-4 lg:pr-8">

@@ -1,11 +1,11 @@
 import React from "react";
 
-import DemoLayout from "@/components/DemoLayout";
+import DemoLayout from "@/components/BasicLayout";
 import { FCWithLayout } from "@/@types";
 
 function Dashboard({ name }: FCWithLayout<{ name: string }>) {
   return (
-    <div className="bg-white min-h-[var(--min-h-with-footer-peek)]">
+    <div className="bg-white min-h-[var(--lc-min-hero-height)]">
       <div className="relative isolate mt-16 px-6 pt-14 lg:px-8">
         <h1 className="text-3xl font-bold leading-tight text-gray-900 mb-4">
           Hello {name}!

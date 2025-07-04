@@ -1,6 +1,8 @@
 GEM
   remote: https://rubygems.org/
   specs:
+    aasm (5.5.0)
+      concurrent-ruby (~> 1.0)
     actioncable (8.0.2)
       actionpack (= 8.0.2)
       activesupport (= 8.0.2)
@@ -80,6 +82,9 @@ GEM
     addressable (2.8.7)
       public_suffix (>= 2.0.2, < 7.0)
     aes_key_wrap (1.1.0)
+    after_commit_everywhere (1.6.0)
+      activerecord (>= 4.2)
+      activesupport
     annotaterb (4.14.0)
     ast (2.4.3)
     awesome_print (1.9.2)
@@ -101,6 +106,8 @@ GEM
     concurrent-ruby (1.3.5)
     connection_pool (2.5.1)
     crass (1.0.6)
+    cssbundling-rails (1.4.3)
+      railties (>= 6.0.0)
     dartsass-rails (0.5.1)
       railties (>= 6.0.0)
       sass-embedded (~> 1.63)
@@ -144,6 +151,10 @@ GEM
       logger
       zeitwerk (~> 2.6)
     erubi (1.13.1)
+    et-orbi (1.2.11)
+      tzinfo
+    ethon (0.16.0)
+      ffi (>= 1.15.0)
     fabrication (2.31.0)
     faker (3.5.1)
       i18n (>= 1.8.11, < 2)
@@ -155,6 +166,8 @@ GEM
       faraday (>= 1, < 3)
     faraday-net_http (3.4.0)
       net-http (>= 0.5.0)
+    faraday-retry (2.3.1)
+      faraday (~> 2.0)
     ffi (1.17.2-arm64-darwin)
     ffi (1.17.2-x86_64-linux-gnu)
     flipper (1.3.4)
@@ -174,6 +187,9 @@ GEM
       sanitize (< 8)
     friendly_id (5.5.1)
       activerecord (>= 4.0.0)
+    fugit (1.11.1)
+      et-orbi (~> 1, >= 1.2.11)
+      raabro (~> 1.4)
     globalid (1.2.1)
       activesupport (>= 6.1)
     google-protobuf (4.30.2-arm64-darwin)
@@ -188,6 +204,10 @@ GEM
     image_processing (1.14.0)
       mini_magick (>= 4.9.5, < 6)
       ruby-vips (>= 2.0.17, < 3)
+    importmap-rails (2.1.0)
+      actionpack (>= 6.0.0)
+      activesupport (>= 6.0.0)
+      railties (>= 6.0.0)
     inertia_rails (3.8.0)
       railties (>= 6)
     interactor (3.1.2)
@@ -221,6 +241,9 @@ GEM
     letter_opener (1.10.0)
       launchy (>= 2.2, < 4)
     lint_roller (1.1.0)
+    listen (3.9.0)
+      rb-fsevent (~> 0.10, >= 0.10.3)
+      rb-inotify (~> 0.9, >= 0.9.10)
     logger (1.7.0)
     logtail (0.1.17)
       msgpack (~> 1.0)
@@ -247,6 +270,16 @@ GEM
       logger
     mini_mime (1.1.5)
     minitest (5.25.5)
+    mission_control-jobs (1.0.2)
+      actioncable (>= 7.1)
+      actionpack (>= 7.1)
+      activejob (>= 7.1)
+      activerecord (>= 7.1)
+      importmap-rails (>= 1.2.1)
+      irb (~> 1.13)
+      railties (>= 7.1)
+      stimulus-rails
+      turbo-rails
     monetize (1.13.0)
       money (~> 6.12)
     money (6.19.0)
@@ -327,6 +360,7 @@ GEM
       nio4r (~> 2.0)
     pundit (2.5.0)
       activesupport (>= 3.0.0)
+    raabro (1.4.0)
     racc (1.8.1)
     rack (3.1.13)
     rack-cors (2.0.2)
@@ -369,6 +403,11 @@ GEM
     rails-html-sanitizer (1.6.2)
       loofah (~> 2.21)
       nokogiri (>= 1.15.7, != 1.16.7, != 1.16.6, != 1.16.5, != 1.16.4, != 1.16.3, != 1.16.2, != 1.16.1, != 1.16.0.rc1, != 1.16.0)
+    rails_live_reload (0.4.0)
+      listen
+      nio4r
+      railties
+      websocket-driver
     rails_semantic_logger (4.17.0)
       rack
       railties (>= 5.1)
@@ -387,6 +426,9 @@ GEM
       activerecord (>= 6.1.5)
       activesupport (>= 6.1.5)
       i18n
+    rb-fsevent (0.11.2)
+    rb-inotify (0.11.1)
+      ffi (~> 1.0)
     rdoc (6.13.1)
       psych (>= 4.0.0)
     regexp_parser (2.10.0)
@@ -397,6 +439,8 @@ GEM
     responders (3.1.1)
       actionpack (>= 5.2)
       railties (>= 5.2)
+    reverse_markdown (3.0.0)
+      nokogiri
     rexml (3.4.1)
     rolify (6.0.1)
     rspec-core (3.13.3)
@@ -492,9 +536,23 @@ GEM
       concurrent-ruby (~> 1.0)
     shoulda-matchers (6.4.0)
       activesupport (>= 5.2.0)
+    sib-api-v3-sdk (9.1.0)
+      addressable (~> 2.3, >= 2.3.0)
+      json (~> 2.1, >= 2.1.0)
+      typhoeus (~> 1.0, >= 1.0.1)
+    simple_form (5.3.1)
+      actionpack (>= 5.2)
+      activemodel (>= 5.2)
     snaky_hash (2.0.1)
       hashie
       version_gem (~> 1.1, >= 1.1.1)
+    solid_queue (1.1.5)
+      activejob (>= 7.1)
+      activerecord (>= 7.1)
+      concurrent-ruby (>= 1.3.1)
+      fugit (~> 1.11.0)
+      railties (>= 7.1)
+      thor (~> 1.3.1)
     sprockets (4.2.2)
       concurrent-ruby (~> 1.0)
       logger
@@ -503,6 +561,8 @@ GEM
       actionpack (>= 6.1)
       activesupport (>= 6.1)
       sprockets (>= 3.0.0)
+    stimulus-rails (1.3.4)
+      railties (>= 6.0.0)
     stringio (3.1.6)
     strong_migrations (2.3.0)
       activerecord (>= 7)
@@ -516,6 +576,11 @@ GEM
     thor (1.3.2)
     tilt (2.6.0)
     timeout (0.4.3)
+    turbo-rails (2.0.13)
+      actionpack (>= 7.1.0)
+      railties (>= 7.1.0)
+    typhoeus (1.4.1)
+      ethon (>= 0.9.0)
     tzinfo (2.0.6)
       concurrent-ruby (~> 1.0)
     unicode-display_width (3.1.4)
@@ -559,12 +624,15 @@ PLATFORMS
   x86_64-linux
 
 DEPENDENCIES
+  aasm
   active_model_serializers
+  after_commit_everywhere (~> 1.6)
   annotaterb
   awesome_print
   brakeman
   bumbler
   climate_control
+  cssbundling-rails
   dartsass-rails (~> 0.5)
   data_migrate (~> 11.3)
   database_cleaner-active_record
@@ -572,11 +640,12 @@ DEPENDENCIES
   devise
   devise-jwt (~> 0.12)
   devise-passwordless (~> 1.1)
-  discard
+  discard (~> 1.4)
   dotenv
   fabrication
   faker
-  faraday
+  faraday (~> 2.13)
+  faraday-retry
   flipper-active_record (~> 1.3)
   flipper-api
   flipper-ui
@@ -588,8 +657,10 @@ DEPENDENCIES
   jbuilder
   letter_opener
   logtail-rails
+  mission_control-jobs
   money-rails (~> 1.15)
   name_of_person
+  nokogiri
   omniauth-apple (~> 1.3)
   omniauth-google-oauth2 (~> 1.2)
   omniauth-rails_csrf_protection
@@ -603,8 +674,10 @@ DEPENDENCIES
   rack-cors (~> 2.0)
   rails (~> 8.0)
   rails-controller-testing
+  rails_live_reload
   rails_semantic_logger
   ransack (~> 4.3)
+  reverse_markdown
   rolify (~> 6.0)
   rspec-rails (~> 7)
   rswag-api
@@ -620,11 +693,15 @@ DEPENDENCIES
   sassc-rails (~> 2.1)
   selenium-webdriver
   shoulda-matchers
+  sib-api-v3-sdk
+  simple_form (~> 5.3)
+  solid_queue
   sprockets-rails
   strong_migrations
   tailwindcss-rails (~> 3.3)
   tailwindcss-ruby (~> 3.4)
   terminal-table
+  turbo-rails
   tzinfo-data
   vcr (~> 6.2)
   vite_rails

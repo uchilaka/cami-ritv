@@ -48,7 +48,7 @@ en:
   shared:
     navbar:
       home: "Home"
-      about: "About Us"
+      about: "What We Do"
       dashboard: "Dashboard"
       demos: "Showcase"
       services: "Services"
@@ -59,13 +59,19 @@ en:
       registration: "Settings"
     footer:
       flowbite_icons: 'Flowbite Icons'
+      flowbite_blocks: 'Flowbite Blocks'
       flowbite_integration_guide: 'Flowbite Integration Guide'
-      tailwind_blocks: 'Tailwind CSS UI Blocks'
+      tailwind_flex: 'Tailwind Flex'
+      tailwind_blocks: 'Tailwind UI Blocks'
+      tailwind_theming: 'Tailwind Theme'
+      turbo_handbook: 'Turbo Handbook'
       fontawesome_icons: 'FontAwesome Icons'
       mongoid_docs: 'Mongoid Documentation (v8.1)'
       component_library: 'Component Library'
       paypal_sandbox_guide: 'PayPal Sandbox Testing Guide'
+      open_source_guides: 'Open Source Guides'
       ruby_doc: 'Ruby Documentation'
+      rails_guides: 'Rails Guides (v8)'
       wai_aria_guide: 'Accessibility Guide (WAI-ARIA)'
       zoho_crm_api_guide: 'Zoho CRM API Guide (v7)'
 
@@ -75,3 +81,4 @@ en:
       invalid_password: "is not a valid password"
       invalid_username: "%{value} is not a valid username"
       invalid_phone_number: "%{value} is not a valid phone number"
+      invalid_url: "%{value} is not a valid URL"

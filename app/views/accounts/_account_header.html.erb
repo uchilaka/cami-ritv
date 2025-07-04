@@ -1,0 +1,14 @@
+<% title ||= "Account" %>
+<div class="flex flex-wrap items-center justify-between mx-auto py-4 text-4xl">
+  <h1 class="text-4xl font-bold"><%= title %></h1>
+  <code><%= account.slug %></code>
+</div>
+
+<!-- Notices and alerts -->
+
+<% if account.last_sent_to_crm_at %>
+  <!-- Show the relative time since the last sync in a success alert -->
+  <div class="bg-green-50 border-l-4 border-green-400 text-green-700 p-4 mb-4" role="alert">
+    <p class="font-bold">Last synced to CRM <%= time_ago_in_words(account.last_sent_to_crm_at) %> ago</p>
+  </div>
+<% end %>

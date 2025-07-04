@@ -1,0 +1,1 @@
+console.debug('<<< accounts.ts entrypoint loaded! >>>')

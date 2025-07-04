@@ -53,6 +53,11 @@ Rails.application.configure do
   # Only use :id for inspections in production.
   config.active_record.attributes_for_inspect = [ :id ]
 
+  # Async jobs are run in the background using SolidQueue.
+  config.active_job.queue_adapter = :solid_queue
+  config.solid_queue.connects_to = { database: { writing: :queue } }
+  config.active_job.connects_to = { database: { writing: :queue } }
+
   # Enable DNS rebinding protection and other `Host` header attacks.
   # config.hosts = [
   #   "example.com",     # Allow requests from example.com
@@ -61,4 +66,9 @@ Rails.application.configure do
   #
   # Skip DNS rebinding protection for the default health check endpoint.
   # config.host_authorization = { exclude: ->(request) { request.path == "/up" } }
+
+  # TODO: Disable basic auth for mission_control - to do this, confirm that
+  #   in production, the route configured constraints for /admin/mission_control
+  #   are working as intended to guard /admin/* routes.
+  # config.mission_control.jobs.http_basic_auth_enabled = false
 end

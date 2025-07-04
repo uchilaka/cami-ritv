@@ -1,0 +1,74 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://api-m.sandbox.paypal.com/v1/catalogs/products?page_size=20
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Content-type:
+      - application/json
+      User-Agent:
+      - Faraday v2.9.0
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      connection:
+      - keep-alive
+      content-length:
+      - '2469'
+      cache-control:
+      - max-age=0, no-cache, no-store, must-revalidate
+      content-type:
+      - application/json
+      paypal-debug-id:
+      - fa3c450b33c0c
+      set-cookie:
+      - l7_az=ccg13.slc; Path=/; Domain=paypal.com; Expires=Sat, 20 Apr 2024 13:41:30
+        GMT; HttpOnly; Secure
+      traceparent:
+      - 00-0000000000000000000fa3c450b33c0c-d3a864a93789466e-01
+      edge-control:
+      - max-age=0
+      accept-ranges:
+      - bytes
+      date:
+      - Sat, 20 Apr 2024 13:11:30 GMT
+      via:
+      - 1.1 varnish
+      strict-transport-security:
+      - max-age=63072000; includeSubDomains; preload
+      x-served-by:
+      - cache-chi-kigq8000164-CHI
+      x-cache:
+      - MISS
+      x-cache-hits:
+      - '0'
+      x-timer:
+      - S1713618691.689870,VS0,VE147
+      vary:
+      - Accept-Encoding
+    body:
+      encoding: UTF-8
+      string: '{"products":[{"id":"COM-GSUITE-BASIC-ANNUAL","name":".COM G-Suite Basic
+        Plan @ $6 / user / mo. (billed annually)","description":"Includes relay subscription
+        for G-Suite basic and a .COM domain name registered via domains.google","create_time":"2020-09-15T04:32:06Z","links":[{"href":"https://api.paypal.com/v1/catalogs/products/COM-GSUITE-BASIC-ANNUAL","rel":"self","method":"GET"}]},{"id":"GSUITE-RELAY","name":"G-Suite
+        Relay","description":"Relay billing for Google''s G-Suite services to unsupported
+        markets or delegating clients","create_time":"2020-09-15T04:43:55Z","links":[{"href":"https://api.paypal.com/v1/catalogs/products/GSUITE-RELAY","rel":"self","method":"GET"}]},{"id":"gsuite-basic-inbox","name":"G-Suite
+        Basic E-Mail Inbox","description":"Associate e-mail service at your custom
+        domain, with the popular GMail app","create_time":"2020-10-03T20:43:50Z","links":[{"href":"https://api.paypal.com/v1/catalogs/products/gsuite-basic-inbox","rel":"self","method":"GET"}]},{"id":"starter-landing-page","name":"Starter
+        Landing Page","create_time":"2020-10-03T21:10:26Z","links":[{"href":"https://api.paypal.com/v1/catalogs/products/starter-landing-page","rel":"self","method":"GET"}]},{"id":"inbox-gandi","name":"On-Brand
+        Email @Gandi.net","description":"Just need budget-friendly, no-frills custom
+        email? Look no further than Gandi.net for budget friendly custom email services!","create_time":"2020-10-03T21:17:23Z","links":[{"href":"https://api.paypal.com/v1/catalogs/products/inbox-gandi","rel":"self","method":"GET"}]},{"id":"GW-BUSINESS-STARTER","name":"Google
+        Workspace Business Starter","description":"Custom and secure business email\n100
+        participant video meetings\n30 GB cloud storage per user\nSecurity and management
+        controls\nStandard Support","create_time":"2021-03-23T10:09:36Z","links":[{"href":"https://api.paypal.com/v1/catalogs/products/GW-BUSINESS-STARTER","rel":"self","method":"GET"}]},{"id":"GW-BUSINESS-STANDARD","name":"Google
+        Workspace Business Standard","description":"one\nCustom and secure business
+        email\n150 participant video meetings + recording\n2 TB cloud storage per
+        user\nSecurity and management controls\nStandard Support (paid upgrade to
+        Enhanced Support)","create_time":"2021-03-23T10:11:20Z","links":[{"href":"https://api.paypal.com/v1/catalogs/products/GW-BUSINESS-STANDARD","rel":"self","method":"GET"}]}],"links":[{"href":"https://api.paypal.com/v1/catalogs/products?page_size=20&page=1","rel":"self","method":"GET"}]}'
+  recorded_at: Sat, 20 Apr 2024 13:11:30 GMT
+recorded_with: VCR 6.2.0

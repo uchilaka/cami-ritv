@@ -13,10 +13,19 @@
  *= require_tree .
  *= require_self
  */
-@use "fontawesome";
-@use "variables";
+@use 'fontawesome';
+@use 'global_vars';
+@use 'lobby/landing_page';
 
-#main_logo > img, footer img.logo {
+// From HTML5 style suite
+//@import "libs/vars";
+//@import "libs/functions";
+//@import "libs/mixins";
+//@import "libs/vendor";
+//@import "libs/breakpoints";
+
+#main_logo > img,
+footer img.logo {
   width: auto;
 }
 
@@ -29,7 +38,7 @@
 }
 
 .PhoneInput {
-  input[type="tel"] {
+  input[type='tel'] {
     border-width: 0;
   }
 }
@@ -41,8 +50,20 @@
 /***************** Demos Styling ******************/
 header {
   &.absolute {
-    nav[aria-label="Global"] {
+    nav[aria-label='Global'] {
       backdrop-filter: opacity(0.8) blur(10px);
     }
   }
 }
+
+/**************** Breakpoints ******************/
+
+//@include breakpoints((
+//        wide:      ( 1281px,  1680px ),
+//        normal:    ( 737px,   1280px ),
+//        mobile:    ( 481px,   736px  ),
+//        mobilep:   ( null,    480px  )
+//));
+
+@custom-variant dark (&:where(.dark, .dark *));
+@custom-variant light (&:where(.light, .light *));

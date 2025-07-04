@@ -1,6 +1,6 @@
 import React from "react";
 import { FCWithLayout } from "@/@types";
-import DemoLayout from "@/components/DemoLayout";
+import DemoLayout from "@/components/BasicLayout";
 
 const SimpleSignIn: FCWithLayout = () => {
   return (
@@ -13,7 +13,7 @@ const SimpleSignIn: FCWithLayout = () => {
         <body class="h-full">
         ```
       */}
-      <div className="flex min-h-[var(--min-h-with-footer-peek)] flex-1 flex-col justify-center px-6 py-12 lg:px-8">
+      <div className="bg-white flex min-h-[var(--lc-min-hero-height)] flex-1 flex-col justify-center px-6 py-12 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
           <img
             alt="Your Company"

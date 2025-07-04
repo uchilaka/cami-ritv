@@ -1,0 +1,21 @@
+<% content_for(:typescript_includes) do %>
+  <%= vite_javascript_tag "invoice_search_app.tsx" %>
+<% end %>
+<div class="w-full dark:text-white min-h-[var(--lc-min-form-height)]">
+  <% if notice.present? %>
+    <p class="py-2 px-3 bg-green-50 mb-5 text-green-500 font-medium rounded-lg inline-block" id="notice"><%= notice %></p>
+  <% end %>
+
+  <% content_for :title, "Invoices" %>
+
+  <div class="flex justify-between items-center mb-6">
+    <h1 class="font-bold text-4xl">Invoices</h1>
+    <%= link_to "New invoice", new_invoice_path, class: primary_btn_classes %>
+  </div>
+
+  <!-- Frontend/Features/InvoiceManager/InvoiceSearch app gets rendered here -->
+  <div id="invoice-search" class="min-w-full relative shadow-md sm:rounded-lg"></div>
+
+  <!-- Invoice show modal will be rendered here -->
+  <turbo-frame id="invoice-show-modal"></turbo-frame>
+</div>

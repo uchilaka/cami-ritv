@@ -24,9 +24,11 @@ Struct.new(
   :new_window,
   :section,
   :submenu,
+  :feature,
   :feature_flag,
   :enabled,
   :public,
   :admin,
+  :order,
   keyword_init: true
 )

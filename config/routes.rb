@@ -3,8 +3,19 @@
 require 'lib/admin_scope_constraint'
 
 Rails.application.routes.draw do
-  mount Rswag::Ui::Engine => '/api-docs'
-  mount Rswag::Api::Engine => '/api-docs'
+  resources :webhooks
+  namespace :api do
+    namespace :v2, defaults: { format: :json } do
+      namespace :crm do
+        resource :accounts, only: [] do
+          member do
+            put ':id', as: :update, action: :update
+            patch ':id', action: :update
+          end
+        end
+      end
+    end
+  end
 
   devise_for :users,
              controllers: {
@@ -22,21 +33,50 @@ Rails.application.routes.draw do
   end
 
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
+  resources :invoices, except: %i[destroy] do
+    member do
+      get :show_modal
+    end
+
+    collection do
+      post :search
+    end
+  end
+
+  resources :accounts, except: %i[destroy] do
+    member do
+      get :show_modal
+      get :navigate_to_crm_modal
+      get :show_li_actions
+      put 'update/:integration', as: :update_integration, action: :push
+    end
+  end
 
   resources :demos, only: %i[] do
     collection do
+      get 'blog-highlights', to: 'demos#blog_highlights'
+      get 'content-sections', to: 'demos#content_sections'
       get 'feature/with-product-screenshot', to: 'demos#feature_with_product_screenshot'
       get 'feature/with-2x2-grid', to: 'demos#feature_with_2x2_grid'
       get 'hello-inertia-rails', to: 'dashboard#index'
       get 'hero/simply-centered', to: 'demos#hero_simply_centered'
+      get 'newsletter', to: 'demos#newsletter'
       get 'pricing/with-emphasized-tier', to: 'demos#pricing_with_emphasized_tier'
       get 'simple-sign-in', to: 'demos#simple_sign_in'
+      get 'testimonials', to: 'demos#testimonials'
+      get 'work-with-us', to: 'demos#work_with_us'
     end
   end
 
+  get '/about-us', to: 'lobby#about_us'
+  get '/consultation/:subject', to: 'lobby#consultation'
   get '/protego/:code', to: 'errors#render_static_error'
+  get '/video', to: 'lobby#background_video'
 
-  root 'demos#hero_simply_centered'
+  root 'lobby#landing_page'
 
   draw :flipper
+  draw :mission_control
+  draw :swagger
+  draw :api_v1
 end

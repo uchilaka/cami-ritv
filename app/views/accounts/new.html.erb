@@ -1,0 +1,9 @@
+<div class="dark:text-white mx-auto md:w-2/3 w-full">
+  <h1 class="font-bold text-4xl">New account</h1>
+
+  <% content_for :form_actions do %>
+    <%= link_to "Back to accounts", accounts_path, class: secondary_btn_classes %>
+  <% end %>
+
+  <%= render "form", account: @account %>
+</div>

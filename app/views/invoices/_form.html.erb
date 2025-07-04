@@ -1,0 +1,87 @@
+<%= simple_form_for(invoice, class: "contents") do |form| %>
+  <% if invoice.errors.any? %>
+    <div id="error_explanation" class="bg-red-50 text-red-500 px-3 py-2 font-medium rounded-lg mt-3">
+      <h2><%= pluralize(invoice.errors.count, "error") %> prohibited this invoice from being saved:</h2>
+
+      <ul>
+        <% invoice.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="grid md:grid-cols-2 md:gap-6">
+    <div class="my-5 group">
+      <%= form.label :invoice_number %>
+      <%= form.text_field :invoice_number,
+                          readonly: invoice.persisted?,
+                          class: compose_class_names(
+                            "shadow border-gray-400 dark:bg-gray-700",
+                            "block rounded-md border outline-none px-3 py-2 mt-2 w-full", {
+                              "cursor-not-allowed focus:ring-gray-400 focus:border-gray-400": invoice.persisted?
+                            }) %>
+    </div>
+    <div class="my-5 group">
+      <%= form.label :status %>
+      <%= form.select(:status,
+                      options_for_select(invoice_status_options, selected: invoice.status),
+                      {},
+                      class: input_class_names) %>
+    </div>
+  </div>
+
+  <div class="grid lg:grid-cols-3 md:gap-6">
+    <div class="my-5 group">
+      <%= form.label :issued_at %>
+      <%= form.datetime_field :issued_at, class: input_class_names %>
+    </div>
+    <div class="my-5 group">
+      <%= form.label :due_at %>
+      <%= form.datetime_field :due_at, class: input_class_names %>
+    </div>
+    <div class="my-5">
+      <%= form.label :paid_at %>
+      <%= form.datetime_field :paid_at, class: input_class_names %>
+    </div>
+  </div>
+
+  <div class="grid lg:grid-cols-3 md:gap-6">
+    <div class="my-5 group">
+      <%= form.label :amount %>
+      <%= form.number_field :amount, min: 0, class: input_class_names %>
+    </div>
+    <div class="my-5 group">
+      <%= form.label :due_amount %>
+      <%= form.number_field :due_amount, min: 0, class: input_class_names %>
+    </div>
+    <div class="my-5 group">
+      <%= form.label :currency_code %>
+      <%= form.select(:currency_code,
+                      options_for_select(currency_code_options),
+                      {},
+                      class: input_class_names,
+                      disabled: true) %>
+    </div>
+  </div>
+
+  <div class="my-5">
+    <%= form.label :notes %>
+    <%= form.rich_text_area :notes, rows: 4, class: input_class_names %>
+  </div>
+
+  <div class="grid md:grid-cols-2 md:gap-6">
+    <div class="my-5 group">&nbsp;</div>
+    <div class="my-5">
+      <%= form.label :updated_accounts_at %>
+      <!-- TODO Tooltip that this controls invoice selection for UpsertInvoiceRecordsJob batch runs -->
+      <span class="<%= badge_classes("ms-1") %>">Control field</span>
+      <%= form.datetime_field :updated_accounts_at, class: input_class_names %>
+    </div>
+  </div>
+
+  <div class="mt-2 flex w-full items-center justify-end">
+    <%= yield :form_actions %>
+    <%= form.submit class: primary_btn_classes("py-3 px-5 cursor-pointer") %>
+  </div>
+<% end %>

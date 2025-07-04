@@ -1,0 +1,12 @@
+<div class="mx-auto md:w-2/3 dark:text-white w-full min-h-[var(--lc-min-form-height)]">
+  <!-- Account form header -->
+  <%= render 'accounts/account_header', { account: @account, title: "Editing account" } %>
+
+  <!-- Account form actions -->
+  <% content_for :form_actions do %>
+    <%= link_to "Show this account", @account, class: secondary_btn_classes("px-5 py-3") %>
+    <%= link_to "Back to accounts", accounts_path, class: secondary_btn_classes("px-5 py-3 md:mx-2") %>
+  <% end %>
+
+  <%= render "form", account: @account %>
+</div>

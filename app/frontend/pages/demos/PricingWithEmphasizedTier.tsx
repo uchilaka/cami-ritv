@@ -1,7 +1,7 @@
 import React from "react";
 import clsx from "clsx";
 import { CheckIcon } from "@heroicons/react/20/solid";
-import DemoLayout from "@/components/DemoLayout";
+import DemoLayout from "@/components/BasicLayout";
 import { FCWithLayout } from "@/@types";
 
 interface PriceTier {
@@ -25,7 +25,7 @@ const PricingWithEmphasizedTier: FCWithLayout<PricingTierProps> = ({
   tiers,
 }) => {
   return (
-    <div className="relative isolate px-6 py-24 sm:py-32 lg:px-8">
+    <div className="relative isolate px-6 py-24 sm:py-32 lg:px-8 bg-[radial-gradient(45rem_50rem_at_top,theme(colors.indigo.100),white)]">
       <div
         aria-hidden="true"
         className="absolute inset-x-0 -top-3 -z-10 transform-gpu overflow-hidden px-36 blur-3xl"
