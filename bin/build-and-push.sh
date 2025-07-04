@@ -19,18 +19,25 @@ fi
 : "${GCP_ARTIFACT_REPOSITORY:=cami-ritv}"
 : "${DOCKER_IMAGE_NAME:=cami-ritv}"
 
-# Get git commit hash for tagging
+# Get versions
 GIT_COMMIT=$(git rev-parse --short HEAD) || error_exit "Failed to get git commit hash"
+RUBY_VERSION="3.4.3"  # From .tool-versions
+NODE_VERSION="24.3.0"  # From .tool-versions
+
+# Sanitize versions for Docker tags
+SANITIZED_RUBY_VERSION=$(echo "${RUBY_VERSION}" | tr '.' '-')
+SANITIZED_NODE_VERSION=$(echo "${NODE_VERSION}" | tr '.' '-')
 
 # Image tags
-IMAGE_TAG="${GCP_REGION}-docker.pkg.dev/${GCP_PROJECT_ID}/${GCP_ARTIFACT_REPOSITORY}/${DOCKER_IMAGE_NAME}:${GIT_COMMIT}"
+IMAGE_TAG="${GCP_REGION}-docker.pkg.dev/${GCP_PROJECT_ID}/${GCP_ARTIFACT_REPOSITORY}/${DOCKER_IMAGE_NAME}:ruby-${SANITIZED_RUBY_VERSION}-node-${SANITIZED_NODE_VERSION}-${GIT_COMMIT}"
 LATEST_TAG="${GCP_REGION}-docker.pkg.dev/${GCP_PROJECT_ID}/${GCP_ARTIFACT_REPOSITORY}/${DOCKER_IMAGE_NAME}:latest"
+STABLE_TAG="${GCP_REGION}-docker.pkg.dev/${GCP_PROJECT_ID}/${GCP_ARTIFACT_REPOSITORY}/${DOCKER_IMAGE_NAME}:ruby-${SANITIZED_RUBY_VERSION}-node-${SANITIZED_NODE_VERSION}"
 
 # Check for required commands
 for cmd in docker gcloud git; do
-    if ! command -v "${cmd}" &> /dev/null; then
-        error_exit "${cmd} is required but not installed"
-    fi
+  if ! command -v "${cmd}" &> /dev/null; then
+    error_exit "${cmd} is required but not installed"
+  fi
 done
 
 # Ensure user is authenticated with gcloud
@@ -55,11 +62,18 @@ docker build \
 echo "🚀 Pushing Docker image to Google Artifact Registry..."
 docker push "${IMAGE_TAG}" || error_exit "Failed to push image"
 
-# Create and push latest tag
-echo "🏷️  Updating 'latest' tag..."
+# Create and push versioned tags
+echo "🏷️  Updating tags..."
+
+# Latest tag (always points to most recent build)
 docker tag "${IMAGE_TAG}" "${LATEST_TAG}" || error_exit "Failed to tag image as latest"
 docker push "${LATEST_TAG}" || error_exit "Failed to push latest tag"
 
+# Versioned tag (points to this specific Ruby/Node version)
+docker tag "${IMAGE_TAG}" "${STABLE_TAG}" || error_exit "Failed to tag image as versioned"
+docker push "${STABLE_TAG}" || error_exit "Failed to push versioned tag"
+
 echo -e "\n✅ Success!"
 echo "📦 Image: ${IMAGE_TAG}"
-echo "🏷️  Latest: ${LATEST_TAG}"
+echo "🏷️  Stable: ${STABLE_TAG}"
+echo "🔖 Latest: ${LATEST_TAG}"
