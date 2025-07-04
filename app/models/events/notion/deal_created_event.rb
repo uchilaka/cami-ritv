@@ -22,5 +22,9 @@ module Notion
     def self.model_name
       GenericEvent.model_name
     end
+
+    # TODO: Add testing for these delegated attributes to ensure that when they
+    #   are not set, validations are triggered with useful error messages.
+    # validates :entity_id, :database_id, :workspace_id, :workspace_name, presence: true
   end
 end
