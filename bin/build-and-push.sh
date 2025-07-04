@@ -1,5 +1,5 @@
-#!/usr/bin/env bash
-set -euo pipefail
+#!/usr/bin/env zsh
+set -eo pipefail
 
 # Exit immediately if a command fails
 function error_exit {
@@ -7,10 +7,14 @@ function error_exit {
     exit 1
 }
 
+# Get the directory of this script
+SCRIPT_DIR="${0:A:h}"
+PROJECT_ROOT="${SCRIPT_DIR:h}"
+
 # Load environment variables from .env file if it exists
-if [[ -f "${BASH_SOURCE%/*}/../.env" ]]; then
+if [[ -f "${PROJECT_ROOT}/.env" ]]; then
     # shellcheck source=/dev/null
-    source "${BASH_SOURCE%/*}/../.env"
+    source "${PROJECT_ROOT}/.env"
 fi
 
 # Configuration with environment variable fallbacks
@@ -19,14 +23,36 @@ fi
 : "${GCP_ARTIFACT_REPOSITORY:=cami-ritv}"
 : "${DOCKER_IMAGE_NAME:=cami-ritv}"
 
-# Get versions
-GIT_COMMIT=$(git rev-parse --short HEAD) || error_exit "Failed to get git commit hash"
-RUBY_VERSION="3.4.3"  # From .tool-versions
-NODE_VERSION="24.3.0"  # From .tool-versions
+# Parse versions from .tool-versions file
+TOOL_VERSIONS="${PROJECT_ROOT}/.tool-versions"
+if [[ ! -f "${TOOL_VERSIONS}" ]]; then
+    error_exit "${TOOL_VERSIONS} not found"
+fi
+
+# Read versions into associative array
+declare -A versions
+while read -r tool version; do
+  versions[${tool}]=${version}
+done < "${TOOL_VERSIONS}"
+
+# Extract versions with defaults
+RUBY_VERSION=${versions[ruby]:-unknown}
+NODE_VERSION=${versions[nodejs]:-unknown}
+
+# Verify versions were found
+[[ "${RUBY_VERSION}" == "unknown" ]] && error_exit "Ruby version not found in .tool-versions"
+[[ "${NODE_VERSION}" == "unknown" ]] && error_exit "Node.js version not found in .tool-versions"
+
+echo "🔍 Detected versions:"
+echo "   Ruby: ${RUBY_VERSION}"
+echo "   Node.js: ${NODE_VERSION}"
+
+# Get git commit
+GIT_COMMIT=$(git -C "${PROJECT_ROOT}" rev-parse --short HEAD) || error_exit "Failed to get git commit hash"
 
 # Sanitize versions for Docker tags
-SANITIZED_RUBY_VERSION=$(echo "${RUBY_VERSION}" | tr '.' '-')
-SANITIZED_NODE_VERSION=$(echo "${NODE_VERSION}" | tr '.' '-')
+SANITIZED_RUBY_VERSION=${RUBY_VERSION//./-}
+SANITIZED_NODE_VERSION=${NODE_VERSION//./-}
 
 # Image tags
 IMAGE_TAG="${GCP_REGION}-docker.pkg.dev/${GCP_PROJECT_ID}/${GCP_ARTIFACT_REPOSITORY}/${DOCKER_IMAGE_NAME}:ruby-${SANITIZED_RUBY_VERSION}-node-${SANITIZED_NODE_VERSION}-${GIT_COMMIT}"
