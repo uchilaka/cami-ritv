@@ -8,9 +8,7 @@ cask_args appdir: '~/Applications', require_sha: true
 # brew install
 brew 'foreman'
 brew 'tree'
-brew 'direnv'
 brew 'ruby-build'
-brew 'asdf'
 brew 'coreutils'
 brew 'gnupg'
 brew 'git-crypt'
@@ -22,9 +20,9 @@ if OS.mac?
   brew 'tree'
   brew 'gnutls'
   brew 'foreman'
-  cask 'ngrok'
-  brew 'pgadmin4'
   brew 'pinentry-mac'
+  cask 'ngrok'
+  cask 'pgadmin4'
 end
 
 if File.exist?('/Applications/RubyMine.app')
@@ -33,6 +31,7 @@ elsif ENV['VISUAL'] == 'rubymine' || ENV['EDITOR'] == 'rubymine'
   cask 'rubymine'
 else
   cask 'visual-studio-code'
+  cask 'windsurf'
 end
 
 # FYI: Brew cask only works on macOS
@@ -46,3 +45,18 @@ cask 'keepassxc'
 cask 'claude'
 cask 'notion'
 cask '1password'
+
+unless ENV['RAILS_ENV'] == 'production'
+  cask 'insomnia'
+  cask 'discord'
+  cask 'slack'
+  cask 'whatsapp'
+end
+
+# Environment specific dependencies
+if %w[staging production].include?(ENV['RAILS_ENV'])
+  brew 'mise'
+elsif %w[development].include?(ENV['RAILS_ENV'])
+  brew 'asdf'
+  brew 'direnv'
+end
