@@ -1,6 +1,7 @@
 import React, { useEffect, useCallback, useState } from 'react';
 import LightModeIcon from './svgs/LightModeIcon';
 import DarkModeIcon from './svgs/DarkModeIcon';
+import ControlWrapper from './ControlWrapper';
 
 type THEME = 'dark' | 'light';
 
@@ -39,8 +40,7 @@ const DarkModeApp = () => {
   }, [currentScheme]);
 
   return (
-    <div className="min-w-[200px] flex justify-between content-center text-sm px-4 py-3 dark:text-white">
-      <label className="content-center">Theme</label>
+    <ControlWrapper>
       <button
         type="button"
         onClick={toggleTheme}
@@ -48,7 +48,7 @@ const DarkModeApp = () => {
       >
         {currentScheme === 'dark' ? <DarkModeIcon /> : <LightModeIcon />}
       </button>
-    </div>
+    </ControlWrapper>
   );
 };
 

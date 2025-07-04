@@ -1,22 +1,22 @@
-import React from "react";
+import React from 'react';
 import {
   CloudArrowUpIcon,
   LockClosedIcon,
   ServerIcon,
-} from "@heroicons/react/20/solid";
-import { FCWithLayout } from "@/@types";
-import DemoLayout from "@/components/BasicLayout";
-import { FeatureConfig, FeatureProps, GenericHeroIcon } from "./@types";
+} from '@heroicons/react/20/solid';
+import { FCWithLayout } from '@/@types';
+import DemoLayout from '@/components/BasicLayout';
+import { FeatureConfig, FeatureProps, GenericHeroIcon } from './@types';
 
 const featureIcons: Record<string, GenericHeroIcon> = {
-  "cloud-arrow-up-icon": CloudArrowUpIcon,
-  "lock-closed-icon": LockClosedIcon,
-  "server-icon": ServerIcon,
+  'cloud-arrow-up-icon': CloudArrowUpIcon,
+  'lock-closed-icon': LockClosedIcon,
+  'server-icon': ServerIcon,
 };
 
 const buildFeatures = (
-  features: FeatureProps["features"]
-): Array<Omit<FeatureConfig, "iconKey"> & { icon: GenericHeroIcon }> => {
+  features: FeatureProps['features']
+): Array<Omit<FeatureConfig, 'iconKey'> & { icon: GenericHeroIcon }> => {
   return features.map(({ iconKey, ...feature }) => ({
     ...feature,
     icon: featureIcons[iconKey],
@@ -45,7 +45,7 @@ const FeatureWithProductScreenshot: FCWithLayout<FeatureProps> = ({
                 cupiditate blanditiis ratione.
               </p>
               <dl className="mt-10 max-w-xl space-y-8 text-base/7 text-gray-600 lg:max-w-none">
-                {features.map((feature) => (
+                {features.map(feature => (
                   <div key={feature.name} className="relative pl-9">
                     <dt className="inline font-semibold text-gray-900">
                       <feature.icon
@@ -53,7 +53,7 @@ const FeatureWithProductScreenshot: FCWithLayout<FeatureProps> = ({
                         className="absolute top-1 left-1 size-5 text-indigo-600"
                       />
                       {feature.name}
-                    </dt>{" "}
+                    </dt>{' '}
                     <dd className="inline">{feature.description}</dd>
                   </div>
                 ))}
