@@ -61,7 +61,7 @@ cask 'claude'
 cask 'notion'
 cask '1password'
 
-unless ENV['RAILS_ENV'] == 'production'
+unless %w[ci test production].include?(ENV['RAILS_ENV'])
   cask 'insomnia'
   cask 'discord'
   cask 'slack'
