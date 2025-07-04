@@ -1,37 +1,65 @@
-#!/bin/bash
-set -e
+#!/usr/bin/env bash
+set -euo pipefail
 
-# Configuration
-PROJECT_ID="your-gcp-project-id"
-REGION="us-central1"  # Change to your preferred region
-REPOSITORY="cami-ritv"
-IMAGE_NAME="cami-ritv"
-TAG="$(git rev-parse --short HEAD)"  # Using git commit hash as tag
-FULL_IMAGE_NAME="${REGION}-docker.pkg.dev/${PROJECT_ID}/${REPOSITORY}/${IMAGE_NAME}:${TAG}"
+# Exit immediately if a command fails
+function error_exit {
+    echo "❌ Error: $1" >&2
+    exit 1
+}
+
+# Load environment variables from .env file if it exists
+if [[ -f "${BASH_SOURCE%/*}/../.env" ]]; then
+    # shellcheck source=/dev/null
+    source "${BASH_SOURCE%/*}/../.env"
+fi
+
+# Configuration with environment variable fallbacks
+: "${GCP_PROJECT_ID:?GCP_PROJECT_ID must be set in .env or environment}"
+: "${GCP_REGION:=us-central1}"  # Default to us-central1 if not set
+: "${GCP_ARTIFACT_REPOSITORY:=cami-ritv}"
+: "${DOCKER_IMAGE_NAME:=cami-ritv}"
+
+# Get git commit hash for tagging
+GIT_COMMIT=$(git rev-parse --short HEAD) || error_exit "Failed to get git commit hash"
+
+# Image tags
+IMAGE_TAG="${GCP_REGION}-docker.pkg.dev/${GCP_PROJECT_ID}/${GCP_ARTIFACT_REPOSITORY}/${DOCKER_IMAGE_NAME}:${GIT_COMMIT}"
+LATEST_TAG="${GCP_REGION}-docker.pkg.dev/${GCP_PROJECT_ID}/${GCP_ARTIFACT_REPOSITORY}/${DOCKER_IMAGE_NAME}:latest"
+
+# Check for required commands
+for cmd in docker gcloud git; do
+    if ! command -v "${cmd}" &> /dev/null; then
+        error_exit "${cmd} is required but not installed"
+    fi
+done
 
 # Ensure user is authenticated with gcloud
-if ! gcloud auth list --filter=status:ACTIVE --format='value(account)' 2>/dev/null; then
-  echo "Please authenticate with gcloud first:"
-  echo "gcloud auth login"
-  exit 1
+if ! gcloud auth list --filter=status:ACTIVE --format='value(account)' &>/dev/null; then
+    error_exit "Please authenticate with gcloud first:\n  gcloud auth login"
 fi
 
 # Ensure docker is authenticated to the artifact registry
-gcloud auth configure-docker "${REGION}-docker.pkg.dev" --quiet
+echo "🔐 Authenticating Docker with Google Artifact Registry..."
+gcloud auth configure-docker "${GCP_REGION}-docker.pkg.dev" --quiet || \
+    error_exit "Failed to authenticate Docker with Google Artifact Registry"
 
 # Build the Docker image
-echo "Building Docker image..."
-docker build -t "${FULL_IMAGE_NAME}" .
+echo "🏗️  Building Docker image (${GIT_COMMIT})..."
+docker build \
+    --tag "${IMAGE_TAG}" \
+    --build-arg RAILS_ENV=production \
+    --build-arg NODE_ENV=production \
+    . || error_exit "Docker build failed"
 
 # Push the Docker image
-echo "Pushing Docker image to Google Artifact Registry..."
-docker push "${FULL_IMAGE_NAME}"
+echo "🚀 Pushing Docker image to Google Artifact Registry..."
+docker push "${IMAGE_TAG}" || error_exit "Failed to push image"
 
-echo "Image successfully pushed to: ${FULL_IMAGE_NAME}"
+# Create and push latest tag
+echo "🏷️  Updating 'latest' tag..."
+docker tag "${IMAGE_TAG}" "${LATEST_TAG}" || error_exit "Failed to tag image as latest"
+docker push "${LATEST_TAG}" || error_exit "Failed to push latest tag"
 
-# Create a latest tag
-LATEST_TAG="${REGION}-docker.pkg.dev/${PROJECT_ID}/${REPOSITORY}/${IMAGE_NAME}:latest"
-docker tag "${FULL_IMAGE_NAME}" "${LATEST_TAG}"
-docker push "${LATEST_TAG}"
-
-echo "Latest tag updated to: ${LATEST_TAG}"
+echo -e "\n✅ Success!"
+echo "📦 Image: ${IMAGE_TAG}"
+echo "🏷️  Latest: ${LATEST_TAG}"
