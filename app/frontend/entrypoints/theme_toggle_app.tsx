@@ -1,6 +1,6 @@
 import { createElement } from 'react';
 import { createRoot } from 'react-dom/client';
-import ThemeToggleApp from '@/features/ThemeToggle';
+import ThemeToggleApp from '@/features/ThemeToggle/v2';
 
 const container = document.querySelector<HTMLDivElement>('#user-dropdown');
 if (container) {
