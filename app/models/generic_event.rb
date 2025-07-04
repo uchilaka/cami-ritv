@@ -19,7 +19,10 @@
 class GenericEvent < ApplicationRecord
   extend FriendlyId
 
-  friendly_id :slug_candidates, use: :slugged, slug_limit: 15
+  friendly_id :slug_candidates,
+              use: :slugged,
+              sequence_separator: '-',
+              slug_limit: 15
 
   attribute :type, :string, default: 'GenericEvent'
 
@@ -31,13 +34,15 @@ class GenericEvent < ApplicationRecord
 
   delegate :remote_record_id, to: :metadatum, allow_nil: true
 
+  validates :type, presence: true
   validates :metadatum, presence: true, if: -> { type != 'GenericEvent' }
 
   # FriendlyId helper methods
   def slug_candidates
     [
-      %i[eventable_slug id],
-      %i[eventable_slug variant id],
+      %i[id_first_5],
+      %i[eventable_slug id_first_5],
+      %i[eventable_slug variant id_first_5],
     ]
   end
 
@@ -51,7 +56,6 @@ class GenericEvent < ApplicationRecord
   end
 
   def variant
-    raise NotImplementedError,
-          'Subclasses must implement #variant'
+    'generic'
   end
 end

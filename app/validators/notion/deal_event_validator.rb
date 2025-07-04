@@ -14,8 +14,10 @@ module Notion
 
     def validate_metadatum_presence(record)
       return if record.metadatum.present?
+      # Avoid adding duplicate error messages
+      return if (record.errors[:metadatum] || []).include?('must exist')
 
-      record.errors.add(:metadatum, :blank, message: "can't be blank")
+      record.errors.add(:metadatum, :blank, message: 'must exist')
     end
 
     def validate_required_attributes(record)
