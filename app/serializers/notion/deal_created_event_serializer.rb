@@ -20,10 +20,14 @@
 #
 module Notion
   class DealCreatedEventSerializer < ActiveModel::Serializer
+    include Rails.application.routes.url_helpers
+
+    delegate :hostname, to: AppUtils
+
     attributes :id, :slug, :status, :workspace_id, :workspace_name,
                :subscription_id, :integration_id, :remote_record_id,
                :entity_id, :database_id, :created_at, :updated_at,
-               :type, :entity, :database
+               :type, :entity, :database, :url, :download_deal_url
 
     def entity_id
       from_metadata('entity', 'id')
@@ -43,6 +47,14 @@ module Notion
 
     def subscription_id
       from_metadata('subscription_id')
+    end
+
+    def url
+      webhook_event_url(object.eventable, object, host: hostname, format: :json)
+    end
+
+    def download_deal_url
+      api_v2_webhooks_notion_event_deal_url(object, host: hostname, format: :json)
     end
 
     private

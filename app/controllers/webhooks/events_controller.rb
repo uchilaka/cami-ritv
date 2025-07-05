@@ -4,6 +4,7 @@ module Webhooks
   class EventsController < ::ApplicationController
     # Make sure the webhook is loaded before any action
     before_action :webhook
+    before_action :event, except: %i[index]
 
     def index
       @query = GenericEvent.ransack(search_query.predicates)
@@ -17,12 +18,7 @@ module Webhooks
     protected
 
     def event
-      @event ||=
-        if events_params[:event_id].blank?
-          nil
-        else
-          authorize webhook.generic_events.friendly.find(events_params[:event_id])
-        end
+      @event ||= authorize GenericEvent.friendly.find(event_id)
     end
 
     def webhook
@@ -34,6 +30,12 @@ module Webhooks
     end
 
     private
+
+    def event_id
+      return events_params[:id] if webhook.present?
+
+      events_params[:event_id]
+    end
 
     def search_query
       @search_query ||= ::Webhooks::EventSearchQuery.new(
@@ -62,7 +64,7 @@ module Webhooks
     end
 
     def event_search_common_params
-      %i[webhook_id event_id page q]
+      %i[webhook_id event_id id page q]
     end
   end
 end
