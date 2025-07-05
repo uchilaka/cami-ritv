@@ -37,7 +37,7 @@ module Webhooks
         params:
           events_params
                   .merge(webhook_slug: webhook.slug),
-        fields: %w[slug status type key eventable_type]
+        fields: %w[slug status]
       )
     end
 

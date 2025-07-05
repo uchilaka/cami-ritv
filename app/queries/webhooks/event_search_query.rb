@@ -14,8 +14,12 @@ module Webhooks
 
     protected
 
-    def compose_predicates(*fields)
-      search_fields = (%w[key] + fields).uniq
+    def fields
+      @fields || []
+    end
+
+    def compose_predicates(*input_fields)
+      search_fields = (fields + %w[slug status] + input_fields).uniq
       metadatum_search_predicate =
         GenericEvent
           .fuzzy_search_predicate_key(
@@ -25,7 +29,6 @@ module Webhooks
             polymorphic: true,
             matcher: nil
           )
-      search_fields = (search_fields + %w[event_type]).uniq
       event_search_predicate =
         GenericEvent.fuzzy_search_predicate_key(*search_fields, matcher: nil)
       compound_cont_predicate =

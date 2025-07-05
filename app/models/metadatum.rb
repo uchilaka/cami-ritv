@@ -25,7 +25,7 @@ class Metadatum < ApplicationRecord
   has_and_belongs_to_many :accounts, join_table: 'accounts_metadata'
 
   def self.ransackable_attributes(_auth_object = nil)
-    %w[key]
+    %w[key value]
   end
 
   def self.ransackable_associations(_auth_object = nil)

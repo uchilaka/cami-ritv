@@ -16,5 +16,5 @@
 #  index_webhooks_on_status  (status)
 #
 class WebhookSerializer < ActiveModel::Serializer
-  attributes :id, :url, :verification_token
+  attributes :id, :url, :slug, :status, :verification_token
 end
