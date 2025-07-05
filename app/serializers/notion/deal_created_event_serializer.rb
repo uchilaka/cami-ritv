@@ -20,7 +20,7 @@
 #
 module Notion
   class DealCreatedEventSerializer < ActiveModel::Serializer
-    attributes :id, :workspace_id, :workspace_name,
+    attributes :id, :slug, :workspace_id, :workspace_name,
                :subscription_id, :integration_id, :remote_record_id,
                :entity_id, :database_id, :created_at, :updated_at,
                :type, :entity, :database

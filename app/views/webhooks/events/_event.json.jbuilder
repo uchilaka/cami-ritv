@@ -1,4 +1,4 @@
 json.extract! event.serializable_hash,
-              :type, :created_at, :updated_at
+              :id, :type, :slug, :created_at, :updated_at
 
 json.metadatum event.metadatum.serializable_hash
