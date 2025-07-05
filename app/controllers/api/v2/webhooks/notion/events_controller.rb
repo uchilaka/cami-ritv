@@ -31,6 +31,10 @@ module API
             render json: { errors: e.message }, status: :unprocessable_entity
           end
 
+          def deal
+            render json: { message: 'Not implemented yet' }, status: :not_implemented
+          end
+
           protected
 
           def webhook

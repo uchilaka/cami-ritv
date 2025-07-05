@@ -41,6 +41,10 @@ Struct.new(
 #   - Add corresponding deal types: :new_business, :renewal, :expansion
 #   - Add corresponding deal sources: e.g. :webinar, :referral, :outbound, :inbound,
 #     :partner
+#
+# bin/rails g scaffold Deal remote_system_id:string name:string deal_stage:string \
+#   last_contacted_at:timestamp lead_source:string notes:action_text \
+#   priority_level:string deal_value:number expected_close_at:timestamp --pretend
 Struct.new(
   'Deal',
   :remote_system_id,

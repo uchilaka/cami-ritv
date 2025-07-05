@@ -16,6 +16,7 @@ Rails.application.routes.draw do
 
       namespace :webhooks, only: [] do
         post 'notion/events', controller: 'notion/events', action: :create
+        patch 'notion/events/:id/deal', controller: 'notion/events', action: :deal, as: :notion_event_deal
       end
     end
   end
@@ -72,7 +73,11 @@ Rails.application.routes.draw do
   end
 
   resources :webhooks do
-    resources :events, only: %i[index show]
+    resources :events, only: %i[index show] do
+      # member do
+      #   resources :record, only: %i[index show], controller: 'events/records'
+      # end
+    end
   end
 
   get '/about-us', to: 'lobby#about_us'
