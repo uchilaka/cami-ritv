@@ -71,6 +71,7 @@ module Cami
     # config.eager_load_paths << Rails.root.join("extras")
     config.eager_load_paths << "#{root}/lib"
     config.eager_load_paths << "#{root}/app/concerns"
+    config.eager_load_paths << "#{root}/app/queries"
 
     # Autoload paths
     config.autoload_paths << "#{root}/lib/workflows"

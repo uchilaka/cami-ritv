@@ -54,6 +54,21 @@ module Notion
       (value || {})['type']
     end
 
+    def self.ransackable_attributes(_auth_object = nil)
+      super + %w[integration_id entity_id database_id workspace_id workspace_name remote_record_id]
+    end
+
+    def self.ransackable_associations(_auth_object = nil)
+      super + %w[appendable accounts]
+    end
+
+    # def self.ransackable_scopes(_auth_object = nil)
+    #   %i[by_integration by_entity by_database by_workspace]
+    # end
+
+    # scope :by_integration, ->(integration_id) { where(value: { integration_id: integration_id }) }
+    # scope :by_entity, ->(entity_id) { where(value: { entity: { id: entity_id } }) }
+
     private
 
     def safe_value

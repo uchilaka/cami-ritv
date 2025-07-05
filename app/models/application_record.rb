@@ -2,16 +2,9 @@
 
 class ApplicationRecord < ActiveRecord::Base
   include AutoSerializable
+  include Pagination
 
   primary_abstract_class
-
-  # def serializable_hash(options = {})
-  #   if (serializer_class = serializer_class_presence)
-  #     serializer_class.new(self, options).serializable_hash.with_indifferent_access
-  #   else
-  #     super
-  #   end
-  # end
 
   def id_first_5
     id_prefix(5)
@@ -32,14 +25,4 @@ class ApplicationRecord < ActiveRecord::Base
   def crm_org_id
     Rails.application.credentials&.zoho&.org_id
   end
-
-  # def serializer_class_presence(name_prefix: self.class.name)
-  #   adhoc_serializer_class(name_prefix:)
-  # rescue NameError
-  #   false
-  # end
-  #
-  # def adhoc_serializer_class(name_prefix:)
-  #   "#{name_prefix}Serializer".constantize
-  # end
 end

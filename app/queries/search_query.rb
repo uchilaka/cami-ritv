@@ -17,7 +17,7 @@ class SearchQuery
     rebuild
   end
 
-  def build
+  def build(fields: [])
     raise NotImplementedError, "#{self.class.name} must implement #build"
   end
 
@@ -29,15 +29,15 @@ class SearchQuery
     raise NotImplementedError, "#{self.class.name} must implement #query_param"
   end
 
-  def compose_filters
+  def compose_filters(*fields)
     raise NotImplementedError, "#{self.class.name} must implement #compose_filters"
   end
 
-  def compose_predicates
+  def compose_predicates(*fields)
     raise NotImplementedError, "#{self.class.name} must implement #compose_predicates"
   end
 
-  def compose_sorters
+  def compose_sorters(*fields)
     raise NotImplementedError, "#{self.class.name} must implement #compose_sorters"
   end
 

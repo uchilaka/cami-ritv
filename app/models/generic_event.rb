@@ -19,6 +19,8 @@
 class GenericEvent < ApplicationRecord
   extend FriendlyId
 
+  include Searchable
+
   friendly_id :slug_candidates,
               use: :slugged,
               sequence_separator: '-',
@@ -57,5 +59,17 @@ class GenericEvent < ApplicationRecord
 
   def variant
     'generic'
+  end
+
+  def self.ransackable_attributes(_auth_object = nil)
+    %w[id slug status type eventable_id eventable_type created_at updated_at]
+  end
+
+  def self.ransackable_associations(_auth_object = nil)
+    %w[eventable metadatum]
+  end
+
+  def self.ransackable_scopes(_auth_object = nil)
+    []
   end
 end
