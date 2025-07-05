@@ -41,6 +41,7 @@ class InvoiceSearchQuery < SearchQuery
     compound_cont_predicate =
       [invoice_search_predicate, account_search_predicate].join('_or_')
     @predicates["#{compound_cont_predicate}_cont"] = query_string
+    @predicates
   end
 
   def compose_filters

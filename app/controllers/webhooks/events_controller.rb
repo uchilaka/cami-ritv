@@ -2,10 +2,14 @@
 
 module Webhooks
   class EventsController < ::ApplicationController
+    # Make sure the webhook is loaded before any action
+    before_action :webhook
+
     def index
-      @query = policy_scope(GenericEvent).ransack(search_query.predicates)
+      @query = GenericEvent.ransack(search_query.predicates)
       @query.sorts = search_query.sorters if search_query.sorters.any?
-      @events = @query.result.paginate(page, GenericEvent.page_limit)
+      @sql = Rails.env.development? ? @query.result.to_sql : nil
+      @events = policy_scope(@query.result).paginate(page, GenericEvent.page_limit)
     end
 
     def show; end
@@ -34,15 +38,31 @@ module Webhooks
     def search_query
       @search_query ||= ::Webhooks::EventSearchQuery.new(
         events_params[:q],
-        params:
-          events_params
-                  .merge(webhook_slug: webhook.slug),
+        params: events_params,
         fields: %w[slug status]
       )
     end
 
     def events_params
-      params.permit(:webhook_id, :event_id, :page, :q)
+      if params[:f].is_a?(Array) || params[:s].is_a?(Array)
+        event_search_array_params
+      else
+        event_search_hash_params
+      end
+    rescue ActionController::ParameterMissing => e
+      raise ActionController::BadRequest, e.message
+    end
+
+    def event_search_hash_params
+      params.permit(*event_search_common_params, f: {}, s: {})
+    end
+
+    def event_search_array_params
+      params.permit(*event_search_common_params, f: %i[field value], s: %i[field direction])
+    end
+
+    def event_search_common_params
+      %i[webhook_id event_id page q]
     end
   end
 end

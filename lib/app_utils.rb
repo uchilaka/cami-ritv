@@ -132,5 +132,12 @@ class AppUtils
           yes?(ENV.fetch('RAILS_LIVE_RELOAD_ENABLED', 'yes'))
       end
     end
+
+    def jbuilder_pre_keys
+      @jbuilder_pre_keys ||= begin
+        keys = Rails.application.credentials&.jbuilder&.pre_keys || %i[predicate]
+        keys.is_a?(Array) ? keys : [keys]
+      end
+    end
   end
 end

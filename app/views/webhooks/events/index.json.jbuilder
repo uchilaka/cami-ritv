@@ -1,10 +1,15 @@
+
 json.query do
+  json.deep_format_keys! false
   # json.page @page
   # json.total @query.result.count
   # json.per_page GenericEvent.page_limit
   # json.sorts @query.sorts.map(&:to_s)
   # json.search_query @search_query.to_h
-  json.predicate @search_query.predicates
+  json.predicates @search_query.predicates
+  json.filters @search_query.filters
+  # Capture the SQL query if in development
+  json.sql @sql
 end
 
 json.webhook do

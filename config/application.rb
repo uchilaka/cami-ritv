@@ -89,7 +89,11 @@ module Cami
     config.hosts += config_for(:allowed_hosts)
 
     # Doc for jbuilder: https://github.com/rails/jbuilder
-    Jbuilder.key_format camelize: :lower
+    Jbuilder.key_format lambda { |key|
+      # Customize key formatting for JBuilder to support a configurable set
+      # of keys that should NOT be camelized.
+      AppUtils.jbuilder_pre_keys.include?(key.to_sym) ? key : key.camelize(:lower)
+    }
     Jbuilder.deep_format_keys true
 
     # # Configure CSS compressor

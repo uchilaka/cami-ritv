@@ -9,7 +9,11 @@ class SearchQuery
     @filters ||= {}
     @sorters ||= []
     @predicates ||= {}
-    build
+    if block_given?
+      yield self
+    else
+      build
+    end
   end
 
   def extend(params)
