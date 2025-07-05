@@ -32,11 +32,11 @@ module Notion
       database
     ]
 
-    alias :remote_record_id entity_id
-
     def entity_id
       super.presence || (value || {}).dig('entity', 'id')
     end
+
+    alias remote_record_id entity_id
 
     def database_id
       super.presence || (value || {}).dig('database', 'id')

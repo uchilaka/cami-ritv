@@ -25,6 +25,7 @@ module Notion
     delegate :variant,
              :entity_id,
              :integration_id,
+             :remote_record_id,
              :database_id,
              :workspace_id,
              :workspace_name,

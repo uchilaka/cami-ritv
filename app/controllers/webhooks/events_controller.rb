@@ -34,8 +34,10 @@ module Webhooks
     def search_query
       @search_query ||= ::Webhooks::EventSearchQuery.new(
         events_params[:q],
-        params: events_params,
-        fields: %w[slug status eventable_type]
+        params:
+          events_params
+                  .merge(webhook_slug: webhook.slug),
+        fields: %w[slug status type key eventable_type]
       )
     end
 
