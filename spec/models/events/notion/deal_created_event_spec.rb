@@ -7,6 +7,7 @@ RSpec.describe Notion::DealCreatedEvent, type: :model do
   let(:integration_id) { SecureRandom.uuid }
   let(:entity_id) { SecureRandom.uuid }
   let(:workspace_id) { "ws_#{SecureRandom.hex(8)}" }
+  let(:workspace_name) { 'Test Workspace' }
   let(:subscription_id) { "sub_#{SecureRandom.hex(8)}" }
   let(:attempt_number) { 3 }
 
@@ -18,10 +19,10 @@ RSpec.describe Notion::DealCreatedEvent, type: :model do
         database_id:,
         entity_id:,
         workspace_id:,
-        workspace_name: 'Test Workspace',
+        workspace_name:,
         subscription_id:,
         attempt_number:,
-      },
+      }.stringify_keys,
     }
   end
 
@@ -32,6 +33,29 @@ RSpec.describe Notion::DealCreatedEvent, type: :model do
 
   describe '#variant' do
     it { expect(event.variant).to eq('deal_created') }
+  end
+
+  describe '#metadatum' do
+    it { expect(event.metadatum).to eq(metadatum) }
+    it { expect(event.metadatum).to be_a(Notion::WebhookEventMetadatum) }
+    it { expect(event.metadatum.key).to eq('notion.deal_created') }
+
+    context 'with nested attributes' do
+      subject(:event) do
+        Notion::DealCreatedEvent
+          .create(
+            eventable: webhook,
+            metadatum:
+              Notion::WebhookEventMetadatum
+                .new(metadatum_attributes)
+          )
+      end
+
+      it { expect { subject }.to change { Notion::WebhookEventMetadatum.count }.by(1) }
+      it { expect(event.metadatum).to be_a(Notion::WebhookEventMetadatum) }
+      it { expect(event.metadatum.key).to eq('notion.deal_created') }
+      it { expect(event.metadatum).to have_attributes(metadatum_attributes) }
+    end
   end
 
   describe 'attributes' do
