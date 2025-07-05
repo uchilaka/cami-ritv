@@ -23,6 +23,8 @@ module LarCity
       # @return [Faraday::Connection] A configured Faraday client
       def client
         @client ||= new_client
+        yield @client if block_given?
+        @client
       end
 
       # Creates a new Faraday client with default configuration.

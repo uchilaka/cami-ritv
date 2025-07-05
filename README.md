@@ -2,6 +2,11 @@
 
 > **R**eact **I**nertiaJS **T**ailwindCSS **V**ite
 
+## Homework
+
+- [ ] [Tailwind dark mode guide](https://v3.tailwindcss.com/docs/dark-mode)
+- [ ] [Flowbite dark mode guide](https://flowbite.com/docs/customize/dark-mode/)
+
 ## ENV variables
 
 Environment variables for the application are utilized as follows:

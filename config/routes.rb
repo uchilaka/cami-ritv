@@ -3,7 +3,6 @@
 require 'lib/admin_scope_constraint'
 
 Rails.application.routes.draw do
-  resources :webhooks
   namespace :api do
     namespace :v2, defaults: { format: :json } do
       namespace :crm do
@@ -13,6 +12,11 @@ Rails.application.routes.draw do
             patch ':id', action: :update
           end
         end
+      end
+
+      namespace :webhooks, only: [] do
+        post 'notion/events', controller: 'notion/events', action: :create
+        patch 'notion/events/:id/deal', controller: 'notion/events', action: :deal, as: :notion_event_deal
       end
     end
   end
@@ -65,6 +69,18 @@ Rails.application.routes.draw do
       get 'simple-sign-in', to: 'demos#simple_sign_in'
       get 'testimonials', to: 'demos#testimonials'
       get 'work-with-us', to: 'demos#work_with_us'
+    end
+  end
+
+  resources :webhooks do
+    member do
+      get :records, to: 'webhooks/records#index', as: :records
+    end
+
+    resources :events, controller: 'webhooks/events', only: %i[index show] do
+      member do
+        get :record, to: 'webhooks/records#show', as: :record
+      end
     end
   end
 

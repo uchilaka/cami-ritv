@@ -16,6 +16,7 @@ class InvoicesController < ApplicationController
 
   # GET /invoices or /invoices.json
   def index
+    # TODO: Review when the policy scope should be applied in /invoices results.
     @query = policy_scope(Invoice).ransack(search_query.predicates)
     @query.sorts = search_query.sorters if search_query.sorters.any?
     @invoices = @query.result(distinct: true)

@@ -10,7 +10,7 @@ class AddDigitalOceanToVendors < ActiveRecord::Migration[7.2]
         support_url: 'https://www.digitalocean.com/support/',
         status_url: 'https://status.digitalocean.com/',
         billing_url: 'https://cloud.digitalocean.com/account/billing/history?i=a2dea4',
-        resources: {
+        generic_events: {
           larcity: {
             name: 'Larcity Labs @ DigitalOcean',
             url: 'https://cloud.digitalocean.com/projects/13e8f7a6-c302-47a9-9044-5fa322ee5458/resources?i=a2dea4',

@@ -1,17 +1,22 @@
 # frozen_string_literal: true
 
 class ApplicationRecord < ActiveRecord::Base
+  include AutoSerializable
+  include Pagination
+
   primary_abstract_class
 
-  def serializable_hash(options = {})
-    if (serializer_class = serializer_class_presence)
-      serializer_class.new(self, options).serializable_hash.with_indifferent_access
-    else
-      super
-    end
+  def id_first_5
+    id_prefix(5)
   end
 
   protected
+
+  def id_prefix(slice_length = 4)
+    return nil if id.blank?
+
+    id.slice(0, slice_length)
+  end
 
   def crm_resource_url(uri = nil)
     ["https://crm.zoho.com/crm/org#{crm_org_id}", uri].compact.join('/')
@@ -19,15 +24,5 @@ class ApplicationRecord < ActiveRecord::Base
 
   def crm_org_id
     Rails.application.credentials&.zoho&.org_id
-  end
-
-  def serializer_class_presence(name_prefix: self.class.name)
-    adhoc_serializer_class(name_prefix:)
-  rescue NameError
-    false
-  end
-
-  def adhoc_serializer_class(name_prefix:)
-    "#{name_prefix}Serializer".constantize
   end
 end

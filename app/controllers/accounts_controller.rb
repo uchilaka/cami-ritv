@@ -138,7 +138,7 @@ class AccountsController < ApplicationController
     params
       .permit(
         %i[integration],
-        account: [*update_account_param_keys, { metadata: {} }],
+        account: [*update_account_param_keys, metadata: {}],
         profile: create_profile_param_keys
       )
   end

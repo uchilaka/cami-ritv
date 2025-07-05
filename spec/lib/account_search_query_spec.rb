@@ -39,7 +39,7 @@ RSpec.describe AccountSearchQuery, type: :query do
         {
           'q' => qs,
           'f' => {},
-          's' => {}
+          's' => {},
         }
       end
 
@@ -52,8 +52,8 @@ RSpec.describe AccountSearchQuery, type: :query do
           'q' => qs,
           's' => {
             'status' => 'asc',
-            'updatedAt' => 'desc'
-          }
+            'updatedAt' => 'desc',
+          },
         }
       end
 
@@ -67,7 +67,7 @@ RSpec.describe AccountSearchQuery, type: :query do
     it_should_behave_like 'search by query string',
                           'AEL',
                           {
-                            'display_name_or_email_or_slug_or_tax_id_cont' => 'AEL'
+                            'display_name_or_email_or_slug_or_tax_id_cont' => 'AEL',
                           }
   end
 end

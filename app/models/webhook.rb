@@ -7,16 +7,22 @@
 #  id                 :uuid             not null, primary key
 #  data               :jsonb
 #  slug               :string
+#  status             :string           default("pending_review"), not null
 #  verification_token :string
 #  created_at         :datetime         not null
 #  updated_at         :datetime         not null
 #
 # Indexes
 #
-#  index_webhooks_on_slug  (slug) UNIQUE
+#  index_webhooks_on_slug    (slug) UNIQUE
+#  index_webhooks_on_status  (status)
 #
 class Webhook < ApplicationRecord
   extend FriendlyId
+
+  include AASM
+
+  store_accessor :data, %i[integration_id integration_name dashboard_url]
 
   encrypts :verification_token, deterministic: true
 
@@ -26,7 +32,31 @@ class Webhook < ApplicationRecord
 
   has_many :generic_events, as: :eventable, dependent: :nullify
 
-  validates :slug, presence: true, uniqueness: true, length: { maximum: 64 }
+  aasm column: :status do
+    state :draft, initial: true
+    state :pending_review
+    state :active
+    state :disabled
+
+    # TODO: implement callback to (async) job to send a notification to the admin user to review the webhook.
+    #   See callback example(s): https://github.com/aasm/aasm?tab=readme-ov-file#callbacks
+    event :start_review do
+      transitions from: %i[active disabled draft], to: :pending_review
+    end
+
+    event :disable do
+      transitions from: :active, to: :disabled
+    end
+
+    event :enable do
+      transitions from: %i[draft pending_review disabled], to: :active, guard: :verified?
+    end
+  end
+
+  validates :slug,
+            presence: true,
+            uniqueness: { case_sensitive: false },
+            length: { maximum: 64 }
   validates :verification_token, presence: true
 
   def url
@@ -37,5 +67,9 @@ class Webhook < ApplicationRecord
 
   def hostname
     ENV.fetch('HOSTNAME')
+  end
+
+  def verified?
+    verification_token.present?
   end
 end

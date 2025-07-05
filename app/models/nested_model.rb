@@ -7,10 +7,12 @@
 #   nested model functionality.
 class NestedModel
   include ActiveModel::API
+  include ActiveModel::Validations
   include ActiveModel::Serialization
-  extend ActiveModel::Callbacks
-  extend ActiveModel::Validations::Callbacks
   include ActiveModel::Dirty
+
+  # extend ActiveModel::Callbacks
+  # extend ActiveModel::Validations::Callbacks
 
   attr_accessor :resource, :resource_attribute_name
 

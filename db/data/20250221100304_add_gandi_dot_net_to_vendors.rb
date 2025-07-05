@@ -13,7 +13,7 @@ class AddGandiDotNetToVendors < ActiveRecord::Migration[7.2]
         billing_url: 'https://admin.gandi.net/billing/1f7281e2-9db0-11e7-a7db-00163ec31f40/organizations',
         # TODO: Implement a VendorResource model for records in
         #   <vendor-instance>.dig(:metadata, :resources)
-        resources: {
+        generic_events: {
           larcity: {
             name: 'Larcity Project @ Gandi.net',
             url: 'https://admin.gandi.net/dashboard/1f7281e2-9db0-11e7-a7db-00163ec31f40',
