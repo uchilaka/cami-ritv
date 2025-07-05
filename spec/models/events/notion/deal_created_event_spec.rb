@@ -45,9 +45,9 @@ RSpec.describe Notion::DealCreatedEvent, type: :model do
         Notion::DealCreatedEvent
           .create(
             eventable: webhook,
-            metadatum:
-              Notion::WebhookEventMetadatum
-                .new(metadatum_attributes)
+            metadatum_attributes:
+              metadatum_attributes
+                .merge(type: 'Notion::WebhookEventMetadatum')
           )
       end
 
