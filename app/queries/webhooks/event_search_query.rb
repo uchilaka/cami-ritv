@@ -29,7 +29,7 @@ module Webhooks
       event_search_predicate =
         GenericEvent.fuzzy_search_predicate_key(*search_fields, matcher: nil)
       compound_cont_predicate =
-        [metadatum_search_predicate, event_search_predicate].join('_or_')
+        [event_search_predicate, metadatum_search_predicate].join('_or_')
       @predicates["#{compound_cont_predicate}_cont"] = query_string
     end
   end
