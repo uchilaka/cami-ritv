@@ -36,7 +36,7 @@
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
     "flowbite": "^3.1.2",
-    "flowbite-react": "~0.10",
+    "flowbite-react": "~0.11",
     "lodash.debounce": "^4.0.8",
     "lodash.find": "^4.6.0",
     "lodash.merge": "^4.6.2",
