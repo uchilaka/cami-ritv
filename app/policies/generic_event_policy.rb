@@ -25,11 +25,9 @@ class GenericEventPolicy < ApplicationPolicy
     def resolve
       if user.admin?
         scope.all
-      elsif user.account.nil?
-        scope.none
       else
         # TODO: For now, only return events for the user's account.
-        scope.where(eventable: user.account)
+        scope.kept.where(eventable: user.account)
       end
     end
   end

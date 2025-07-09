@@ -66,10 +66,6 @@ class GenericEvent < ApplicationRecord
   end
 
   def self.ransackable_associations(_auth_object = nil)
-    %w[eventable metadatum]
-  end
-
-  def self.ransackable_scopes(_auth_object = nil)
-    []
+    %w[eventable appendable metadatum]
   end
 end

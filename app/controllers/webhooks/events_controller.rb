@@ -9,8 +9,8 @@ module Webhooks
     def index
       @query = GenericEvent.ransack(search_query.predicates)
       @query.sorts = search_query.sorters if search_query.sorters.any?
+      @events = policy_scope(@query.result(distinct: true)).paginate(page, GenericEvent.page_limit)
       @sql = Rails.env.development? ? @query.result.to_sql : nil
-      @events = policy_scope(@query.result).paginate(page, GenericEvent.page_limit)
     end
 
     def show; end
