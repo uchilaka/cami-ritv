@@ -15,10 +15,10 @@ else
   brew 'gh'
   brew 'asdf'
   brew 'direnv'
+  brew 'goreman'
 
   # Skip these specifically in test environments
   unless %w[ci test].include?(ENV['RAILS_ENV'])
-    brew 'foreman' if OS.mac?
     brew 'tree' if OS.mac?
     brew 'ruby-build'
     # TODO: what's the overlap between this and gnutls?
