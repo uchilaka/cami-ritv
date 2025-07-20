@@ -3,7 +3,7 @@
 require 'fileutils'
 
 # set arguments for all 'brew install --cask' commands
-cask_args appdir: '~/Applications', require_sha: true
+cask_args appdir: '~/Applications', require_sha: false
 
 puts "Environment: #{ENV.fetch('RAILS_ENV', '<N/A>')}"
 
@@ -27,7 +27,7 @@ else
     brew 'git-crypt'
 
     if File.exist?('/Applications/RubyMine.app')
-      puts 'Found RubyMine installed 🥳 - skipping RubyMine installation'
+      puts 'Found RubyMine installed 🎊 - skipping RubyMine installation'
     elsif ENV['VISUAL'] == 'rubymine' || ENV['EDITOR'] == 'rubymine'
       cask 'rubymine'
     else
@@ -37,7 +37,7 @@ else
 
     # FYI: Brew cask only works on macOS
     if File.exist?('/usr/local/bin/docker')
-      puts 'Found Docker installed 🥳 - skipping docker installation'
+      puts 'Found Docker installed 🎊 - skipping docker installation'
     elsif OS.mac?
       puts 'Setting up Rancher Desktop (an open source Docker Desktop alternative)'
       cask 'rancher'
@@ -66,4 +66,13 @@ unless %w[ci test production].include?(ENV['RAILS_ENV'])
   cask 'discord'
   cask 'slack'
   cask 'whatsapp'
+  cask 'signal'
+  begin
+    # TODO: Turned off require_sha to get Messenger installed... too risky?
+    cask 'messenger'
+  rescue => _e
+    if File.exist?('/Applications/Messenger.app')
+      puts 'Found Messenger installed 🎊 - skipping Messenger installation'
+    end
+  end
 end
