@@ -1,0 +1,112 @@
+{
+  "folders": [
+    {
+      "path": ".",
+      "name": "Rails"
+    },
+    {
+      "path": "./app/models/",
+      "name": "Rails/Models"
+    },
+    {
+      "path": "./app/views/",
+      "name": "Rails/Views"
+    },
+    {
+      "path": "./app/controllers/",
+      "name": "Rails/Controllers"
+    },
+    {
+      "path": "./lib/commands/",
+      "name": "Rails/Commands"
+    },
+    {
+      "path": "./app/jobs/",
+      "name": "Rails/Jobs"
+    },
+    {
+      "path": "./app/frontend/__tests__/",
+      "name": "Frontend/Tests"
+    },
+    {
+      "path": "./app/frontend/components/",
+      "name": "Frontend/Components"
+    },
+    {
+      "path": "./app/frontend/entrypoints/",
+      "name": "Frontend/Entrypoints"
+    },
+    {
+      "path": "./app/frontend/features/",
+      "name": "Frontend/Features"
+    },
+    {
+      "path": "./app/frontend/hooks/",
+      "name": "Frontend/Hooks"
+    },
+    {
+      "path": "./app/frontend/pages/",
+      "name": "Frontend/Pages"
+    },
+    {
+      "path": "./app/frontend/utils/",
+      "name": "Frontend/Utils"
+    },
+  ],
+  "settings": {
+    "[ruby]": {
+      "editor.defaultFormatter": "Shopify.ruby-lsp",
+      "editor.formatOnSave": true
+    },
+    "terminal.integrated.fontSize": 15,
+    "window.zoomLevel": 0.125,
+    "rubyLsp.rubyVersionManager": {
+      "miseExecutablePath": "/home/linuxbrew/.linuxbrew/bin/mise",
+      "identifier": "mise"
+    },
+    // "rubocop.yjitEnabled": true,
+    // "rubocop.commandPath": "${userHome}${pathSeparator}.asdf${pathSeparator}shims${pathSeparator}rubocop",
+    // "rubocop.mode": "enableViaGemfileOrMissingGemfile",
+    "editor.mouseWheelZoom": true,
+    "terminal.integrated.mouseWheelZoom": true,
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.codeActionsOnSave": {
+      "source.fixAll.markdownlint": "explicit",
+      "source.fixAll.prettier": "explicit"
+    },
+    "[typescript]": {
+      "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[typescriptreact]": {
+      "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[javascript]": {
+      "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[javascriptreact]": {
+      "editor.defaultFormatter": "esbenp.prettier-vscode"
+    }
+  },
+  "extensions": {
+    // See https://go.microsoft.com/fwlink/?LinkId=827846 to learn about workspace recommendations.
+    // Extension identifier format: ${publisher}.${name}. Example: vscode.csharp
+    // List of extensions which should be recommended for users of this workspace.
+    "recommendations": [
+      "clinyong.vscode-css-modules",
+      "esbenp.prettier-vscode",
+      "dbaeumer.vscode-eslint",
+      "bierner.markdown-emoji",
+      "davidanson.vscode-markdownlint",
+      "rubocop.vscode-rubocop",
+      "Shopify.ruby-lsp",
+      "yzhang.markdown-all-in-one",
+      "GitHub.copilot",
+      "GitHub.copilot-chat",
+      "ms-vscode-remote.vscode-remote-extensionpack"
+    ],
+    // List of extensions recommended by VS Code that should not be recommended for users of this workspace.
+    "unwantedRecommendations": [
+      "shopify.rubocop-lsp"
+    ]
+  }
+}
