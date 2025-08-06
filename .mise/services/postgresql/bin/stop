@@ -1,0 +1,14 @@
+#!/usr/bin/env zsh
+
+SCRIPT_PATH=$(dirname "${0:a}")
+
+source "$SCRIPT_PATH"/setup
+
+if [[ -z "$APP_POSTGRES_DATA_DIR" ]]; then
+  echo "No PostgreSQL server data available. Checked @ $APP_POSTGRES_DATA_DIR. Exiting."
+  exit 0
+else
+  # Stop the PostgreSQL server
+  pg_ctl --pgdata="${APP_POSTGRES_DATA_DIR}" \
+    --mode=smart stop
+fi

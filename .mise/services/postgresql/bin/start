@@ -1,0 +1,15 @@
+#!/usr/bin/env zsh
+
+SCRIPT_PATH=$(dirname "${0:a}")
+
+source "$SCRIPT_PATH"/initialize
+
+if [[ -f "$APP_POSTGRES_PID_FILE" ]]; then
+  echo "PostgreSQL server is already running."
+  exit 0
+else
+  # Start the PostgreSQL server
+  pg_ctl --pgdata="${APP_POSTGRES_DATA_DIR}" \
+    --log="${APP_POSTGRES_LOG_FILE}" \
+    --mode=fast start
+fi
