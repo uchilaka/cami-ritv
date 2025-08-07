@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # 20250506021526
-class AddZohoServerinfoForCrmAuth < ActiveRecord::Migration[8.0]
+class AddZohoServerinfoForCRMAuth < ActiveRecord::Migration[8.0]
   def up
     # US region
     us_oauth_serverinfo =
