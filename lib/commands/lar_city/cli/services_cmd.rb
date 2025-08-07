@@ -11,7 +11,7 @@ module LarCity
                    type: :string,
                    desc: 'The profile to use for the command',
                    enum: %w[all essential batteries-included],
-                   default: 'all'
+                   default: 'batteries-included'
 
       method_option :pid,
                     type: :string,
