@@ -11,6 +11,9 @@
 /db/*.sqlite3
 /db/*.sqlite3-*
 
+# Ignore mise databases
+/.mise/services/postgresql/data
+
 # Ignore all logfiles and tempfiles.
 /log/*
 /tmp/*

@@ -14,7 +14,8 @@ else
   # Dev & anonymous environments
   brew 'gh'
   brew 'asdf'
-  brew 'direnv'
+  # Direnv will be managed as a mise dependency instead
+  #brew 'direnv'
 
   # Skip these specifically in test environments
   unless %w[ci test].include?(ENV['RAILS_ENV'])

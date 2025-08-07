@@ -12,15 +12,71 @@ Environment variables for the application are utilized as follows:
 
 ## Setting up the app
 
-### 1. Get the `config/credentials/git-crypt.key` file
+### 1. Set up the `config/credentials/git-crypt.key` file
 
 This file must be available in your local environment. You can acquire this file from a team member or from the secrets vault (KeepassXC/Bitwarden).
 
+Alternatively, you can follow [the git-crypt setup guide](./docs/SECRETS.md) to set up your git-crypt for the repository.
+
 ### 2. Unlock the encrypted files
 
-Run `yarn keys:unlock` to unlock the encrypted files.
+Run `git crypt unlock` to unlock the encrypted files.
+
+### 3. Install dependencies 
+
+```shell
+# Install brew system dependencies
+brew bundle
+
+# Ensure dependencies required by postgresql are installed for your OS (if running on metal)
+open https://github.com/mise-plugins/mise-postgres
+
+# Install NPM dependencies
+yarn install
+
+# Install mise system dependencies
+mise install
+```
+
+### 4. Setup direnv
+
+> Review the direnv setup guide: https://direnv.net/#basic-installation
+
+Ensure you have `direnv` configured in your shell. This will automatically load the environment variables from `.envrc` when you enter the project directory.
+
+Direnv should be installed as a dependency when you run `mise install`. You may need to install the `direnv` plugin for mise.
+
+### 5. Set up the database
+
+> Only complete this step if you are running the app database via the mise service.
+
+```shell
+.mise/services/postgresql/bin/initialize
+```
 
 ## Running the app
+
+### 1. Start the database service
+
+#### Running the database on metal (via mise)
+
+```shell
+.mise/services/postgresql/bin/start
+```
+
+#### Running the database in Docker
+
+When running the database in Docker, you will need to ensure you have the right application configurations in place. You can use the `.env.development.local` file to override the following `ENV` variables (the `.env.development` file contains the defaults and in included in the repository - you will need GPG access via `git-crypt` to decrypt it):
+
+- `APP_DATABASE_HOST` (default: `localhost`)
+- `APP_DATABASE_USER`
+- `APP_DATABASE_PASSWORD`
+- `APP_DATABASE_PORT`
+
+
+```shell
+docker compose up -d app-store && docker compose logs -f app-store --since 5m
+```
 
 ## Future work
 
