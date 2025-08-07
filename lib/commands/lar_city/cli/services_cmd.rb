@@ -11,12 +11,12 @@ module LarCity
                    type: :string,
                    desc: 'The profile to use for the command',
                    enum: %w[all essential batteries-included],
-                   default: 'all'
+                   default: 'batteries-included'
 
-      class_option :pid,
-                   type: :string,
-                   desc: 'The PID of the process to kill',
-                   required: true
+      method_option :pid,
+                    type: :string,
+                    desc: 'The PID of the process to kill',
+                    required: true
       desc 'kill_process', I18n.t('commands.services.kill_process.short_desc')
       long_desc I18n.t('commands.services.kill_process.long_desc')
       def kill_process

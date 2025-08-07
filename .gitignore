@@ -11,6 +11,9 @@
 /db/*.sqlite3
 /db/*.sqlite3-*
 
+# Ignore mise databases
+/.mise/services/postgresql/data
+
 # Ignore all logfiles and tempfiles.
 /log/*
 /tmp/*
@@ -43,6 +46,8 @@
 # Ignore backups of secrets file. See the command: bin/thor help lx-cli:secrets:backup
 /config/credentials/*--**-*-*T*.yml.enc
 
+###################################################################
+
 # Vite Ruby
 /public/vite
 /public/vite-dev
@@ -54,6 +59,8 @@
 
 # IDE specific files
 /.idea
+/.vscode/settings.json
+/.gem_rbs_collection
 
 # Environment variable files
 /.env.test.local
@@ -106,6 +113,3 @@ Temporary Items
 # Chromatic
 chromatic-diagnostics.json
 chromatic.log
-
-/config/credentials/development.key
-

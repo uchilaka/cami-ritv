@@ -1,0 +1,15 @@
+#!/usr/bin/env zsh
+
+SCRIPT_PATH=$(dirname "${0:a}")
+
+source "$SCRIPT_PATH"/setup
+
+if [ -d "$APP_POSTGRES_DATA_DIR" ]; then
+  echo "Data directory already exists: $APP_POSTGRES_DATA_DIR"
+else
+  # Initialize the data directory if it doesn't exist
+  mkdir -vp "$APP_POSTGRES_DATA_DIR"
+
+  # Initialize PostgreSQL server
+  pg_ctl --pgdata="${APP_POSTGRES_DATA_DIR}" init
+fi

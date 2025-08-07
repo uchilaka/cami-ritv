@@ -1,0 +1,14 @@
+#!/usr/bin/env zsh
+
+SCRIPT_PATH=$(dirname "${0:a:h}")
+PROJECT_ROOT=$(realpath "$SCRIPT_PATH/../../..")
+CUSTOM_BASE_DIR="$PROJECT_ROOT/.mise/services/postgresql"
+export APP_POSTGRES_DATA_DIR="${CUSTOM_BASE_DIR}/data"
+export APP_POSTGRES_LOG_FILE="${PROJECT_ROOT}/log/postgresql.log"
+export APP_POSTGRES_PID_FILE="${PROJECT_ROOT}/tmp/pids/postgresql.pid"
+
+echo "********************* PostgreSQL *************************"
+echo "Data directory: $APP_POSTGRES_DATA_DIR"
+echo "PID file: $APP_POSTGRES_PID_FILE"
+echo "Error log: $APP_POSTGRES_LOG_FILE"
+echo "*************************************************************************"
