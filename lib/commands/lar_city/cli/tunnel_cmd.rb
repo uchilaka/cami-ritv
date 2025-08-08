@@ -103,6 +103,7 @@ module LarCity
         end
 
         def profile_config_file
+          # TODO: Derive this path a different way using $HOME and eliminate this ENV variable
           ENV.fetch('NGROK_PROFILE_CONFIG_PATH', nil)
         end
       end
