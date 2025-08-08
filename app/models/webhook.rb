@@ -7,7 +7,7 @@
 #  id                 :uuid             not null, primary key
 #  data               :jsonb
 #  slug               :string
-#  status             :string           default("pending_review"), not null
+#  status             :string           not null
 #  verification_token :string
 #  created_at         :datetime         not null
 #  updated_at         :datetime         not null

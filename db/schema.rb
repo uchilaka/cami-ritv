@@ -392,7 +392,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_04_173016) do
     t.jsonb "data", default: {}
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "status", default: "pending_review", null: false
+    t.string "status", null: false
     t.index ["slug"], name: "index_webhooks_on_slug", unique: true
     t.index ["status"], name: "index_webhooks_on_status"
   end
