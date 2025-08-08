@@ -1,6 +1,11 @@
-# CAMI
+# CAMI (**R**eact **I**nertiaJS **T**ailwindCSS **V**ite)
 
-> **R**eact **I**nertiaJS **T**ailwindCSS **V**ite
+## System Requirements 
+
+- Ruby: 3.4
+- Mise: [mise.dev](https://mise.jdx.dev/)
+- Brew (only for macOS/Linux users): https://brew.sh/
+- Yarn v4+: [yarnpkg.com](https://yarnpkg.com/)
 
 ## Homework
 
@@ -12,7 +17,7 @@
 
 Environment variables for the application are utilized as follows:
 
-- `.env.{environment}.local` files (transparently encrypted for development environments)
+- `.env.development` is transparently encrypted for development environments
 - Rails credentials (encrypted) stored in the `config/credentials/{environment}.yml.enc` files
 - Direct environment variables (e.g. `RAILS_ENV`)
 
