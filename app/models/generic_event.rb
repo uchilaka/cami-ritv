@@ -21,7 +21,10 @@ class GenericEvent < ApplicationRecord
 
   include Searchable
 
-  friendly_id :short_sha, use: :slugged
+  friendly_id :short_sha,
+              use: :slugged,
+              sequence_separator: '-',
+              slug_limit: 15
 
   attribute :type, :string, default: 'GenericEvent'
 
