@@ -34,7 +34,7 @@ module Notion
     def database_query(database_id:, query_params:)
       response = http_client.post(
         "#{BASE_URL}/databases/#{database_id}/query",
-        query_params.to_json
+        query_params
       )
 
       handle_response(response)

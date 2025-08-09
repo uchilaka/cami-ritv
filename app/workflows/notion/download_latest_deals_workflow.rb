@@ -68,8 +68,7 @@ module Notion
       ].select(&:itself)
 
       # Return query hash with filters and sorts
-      {
-        filter: { and: predicates },
+      query_hash = {
         sorts: [
           {
             property: 'created_time',
@@ -78,13 +77,19 @@ module Notion
         ],
         page_size: 100,
       }
+      return query_hash if predicates.blank?
+
+      query_hash[:filter] = { and: predicates }
+      query_hash
     end
 
     def fetch_deals_from_notion
       client = Notion::Client.new
 
-      # Fetch from the deals database - assuming the database_id is in configuration
-      database_id = Rails.application.config.notion.deals_database_id
+      # Fetch from the deals database - this should have been provisioned in the devkit
+      #   command when setting up the Notion (webhook) integration.
+      _integration_id, _integration_name, database_id =
+        context.webhook.data.values_at :integration_id, :integration_name, :deal_database_id
 
       context.raw_results =
         client.database_query(
