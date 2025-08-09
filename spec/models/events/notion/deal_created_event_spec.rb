@@ -31,6 +31,10 @@ RSpec.describe Notion::DealCreatedEvent, type: :model do
 
   subject(:event) { Fabricate(:deal_created_event, integration: :notion, metadatum:, eventable: webhook) }
 
+  describe '#slug', skip: 'Need to read up on FriendlyId to better understand, configure then test' do
+    it('behaves like configured friendly_id') { expect(event.slug).to eq(event.id_last_5) }
+  end
+
   describe '#variant' do
     it { expect(event.variant).to eq('deal_created') }
   end

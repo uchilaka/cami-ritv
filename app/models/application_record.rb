@@ -6,8 +6,16 @@ class ApplicationRecord < ActiveRecord::Base
 
   primary_abstract_class
 
+  def short_sha
+    Digest::SHA256.hexdigest(serializable_hash.sort.to_s).first(8)
+  end
+
   def id_first_5
     id_prefix(5)
+  end
+
+  def id_last_5
+    id_suffix(5)
   end
 
   protected
@@ -16,6 +24,12 @@ class ApplicationRecord < ActiveRecord::Base
     return nil if id.blank?
 
     id.slice(0, slice_length)
+  end
+
+  def id_suffix(slice_length = 4)
+    return nil if id.blank?
+
+    id.slice(-slice_length, slice_length)
   end
 
   def crm_resource_url(uri = nil)

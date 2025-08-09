@@ -21,10 +21,10 @@ class GenericEvent < ApplicationRecord
 
   include Searchable
 
-  friendly_id :slug_candidates,
+  friendly_id :id_last_5,
               use: :slugged,
               sequence_separator: '-',
-              slug_limit: 15
+              slug_limit: 10
 
   attribute :type, :string, default: 'GenericEvent'
 
@@ -40,13 +40,13 @@ class GenericEvent < ApplicationRecord
   validates :metadatum, presence: true, if: -> { type != 'GenericEvent' }
 
   # FriendlyId helper methods
-  def slug_candidates
-    [
-      %i[id_first_5],
-      %i[eventable_slug id_first_5],
-      %i[eventable_slug variant id_first_5],
-    ]
-  end
+  # def slug_candidates
+  #   [
+  #     %i[id_first_5],
+  #     %i[id_first_5 variant short_sha],
+  #     %i[id_last_5 variant short_sha],
+  #   ]
+  # end
 
   def should_generate_new_friendly_id?
     slug.blank?

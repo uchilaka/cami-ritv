@@ -52,6 +52,17 @@ module Notion
       end
     end
 
+    after_commit :pull_remote_record, on: %i[create update]
+
+    def pull_remote_record
+      return unless Flipper.enabled?(:feat__notion_async_fetch_deal)
+
+      Notion::FetchDealJob.perform_later(
+        webhook_slug: eventable.slug,
+        remote_record_id:
+      )
+    end
+
     def variant
       return nil if metadatum.blank?
 
