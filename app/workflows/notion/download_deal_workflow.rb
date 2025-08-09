@@ -4,7 +4,8 @@ module Notion
   class DownloadDealWorkflow
     include Interactor
 
-    delegate :result, to: :context
+    delegate :webhook, :database_id, :remote_record_id,
+             :response_hash, :result, to: :context
 
     def call
       fetch_remote_record

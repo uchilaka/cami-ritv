@@ -6,7 +6,9 @@ module Notion
   class DownloadLatestDealsWorkflow
     include Interactor
 
-    delegate :webhook, :interval, :query_params, :filters, :response_hash, :results, to: :context
+    delegate :webhook, :database_id,
+             :interval, :query_params, :filters,
+             :response_hash, :results, to: :context
 
     INTERVALS = {
       six_months: 6.months,
@@ -102,9 +104,9 @@ module Notion
 
       # Fetch from the deals database - this should have been provisioned in the devkit
       #   command when setting up the Notion (webhook) integration.
-      _integration_id, _integration_name, database_id =
-        webhook.data.values_at 'integration_id', 'integration_name', 'deal_database_id'
+      context.database_id = webhook.data['deal_database_id']
 
+      # Notion API database query: https://developers.notion.com/reference/post-database-query
       context.response_hash = client.database_query(database_id:, query_params: context.query_params)
 
       # Handle pagination if needed
