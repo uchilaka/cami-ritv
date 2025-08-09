@@ -47,7 +47,11 @@ module Notion
       super
       self.timestamp ||= Time.current
       @entity = deserialize_entity(@entity || @data[:entity])
-      @parent = deserialize_parent(@parent || @data[:parent])
+      # Try fetching the parent assuming the webhook request params data signature
+      @parent = deserialize_parent(@parent || @data.dig(:data, :parent))
+      # Attempt a default deserialization of parent if not provided
+      @parent ||= deserialize_parent
+      # Try authors
       @authors = deserialize_authors(@authors || @data[:authors])
       @authors ||= []
     end

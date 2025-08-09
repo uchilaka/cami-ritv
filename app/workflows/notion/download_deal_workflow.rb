@@ -4,9 +4,11 @@ module Notion
   class DownloadDealWorkflow
     include Interactor
 
-    delegate :webhook, :database_id, :source_event,
+    delegate :webhook, :source_event, :remote_record_id,
              :response_hash, :result, to: :context
-    delegate :remote_record_id, to: :source_event
+
+    # Each record of the Deal Pipeline database is a page in Notion.
+    alias page_id remote_record_id
 
     def call
       fetch_remote_record
@@ -18,13 +20,15 @@ module Notion
     private
 
     def process_result
+      return context.fail!(message: 'No results returned from Notion') if context.response_hash['results'].empty?
+
+      adapter = Notion::DealQueryResultAdapter.new(context.response_hash['results'])
+      context.records = adapter.process_deals
     end
 
     def fetch_remote_record
       client = Notion::Client.new
-      # Fetch from the deals database - this should have been provisioned in the devkit
-      #   command when setting up the Notion (webhook) integration.
-      context.database_id = webhook.data['deal_database_id']
+      context.response_hash = client.get_entity(id: page_id, type: 'page')
     end
   end
 end

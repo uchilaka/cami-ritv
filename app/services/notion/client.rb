@@ -40,6 +40,12 @@ module Notion
       handle_response(response)
     end
 
+    def get_entity(id:, type: 'page')
+      response = http_client.get("#{BASE_URL}/#{type.pluralize}/#{id}")
+
+      handle_response(response)
+    end
+
     private
 
     def api_token
