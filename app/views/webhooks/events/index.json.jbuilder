@@ -1,4 +1,3 @@
-
 json.query do
   json.deep_format_keys! false
   # json.page @page
@@ -20,7 +19,7 @@ json.events do
   case @webhook&.slug
   when 'notion'
     # Render Notion specific events
-    json.array! @events, partial: 'webhooks/notion/events/event', as: :event
+    json.array! @events, partial: 'webhooks/notion/event', as: :event
   else
     # Render generic events
     json.array! @events, partial: 'webhooks/events/event', as: :event

@@ -50,6 +50,7 @@ module Notion
       last_contacted_at = parse_date(properties['Last contact date'])
       expected_close_at = parse_date(properties['Expected close date'])
       Struct::Deal.new(
+        integration: :notion,
         remote_system_id:, name:, deal_stage:,
         last_contacted_at:, email:, phone_number:, lead_source:, notes:,
         # account_owner: parse_people(properties['Account owner']),

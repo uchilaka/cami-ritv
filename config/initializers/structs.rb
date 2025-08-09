@@ -47,6 +47,7 @@ Struct.new(
 #   priority_level:string deal_value:number expected_close_at:timestamp --pretend
 Struct.new(
   'Deal',
+  :integration,
   :remote_system_id,
   :name,
   :email,
