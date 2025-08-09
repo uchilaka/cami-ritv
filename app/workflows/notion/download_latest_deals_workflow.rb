@@ -15,8 +15,16 @@ module Notion
       one_week: 1.week,
     }.freeze
 
+    SUPPORTED_FILTERS = %i[skip_lost_deals skip_won_deals deal_stage start_date end_date].freeze
+
     def call
-      context.filters ||= {}
+      context.filters ||= { skip_lost_deals: true }
+      supported_filters = context.filters.slice(*SUPPORTED_FILTERS)
+      Rails.logger.info("#{self.class}.call", supported_filters:)
+      unsupported_filters = context.filters.keys - SUPPORTED_FILTERS
+      if unsupported_filters.any?
+        Rails.logger.warn("#{self.class}.call", unsupported_filters:)
+      end
       context.start_date ||= (INTERVALS[context.interval] || INTERVALS[:three_months]).ago.beginning_of_day
       context.end_date ||= Time.current.end_of_day
 
@@ -40,16 +48,17 @@ module Notion
     end
 
     def build_query_params
+      # Notion API database query filtering: https://developers.notion.com/reference/post-database-query-filter
       predicates = [
         has_filter?(:start_date) && {
-          property: 'created_time',
-          date: {
+          timestamp: 'created_time',
+          created_time: {
             on_or_after: filter(:start_date).iso8601,
           },
         },
         has_filter?(:end_date) && {
-          property: 'created_time',
-          date: {
+          timestamp: 'created_time',
+          created_time: {
             on_or_before: filter(:end_date).iso8601,
           },
         },
@@ -57,6 +66,12 @@ module Notion
           property: 'Deal stage',
           select: {
             equals: filter(:deal_stage),
+          },
+        },
+        filter(:skip_won_deals) && {
+          property: 'Deal stage',
+          select: {
+            does_not_equal: 'Won',
           },
         },
         filter(:skip_lost_deals) && {
