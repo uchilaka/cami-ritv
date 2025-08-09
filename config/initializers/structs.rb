@@ -49,6 +49,8 @@ Struct.new(
   'Deal',
   :remote_system_id,
   :name,
+  :email,
+  :phone_number,
   :deal_stage,
   :created_at,
   :updated_at,
