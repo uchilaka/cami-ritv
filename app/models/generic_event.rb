@@ -21,10 +21,7 @@ class GenericEvent < ApplicationRecord
 
   include Searchable
 
-  friendly_id :id_last_5,
-              use: :slugged,
-              sequence_separator: '-',
-              slug_limit: 10
+  friendly_id :short_sha, use: :slugged
 
   attribute :type, :string, default: 'GenericEvent'
 

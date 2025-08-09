@@ -7,7 +7,7 @@ class ApplicationRecord < ActiveRecord::Base
   primary_abstract_class
 
   def short_sha
-    Digest::SHA256.hexdigest(serializable_hash.sort.to_s).first(8)
+    Digest::SHA256.hexdigest(attributes.to_h.compact.to_s).first(8)
   end
 
   def id_first_5
