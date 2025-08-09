@@ -40,9 +40,8 @@ class GenericEvent < ApplicationRecord
   def slug_candidates
     [
       :short_sha,
-      %i[short_sha id_first_5],
-      %i[short_sha id_first_5 variant],
-      %i[short_sha id_last_5 variant],
+      %i[short_sha eventable_slug],
+      %i[short_sha eventable_slug variant],
     ]
   end
 
