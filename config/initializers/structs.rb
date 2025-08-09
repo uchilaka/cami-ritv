@@ -62,3 +62,21 @@ Struct.new(
   :expected_close_at,
   keyword_init: true
 )
+
+Struct.new(
+  'WebhookActionSet',
+  :index,
+  :create,
+  :update,
+  :destroy,
+  :show,
+  keyword_init: true
+)
+
+Struct.new(
+  'WebhookAction',
+  :name,
+  :description,
+  :workflow_klass,
+  keyword_init: true
+)

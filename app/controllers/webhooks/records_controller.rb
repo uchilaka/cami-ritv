@@ -3,14 +3,17 @@
 module Webhooks
   class RecordsController < ApplicationController
     def index
-      workflow_klass = webhook.records_index_workflow_name.to_s.constantize
-      result = workflow_klass.call(webhook:, event:)
+      result = workflow_by_action.call(webhook:, event:)
       @records = result.records
     end
 
     def show; end
 
     protected
+
+    def workflow_by_action
+      @workflow_by_action ||= webhook.actions.send(action_name).workflow_klass
+    end
 
     def webhook
       @webhook ||= authorize Webhook.friendly.find(webhook_id)

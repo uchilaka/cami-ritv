@@ -59,6 +59,14 @@ class Webhook < ApplicationRecord
             length: { maximum: 64 }
   validates :verification_token, presence: true
 
+  def actions
+    @actions ||= Struct::WebhookActionSet.new(
+      index: Struct::WebhookAction.new(
+        workflow_klass: records_index_workflow_name.to_s.constantize,
+      )
+    )
+  end
+
   def url
     "https://#{hostname}/api/v2/webhooks/#{slug}/events"
   end
