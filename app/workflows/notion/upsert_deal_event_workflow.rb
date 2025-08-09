@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Notion
-  class UpsertDealWorkflow
+  class UpsertDealEventWorkflow
     include Interactor
 
     def call
@@ -39,6 +39,7 @@ module Notion
         attempt_number:,
       }
       metadatum = ::Notion::WebhookEventMetadatum.create!(key: "notion.#{context.event.type}", value: event_data)
+      # TODO: Creating the (deal) system event should enqueue the job to process the deal as a side effect
       system_event = klass_type.constantize.create!(metadatum:)
       system_event.eventable = context.webhook
       if system_event.valid?

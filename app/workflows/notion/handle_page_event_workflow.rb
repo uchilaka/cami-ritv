@@ -18,7 +18,7 @@ module Notion
           page = event.entity
           database = event.parent.type == 'database' ? event.parent : nil
           if event.parent.id == webhook.data['deal_database_id']
-            result = ::Notion::UpsertDealWorkflow.call(event:, webhook:, database:)
+            result = ::Notion::UpsertDealEventWorkflow.call(event:, webhook:, database:)
             if result.success?
               :ok
             else

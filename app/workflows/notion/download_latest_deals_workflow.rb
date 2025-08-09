@@ -6,7 +6,7 @@ module Notion
   class DownloadLatestDealsWorkflow
     include Interactor
 
-    delegate :results, to: :context
+    delegate :webhook, :interval, :query_params, :filters, :response_hash, :results, to: :context
 
     INTERVALS = {
       six_months: 6.months,
@@ -19,18 +19,16 @@ module Notion
 
     def call
       context.filters ||= { skip_lost_deals: true }
-      supported_filters = context.filters.slice(*SUPPORTED_FILTERS)
+      supported_filters = filters.slice(*SUPPORTED_FILTERS)
       Rails.logger.info("#{self.class}.call", supported_filters:)
-      unsupported_filters = context.filters.keys - SUPPORTED_FILTERS
-      if unsupported_filters.any?
-        Rails.logger.warn("#{self.class}.call", unsupported_filters:)
-      end
+      unsupported_filters = filters.keys - SUPPORTED_FILTERS
+      Rails.logger.warn("#{self.class}.call", unsupported_filters:) if unsupported_filters.any?
       context.start_date ||= (INTERVALS[context.interval] || INTERVALS[:three_months]).ago.beginning_of_day
       context.end_date ||= Time.current.end_of_day
 
       context.query_params = build_query_params
 
-      fetch_deals_from_notion
+      fetch_remote_records
       process_results
     rescue StandardError => e
       context.fail!(error: e, message: "Failed to download deals from Notion: #{e.message}")
@@ -39,12 +37,12 @@ module Notion
     private
 
     def has_filter?(filter_key)
-      context.filters.key?(filter_key) && context.filters[filter_key].present?
+      filters.key?(filter_key) && filters[filter_key].present?
     end
 
     def filter(filter_key)
       context.filters ||= {}
-      context.filters[filter_key.to_sym]
+      filters[filter_key.to_sym]
     end
 
     def build_query_params
@@ -99,23 +97,23 @@ module Notion
       query_hash
     end
 
-    def fetch_deals_from_notion
+    def fetch_remote_records
       client = Notion::Client.new
 
       # Fetch from the deals database - this should have been provisioned in the devkit
       #   command when setting up the Notion (webhook) integration.
       _integration_id, _integration_name, database_id =
-        context.webhook.data.values_at 'integration_id', 'integration_name', 'deal_database_id'
+        webhook.data.values_at 'integration_id', 'integration_name', 'deal_database_id'
 
       context.response_hash = client.database_query(database_id:, query_params: context.query_params)
 
       # Handle pagination if needed
-      handle_pagination(client, database_id) if context.response_hash['has_more']
+      handle_pagination(client, database_id) if response_hash['has_more']
     end
 
     def handle_pagination(client, database_id)
-      all_results = context.response_hash['results']
-      next_cursor = context.response_hash['next_cursor']
+      all_results = response_hash['results']
+      next_cursor = response_hash['next_cursor']
 
       while next_cursor
         next_page_params = context.query_params.merge(start_cursor: next_cursor)
