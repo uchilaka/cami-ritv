@@ -48,7 +48,7 @@ module Notion
 
     def handle_response(response)
       if response.success?
-        JSON.parse(response.body)
+        response.body
       else
         error_message = extract_error_message(response)
         raise API::Error.new(

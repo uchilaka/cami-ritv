@@ -71,7 +71,7 @@ module Notion
       query_hash = {
         sorts: [
           {
-            property: 'created_time',
+            timestamp: 'created_time',
             direction: 'descending',
           },
         ],
@@ -79,7 +79,8 @@ module Notion
       }
       return query_hash if predicates.blank?
 
-      query_hash[:filter] = { and: predicates }
+      query_hash[:filter] ||= {}
+      query_hash[:filter][:and] = predicates
       query_hash
     end
 
@@ -89,20 +90,17 @@ module Notion
       # Fetch from the deals database - this should have been provisioned in the devkit
       #   command when setting up the Notion (webhook) integration.
       _integration_id, _integration_name, database_id =
-        context.webhook.data.values_at :integration_id, :integration_name, :deal_database_id
+        context.webhook.data.values_at 'integration_id', 'integration_name', 'deal_database_id'
 
-      context.raw_results =
-        client.database_query(
-          database_id:, query_params: context.query_params
-        )
+      context.response_hash = client.database_query(database_id:, query_params: context.query_params)
 
       # Handle pagination if needed
-      handle_pagination(client, database_id) if context.raw_results['has_more']
+      handle_pagination(client, database_id) if context.response_hash['has_more']
     end
 
     def handle_pagination(client, database_id)
-      all_results = context.raw_results['results']
-      next_cursor = context.raw_results['next_cursor']
+      all_results = context.response_hash['results']
+      next_cursor = context.response_hash['next_cursor']
 
       while next_cursor
         next_page_params = context.query_params.merge(start_cursor: next_cursor)
@@ -116,16 +114,16 @@ module Notion
         next_cursor = response['has_more'] ? response['next_cursor'] : nil
       end
 
-      context.raw_results['results'] = all_results
-      context.raw_results['has_more'] = false
-      context.raw_results['next_cursor'] = nil
+      context.response_hash['results'] = all_results
+      context.response_hash['has_more'] = false
+      context.response_hash['next_cursor'] = nil
     end
 
     def process_results
-      return context.fail!(message: 'No results returned from Notion') if context.raw_results['results'].empty?
+      return context.fail!(message: 'No results returned from Notion') if context.response_hash['results'].empty?
 
-      adapter = Notion::DealQueryResultAdapter.new(context.raw_results)
-      context.results = adapter.process_deals
+      adapter = Notion::DealQueryResultAdapter.new(context.response_hash['results'])
+      context.records = adapter.process_deals
     end
   end
 end

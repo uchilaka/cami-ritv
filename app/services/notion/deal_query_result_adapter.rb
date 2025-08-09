@@ -22,6 +22,8 @@ module Notion
     def process_deal(deal_data)
       properties = deal_data['properties']
 
+      property_mappings = {}
+
       # Available properties:
       # - Name
       # - Deal stage
