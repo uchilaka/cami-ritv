@@ -54,19 +54,22 @@ RSpec.describe 'API::V2::Webhooks::Notion::Events', type: :request do
         let(:testing_id) { SecureRandom.hex(4) }
         let(:event_data) do
           {
-            id: SecureRandom.uuid,
-            timestamp: Time.current.iso8601,
-            workspace_id: "workspace-#{testing_id}",
-            workspace_name: 'Test Workspace',
-            subscription_id: "subscription-#{testing_id}",
-            integration_id: "integration-#{testing_id}",
-            attempt_number: 1,
-            type: 'page.created',
-            data: {
-              parent: {
-                id: deal_database_id,
-                type: 'database',
+            'id' => 'b617e9d0-7267-4a7b-a62f-8635c4d0f6cd',
+            'timestamp' => '2025-08-09T10:20:53.273Z',
+            'workspace_id' => '0c39cfc7-e1df-41ee-90d8-9147e025de23',
+            'workspace_name' => "Uche's Notion",
+            'subscription_id' => '210d872b-594c-8112-adcf-00998896998d',
+            'integration_id' => '20fd872b-594c-8075-b1c7-0037f35531b4',
+            'authors' => [{ 'id' => '65a600e7-9de7-4bff-b158-07c1d4b1dc71', 'type' => 'person' }],
+            'attempt_number' => 4, 'api_version' => '2022-06-28',
+            'entity' => { 'id' => '22631362-3069-80c5-bd8e-f024ef3c6fcd', 'type' => 'page' },
+            'type' => 'page.properties_updated',
+            'data' => {
+              'parent' => {
+                'id' => '20f31362-3069-80b0-9196-d554bd3ab27a',
+                'type' => 'database',
               },
+              'updated_properties' => ['y_%3D%3C'],
             },
           }
         end

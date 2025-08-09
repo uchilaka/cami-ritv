@@ -60,9 +60,9 @@ module Notion
       #   # end
       #   instance_variable_set(:"@#{k}", attr_value)
       # end
-      deserialize_entity(@entity || @data[:entity])
-      deserialize_parent(@parent || @data[:parent])
-      deserialize_authors(@authors || @data[:authors])
+      @entity = deserialize_entity(@entity || @data[:entity])
+      @parent = deserialize_parent(@parent || @data.dig(:data, :parent))
+      @authors = deserialize_authors(@authors || @data[:authors])
       @authors ||= []
       @errors = ActiveModel::Errors.new(self)
     end
@@ -91,7 +91,7 @@ module Notion
       return unless authors_data.is_a?(Array)
       return authors_data if authors_data.all? { |a| a.is_a?(Notion::Entity) }
 
-      @authors = authors_data.map do |author|
+      authors_data.map do |author|
         if author.is_a?(Notion::Entity)
           author
         else
@@ -100,26 +100,25 @@ module Notion
       end
     end
 
-    def deserialize_entity(entity_data = @data[:entity])
-      return unless entity_data.present?
-      return entity_data if entity_data.is_a?(Notion::Entity)
-
-      @entity =
-        case entity_data[:type]
-        when 'database'
-          Notion::Database.new(entity_data)
-        when 'page'
-          Notion::Page.new(entity_data)
-        else
-          Notion::Entity.new(entity_data)
-        end
-    end
-
     def deserialize_parent(parent_data = @data[:parent])
       return unless parent_data.present?
       return parent_data if parent_data.is_a?(Notion::Entity)
 
-      @parent = deserialize_entity(parent_data)
+      deserialize_entity(parent_data)
+    end
+
+    def deserialize_entity(entity_data)
+      return unless entity_data.present?
+      return entity_data if entity_data.is_a?(Notion::Entity)
+
+      case entity_data[:type]
+      when 'database'
+        Notion::Database.new(entity_data)
+      when 'page'
+        Notion::Page.new(entity_data)
+      else
+        Notion::Entity.new(entity_data)
+      end
     end
   end
 end

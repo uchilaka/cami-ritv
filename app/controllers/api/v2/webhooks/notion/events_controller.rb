@@ -51,12 +51,12 @@ module API
             request.headers['HTTP_X_NOTION_SIGNATURE']
           end
 
-          def set_event
-            @event = ::Notion::Event.new(webhook_event_params)
-            @event.validate!
-          rescue ActiveModel::ValidationError => e
-            render json: { errors: e.message }, status: :unprocessable_entity
-          end
+          # def set_event
+          #   @event = ::Notion::Event.new(webhook_event_params)
+          #   @event.validate!
+          # rescue ActiveModel::ValidationError => e
+          #   render json: { errors: e.message }, status: :unprocessable_entity
+          # end
 
           def webhook_verification_params
             params.permit(:verification_token)

@@ -60,9 +60,9 @@
     },
     "terminal.integrated.fontSize": 15,
     "window.zoomLevel": 0.125,
-    // "rubyLsp.rubyVersionManager": {
-    //   "identifier": "asdf"
-    // },
+    "rubyLsp.rubyVersionManager": {
+      "identifier": "mise"
+    },
     // "rubocop.yjitEnabled": true,
     // "rubocop.commandPath": "${userHome}${pathSeparator}.asdf${pathSeparator}shims${pathSeparator}rubocop",
     // "rubocop.mode": "enableViaGemfileOrMissingGemfile",

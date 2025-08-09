@@ -26,14 +26,12 @@ module Notion
     def initialize(args = {})
       super
       @data = (args[:data] || {}).to_h.deep_symbolize_keys
-      # clear_attribute_changes(attributes.keys)
 
       attributes.each_key do |k|
         attr_value = args[k] || @data[k]
         next if deserializable_attributes.include?(k)
         next unless attr_value.present?
 
-        # instance_variable_set("@#{k}", attr_value)
         send("#{k}=", attr_value)
       end
 
@@ -42,6 +40,7 @@ module Notion
       # self.id ||= args.dig(:data, :id)
       # self.type ||= args[:type] || @data[:type]
       # self.type ||= @data[:type]
+
       @errors = ActiveModel::Errors.new(self)
     end
 

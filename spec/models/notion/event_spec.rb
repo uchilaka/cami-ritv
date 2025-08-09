@@ -3,34 +3,60 @@
 require 'rails_helper'
 
 describe Notion::Event do
-  let(:event_id) { SecureRandom.uuid }
-  let(:event_type) { 'page.created' }
-  let(:event_data) do
-    {
-      id: event_id,
-      type: event_type,
-      entity: {
-        id: SecureRandom.uuid,
-        type: 'page',
-      },
-      parent: {
-        id: SecureRandom.uuid,
-        type: 'database',
-      },
-      authors: [
-        {
-          id: SecureRandom.uuid,
-          type: 'user',
-        },
-      ],
-    }
-  end
-
   subject(:event) { described_class.new(data: event_data) }
 
-  before { event.valid? }
+  let(:event_id) { SecureRandom.uuid }
+  let(:event_type) { 'unsupported_event_type' }
+  let(:event_data) do
+    { id: event_id, type: event_type }
+  end
 
-  it { expect(event.parent).to be_a(Notion::Database) }
+  shared_examples 'a well-formed database page event' do |expected_event_type|
+    let(:event_data) do
+      {
+        id: event_id,
+        type: event_type,
+        entity: {
+          id: SecureRandom.uuid,
+          type: 'page',
+        },
+        data: {
+          parent: {
+            id: SecureRandom.uuid,
+            type: 'database',
+          },
+          updated_properties: ['y_%3D%3C'],
+        },
+        authors: [
+          {
+            id: SecureRandom.uuid,
+            type: 'person',
+          },
+        ],
+      }
+    end
+
+    it { expect(event.type).to eq(expected_event_type) }
+    it { expect(event.parent).to be_a(Notion::Database) }
+    it { expect(event.entity).to be_a(Notion::Page) }
+    it { expect(event.authors).to all(be_a(Notion::Entity)) }
+  end
+
+  context "when the event type is 'page.created'" do
+    let(:event_type) { 'page.created' }
+
+    before { event.valid? }
+
+    it_should_behave_like 'a well-formed database page event', 'page.created'
+  end
+
+  context "when the event type is 'page.updated'" do
+    let(:event_type) { 'page.properties_updated' }
+
+    before { event.valid? }
+
+    it_should_behave_like 'a well-formed database page event', 'page.properties_updated'
+  end
 
   describe 'validations' do
     it { is_expected.to be_valid }
@@ -57,7 +83,6 @@ describe Notion::Event do
           expect(invalid_event.errors[:data]).to include("can't be blank")
         end
       end
-
 
       it 'is invalid without a type' do
         invalid_event = described_class.new(data: { key: 'value' })
