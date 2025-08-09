@@ -14,7 +14,7 @@ If you have not generated a GPG key, you can generate one following [this guide]
 
 ## 3. Export your GPG public key
 
-Once you've identified the GPG key for your user, you can export a public key for that user to send to someone with repo permissions (and `config/credentials/git-crypt.key` available on their machine) to add your GPG user to the repository. 
+Once you've identified the GPG key for your user, you can export a public key for that user to send to someone with repo permissions (and `config/credentials/git-crypt.key` available on their machine) to add your GPG user to the repository.
 
 ```shell
 # Output your GPG key in armor format (your machine)
@@ -37,4 +37,3 @@ Note the user ID in the terminal output from successfully importing the GPG publ
 ```shell
 git crypt add-gpg-user --trusted GPG_USER_ID
 ```
-

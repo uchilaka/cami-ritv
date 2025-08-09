@@ -46,3 +46,7 @@ rails new cami --no-rc --skip-webpack-install --skip-javascript \
 
 - [Modeling](./MODELING.md)
 - [Scaffolding](./SCAFFOLDING.md)
+- [New GPG User](./NEW_GPG_USER.md)
+- [Development Setup Guide](./DEVELOPMENT.md)
+- [References](./GUIDES.md)
+- [Configuration](./CONFIG.md)
