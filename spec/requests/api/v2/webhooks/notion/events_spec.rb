@@ -52,6 +52,7 @@ RSpec.describe 'API::V2::Webhooks::Notion::Events', type: :request do
 
       response '200', 'event processed' do
         let(:testing_id) { SecureRandom.hex(4) }
+        let(:deal_database_id) { event_data.dig('data', 'parent', 'id') }
         let(:event_data) do
           {
             'id' => 'b617e9d0-7267-4a7b-a62f-8635c4d0f6cd',

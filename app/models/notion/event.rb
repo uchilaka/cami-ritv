@@ -46,25 +46,10 @@ module Notion
     def initialize(args = {})
       super
       self.timestamp ||= Time.current
-      # attributes.each_key do |k|
-      #   attr_value = args[k] || args.dig(:data, k)
-      #   next unless attr_value.present?
-      #
-      #   # case k
-      #   # when :entity
-      #   #   deserialize_entity(attr_value)
-      #   # when :parent
-      #   #   deserialize_parent(attr_value)
-      #   # else
-      #   #   instance_variable_set(:"@#{k}", attr_value)
-      #   # end
-      #   instance_variable_set(:"@#{k}", attr_value)
-      # end
       @entity = deserialize_entity(@entity || @data[:entity])
-      @parent = deserialize_parent(@parent || @data.dig(:data, :parent))
+      @parent = deserialize_parent(@parent || @data[:parent])
       @authors = deserialize_authors(@authors || @data[:authors])
       @authors ||= []
-      @errors = ActiveModel::Errors.new(self)
     end
 
     # define_model_callbacks :initialize, :validation

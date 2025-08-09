@@ -37,10 +37,6 @@ module Notion
 
       # define_model_callbacks :initialize, :validation
 
-      # self.id ||= args.dig(:data, :id)
-      # self.type ||= args[:type] || @data[:type]
-      # self.type ||= @data[:type]
-
       @errors = ActiveModel::Errors.new(self)
     end
 
