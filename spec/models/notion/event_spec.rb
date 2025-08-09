@@ -3,9 +3,10 @@
 require 'rails_helper'
 
 describe Notion::Event do
-  subject(:event) { described_class.new(data: event_data) }
+  subject(:event) { described_class.new(event_data) }
 
   let(:event_id) { SecureRandom.uuid }
+  let(:database_id) { SecureRandom.uuid }
   let(:event_type) { 'unsupported_event_type' }
   let(:event_data) do
     { id: event_id, type: event_type }
@@ -22,7 +23,7 @@ describe Notion::Event do
         },
         data: {
           parent: {
-            id: SecureRandom.uuid,
+            id: database_id,
             type: 'database',
           },
           updated_properties: ['y_%3D%3C'],
@@ -59,13 +60,36 @@ describe Notion::Event do
   end
 
   describe 'validations' do
+    let(:event_type) { 'page.properties_updated' }
+    let(:event_data) do
+      {
+        id: event_id,
+        type: event_type,
+        entity: {
+          id: SecureRandom.uuid,
+          type: 'page',
+        },
+        data: {
+          parent: {
+            id: database_id,
+            type: 'database',
+          },
+          updated_properties: ['y_%3D%3C'],
+        }
+      }
+    end
+
     it { is_expected.to be_valid }
     it { is_expected.to validate_presence_of(:type) }
 
     context 'with invalid attributes' do
       describe '#data' do
         context 'with nil data' do
-          subject(:event) { described_class.new(data: nil, type: 'database.content_updated') }
+          let(:event_data) do
+            { data: nil, type: 'database.content_updated' }
+          end
+
+          # subject(:event) { described_class.new(data: nil, type: 'database.content_updated') }
 
           it { is_expected.to be_invalid }
           it { expect(event.errors[:type]).to be_empty }
@@ -111,6 +135,29 @@ describe Notion::Event do
   end
 
   describe 'attributes' do
+    let(:event_type) { 'page.created' }
+    let(:event_data) do
+      {
+        entity: {
+          id: SecureRandom.uuid,
+          type: 'page',
+        },
+        data: {
+          parent: {
+            id: database_id,
+            type: 'database',
+          },
+          updated_properties: ['y_%3D%3C'],
+        },
+        authors: [
+          {
+            id: SecureRandom.uuid,
+            type: 'person',
+          },
+        ]
+      }
+    end
+
     it 'has a type' do
       expect(event.type).to eq(event_data[:type])
     end
@@ -120,7 +167,7 @@ describe Notion::Event do
     end
 
     it 'has data' do
-      expect(event.data).to eq(event_data)
+      expect(event.data).to eq(event_data[:data])
     end
 
     it 'sets timestamp by default' do

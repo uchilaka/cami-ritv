@@ -49,7 +49,8 @@ module Notion
       @entity = deserialize_entity(@entity || @data[:entity])
       # Try fetching the parent assuming the webhook request params data signature
       @parent = deserialize_parent(@parent || @data.dig(:data, :parent))
-      # Attempt a default deserialization of parent if not provided
+      # TODO: Attempt a default deserialization of parent if missed in prior dig
+      #   Is there a way to avoid this two-step deserialization for the parent data?
       @parent ||= deserialize_parent
       # Try authors
       @authors = deserialize_authors(@authors || @data[:authors])

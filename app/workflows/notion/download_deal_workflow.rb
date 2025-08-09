@@ -3,6 +3,7 @@
 module Notion
   class DownloadDealWorkflow
     include Interactor
+    include DealProcessable
 
     delegate :webhook, :source_event, :remote_record_id,
              :response_hash, :result, to: :context
@@ -22,8 +23,8 @@ module Notion
     def process_result
       return context.fail!(message: 'No results returned from Notion') if context.response_hash['results'].empty?
 
-      adapter = Notion::DealQueryResultAdapter.new(context.response_hash['results'])
-      context.records = adapter.process_deals
+      deal_data = response_hash['results'].last
+      context.record = process_deal(deal_data)
     end
 
     def fetch_remote_record

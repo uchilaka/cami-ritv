@@ -2,9 +2,20 @@
 
 module Webhooks
   class RecordsController < ApplicationController
+    load_console :index, :show
+
     def index
       result = workflow_by_action.call(webhook:, event:)
       @records = result.records
+
+      case webhook_id
+      when 'notion'
+        # Render notion index view
+        render 'webhooks/notion/records/index'
+      else
+        # Render default index view
+        render 'webhooks/records/index'
+      end
     end
 
     def show; end
