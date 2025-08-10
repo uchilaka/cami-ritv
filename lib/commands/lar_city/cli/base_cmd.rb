@@ -5,10 +5,10 @@ app_path = File.join(Dir.pwd, 'app')
 $LOAD_PATH.unshift(app_path) unless $LOAD_PATH.include?(app_path)
 
 require 'thor'
-require 'thor/shell/color'
 require 'awesome_print'
 require 'concerns/operating_system_detectable'
-require 'lib/lar_city/cli/colors'
+# require_relative '../../../lar_city'
+# require 'lar_city'
 
 # Conventions for command or task implementation classes:
 # - Use the namespace method to define a namespace for the Thor class.

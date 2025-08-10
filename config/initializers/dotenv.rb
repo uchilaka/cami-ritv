@@ -1,17 +1,21 @@
 # frozen_string_literal: true
 
+production_env_vars = %w[
+  APP_DATABASE_NAME
+]
+
 required_env_vars =
   %w[
     PORT
     RAILS_ENV
     REDIS_URL
     APP_DATABASE_HOST
-    APP_DATABASE_NAME
     APP_DATABASE_PORT
     APP_DATABASE_USER
     APP_DATABASE_PASSWORD
   ]
 unless Rails.env.test?
+  required_env_vars += production_env_vars
   required_env_vars += %w[
     HOSTNAME
     PAYPAL_BASE_URL

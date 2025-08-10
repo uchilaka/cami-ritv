@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require_relative 'lar_city/cli/colors'
 require_relative 'app_utils'
 require_relative 'log_utils'
 require_relative 'number_utils'
