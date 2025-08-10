@@ -9,6 +9,12 @@
       </span>
     </div>
 
+    <!-- Name -->
+    <div class="flex flex-col">
+      <%= render('shared/readonly-input',
+                 id: 'name', label: 'Name', value: webhook.name) %>
+    </div>
+
     <% if deal_database_id %>
       <!-- Deal Database ID -->
       <!-- TODO: Implement tool tip on where this is configured in (e.g. accessor in Rails credentials) -->

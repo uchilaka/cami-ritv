@@ -11,6 +11,8 @@
     </div>
   <% end %>
 
+  <%= form.input :name, wrapper_class: "w-full my-5" %>
+
   <%= form.input :slug, wrapper_class: "w-full my-5" %>
 
   <% if webhook.persisted? %>

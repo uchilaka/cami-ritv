@@ -4,6 +4,7 @@
 #
 #  id                 :uuid             not null, primary key
 #  data               :jsonb
+#  name               :string
 #  slug               :string
 #  status             :string           not null
 #  verification_token :string
@@ -12,6 +13,7 @@
 #
 # Indexes
 #
+#  index_webhooks_on_name    (name) UNIQUE
 #  index_webhooks_on_slug    (slug) UNIQUE
 #  index_webhooks_on_status  (status)
 #
