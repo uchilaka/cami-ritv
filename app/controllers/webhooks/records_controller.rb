@@ -2,6 +2,8 @@
 
 module Webhooks
   class RecordsController < ApplicationController
+    layout 'application'
+
     load_console :index, :show
 
     def index

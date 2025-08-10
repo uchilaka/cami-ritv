@@ -31,6 +31,9 @@ home_office: &home_office
 
 development:
   <<: *common
+
+staging:
+  <<: *common
   <<: *home_office
 
 production:
