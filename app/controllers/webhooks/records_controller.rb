@@ -5,6 +5,7 @@ module Webhooks
     load_console :index, :show
 
     def index
+      # TODO: Add test coverage for this use of workflow_by_action on :index
       result = workflow_by_action.call(webhook:, event:)
       @records = result.records
 
@@ -19,6 +20,7 @@ module Webhooks
     end
 
     def show
+      # TODO: Add test coverage for this use of workflow_by_action on :show
       result = workflow_by_action.call(webhook:, source_event: event)
       # @record = result.records.find { |r| r.id == webhook_record_params[:id] }
       #
