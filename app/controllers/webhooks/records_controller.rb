@@ -23,24 +23,20 @@ module Webhooks
     def show
       # TODO: Add test coverage for this use of workflow_by_action on :show
       result = workflow_by_action.call(webhook:, source_event: event, remote_record_id: record_id)
-      # @record = result.records.find { |r| r.id == webhook_record_params[:id] }
-      #
-      # if @record.nil?
-      #   flash[:alert] = "Record not found for ID: #{webhook_record_params[:id]}"
-      #   redirect_to action: :index
-      # else
-      #   case webhook_id
-      #   when 'notion'
-      #     # Render notion show view
-      #     render 'webhooks/notion/records/show'
-      #   else
-      #     # Render default show view
-      #     render 'webhooks/records/show'
-      #   end
-      # end
+      raise LarCity::Errors::UnprocessableEntity, result.error if result.failure?
 
-      # TODO: Check status of the result
-      # TODO: Check dynamic controller action
+      if result.failure?
+        Rails.logger.error(
+          'Failed to download webhook record',
+          webhook_id:, error: result.error, message: result.message
+        )
+        flash[:alert] = "Failed to process record: #{result.error}"
+        redirect_to action: :index and return
+      end
+
+      # TODO: Implement webhook name to display here
+      flash[:success] = "Successfully downloaded #{webhook.slug.humanize} record"
+      @record = result.record
       view_path =
         if view_exists?(record_view_by_action)
           record_view_by_action
