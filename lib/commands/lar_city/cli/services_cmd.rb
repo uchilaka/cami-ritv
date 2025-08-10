@@ -20,7 +20,12 @@ module LarCity
         # Specific TCP port: sudo lsof -i tcp:<port-number>
         # List PIDs for multiple ports: sudo lsof -i -P -n | grep -E ':(3036|16006)\b'
         # List PIDs for multiple ports (only TCP listening): sudo lsof -iTCP -sTCP:LISTEN -P -n | grep -E ':(3036|16006)\b'
+        if configured_ports.empty?
+          say 'No configured ports found. Please ensure your environment variables are set correctly.', :red
+          return
+        end
 
+        service_regex = Regexp.union(configured_ports.map { |port| ":#{port}\\b" })
         # if options[:pid].nil?
         #   puts 'Please specify a PID to lookup.'
         #   return
@@ -128,6 +133,14 @@ module LarCity
 
         def docker_compose_config_file
           Rails.root.join('docker-compose.yml').to_s
+        end
+
+        def configured_ports
+          @configured_ports ||=
+            begin
+              result = `printenv | grep PORT | awk -F= '{print $2}' | grep -oE '[0-9]+'`
+              result.split("\n").map(&:strip).reject(&:empty?)
+            end
         end
       end
     end
