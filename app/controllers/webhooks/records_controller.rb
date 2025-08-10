@@ -53,7 +53,8 @@ module Webhooks
     protected
 
     def record_view_by_action
-      "webhooks/#{webhook_id}/records/#{action_name}"
+      path_prefix = _prefixes.first.gsub('webhooks', "webhooks/#{webhook_id}")
+      "#{path_prefix}/#{action_name}"
     end
 
     def workflow_by_action
@@ -79,7 +80,7 @@ module Webhooks
     private
 
     def view_exists?(relative_path, partial: false)
-      lookup_context.exists?(relative_path, _prefixes, partial:)
+      lookup_context.exists?(relative_path, [], partial)
     end
 
     def webhook_id
