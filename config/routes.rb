@@ -73,16 +73,16 @@ Rails.application.routes.draw do
   end
 
   resources :webhooks do
-    member do
-      # get :records, to: 'webhooks/records#index', as: :records
-      resources :records, controller: 'webhooks/records', only: %i[index show], as: :webhook_records
-    end
+    # member do
+    #   get :records, to: 'webhooks/records#index', as: :records
+    # end
+    resources :records, controller: 'webhooks/records', only: %i[index show]
 
     resources :events, controller: 'webhooks/events', only: %i[index show] do
-      member do
-        # get :record, to: 'webhooks/records#show', as: :record
-        resources :records, controller: 'webhooks/records', only: %i[show], as: :event_records
-      end
+      # member do
+      #   get :record, to: 'webhooks/records#show', as: :record
+      # end
+      resources :records, controller: 'webhooks/records', only: %i[show]
     end
   end
 

@@ -1,6 +1,6 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="Development: vite" type="CommandRunConfigurationType" factoryName="Gem Command">
-    <module name="cami-ritv" />
+    <module name="cami" />
     <COMMAND_RUN_CONFIGURATION NAME="RUBY_ARGS" VALUE="" />
     <COMMAND_RUN_CONFIGURATION NAME="WORK DIR" VALUE="$MODULE_DIR$" />
     <COMMAND_RUN_CONFIGURATION NAME="SHOULD_USE_SDK" VALUE="false" />
