@@ -9,6 +9,7 @@ module Webhooks
       result = workflow_by_action.call(webhook:, event:)
       @records = result.records
 
+      # TODO: Is there any Rails magic that could help us with this?
       case webhook_id
       when 'notion'
         # Render notion index view
@@ -37,17 +38,23 @@ module Webhooks
       #     render 'webhooks/records/show'
       #   end
       # end
-      case webhook_id
-      when 'notion'
-        # Render notion show view
-        render 'webhooks/notion/records/show'
-      else
-        # Render default show view
-        render 'webhooks/records/show'
-      end
+
+      # TODO: Check status of the result
+      # TODO: Check dynamic controller action
+      view_path =
+        if view_exists?(record_view_by_action)
+          record_view_by_action
+        else
+          "webhooks/records/#{action_name}"
+        end
+      render view_path, locals: { record: result.record }
     end
 
     protected
+
+    def record_view_by_action
+      "webhooks/#{webhook_id}/records/#{action_name}"
+    end
 
     def workflow_by_action
       @workflow_by_action ||= webhook.actions.send(action_name).workflow_klass
@@ -70,6 +77,10 @@ module Webhooks
     end
 
     private
+
+    def view_exists?(relative_path, partial: false)
+      lookup_context.exists?(relative_path, _prefixes, partial:)
+    end
 
     def webhook_id
       id, webhook_id = identifiers
