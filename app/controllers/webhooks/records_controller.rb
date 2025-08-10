@@ -22,7 +22,7 @@ module Webhooks
 
     def show
       # TODO: Add test coverage for this use of workflow_by_action on :show
-      result = workflow_by_action.call(webhook:, source_event: event)
+      result = workflow_by_action.call(webhook:, source_event: event, remote_record_id: record_id)
       # @record = result.records.find { |r| r.id == webhook_record_params[:id] }
       #
       # if @record.nil?
@@ -83,24 +83,31 @@ module Webhooks
       lookup_context.exists?(relative_path, [], partial)
     end
 
+    def record_id
+      id, webhook_id, _event_id = identifiers
+      return nil if webhook_id.blank?
+
+      id
+    end
+
     def webhook_id
-      id, webhook_id = identifiers
+      id, webhook_id, _event_id = identifiers
       webhook_id || id
     end
 
     def event_id
-      id, webhook_id = identifiers
+      id, webhook_id, _event_id = identifiers
       return nil if webhook_id.blank?
 
       id
     end
 
     def identifiers
-      webhook_record_params.values_at :id, :webhook_id
+      webhook_record_params.values_at :id, :webhook_id, :event_id
     end
 
     def webhook_record_params
-      params.permit(:id, :webhook_id)
+      params.permit(:id, :event_id, :webhook_id)
     end
   end
 end
