@@ -2,8 +2,6 @@
 
 module Webhooks
   class RecordsController < ApplicationController
-    layout 'application'
-
     load_console :index, :show
 
     def index
@@ -20,7 +18,32 @@ module Webhooks
       end
     end
 
-    def show; end
+    def show
+      result = workflow_by_action.call(webhook:, source_event: event)
+      # @record = result.records.find { |r| r.id == webhook_record_params[:id] }
+      #
+      # if @record.nil?
+      #   flash[:alert] = "Record not found for ID: #{webhook_record_params[:id]}"
+      #   redirect_to action: :index
+      # else
+      #   case webhook_id
+      #   when 'notion'
+      #     # Render notion show view
+      #     render 'webhooks/notion/records/show'
+      #   else
+      #     # Render default show view
+      #     render 'webhooks/records/show'
+      #   end
+      # end
+      case webhook_id
+      when 'notion'
+        # Render notion show view
+        render 'webhooks/notion/records/show'
+      else
+        # Render default show view
+        render 'webhooks/records/show'
+      end
+    end
 
     protected
 
