@@ -9,7 +9,7 @@
     <h1 class="font-bold text-4xl">Showing webhook</h1>
 
     <% content_for :form_actions do %>
-      <%= link_to "Records", records_webhook_path(@webhook), class: secondary_btn_classes("px-5 py-3") %>
+      <%= link_to "Records", webhook_records_path(@webhook), class: secondary_btn_classes("px-5 py-3") %>
       <%= link_to "Edit", edit_webhook_path(@webhook), class: secondary_btn_classes("px-5 py-3") %>
       <%= link_to "Back to webhooks", webhooks_path, class: secondary_btn_classes("px-5 py-3") %>
       <%= link_to "Events", webhook_events_path(@webhook, format: :json), class: secondary_btn_classes("px-5 py-3") %>
