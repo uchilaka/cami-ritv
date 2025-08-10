@@ -31,6 +31,7 @@ module LarCity
               Rails.application.credentials.notion&.values_at :integration_id, :verification_token, :deal_database_id
             dashboard_url = "https://www.notion.so/profile/integrations/internal/#{integration_id}"
             records_index_workflow_name = 'Notion::DownloadLatestDealsWorkflow'
+            record_download_workflow_name = 'Notion::DownloadDealWorkflow'
             ::Webhook.transaction do
               webhook =
                 ::Webhook
@@ -43,6 +44,7 @@ module LarCity
                 deal_database_id:,
                 dashboard_url:,
                 records_index_workflow_name:,
+                record_download_workflow_name:
               }.compact
 
               if verbose?

@@ -22,7 +22,14 @@ class Webhook < ApplicationRecord
 
   include AASM
 
-  store_accessor :data, %i[integration_id integration_name dashboard_url records_index_workflow_name]
+  store_accessor :data,
+                 %i[
+                   integration_id
+                   integration_name
+                   dashboard_url
+                   records_index_workflow_name
+                   record_download_workflow_name
+                 ]
 
   encrypts :verification_token, deterministic: true
 
@@ -62,7 +69,10 @@ class Webhook < ApplicationRecord
   def actions
     @actions ||= Struct::WebhookActionSet.new(
       index: Struct::WebhookAction.new(
-        workflow_klass: records_index_workflow_name.to_s.constantize,
+        workflow_klass: records_index_workflow_name.to_s.constantize
+      ),
+      show: Struct::WebhookAction.new(
+        workflow_klass: record_download_workflow_name.to_s.constantize
       )
     )
   end
