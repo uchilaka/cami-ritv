@@ -1,17 +1,22 @@
 en:
   commands:
     services:
+      lookup:
+        short_desc: Lookup a service by its name
+        long_desc: >
+          This command allows you to lookup services for the CAMI app, \
+          listing resources like the port number and PID file.
       kill_process:
         short_desc: Kill a process by its PID
         long_desc: >
           This command allows you to kill a process by its PID (Process ID).
-          An example of when you would use this command is when a process is 
-          not responding (e.g. a zombie Rails server instance) or consuming 
+          An example of when you would use this command is when a process is
+          not responding (e.g. a zombie Rails server instance) or consuming
           too many resources and locking the UI of a specific application. The
-          PID is a numeric value e.g. `1234` and can be found in the system 
+          PID is a numeric value e.g. `1234` and can be found in the system
           process list (or someplace like your Rails console output in your IDE).
           Oracle doc reference: https://docs.oracle.com/cd/E19253-01/817-0403/eoizf/index.html
         completed_msg: >
-          The request to kill process with PID `%{pid}` has been completed. If you were 
-          trying to kill a process, please check the system process list to confirm 
+          The request to kill process with PID `%{pid}` has been completed. If you were
+          trying to kill a process, please check the system process list to confirm
           that it has been terminated.

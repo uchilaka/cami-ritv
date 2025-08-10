@@ -13,10 +13,33 @@ module LarCity
                    enum: %w[all essential batteries-included],
                    default: 'batteries-included'
 
-      method_option :pid,
-                    type: :string,
-                    desc: 'The PID of the process to kill',
-                    required: true
+      desc 'lookup', I18n.t('commands.services.lookup.short_desc')
+      long_desc I18n.t('commands.services.lookup.long_desc')
+      def lookup
+        # Listening TCP ports: sudo lsof -nP -iTCP -sTCP:LISTEN
+        # Specific TCP port: sudo lsof -i tcp:<port-number>
+        # List PIDs for multiple ports: sudo lsof -i -P -n | grep -E ':(3036|16006)\b'
+        # List PIDs for multiple ports (only TCP listening): sudo lsof -iTCP -sTCP:LISTEN -P -n | grep -E ':(3036|16006)\b'
+
+        # if options[:pid].nil?
+        #   puts 'Please specify a PID to lookup.'
+        #   return
+        # end
+        #
+        # result = run 'lsof -i', "-P -n | grep #{options[:pid]}"
+        # if result.nil?
+        #   say_highlight I18n.t('commands.services.lookup.not_found_msg', pid: options[:pid])
+        # else
+        #   puts result
+        # end
+      rescue StandardError => e
+        puts "Error looking up PID: #{e.message}"
+      end
+
+      option :pid,
+             type: :string,
+             desc: 'The PID of the process to kill',
+             required: true
       desc 'kill_process', I18n.t('commands.services.kill_process.short_desc')
       long_desc I18n.t('commands.services.kill_process.long_desc')
       def kill_process
@@ -24,10 +47,10 @@ module LarCity
         say_highlight I18n.t('commands.services.kill_process.completed_msg', pid: options[:pid]) if result.nil?
       end
 
-      method_option :database,
-                    type: :boolean,
-                    desc: 'Use the database service',
-                    default: false
+      option :database,
+             type: :boolean,
+             desc: 'Use the database service',
+             default: false
       desc 'connect', 'Connect to a service'
       def connect
         if service_name.nil?
