@@ -3,10 +3,8 @@
   <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left">
     <!-- Slug -->
     <div class="flex flex-col">
-      <label class="text-sm font-medium text-gray-900 dark:text-white">Slug</label>
-      <span class="text-gray-500 dark:text-gray-400">
-        <code><%= webhook.slug %></code>
-      </span>
+      <%= render('shared/readonly-input',
+                 id: 'slug', label: 'Slug', value: webhook.slug) %>
     </div>
 
     <!-- Name -->

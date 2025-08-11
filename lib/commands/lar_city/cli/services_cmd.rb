@@ -13,6 +13,10 @@ module LarCity
                    enum: %w[all essential batteries-included],
                    default: 'batteries-included'
 
+      option :port,
+             type: :string,
+             desc: I18n.t('commands.services.kill.options.port.short_desc'),
+             long_desc: I18n.t('commands.services.kill.options.port.long_desc')
       desc 'lookup', I18n.t('commands.services.lookup.short_desc')
       long_desc I18n.t('commands.services.lookup.long_desc')
       def lookup
@@ -26,6 +30,8 @@ module LarCity
         end
 
         service_regex = Regexp.union(configured_ports.map { |port| ":#{port}\\b" })
+        # TODO: pending implementation
+        #
         # if options[:pid].nil?
         #   puts 'Please specify a PID to lookup.'
         #   return
@@ -39,6 +45,17 @@ module LarCity
         # end
       rescue StandardError => e
         puts "Error looking up PID: #{e.message}"
+      end
+
+      option :port,
+             type: :string,
+             desc: I18n.t('commands.services.kill.options.port.short_desc'),
+             long_desc: I18n.t('commands.services.kill.options.port.long_desc'),
+             required: true
+      desc 'kill', I18n.t('commands.services.kill.short_desc')
+      long_desc I18n.t('commands.services.kill.long_desc')
+      def kill
+        # TODO: pending implementation
       end
 
       option :pid,
