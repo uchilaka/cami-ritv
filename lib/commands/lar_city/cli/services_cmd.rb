@@ -24,25 +24,29 @@ module LarCity
         # Specific TCP port: sudo lsof -i tcp:<port-number>
         # List PIDs for multiple ports: sudo lsof -i -P -n | grep -E ':(3036|16006)\b'
         # List PIDs for multiple ports (only TCP listening): sudo lsof -iTCP -sTCP:LISTEN -P -n | grep -E ':(3036|16006)\b'
-        if configured_ports.empty?
+        if configured_ports.blank?
           say 'No configured ports found. Please ensure your environment variables are set correctly.', :red
           return
         end
 
-        service_regex = Regexp.union(configured_ports.map { |port| ":#{port}\\b" })
-        # TODO: pending implementation
-        #
-        # if options[:pid].nil?
-        #   puts 'Please specify a PID to lookup.'
-        #   return
-        # end
-        #
-        # result = run 'lsof -i', "-P -n | grep #{options[:pid]}"
-        # if result.nil?
-        #   say_highlight I18n.t('commands.services.lookup.not_found_msg', pid: options[:pid])
-        # else
-        #   puts result
-        # end
+        if port.blank? && !Flipper.enabled?(:feat__lookup_by_configured_ports)
+          say_highlight I18n.t('commands.services.lookup.no_port_specified_msg')
+          return
+        end
+
+        if port.blank?
+          lookup_by_configured_ports
+        else
+          cmd = lookup_ports_command port
+          say_highlight "Looking up service listening on #{port}"
+          result = run cmd, eval: true
+          if result.nil?
+            say_info "No service found listening on #{port}"
+          else
+            # TODO: format CLI output nicely using a table
+            result
+          end
+        end
       rescue StandardError => e
         puts "Error looking up PID: #{e.message}"
       end
@@ -121,6 +125,29 @@ module LarCity
       end
 
       no_commands do
+        def lookup_by_configured_ports
+          if configured_ports.blank?
+            say 'No configured ports found. Please ensure your environment variables are set correctly.', :red
+            return
+          end
+
+          cmd = lookup_ports_command(*configured_ports)
+          say_highlight "Looking up services listening on configured ports: #{configured_ports.join(', ')}"
+          result = run cmd, eval: true
+          if result.nil?
+            say_highlight 'No services found listening on configured ports.'
+          else
+            # TODO: format CLI output nicely using a table
+            say_info result
+          end
+        end
+
+        def lookup_ports_command(*ports)
+          raise ArgumentError, 'No ports specified for lookup' if ports.blank?
+          match_pattern = "\\b#{ports.join('|')}\\b"
+          "lsof -iTCP -sTCP:LISTEN -P -n | grep -E '#{match_pattern}'"
+        end
+
         def service_connect_command
           if use_database_service?
             return [
@@ -158,6 +185,10 @@ module LarCity
               result = `printenv | grep PORT | awk -F= '{print $2}' | grep -oE '[0-9]+'`
               result.split("\n").map(&:strip).reject(&:empty?)
             end
+        end
+
+        def port
+          @port ||= options[:port]
         end
       end
     end

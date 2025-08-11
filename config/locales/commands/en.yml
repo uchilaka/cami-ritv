@@ -6,6 +6,9 @@ en:
         long_desc: >
           This command allows you to lookup services for the CAMI app, \
           listing resources like the port number and PID file.
+        no_port_specified_msg: >
+          No port number was specified. Please specify a port number \
+          using the --port option to lookup the service process.
       kill:
         short_desc: Kill a service by its listening port
         long_desc: >

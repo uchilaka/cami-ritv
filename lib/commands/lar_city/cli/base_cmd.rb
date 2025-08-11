@@ -42,7 +42,7 @@ module LarCity
       no_commands do
         include OperatingSystemDetectable
 
-        def run(*args, inline: false)
+        def run(*args, inline: false, eval: false)
           with_interruption_rescue do
             cmd = args.compact.join(' ')
             if verbose? || dry_run?
@@ -60,8 +60,13 @@ module LarCity
             #   end
             #   wait_thread.value
             # end
-            result = system(cmd, out: $stdout, err: :out)
-            return result if inline
+            result =
+              if eval
+                `#{cmd}`
+              else
+                system(cmd, out: $stdout, err: :out)
+              end
+            return result if inline || eval
 
             # exit 0 if result
           end
