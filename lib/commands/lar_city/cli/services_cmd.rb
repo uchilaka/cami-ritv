@@ -39,12 +39,12 @@ module LarCity
         else
           cmd = lookup_ports_command port
           say_highlight "Looking up service listening on #{port}"
-          result = run cmd, eval: true
+          result = run "sudo", cmd, eval: true
           if result.nil?
             say_info "No service found listening on #{port}"
           else
             # TODO: format CLI output nicely using a table
-            result
+            say_info result
           end
         end
       rescue StandardError => e
@@ -133,7 +133,7 @@ module LarCity
 
           cmd = lookup_ports_command(*configured_ports)
           say_highlight "Looking up services listening on configured ports: #{configured_ports.join(', ')}"
-          result = run cmd, eval: true
+          result = run "sudo", cmd, eval: true
           if result.nil?
             say_highlight 'No services found listening on configured ports.'
           else
