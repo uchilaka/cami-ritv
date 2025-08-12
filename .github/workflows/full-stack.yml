@@ -57,7 +57,7 @@ jobs:
         ports:
           - '16079:6379'
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
