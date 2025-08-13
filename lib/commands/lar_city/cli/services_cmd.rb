@@ -37,14 +37,34 @@ module LarCity
         if port.blank?
           lookup_by_configured_ports
         else
-          cmd = lookup_listening_ports_command port
+          # cmd = lookup_listening_ports_command port
+          cmd = lookup_all_listening_ports_command
           say_highlight "Looking up service listening on #{port}"
-          result = run "sudo", cmd, eval: true
-          if result.nil?
+          output = []
+          # Example output:
+          # COMMAND   PID USER   FD   TYPE DEVICE SIZE/OFF NODE NAME
+          # node    1234  user   22u  IPv4 25812      0t0  TCP *:3000 (LISTEN)
+          # python  5678  user   10u  IPv4 25814      0t0  TCP *:8000 (LISTEN)
+          run 'sudo', cmd, eval: true do |line|
+            parts = line.split
+            next if parts.length < 9 # Skip lines that don't have enough parts
+            next if parts.first == 'COMMAND' # Skip header line
+
+            listening_port = parts[8]
+            if /(\.|:)#{port}$/.match?(listening_port)
+              output << {
+                command: parts[0],
+                pid: parts[1],
+                user: parts[2],
+                port: listening_port,
+              }
+            end
+          end
+          if output.blank?
             say_info "No service found listening on #{port}"
           else
             # TODO: format CLI output nicely using a table
-            say_info result
+            ap output
           end
         end
       rescue StandardError => e
@@ -133,7 +153,7 @@ module LarCity
 
           cmd = lookup_listening_ports_command(*configured_ports)
           say_highlight "Looking up services listening on configured ports: #{configured_ports.join(', ')}"
-          result = run "sudo", cmd, eval: true
+          result = run 'sudo', cmd, eval: true
           if result.nil?
             say_highlight 'No services found listening on configured ports.'
           else
@@ -144,6 +164,7 @@ module LarCity
 
         def lookup_listening_ports_command(*ports)
           raise ArgumentError, 'No ports specified for lookup' if ports.blank?
+
           # To extract just the port numbers from the output of printenv | grep PORT,
           # we can use awk and grep with a regex to match only the numbers:
           # ```shell
@@ -154,7 +175,7 @@ module LarCity
         end
 
         def lookup_all_listening_ports_command
-          "lsof -iTCP -sTCP:LISTEN -P -n"
+          'lsof -iTCP -sTCP:LISTEN -P -n'
         end
 
         def service_connect_command
