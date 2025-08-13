@@ -51,7 +51,7 @@ module LarCity
             next if parts.first == 'COMMAND' # Skip header line
 
             listening_port = parts[8]
-            if /(\.|:)#{port}$/.match?(listening_port)
+            if /[\.:]#{port}$/.match?(listening_port)
               output << {
                 command: parts[0],
                 pid: parts[1],
