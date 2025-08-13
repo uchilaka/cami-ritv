@@ -1,1 +1,14 @@
-<h1>Showing notion webhook record</h1>
+<% deal_dom_id = "notion-deal-#{@record.remote_system_id}" %>
+<% content_for :title, "Showing deal" %>
+
+<div id="<%= deal_dom_id %>" class="flex min-h-[var(--lc-min-form-height)] flex-col justify-center items-center">
+  <div class="dark:text-gray-300 md:w-2/3 w-full">
+    <% if notice.present? %>
+      <p class="py-2 px-3 bg-green-50 mb-5 text-green-500 font-medium rounded-md inline-block" id="notice"><%= notice %></p>
+    <% end %>
+
+    <h1 class="font-bold text-4xl">Showing deal</h1>
+
+    <!-- @TODO Render deal partial -->
+  </div>
+</div>
