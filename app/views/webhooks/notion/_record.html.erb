@@ -45,14 +45,14 @@
   <div class="flex flex-col">
     <%= render('shared/readonly-input',
                id: 'expected-close-at', label: 'Expected Close At',
-               value: (record.expected_close_at ? record.expected_close_at.strftime('%b %d, %Y') : 'N/A')) %>
+               value: (record.expected_close_at ? DateTime.parse(record.expected_close_at).strftime('%b %d, %Y') : 'N/A')) %>
   </div>
 
   <!-- Last Contacted At -->
   <div class="flex flex-col">
     <%= render('shared/readonly-input',
                id: 'last-contacted-at', label: 'Last Contacted At',
-               value: (record.last_contacted_at ? record.last_contacted_at.strftime('%b %d, %Y %I:%M %p') : 'N/A')) %>
+               value: (record.last_contacted_at ? DateTime.parse(record.last_contacted_at).strftime('%b %d, %Y %I:%M %p') : 'N/A')) %>
   </div>
 </div>
 
