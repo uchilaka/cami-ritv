@@ -36,7 +36,9 @@ module Notion
         notes = parse_rich_text(properties['Notes'])
         created_at = Time.parse(deal_data['created_time'])
         updated_at = Time.parse(deal_data['last_edited_time'])
+        # TODO: Parse to date object
         last_contacted_at = parse_date(properties['Last contact date'])
+        # TODO: Parse to date object
         expected_close_at = parse_date(properties['Expected close date'])
         Struct::Deal.new(
           integration: :notion,
