@@ -22,7 +22,8 @@ module Notion
       end
 
       def parse_date(property)
-        property['date']&.dig('start')
+        value = property['date']&.dig('start')
+        value ? DateTime.parse(value) : nil
       end
 
       def parse_email(property)
