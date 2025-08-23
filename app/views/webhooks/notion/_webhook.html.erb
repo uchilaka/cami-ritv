@@ -12,6 +12,15 @@
       <%= render('shared/readonly-input', id: 'slug', label: 'Slug', value: webhook.slug) %>
     </div>
 
+    <% if deal_database_id %>
+      <!-- Deal Database ID -->
+      <!-- TODO: Implement tool tip on where this is configured in (e.g. accessor in Rails credentials) -->
+      <div class="flex flex-col">
+        <%= render('shared/readonly-input',
+                   id: 'database-id', label: 'Deal Database ID', value: deal_database_id) %>
+      </div>
+    <% end %>
+
     <!-- URL -->
     <div class="flex flex-col md:col-span-2">
       <%= render('shared/readonly-input',
@@ -27,6 +36,12 @@
         </span>
       </div>
     <% end %>
+
+    <!-- Verification token -->
+    <div class="flex flex-col">
+      <%= render('shared/readonly-input',
+                 id: 'verification-token', label: 'Verification token', value: webhook.verification_token) %>
+    </div>
 
     <!-- API Key -->
     <div class="flex flex-col">

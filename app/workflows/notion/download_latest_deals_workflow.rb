@@ -20,7 +20,7 @@ module Notion
     SUPPORTED_FILTERS = %i[skip_lost_deals skip_won_deals deal_stage start_date end_date].freeze
 
     def call
-      context.filters ||= { skip_lost_deals: true }
+      context.filters ||= { skip_lost_deals: false, skip_won_deals: false }
       supported_filters = filters.slice(*SUPPORTED_FILTERS)
       Rails.logger.info("#{self.class}.call", supported_filters:)
       unsupported_filters = filters.keys - SUPPORTED_FILTERS

@@ -1,0 +1,48 @@
+<%= simple_form_for(webhook, class: "contents") do |form| %>
+  <% if webhook.errors.any? %>
+    <div id="error_explanation" class="bg-red-50 text-red-500 px-3 py-2 font-medium rounded-md mt-3">
+      <h2><%= pluralize(webhook.errors.count, "error") %> prohibited this webhook from being saved:</h2>
+
+      <ul class="list-disc ml-6">
+        <% webhook.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left">
+    <%= form.input :name, wrapper_class: "flex flex-col my-2" %>
+
+    <%= form.input :slug, wrapper_class: "flex flex-col my-2" %>
+
+    <% if webhook.persisted? %>
+      <%= form.input :url, wrapper_class: "flex flex-col md:col-span-2", readonly: true %>
+    <% end %>
+
+    <!-- Dashboard URL -->
+    <%= form.input :dashboard_url, wrapper_class: "flex flex-col md:col-span-2" %>
+
+    <!-- Verification token -->
+    <%= form.input :verification_token, wrapper_class: "flex flex-col md:col-span-2" %>
+
+    <!-- Integration Name -->
+    <div class="flex flex-col">
+      <%= form.label "Integration Identifier (UUID)", class: "mb-0" %>
+      <%= form.text_field :integration_id, class: input_class_names %>
+    </div>
+
+    <%= form.input :integration_name, wrapper_class: "flex flex-col" %>
+
+    <!-- Notes (Trix WYSIWYG) -->
+    <div class="flex flex-col md:col-span-2 dark:bg-gray-700">
+      <%= form.label :readme, t('labels.accounts.notes') %>
+      <%= form.rich_text_area :readme, rows: 4, class: "block shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full" %>
+    </div>
+  </div>
+
+  <div class="flex flex-col md:flex-row my-5 md:items-center md:justify-end md:space-x-4">
+    <%= yield :form_actions %>
+    <%= form.submit class: primary_btn_classes("cursor-pointer px-5 py-3") %>
+  </div>
+<% end %>

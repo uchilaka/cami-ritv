@@ -68,6 +68,6 @@ class WebhooksController < ApplicationController
 
   # Only allow a list of trusted parameters through.
   def webhook_params
-    params.expect(webhook: %i[slug readme integration_id integration_name dashboard_url verification_token])
+    params.expect(webhook: %i[slug name readme integration_id integration_name dashboard_url verification_token])
   end
 end

@@ -8,5 +8,5 @@
     <%= link_to "Back to webhooks", webhooks_path, class: secondary_btn_classes("px-5 py-3 md:mx-2") %>
   <% end %>
 
-  <%= render "form", webhook: @webhook %>
+  <%= render webhook_view_partial_path, webhook: @webhook %>
 </div>
