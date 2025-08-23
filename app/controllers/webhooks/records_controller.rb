@@ -7,17 +7,16 @@ module Webhooks
     def index
       # TODO: Add test coverage for this use of workflow_by_action on :index
       result = workflow_by_action.call(webhook:, event:)
+      flash[:success] = "Successfully fetched #{webhook.slug.humanize} records" if result.success?
       @records = result.records
 
-      # TODO: Is there any Rails magic that could help us with this?
-      case webhook_id
-      when 'notion'
-        # Render notion index view
-        render 'webhooks/notion/records/index'
-      else
-        # Render default index view
-        render 'webhooks/records/index'
-      end
+      view_path =
+        if view_exists?(record_view_by_action)
+          record_view_by_action
+        else
+          "webhooks/records/#{action_name}"
+        end
+      render view_path
     end
 
     def show
@@ -32,18 +31,19 @@ module Webhooks
         )
         flash[:alert] = "Failed to process record: #{result.error}"
         redirect_to action: :index and return
+      else
+        flash[:success] = "Successfully fetched #{webhook.slug.humanize} record"
       end
 
       # TODO: Implement webhook name to display here
-      flash[:success] = "Successfully downloaded #{webhook.slug.humanize} record"
       @record = result.record
-      view_path =
-        if view_exists?(record_view_by_action)
-          record_view_by_action
-        else
-          "webhooks/records/#{action_name}"
-        end
-      render view_path, locals: { record: result.record }
+      # view_path =
+      #   if view_exists?(record_view_by_action)
+      #     record_view_by_action
+      #   else
+      #     "webhooks/records/#{action_name}"
+      #   end
+      # render view_path, locals: { record: result.record }
     end
 
     protected

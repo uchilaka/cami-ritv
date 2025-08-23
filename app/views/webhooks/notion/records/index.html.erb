@@ -3,8 +3,8 @@
     <h1 class="font-bold dark:text-white text-4xl">Deal Records</h1>
   </div>
 
-  <% if notice.present? %>
-    <p class="py-2 px-3 bg-green-50 mb-5 text-green-500 font-medium rounded-lg inline-block" id="notice"><%= notice %></p>
+  <% if flash[:success].present? %>
+    <%= render "shared/alerts/success", message: flash[:success] %>
   <% end %>
 
   <div class="overflow-x-auto">
@@ -63,8 +63,7 @@
             <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
               <%= link_to "View",
                           webhook_record_url(@webhook, record.remote_system_id),
-                          class: "text-indigo-600 hover:text-indigo-900",
-                          target: "_blank" %>
+                          class: "text-indigo-600 hover:text-indigo-900" %>
             </td>
           </tr>
         <% end %>

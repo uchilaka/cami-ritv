@@ -11,6 +11,8 @@
     }) %>"><%= invoice.status.to_s.upcase %></span>
   </section>
 
+  <%= yield :invoice_notice %>
+
   <p class="my-5">
     <% if invoice.invoiceable.is_a?(Account) %>
       <strong class="block font-medium mb-1">Account ID:</strong>
