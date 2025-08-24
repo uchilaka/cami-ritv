@@ -1,0 +1,4 @@
+en:
+  messages:
+    accounts:
+      last_crm_sync: "Last synced to CRM %{human_readable_time} ago"

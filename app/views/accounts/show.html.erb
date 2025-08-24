@@ -1,8 +1,5 @@
 <div class="flex min-h-[var(--lc-min-form-height)] flex-col justify-center items-center">
-  <div class="w-full md:mx-auto md:min-w-[480px] lg:max-w-lg">
-    <% if notice.present? %>
-      <p class="py-2 px-3 bg-green-50 mb-5 text-green-500 font-medium rounded-lg inline-block" id="notice"><%= notice %></p>
-    <% end %>
+  <div class="w-full md:mx-auto md:min-w-[640px] lg:max-w-lg">
     <!-- Account form header -->
     <%= render 'accounts/account_header', { account: @account, title: "Account" } %>
 
