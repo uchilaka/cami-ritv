@@ -2,7 +2,10 @@
 <%= turbo_frame_tag resource_dom_turbo_id(@account, action: "manage-show-or-edit") do %>
   <!--
     TODO: Initialize this modal in a Turbo compatible way so that it works
-    with the markup configured Flowbite modal options (e.g. data-modal-backdrop="static")
+    with the markup configured Flowbite modal options (e.g. data-modal-backdrop="static").
+    Some JS functionality is currently missing - for e.g. this modal should not allow closing
+    when clicking outside the modal area since it is configured with a static backdrop.
+    See https://flowbite.com/docs/components/modal/#static-modal.
   -->
   <div
     id="<%= modal_id %>" tabindex="-1" aria-hidden="true"
