@@ -7,6 +7,10 @@
     <%= render "shared/alerts/success", message: flash[:success] %>
   <% end %>
 
+  <% content_for :bottom_nav_actions do %>
+    <%= link_to "#{@webhook.name} webhook", webhook_path(@webhook), class: secondary_btn_classes("px-5 py-3 md:mx-2") %>
+  <% end %>
+
   <div class="overflow-x-auto">
     <table class="table table-auto min-w-full divide-y divide-gray-200 text-gray-500 dark:text-gray-400">
       <thead class="bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
@@ -78,9 +82,5 @@
     </table>
   </div>
 
-  <% if @records.respond_to?(:total_pages) %>
-    <div class="px-6 py-4 border-t border-gray-200">
-      <%== pagy_nav(@pagy) if @pagy.present? %>
-    </div>
-  <% end %>
+  <%= render "webhooks/notion/records/pagination" %>
 </div>
