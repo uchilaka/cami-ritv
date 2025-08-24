@@ -960,6 +960,7 @@ __metadata:
     "@tailwindcss/forms": "npm:^0.5.10"
     "@tailwindcss/typography": "npm:^0.5.16"
     "@tanstack/react-query": "npm:^5.59.0"
+    "@types/lodash.capitalize": "npm:^4.2.9"
     "@types/lodash.debounce": "npm:^4"
     "@types/lodash.find": "npm:^4"
     "@types/lodash.merge": "npm:^4"
@@ -987,6 +988,7 @@ __metadata:
     husky: "npm:^9.1.7"
     jiti: "npm:^2.4.2"
     jsdom: "npm:^26.1.0"
+    lodash.capitalize: "npm:^4.2.1"
     lodash.debounce: "npm:^4.0.8"
     lodash.find: "npm:^4.6.0"
     lodash.merge: "npm:^4.6.2"
@@ -1676,6 +1678,15 @@ __metadata:
   version: 7.0.15
   resolution: "@types/json-schema@npm:7.0.15"
   checksum: 10c0/a996a745e6c5d60292f36731dd41341339d4eeed8180bb09226e5c8d23759067692b1d88e5d91d72ee83dfc00d3aca8e7bd43ea120516c17922cbcb7c3e252db
+  languageName: node
+  linkType: hard
+
+"@types/lodash.capitalize@npm:^4.2.9":
+  version: 4.2.9
+  resolution: "@types/lodash.capitalize@npm:4.2.9"
+  dependencies:
+    "@types/lodash": "npm:*"
+  checksum: 10c0/4a4bc23bc82a8a0952bf75712cea34cd9e6eb15ef77a58352d19f387be50cdea0b6f2b21e7f0d87c1623bfd42b8d4fd2384478901702b146f016f4c7c11e1abb
   languageName: node
   linkType: hard
 
@@ -4746,6 +4757,13 @@ __metadata:
   dependencies:
     p-locate: "npm:^5.0.0"
   checksum: 10c0/d3972ab70dfe58ce620e64265f90162d247e87159b6126b01314dd67be43d50e96a50b517bce2d9452a79409c7614054c277b5232377de50416564a77ac7aad3
+  languageName: node
+  linkType: hard
+
+"lodash.capitalize@npm:^4.2.1":
+  version: 4.2.1
+  resolution: "lodash.capitalize@npm:4.2.1"
+  checksum: 10c0/b289326497c2e24d6b8afa2af2ca4e068ef6ef007ade36bfb6f70af77ce10ea3f090eeee947d5fdcf2db4bcfa4703c8c10a5857a2b39e308bddfd1d11ad35970
   languageName: node
   linkType: hard
 
