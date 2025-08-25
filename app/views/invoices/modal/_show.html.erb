@@ -5,12 +5,11 @@
     data-modal-backdrop="dynamic"
     data-modal-placement="center-center"
     class="flowbite-modal hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
-    <div class="relative p-4 w-full max-w-2xl max-h-full bg-white dark:bg-gray-700 rounded-lg">
-      <!-- Modal content -->
+    <!-- Modal content -->
+    <div class="relative w-full max-w-2xl max-h-full bg-white dark:bg-gray-700 rounded-lg">
 
       <!-- Modal body -->
       <div class="p-4 md:p-5 space-y-4">
-
         <% content_for :invoice_notice do %>
           <% if notice.present? %>
             <%= render "shared/alerts/info", message: notice %>
@@ -18,14 +17,15 @@
         <% end %>
 
         <%= render @invoice %>
+      </div>
 
-        <div class="flex w-full items-center justify-end mt-2">
-          <%= link_to "Back to invoices", invoices_path, "data-turbo": false, class: secondary_btn_classes("py-3 px-5") %>
-          <%= link_to "Edit", edit_invoice_path(@invoice), "data-turbo": false, class: secondary_btn_classes("ml-2 py-3 px-5") %>
-          <div class="inline-block ml-2">
-            <!-- TODO: could destroy buttons be implemented as a turbo action of some kind? -->
-            <%= button_to "Destroy", @invoice, method: :delete, "data-turbo": false, class: secondary_btn_classes("py-3 px-5", style: :danger) %>
-          </div>
+      <!-- Modal footer -->
+      <div class="flex w-full p-4 items-center justify-end mt-2 rounded-b border-t border-gray-200 dark:border-gray-600">
+        <%= link_to "Back to invoices", invoices_path, "data-turbo": false, class: secondary_btn_classes("py-3 px-5") %>
+        <%= link_to "Edit", edit_invoice_path(@invoice), "data-turbo": false, class: secondary_btn_classes("ml-2 py-3 px-5") %>
+        <div class="inline-block ml-2">
+          <!-- TODO: could destroy buttons be implemented as a turbo action of some kind? -->
+          <%= button_to "Destroy", @invoice, method: :delete, "data-turbo": false, class: secondary_btn_classes("py-3 px-5", style: :danger) %>
         </div>
       </div>
     </div>
