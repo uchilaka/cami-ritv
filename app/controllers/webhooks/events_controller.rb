@@ -50,7 +50,6 @@ module Webhooks
         event_search_array_params
       else
         event_search_hash_params
-          .reverse_merge(s: { createdAt: 'desc' })
       end
     rescue ActionController::ParameterMissing => e
       raise ActionController::BadRequest, e.message

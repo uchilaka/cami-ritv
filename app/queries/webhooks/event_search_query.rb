@@ -26,15 +26,11 @@ module Webhooks
       @sorters =
         if sort_params.is_a?(Hash)
           sort_params.each_with_object([]) do |(field, direction), array|
-            next if fields.present? && fields.exclude?(field)
-
             array << compose_sorter_clause(field:, direction:)
           end
         elsif sort_params.is_a?(Array)
           sort_params.each_with_object([]) do |sorter, array|
             field, direction = sorter.values_at 'field', 'direction'
-            next if fields.present? && fields.exclude?(field)
-
             array << compose_sorter_clause(field:, direction:)
           end
         else
@@ -50,6 +46,7 @@ module Webhooks
           filter_params
         elsif filter_params.is_a?(Array)
           filter_params.each_with_object({}) do |filter, hash|
+            # Only support filtering on specified fields
             next if fields.present? && fields.exclude?(filter['field'])
 
             hash[filter['field']] = filter['value']
@@ -102,13 +99,13 @@ module Webhooks
     end
 
     def sort_params
-      extract_search_params('s', [])
+      extract_search_params('s', { createdAt: 'desc' })
     end
 
     private
 
     def compose_sorter_clause(field:, direction:)
-      "#{field.underscore} #{direction.upcase}"
+      "#{field.to_s.underscore} #{direction.to_s.upcase}"
     end
   end
 end
