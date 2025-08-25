@@ -19,9 +19,8 @@ RSpec.describe 'webhooks/show', type: :view do
     end
   end
 
-  it 'renders attributes in <p>' do
-    expect(rendered).to match(/URL/)
-    expect(rendered).to match(/Verification token/)
+  it('renders the URL') do
+    assert_select 'input[readonly="readonly"][id=?]', 'webhook-url'
   end
 
   # TODO: Pseudocode from LLM - helper methods don't seem to exist

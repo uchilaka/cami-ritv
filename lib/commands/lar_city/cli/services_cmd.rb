@@ -13,10 +13,79 @@ module LarCity
                    enum: %w[all essential batteries-included],
                    default: 'batteries-included'
 
-      method_option :pid,
-                    type: :string,
-                    desc: 'The PID of the process to kill',
-                    required: true
+      option :port,
+             type: :string,
+             desc: I18n.t('commands.services.kill.options.port.short_desc'),
+             long_desc: I18n.t('commands.services.kill.options.port.long_desc')
+      desc 'lookup', I18n.t('commands.services.lookup.short_desc')
+      long_desc I18n.t('commands.services.lookup.long_desc')
+      def lookup
+        # Listening TCP ports: sudo lsof -nP -iTCP -sTCP:LISTEN
+        # Specific TCP port: sudo lsof -i tcp:<port-number>
+        # List PIDs for multiple ports: sudo lsof -i -P -n | grep -E ':(3036|16006)\b'
+        # List PIDs for multiple ports (only TCP listening): sudo lsof -iTCP -sTCP:LISTEN -P -n | grep -E ':(3036|16006)\b'
+        if configured_ports.blank?
+          say 'No configured ports found. Please ensure your environment variables are set correctly.', :red
+          return
+        end
+
+        if port.blank? && !Flipper.enabled?(:feat__lookup_by_configured_ports)
+          say_highlight I18n.t('commands.services.lookup.no_port_specified_msg')
+          return
+        end
+
+        if port.blank?
+          lookup_by_configured_ports
+        else
+          # cmd = lookup_listening_ports_command port
+          cmd = lookup_all_listening_ports_command
+          say_highlight "Looking up service listening on #{port}"
+          output = []
+          # Example output:
+          # COMMAND   PID USER   FD   TYPE DEVICE SIZE/OFF NODE NAME
+          # node    1234  user   22u  IPv4 25812      0t0  TCP *:3000 (LISTEN)
+          # python  5678  user   10u  IPv4 25814      0t0  TCP *:8000 (LISTEN)
+          run 'sudo', cmd, eval: true do |line|
+            parts = line.split
+            next if parts.length < 9 # Skip lines that don't have enough parts
+            next if parts.first == 'COMMAND' # Skip header line
+
+            listening_port = parts[8]
+            if /[\.:]#{port}$/.match?(listening_port)
+              output << {
+                command: parts[0],
+                pid: parts[1],
+                user: parts[2],
+                port: listening_port,
+              }
+            end
+          end
+          if output.blank?
+            say_info "No service found listening on #{port}"
+          else
+            # TODO: format CLI output nicely using a table
+            ap output
+          end
+        end
+      rescue StandardError => e
+        puts "Error looking up PID: #{e.message}"
+      end
+
+      option :port,
+             type: :string,
+             desc: I18n.t('commands.services.kill.options.port.short_desc'),
+             long_desc: I18n.t('commands.services.kill.options.port.long_desc'),
+             required: true
+      desc 'kill', I18n.t('commands.services.kill.short_desc')
+      long_desc I18n.t('commands.services.kill.long_desc')
+      def kill
+        # TODO: pending implementation
+      end
+
+      option :pid,
+             type: :string,
+             desc: 'The PID of the process to kill',
+             required: true
       desc 'kill_process', I18n.t('commands.services.kill_process.short_desc')
       long_desc I18n.t('commands.services.kill_process.long_desc')
       def kill_process
@@ -24,10 +93,10 @@ module LarCity
         say_highlight I18n.t('commands.services.kill_process.completed_msg', pid: options[:pid]) if result.nil?
       end
 
-      method_option :database,
-                    type: :boolean,
-                    desc: 'Use the database service',
-                    default: false
+      option :database,
+             type: :boolean,
+             desc: 'Use the database service',
+             default: false
       desc 'connect', 'Connect to a service'
       def connect
         if service_name.nil?
@@ -76,6 +145,39 @@ module LarCity
       end
 
       no_commands do
+        def lookup_by_configured_ports
+          if configured_ports.blank?
+            say 'No configured ports found. Please ensure your environment variables are set correctly.', :red
+            return
+          end
+
+          cmd = lookup_listening_ports_command(*configured_ports)
+          say_highlight "Looking up services listening on configured ports: #{configured_ports.join(', ')}"
+          result = run 'sudo', cmd, eval: true
+          if result.nil?
+            say_highlight 'No services found listening on configured ports.'
+          else
+            # TODO: format CLI output nicely using a table
+            say_info result
+          end
+        end
+
+        def lookup_listening_ports_command(*ports)
+          raise ArgumentError, 'No ports specified for lookup' if ports.blank?
+
+          # To extract just the port numbers from the output of printenv | grep PORT,
+          # we can use awk and grep with a regex to match only the numbers:
+          # ```shell
+          # printenv | grep PORT | awk -F= '{print $2}' | grep -oE '[0-9]+'
+          # ```
+          match_pattern = "\\b#{ports.join('|')}\\b"
+          "#{lookup_all_listening_ports_command} | grep -E '#{match_pattern}'"
+        end
+
+        def lookup_all_listening_ports_command
+          'lsof -iTCP -sTCP:LISTEN -P -n'
+        end
+
         def service_connect_command
           if use_database_service?
             return [
@@ -105,6 +207,18 @@ module LarCity
 
         def docker_compose_config_file
           Rails.root.join('docker-compose.yml').to_s
+        end
+
+        def configured_ports
+          @configured_ports ||=
+            begin
+              result = `printenv | grep PORT | awk -F= '{print $2}' | grep -oE '[0-9]+'`
+              result.split("\n").map(&:strip).reject(&:empty?)
+            end
+        end
+
+        def port
+          @port ||= options[:port]
         end
       end
     end

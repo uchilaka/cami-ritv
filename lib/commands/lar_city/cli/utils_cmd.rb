@@ -1,0 +1,108 @@
+# frozen_string_literal: true
+
+require_relative 'base_cmd'
+
+module LarCity
+  module CLI
+    class UtilsCmd < BaseCmd
+      namespace :utils
+
+      desc 'setup_yarn', 'Setup Yarn package manager'
+      def setup_yarn
+        system `corepack enable`
+        if File.exist?(tarball_path)
+          say "Yarn tarball already exists at #{tarball_path}. Skipping download.", :green
+        else
+          say "Downloading Yarn tarball from #{yarn_source_url} to #{tarball_path}", :yellow
+          run yarn_download_cmd
+        end
+        raise Thor::Error, 'Yarn download failed' unless dry_run? || File.exist?(tarball_path)
+
+        # Extract the tarball to the working directory
+        flags = %w[zx]
+        flags << 'v' if verbose?
+        run 'tar', "-#{flags.join}", '-f', tarball_path
+        # mv_tarball_contents_to_workspace_dir unless dry_run?
+        say "Extracted the Yarn tarball to #{extracted_dir}", :green
+        run 'tree -L 1', extracted_dir if verbose?
+        source_package_path = Rails.root.join(extracted_dir, 'packages/berry-cli/bin/berry.js').to_s
+        unless dry_run?
+          raise Thor::Error, "Yarn package not found in tarball (checked at #{source_package_path})" \
+            unless File.exist?(source_package_path)
+
+          # Ensure the releases directory exists
+          FileUtils.mkdir_p(File.dirname(yarn_path))
+          # Copy the Yarn package to the releases directory
+          FileUtils.cp(source_package_path, yarn_path, verbose: verbose?)
+          # Write out an ERB template for the Yarn config file
+          yarn_config_template = File.read(Rails.root.join('config/.yarnrc.yml.erb'))
+          yarn_config_content = ERB.new(yarn_config_template).result(binding)
+          File.write(Rails.root.join('.yarnrc.yml'), yarn_config_content)
+          # Cleanup
+          FileUtils.rm_rf(extracted_dir, verbose: verbose?)
+          FileUtils.rm_rf(tarball_working_dir, verbose: verbose?)
+        end
+        # run corepack_activation_cmd
+        # run 'yarn set version', target_version
+        say 'Yarn has been set up successfully.', :green
+      end
+
+      private
+
+      def mv_tarball_contents_to_workspace_dir
+        FileUtils.mv(extracted_dir, tarball_working_dir)
+      end
+
+      def extracted_dir
+        extracted_dirname = `tar -tzf "#{tarball_path}" | head -1 | cut -f1 -d"/"`.strip
+        Rails.root.join(extracted_dirname).to_s
+      end
+
+      def extract_tarball_cmd
+        [
+          'tar -xzf',
+          tarball_path,
+          '-C',
+          tarball_working_dir,
+          # '--strip-components=1',
+        ].join(' ')
+      end
+
+      def yarn_download_cmd
+        [
+          'curl -L -o',
+          tarball_path,
+          yarn_source_url,
+        ].join(' ')
+      end
+
+      def corepack_activation_cmd
+        "corepack prepare yarn@#{target_version} --activate"
+      end
+
+      def yarn_source_url
+        "https://github.com/yarnpkg/berry/archive/refs/tags/#{target_tag}.tar.gz"
+      end
+
+      def target_tag
+        "@yarnpkg/cli/#{target_version}"
+      end
+
+      def target_version
+        '4.9.1'
+      end
+
+      def tarball_path
+        "#{Rails.root}/tmp/yarn-#{target_version}.tar.gz"
+      end
+
+      def tarball_working_dir
+        [File.dirname(tarball_path), File.basename(tarball_path, '.tar.gz')].join('/')
+      end
+
+      def yarn_path
+        "#{Rails.root}/.yarn/releases/yarn-#{target_version}.cjs"
+      end
+    end
+  end
+end

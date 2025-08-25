@@ -1,0 +1,19 @@
+<% deal_dom_id = "notion-deal-#{@record.remote_system_id}" %>
+
+<% content_for :form_actions do %>
+  <%= link_to "Back to deals", webhook_records_path(@webhook), class: secondary_btn_classes("px-5 py-3 md:mx-2") %>
+<% end %>
+
+<div id="<%= deal_dom_id %>" class="flex min-h-[var(--lc-min-form-height)] flex-col justify-center items-center">
+  <div class="dark:text-gray-300 md:w-2/3 w-full">
+    <section class="flex justify-between item-center mb-6">
+      <h1 class="font-bold text-4xl">Deal: <%= @record.name %></h1>
+      <!-- Deal integration badge -->
+      <span class="bg-blue-100 text-blue-800 text-2xl font-medium me-2 px-2.5 py-0.5 rounded-sm dark:bg-blue-900 dark:text-blue-300">
+        <%= @record.integration.name %>
+      </span>
+    </section>
+
+    <%= render webhook_record_view_partial_path, record: @record %>
+  </div>
+</div>

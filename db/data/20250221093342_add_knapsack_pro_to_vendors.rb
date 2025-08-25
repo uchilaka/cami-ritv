@@ -14,7 +14,7 @@ class AddKnapsackProToVendors < ActiveRecord::Migration[7.2]
         billing_url: 'https://knapsackpro.com/dashboard/billing',
         # TODO: Implement a VendorResource model for records in
         #   <vendor-instance>.dig(:metadata, :resources)
-        resources: {
+        generic_events: {
           cami: {
             name: 'CAMI Project @ Knapsack Pro',
             url: 'https://knapsackpro.com/dashboard/organizations/4019/projects/2608',

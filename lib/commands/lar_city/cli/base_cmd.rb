@@ -5,10 +5,11 @@ app_path = File.join(Dir.pwd, 'app')
 $LOAD_PATH.unshift(app_path) unless $LOAD_PATH.include?(app_path)
 
 require 'thor'
-require 'thor/shell/color'
 require 'awesome_print'
 require 'concerns/operating_system_detectable'
-require 'lib/lar_city/cli/colors'
+require 'open3'
+# require_relative '../../../lar_city'
+# require 'lar_city'
 
 # Conventions for command or task implementation classes:
 # - Use the namespace method to define a namespace for the Thor class.
@@ -42,7 +43,7 @@ module LarCity
       no_commands do
         include OperatingSystemDetectable
 
-        def run(*args, inline: false)
+        def run(*args, inline: false, eval: false, &block)
           with_interruption_rescue do
             cmd = args.compact.join(' ')
             if verbose? || dry_run?
@@ -53,17 +54,25 @@ module LarCity
             end
             return if dry_run?
 
-            # # Example: doing this with Open3
-            # Open3.popen2e(cmd) do |_stdin, stdout_stderr, wait_thread|
-            #   Thread.new do
-            #     stdout_stderr.each { |line| puts line }
-            #   end
-            #   wait_thread.value
-            # end
-            result = system(cmd, out: $stdout, err: :out)
-            return result if inline
+            if eval
+              if block_given?
+                # Example: doing this with Open3
+                Open3.popen2e(cmd) do |_stdin, stdout_stderr, wait_thread|
+                  Thread.new do
+                    stdout_stderr.each(&block)
+                  end
+                  wait_thread.value
+                end
+              else
+                result = `#{cmd}`
+                return result
+              end
+            else
+              result = system(cmd, out: $stdout, err: :out)
+              return result if inline
 
-            # exit 0 if result
+              # exit 0 if result
+            end
           end
         end
 

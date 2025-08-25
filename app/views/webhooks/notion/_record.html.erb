@@ -1,0 +1,62 @@
+<% if flash[:success].present? %>
+  <%= render "shared/alerts/success", message: flash[:success] %>
+<% end %>
+
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left">
+  <!-- Deal Value -->
+  <div class="flex flex-col">
+    <%= render('shared/readonly-input',
+               id: 'deal-value', label: 'Deal Value',
+               value: (record.deal_value ? number_to_currency(record.deal_value, precision: 2) : 'N/A')) %>
+  </div>
+
+  <!-- Deal Stage -->
+  <div class="flex flex-col">
+    <%= render('shared/readonly-input',
+               id: 'deal-stage', label: 'Deal Stage', value: record.deal_stage) %>
+  </div>
+
+  <!-- Priority Level -->
+  <div class="flex flex-col">
+    <%= render('shared/readonly-input',
+               id: 'priority-level', label: 'Priority Level', value: record.priority_level) %>
+  </div>
+
+  <!-- Phone Number -->
+  <div class="flex flex-col">
+    <%= render('shared/readonly-input',
+               id: 'phone-number', label: 'Phone Number', value: record.phone_number) %>
+  </div>
+
+  <!-- Email -->
+  <div class="flex flex-col">
+    <%= render('shared/readonly-input',
+               id: 'email', label: 'Email', value: record.email) %>
+  </div>
+
+  <!-- Created At -->
+  <div class="flex flex-col">
+    <%= render('shared/readonly-input',
+               id: 'created-at', label: 'Created At',
+               value: record.created_at.strftime('%b %d, %Y %I:%M %p')) %>
+  </div>
+
+  <!-- Expected Close At -->
+  <div class="flex flex-col">
+    <%= render('shared/readonly-input',
+               id: 'expected-close-at', label: 'Expected Close At',
+               value: (record.expected_close_at ? record.expected_close_at.strftime('%b %d, %Y') : 'N/A')) %>
+  </div>
+
+  <!-- Last Contacted At -->
+  <div class="flex flex-col">
+    <%= render('shared/readonly-input',
+               id: 'last-contacted-at', label: 'Last Contacted At',
+               value: (record.last_contacted_at ? record.last_contacted_at.strftime('%b %d, %Y %I:%M %p') : 'N/A')) %>
+  </div>
+</div>
+
+<div class="my-5 flex flex-col md:flex-row md:justify-end md:items-center md:space-x-4">
+  <%= yield :form_actions %>
+  <%= link_to "Draft invoice", "#", class: primary_btn_classes %>
+</div>

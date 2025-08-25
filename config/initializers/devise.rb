@@ -338,16 +338,19 @@ Devise.setup do |config|
   # config.passwordless_expire_old_tokens_on_sign_in = false
 
   # ==> Configuration for Devise JWT
-  # Configure the expiration time of the JWT token.
+  # Configure the expiration time of the JWT token
+  # https://github.com/waiting-for-dev/devise-jwt?tab=readme-ov-file#configuration-reference
   config.jwt do |jwt|
     jwt.secret = Rails.application.credentials.devise_jwt_secret_key!
     # TODO: Test that the configuration of dispatches for JWT tokens
     #   is working as expected. This could be done quickly with Insomnia.
     jwt.dispatch_requests = [
-      ['POST', %r{^/users/sign_in$}]
+      ['POST', AppUtils::DeviseJWT::RequestRegex::SIGN_IN],
+      ['GET', AppUtils::DeviseJWT::RequestRegex::OMNIAUTH_CALLBACK],
+      ['POST', AppUtils::DeviseJWT::RequestRegex::OMNIAUTH_CALLBACK]
     ]
     jwt.revocation_requests = [
-      ['DELETE', %r{^/users/sign_out$}]
+      ['DELETE', AppUtils::DeviseJWT::RequestRegex::SIGN_OUT]
     ]
     # Configure other JWT options as needed
     # jwt.expiration_time = 1.day.to_i

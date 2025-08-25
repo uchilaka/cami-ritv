@@ -16,3 +16,39 @@ en:
       errors:
         generic: "An error occurred while creating the user"
         token_conflict: "The %{provider} access token does not match the expected value %{context}"
+    upsert_deal_workflow:
+      errors:
+        generic: "An error occurred while processing the deal workflow"
+        missing_required_fields: "Required fields are missing for the deal workflow"
+        invalid_status: "The provided status %{status} is not valid for the deal workflow"
+        unsupported_event_type: "The event type %{event_type} is not supported for the deal workflow"
+      completed:
+        message: "Deal workflow %{status}"
+        log: "Deal workflow %{status} for deal %{slug}"
+    upsert_notion_deal_workflow:
+      errors:
+        generic: "An error occurred while processing the Notion deal workflow"
+        missing_required_fields: "Required fields are missing for the Notion deal workflow"
+        invalid_status: "The provided status %{status} is not valid for the Notion deal workflow"
+        invalid_event_data: "The %{event_type} event data is invalid for the Notion deal workflow"
+        unsupported_event_type: "The event type %{event_type} is not supported for the Notion deal workflow"
+      completed:
+        message: "Notion deal workflow %{status}"
+        log: "Notion deal workflow %{status} for deal %{slug}"
+    handle_notion_page_event_workflow:
+      errors:
+        generic: "An error occurred while processing the Notion page event workflow"
+        invalid_or_missing_event: "Invalid or missing event for the Notion page event workflow"
+        unsupported_event_type: "The event type %{event_type} is not supported for the Notion page event workflow"
+      completed:
+        message: "Notion page %{event_type} event workflow %{status}"
+        log: "Notion page %{event_type} event workflow %{status} for page %{page}"
+    register_notion_verification_token_workflow:
+      errors:
+        generic: "An error occurred while registering the Notion verification token"
+        missing_webhook: "The Notion webhook has not been set up for %{environment}"
+        missing_token: "The Notion verification token is missing"
+        invalid_token: "The Notion verification token is invalid"
+      completed:
+        message: "Notion verification token registered successfully"
+        log: "Notion verification token registered by user %{email} for workspace %{workspace}"

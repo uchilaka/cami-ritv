@@ -55,6 +55,7 @@ en:
       products: "Products"
       accounts: "Accounts"
       invoices: "Invoices"
+      webhooks: "Webhooks"
       sign_out: "Sign Out"
       registration: "Settings"
     footer:

@@ -1,4 +1,4 @@
-<%= form_with(model: webhook, class: "contents") do |form| %>
+<%= simple_form_for(webhook, class: "contents") do |form| %>
   <% if webhook.errors.any? %>
     <div id="error_explanation" class="bg-red-50 text-red-500 px-3 py-2 font-medium rounded-md mt-3">
       <h2><%= pluralize(webhook.errors.count, "error") %> prohibited this webhook from being saved:</h2>
@@ -11,22 +11,24 @@
     </div>
   <% end %>
 
-  <div class="my-5">
-    <%= form.label :slug %>
-    <%= form.text_field :slug, class: ["block shadow rounded-md border outline-none px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": webhook.errors[:slug].none?, "border-red-400 focus:outline-red-600": webhook.errors[:slug].any?}] %>
-  </div>
+  <%= form.input :name, wrapper_class: "w-full my-5" %>
+
+  <%= form.input :slug, wrapper_class: "w-full my-5" %>
 
   <% if webhook.persisted? %>
-    <div class="my-5">
-      <%= form.label :url %>
-      <%= form.text_field :url, readonly: true, class: "block shadow rounded-md border outline-none px-3 py-2 mt-2 w-full" %>
-    </div>
+    <%= form.input :url, wrapper_class: "w-full my-5", readonly: true %>
   <% end %>
 
+  <!-- Dashboard URL -->
+  <%= form.input :dashboard_url, wrapper_class: "w-full my-5" %>
+
+  <!-- Integration Name -->
   <div class="my-5">
-    <%= form.label :verification_token %>
-    <%= form.text_field :verification_token, class: ["block shadow rounded-md border outline-none px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": webhook.errors[:verification_token].none?, "border-red-400 focus:outline-red-600": webhook.errors[:verification_token].any?}] %>
+    <%= form.label "Integration Identifier (UUID)" %>
+    <%= form.text_field :integration_id, class: input_class_names %>
   </div>
+
+  <%= form.input :integration_name, wrapper_class: "w-full my-5" %>
 
   <!-- Notes (Trix WYSIWYG) -->
   <div class="my-5 dark:bg-gray-700">
@@ -34,7 +36,8 @@
     <%= form.rich_text_area :readme, rows: 4, class: "block shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full" %>
   </div>
 
-  <div class="inline">
-    <%= form.submit class: "rounded-md px-3.5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white inline-block font-medium cursor-pointer" %>
+  <div class="flex flex-col md:flex-row md:items-center md:justify-end md:space-x-4">
+    <%= yield :form_actions %>
+    <%= form.submit class: primary_btn_classes("cursor-pointer px-5 py-3") %>
   </div>
 <% end %>

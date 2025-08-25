@@ -12,7 +12,7 @@ Rails.application.config.middleware.insert_before 0, Rack::Cors do
     # Regex test: https://regex101.com/r/oqv0X5/1
     origins "localhost:#{ENV.fetch('PORT')}",
             "127.0.0.1:#{ENV.fetch('PORT')}",
-            'https://accounts.larcity.ngrok.dev/',
+            'https://accounts.larcity.ngrok.dev',
             %r{\Ahttps?://(?:[a-zA-Z0-9-]+\.)?lar\.city\z}
     resource '/api/*',
              headers: %w[Authorization],

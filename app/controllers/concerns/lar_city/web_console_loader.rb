@@ -21,7 +21,7 @@ module LarCity
     end
 
     def initialize_web_console
-      console if current_user&.admin? || Rails.env.development?
+      console if (!Rails.env.test? && current_user&.admin?) || Rails.env.development?
     end
   end
 end

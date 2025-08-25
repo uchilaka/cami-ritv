@@ -10,6 +10,15 @@ require 'concerns/operating_system_detectable'
 class AppUtils
   include OperatingSystemDetectable
 
+  module DeviseJWT
+    class RequestRegex
+      SIGN_IN = %r{^/users/sign_in$}
+      SIGN_OUT = %r{^/users/sign_out$}
+      # Test: https://rubular.com/r/7bDMX2Vmr1O8AP
+      OMNIAUTH_CALLBACK = %r{^/users/auth/([\w\-_])+/callback$}
+    end
+  end
+
   class << self
     def crm_org_id
       override_value = ENV.fetch('CRM_ORG_ID', nil)
@@ -130,6 +139,13 @@ class AppUtils
       else
         Rails.env.development? &&
           yes?(ENV.fetch('RAILS_LIVE_RELOAD_ENABLED', 'yes'))
+      end
+    end
+
+    def jbuilder_pre_keys
+      @jbuilder_pre_keys ||= begin
+        keys = Rails.application.credentials&.jbuilder&.pre_keys || %i[predicate]
+        keys.is_a?(Array) ? keys : [keys]
       end
     end
   end

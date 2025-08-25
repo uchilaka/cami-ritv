@@ -1,0 +1,86 @@
+# Files in the config/locales directory are used for internationalization
+# and are automatically loaded by Rails. If you want to use locales other
+# than English, add the necessary files in this directory.
+#
+# To use the locales, use `I18n.t`:
+#
+#     I18n.t "hello"
+#
+# In views, this is aliased to just `t`:
+#
+#     <%= t("hello") %>
+#
+# To use a different locale, set it with `I18n.locale`:
+#
+#     I18n.locale = :es
+#
+# This would use the information in config/locales/es.yml.
+#
+# The following keys must be escaped otherwise they will not be retrieved by
+# the default I18n backend:
+#
+# true, false, on, off, yes, no
+#
+# Instead, surround them with single quotes.
+#
+# en:
+#   "true": "foo"
+#
+# To learn more, please read the Rails Internationalization guide
+# available at https://guides.rubyonrails.org/i18n.html.
+
+en:
+  globals:
+    app:
+      name: "Customer Accounts Management & Invoicing"
+      short_name: "C.A.M.I."
+
+    labels:
+      engineering_or_support: "Engineering or Support"
+      invoices:
+        create: "New invoice"
+        search: "Search for invoices"
+      accounts:
+        tax_id: "Tax ID (E.g. EIN)"
+        notes: "Notes"
+        create: "New account"
+        search: "Search for accounts"
+
+    shared:
+      navbar:
+        home: "Home"
+        about: "What We Do"
+        dashboard: "Dashboard"
+        demos: "Showcase"
+        services: "Services"
+        products: "Products"
+        accounts: "Accounts"
+        invoices: "Invoices"
+        webhooks: "Webhooks"
+        sign_out: "Sign Out"
+        registration: "Settings"
+      footer:
+        flowbite_icons: 'Flowbite Icons'
+        flowbite_blocks: 'Flowbite Blocks'
+        flowbite_integration_guide: 'Flowbite Integration Guide'
+        tailwind_flex: 'Tailwind Flex'
+        tailwind_blocks: 'Tailwind UI Blocks'
+        tailwind_theming: 'Tailwind Theme'
+        turbo_handbook: 'Turbo Handbook'
+        fontawesome_icons: 'FontAwesome Icons'
+        mongoid_docs: 'Mongoid Documentation (v8.1)'
+        component_library: 'Component Library'
+        paypal_sandbox_guide: 'PayPal Sandbox Testing Guide'
+        open_source_guides: 'Open Source Guides'
+        ruby_doc: 'Ruby Documentation'
+        rails_guides: 'Rails Guides (v8)'
+        wai_aria_guide: 'Accessibility Guide (WAI-ARIA)'
+        zoho_crm_api_guide: 'Zoho CRM API Guide (v7)'
+
+    validators:
+      errors:
+        invalid_email: "%{value} is not a valid email address"
+        invalid_password: "is not a valid password"
+        invalid_username: "%{value} is not a valid username"
+        invalid_phone_number: "%{value} is not a valid phone number"
+        invalid_url: "%{value} is not a valid URL"

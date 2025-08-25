@@ -1,18 +1,47 @@
-<div id="<%= dom_id webhook %>">
-  <p class="my-5">
-    <strong class="block font-medium mb-1">Slug:</strong>
-    <%= webhook.slug %>
-  </p>
-  <p class="my-5">
-    <strong class="block font-medium mb-1">URL:</strong>
-    <%= webhook.url %>
-  </p>
-  <p class="my-5">
-    <strong class="block font-medium mb-1">Verification token:</strong>
-    <%= webhook.verification_token %>
-  </p>
-  <div class="my-5">
-    <strong class="block font-medium mb-1">Readme:</strong>
-    <%= webhook.readme.to_s %>
+<% deal_database_id ||= Rails.application.credentials.notion&.deal_database_id %>
+<div id="<%= dom_id webhook %>" class="relative my-5">
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left">
+    <!-- Name -->
+    <div class="flex flex-col md:col-span-2">
+      <%= render('shared/readonly-input',
+                 id: 'name', label: 'Name', value: webhook.name) %>
+    </div>
+
+    <!-- Slug -->
+    <div class="flex flex-col">
+      <%= render('shared/readonly-input', id: 'slug', label: 'Slug', value: webhook.slug) %>
+    </div>
+
+    <!-- URL -->
+    <div class="flex flex-col md:col-span-2">
+      <%= render('shared/readonly-input',
+                 id: 'webhook-url', label: 'URL', value: webhook.url) %>
+    </div>
+
+    <% if webhook.dashboard_url %>
+      <!-- Dashboard URL -->
+      <div class="flex flex-col md:col-span-2">
+        <label class="text-sm font-medium text-gray-900 dark:text-white">Dashboard URL</label>
+        <span class="text-gray-500 dark:text-gray-400">
+          <%= link_to webhook.dashboard_url, webhook.dashboard_url, target: '_blank' %>
+        </span>
+      </div>
+    <% end %>
+
+    <!-- API Key -->
+    <div class="flex flex-col">
+      <%= render('shared/readonly-input',
+                 id: 'notion-api-key', label: 'API key', value: Rails.application.credentials.notion&.secret_key) %>
+    </div>
+
+    <!-- Readme WYSIWYG -->
+    <div class="flex flex-col md:col-span-2">
+      <label class="text-sm font-medium text-gray-900 dark:text-white">README</label>
+      <%= webhook.readme.to_s %>
+    </div>
   </div>
+</div>
+
+<div class="my-5 flex flex-col md:flex-row md:justify-end md:items-center md:space-x-4">
+  <%= yield :form_actions %>
 </div>

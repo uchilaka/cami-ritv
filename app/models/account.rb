@@ -197,7 +197,7 @@ class Account < ApplicationRecord
   end
 
   def push_to_crm
-    return unless Flipper.enabled?(:feat__push_updates_to_crm)
+    return unless Flipper.enabled?(:feat__push_updates_to_crm, Current.user)
 
     Zoho::UpsertAccountJob.set(wait: 5.seconds).perform_later(id)
   end

@@ -19,6 +19,16 @@
 #  index_metadata_on_appendable              (appendable_type,appendable_id)
 #
 class Metadatum < ApplicationRecord
+  include Searchable
+
   belongs_to :appendable, polymorphic: true, optional: true
   has_and_belongs_to_many :accounts, join_table: 'accounts_metadata'
+
+  def self.ransackable_attributes(_auth_object = nil)
+    %w[key value]
+  end
+
+  def self.ransackable_associations(_auth_object = nil)
+    %w[appendable]
+  end
 end

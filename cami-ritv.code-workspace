@@ -61,11 +61,11 @@
     "terminal.integrated.fontSize": 15,
     "window.zoomLevel": 0.125,
     "rubyLsp.rubyVersionManager": {
-      "identifier": "asdf"
+      "identifier": "mise"
     },
-    "rubocop.yjitEnabled": true,
-    "rubocop.commandPath": "${userHome}${pathSeparator}.asdf${pathSeparator}shims${pathSeparator}rubocop",
-    "rubocop.mode": "enableViaGemfileOrMissingGemfile",
+    // "rubocop.yjitEnabled": true,
+    // "rubocop.commandPath": "${userHome}${pathSeparator}.asdf${pathSeparator}shims${pathSeparator}rubocop",
+    // "rubocop.mode": "enableViaGemfileOrMissingGemfile",
     "editor.mouseWheelZoom": true,
     "terminal.integrated.mouseWheelZoom": true,
     "editor.defaultFormatter": "esbenp.prettier-vscode",

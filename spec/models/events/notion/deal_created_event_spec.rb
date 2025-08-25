@@ -6,36 +6,139 @@ RSpec.describe Notion::DealCreatedEvent, type: :model do
   let(:database_id) { SecureRandom.uuid }
   let(:integration_id) { SecureRandom.uuid }
   let(:entity_id) { SecureRandom.uuid }
-  let(:metadatum) do
-    Fabricate(:metadatum,
-              key: 'notion.deal_created',
-              value: { integration_id:, database_id: })
+  let(:workspace_id) { "ws_#{SecureRandom.hex(8)}" }
+  let(:workspace_name) { 'Test Workspace' }
+  let(:subscription_id) { "sub_#{SecureRandom.hex(8)}" }
+  let(:attempt_number) { 3 }
+
+  let(:metadatum_attributes) do
+    {
+      key: 'notion.deal_created',
+      value: {
+        integration_id:,
+        database_id:,
+        entity_id:,
+        workspace_id:,
+        workspace_name:,
+        subscription_id:,
+        attempt_number:,
+      }.stringify_keys,
+    }
   end
+
+  let(:metadatum) { Fabricate(:notion_webhook_event_metadatum, variant: :deal_created, **metadatum_attributes) }
   let(:webhook) { Fabricate(:webhook, integration: :notion) }
 
-  subject(:event) { Fabricate(:deal_created_event, integration: :notion, metadatum:) }
+  subject(:event) { Fabricate(:deal_created_event, integration: :notion, metadatum:, eventable: webhook) }
 
-  before do
-    event.eventable = webhook
-    event.save!
+  describe '#slug', skip: "Maybe we won't test this, beyond the value being unique?" do
+    it('behaves like configured friendly_id') { expect(event.slug).to eq(event.short_sha) }
   end
 
-  xit { is_expected.to have_attributes(entity_id:) }
-  xit { is_expected.to have_attributes(integration_id:) }
-  xit { is_expected.to have_attributes(database_id:) }
-  xit { is_expected.to have_attributes(remote_record_id: entity_id) }
+  describe '#variant' do
+    it { expect(event.variant).to eq('deal_created') }
+  end
+
+  describe '#metadatum' do
+    it { expect(event.metadatum).to eq(metadatum) }
+    it { expect(event.metadatum).to be_a(Notion::WebhookEventMetadatum) }
+    it { expect(event.metadatum.key).to eq('notion.deal_created') }
+
+    context 'with nested attributes' do
+      subject(:event) do
+        Notion::DealCreatedEvent
+          .create(
+            eventable: webhook,
+            metadatum_attributes:
+              metadatum_attributes
+                .merge(type: 'Notion::WebhookEventMetadatum')
+          )
+      end
+
+      it { expect { subject }.to change { Notion::WebhookEventMetadatum.count }.by(1) }
+      it { expect(event.metadatum).to be_a(Notion::WebhookEventMetadatum) }
+      it { expect(event.metadatum.key).to eq('notion.deal_created') }
+      it { expect(event.metadatum).to have_attributes(metadatum_attributes) }
+    end
+  end
+
+  describe 'attributes' do
+    it { is_expected.to be_valid }
+    it { is_expected.to have_attributes(entity_id:) }
+    it { is_expected.to have_attributes(integration_id:) }
+    it { is_expected.to have_attributes(database_id:) }
+    it { is_expected.to have_attributes(remote_record_id: entity_id) }
+    it { is_expected.to have_attributes(workspace_id:) }
+    it { is_expected.to have_attributes(attempt_number:) }
+  end
 
   describe 'associations' do
-    it { is_expected.to be_valid }
     it { is_expected.to belong_to(:eventable).optional }
-    it { is_expected.to have_one(:metadatum).optional.dependent(:destroy) }
+    xit { is_expected.to have_one(:metadatum).class_name('Notion::WebhookEventMetadatum') }
+    it { is_expected.to accept_nested_attributes_for(:metadatum) }
     it { is_expected.to have_attributes(metadatum:) }
     it { is_expected.to have_attributes(eventable: webhook) }
   end
 
-  describe 'inheritance' do
-    it 'inherits from GenericEvent' do
-      expect(described_class.superclass).to eq(GenericEvent)
+  describe 'validations' do
+    context 'when metadatum is present' do
+      it { is_expected.to be_valid }
+    end
+
+    context 'when metadatum is missing' do
+      subject(:invalid_event) { described_class.new(metadatum: nil) }
+
+      it 'is not valid' do
+        expect(invalid_event).not_to be_valid
+        expect(invalid_event.errors[:metadatum]).to include("can't be blank")
+      end
+    end
+
+    context 'when metadatum has missing attributes' do
+      let(:metadatum) { Fabricate(:notion_webhook_event_metadatum, variant: :deal_created, value: {}) }
+      subject(:event) { described_class.new(metadatum:) }
+
+      before { event.valid? }
+
+      it 'is not valid' do
+        expect(event).not_to be_valid
+      end
+
+      it 'requires entity_id' do
+        expect(event.errors[:entity_id]).to include("can't be blank")
+      end
+
+      it 'requires database_id' do
+        expect(event.errors[:database_id]).to include("can't be blank")
+      end
+
+      it 'requires workspace_id' do
+        expect(event.errors[:workspace_id]).to include("can't be blank")
+      end
+
+      it 'requires workspace_name' do
+        expect(event.errors[:workspace_name]).to include("can't be blank")
+      end
+    end
+
+    describe '#attempt_number' do
+      context 'when invalid' do
+        let(:attempt_number) { 0 }
+
+        it do
+          expect { subject }.to \
+            raise_error(ActiveRecord::RecordInvalid, /Attempt number must be an integer greater than or equal to 1/)
+        end
+      end
+
+      context 'when missing' do
+        let(:attempt_number) { nil }
+
+        it do
+          expect { subject }.to \
+            raise_error(ActiveRecord::RecordInvalid, /Attempt number must be an integer greater than or equal to 1/)
+        end
+      end
     end
   end
 
@@ -43,14 +146,30 @@ RSpec.describe Notion::DealCreatedEvent, type: :model do
     it 'can be instantiated' do
       expect { described_class.new }.not_to raise_error
     end
+
+    it 'inherits from BaseEvent' do
+      expect(described_class.superclass).to eq(Notion::BaseEvent)
+    end
+  end
+
+  describe 'delegated methods' do
+    it { expect(event.workspace_id).to eq(workspace_id) }
+    it { expect(event.workspace_name).to eq(metadatum.workspace_name) }
+    it { expect(event.entity_id).to eq(entity_id) }
+    it { expect(event.integration_id).to eq(integration_id) }
+    it { expect(event.database_id).to eq(database_id) }
+    it { expect(event.remote_record_id).to eq(entity_id) }
+    it { expect(event.attempt_number).to eq(3) }
   end
 
   describe 'state machine' do
     subject(:event) { described_class.new }
 
-    let(:deal_created) { described_class.new }
-
     it { is_expected.to have_state(:pending) }
+    it { is_expected.to allow_event(:process) }
+    # TODO: Replace this with a proper test for the `complete` event
+    xit { is_expected.to allow_event(:complete) }
+    it { is_expected.to allow_event(:fail) }
 
     describe 'transitions' do
       it { is_expected.to transition_from(:pending).to(:processing).on_event(:process) }

@@ -103,7 +103,10 @@ module LarCity
         end
 
         def profile_config_file
-          ENV.fetch('NGROK_PROFILE_CONFIG_PATH', nil)
+          home_dir = Dir.home || ENV.fetch('USERPROFILE', nil)
+          return nil unless home_dir
+
+          "#{home_dir}/.ngrok2/ngrok.yml"
         end
       end
 

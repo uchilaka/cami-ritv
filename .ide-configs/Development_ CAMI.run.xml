@@ -1,6 +1,6 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="Development: CAMI" type="RailsRunConfigurationType" factoryName="Rails">
-    <module name="cami-ritv" />
+    <module name="cami" />
     <predefined_log_file enabled="true" id="RUBY_RAILS_SERVER" />
     <RAILS_SERVER_CONFIG_SETTINGS_ID NAME="RUBY_ARGS" VALUE="" />
     <RAILS_SERVER_CONFIG_SETTINGS_ID NAME="WORK DIR" VALUE="$MODULE_DIR$" />

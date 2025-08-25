@@ -31,8 +31,8 @@ module Cami
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 7.0
 
-    # config.application_name = 'Customer Account Management & Invoicing'
-    # config.application_short_name = 'C.A.M.I.'
+    config.application_name = I18n.t('globals.app.name')
+    config.application_short_name = I18n.t('globals.app.short_name')
 
     # Show full error reports?
     config.consider_all_requests_local = AppUtils.debug_mode?
@@ -71,6 +71,7 @@ module Cami
     # config.eager_load_paths << Rails.root.join("extras")
     config.eager_load_paths << "#{root}/lib"
     config.eager_load_paths << "#{root}/app/concerns"
+    config.eager_load_paths << "#{root}/app/queries"
 
     # Autoload paths
     config.autoload_paths << "#{root}/lib/workflows"
@@ -88,7 +89,11 @@ module Cami
     config.hosts += config_for(:allowed_hosts)
 
     # Doc for jbuilder: https://github.com/rails/jbuilder
-    Jbuilder.key_format camelize: :lower
+    Jbuilder.key_format lambda { |key|
+      # Customize key formatting for JBuilder to support a configurable set
+      # of keys that should NOT be camelized.
+      AppUtils.jbuilder_pre_keys.include?(key.to_sym) ? key : key.camelize(:lower)
+    }
     Jbuilder.deep_format_keys true
 
     # # Configure CSS compressor

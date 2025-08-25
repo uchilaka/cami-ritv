@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'thor/shell/color'
+
 module LarCity
   module CLI
     module Colors

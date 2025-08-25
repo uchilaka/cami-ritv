@@ -6,14 +6,49 @@ shared:
     - domain: larcity.org
       content: nas-1.ho
       type: A
-      ttl: 900
+      ttl: 3600
 
     - domain: larcity.org
       content: nas-2.ho
       type: A
-      ttl: 900
+      ttl: 3600
+
+    - domain: larcity.org
+      content: auth.ho
+      type: A
+      ttl: 3600
+
+    - domain: larcity.org
+      content: sso.ho
+      type: A
+      ttl: 3600
+
+    - domain: larcity.org
+      content: accounts.ho
+      type: A
+      ttl: 3600
+
+    - domain: larcity.org
+      content: staging.ho
+      type: A
+      ttl: 3600
+
+    - domain: larcity.org
+      content: auth.staging
+      type: A
+      ttl: 3600
+
+    - domain: larcity.org
+      content: 1.nas.ho
+      type: A
+      ttl: 3600
+
+    - domain: larcity.org
+      content: 2.nas.ho
+      type: A
+      ttl: 3600
 
     - domain: larcity.org
       content: accounts.staging
       type: A
-      ttl: 900
+      ttl: 3600
