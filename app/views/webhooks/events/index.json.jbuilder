@@ -3,7 +3,7 @@ json.query do
   # json.page @page
   # json.total @query.result.count
   # json.per_page GenericEvent.page_limit
-  # json.sorts @query.sorts.map(&:to_s)
+  json.sorters @search_query.sorters
   # json.search_query @search_query.to_h
   json.predicates @search_query.predicates
   json.filters @search_query.filters

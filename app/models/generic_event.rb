@@ -34,6 +34,7 @@ class GenericEvent < ApplicationRecord
   delegate :remote_record_id, to: :metadatum, allow_nil: true
 
   validates :type, presence: true
+  # Validate presence of metadatum for all subclasses
   validates :metadatum, presence: true, if: -> { type != 'GenericEvent' }
 
   # FriendlyId helper methods

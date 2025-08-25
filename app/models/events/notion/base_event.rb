@@ -35,6 +35,8 @@ module Notion
 
     has_one :payload, as: :appendable, class_name: 'Notion::WebhookEventMetadatum'
 
+    alias webhook eventable
+
     aasm column: :status do
       state :pending, initial: true
       state :processing
