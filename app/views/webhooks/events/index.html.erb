@@ -28,40 +28,7 @@
         </thead>
         <tbody class="divide-y divide-gray-200">
         <% if @events.any? %>
-          <% @events.each do |event| %>
-            <tr>
-              <td class="px-6 py-4 whitespace-nowrap">
-                <div class="text-sm font-medium dark:text-white">
-                  <code><%= event.type %></code>
-                </div>
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap">
-                <div class="text-sm font-medium dark:text-white">
-                  <code><%= event.payload&.key %></code>
-                </div>
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap">
-                <%= content_tag :span,
-                                class: compose_class_names(
-                                  "px-2 inline-flex text-xs leading-5 font-semibold rounded-full",
-                                  "bg-green-100 text-green-800" => event.completed?,
-                                  "bg-red-100 text-red-800" => event.failed?,
-                                  "bg-yellow-100 text-yellow-800" => event.pending?,
-                                  "bg-orange-100 text-orange-800" => event.processing?
-                                ) do %>
-                  <%= event.status.to_s.humanize %>
-                <% end %>
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm">
-                <%= event.created_at.strftime("%B %d, %Y %I:%M %p") %>
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                <%= link_to "View Details",
-                            webhook_event_path(@webhook, event, format: :json),
-                            class: primary_btn_classes("px-3 py-1") %>
-              </td>
-            </tr>
-          <% end %>
+          <%= render partial: 'webhooks/events/list_item/index', collection: @events, as: :event %>
         <% else %>
           <tr>
             <td colspan="5" class="px-6 py-4 text-center text-sm text-gray-500">

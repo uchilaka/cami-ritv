@@ -8,7 +8,7 @@ module Notion
 
     delegate :webhook, :database_id,
              :interval, :query_params, :filters,
-             :response_hash, :results, to: :context
+             :controller, :response_hash, :results, to: :context
 
     INTERVALS = {
       six_months: 6.months,
@@ -139,6 +139,10 @@ module Notion
 
       adapter = Notion::DealQueryResultAdapter.new(context.response_hash['results'])
       context.records = adapter.process_deals
+
+      if context.success? && controller.present?
+        controller.flash[:success] = "Successfully downloaded #{context.records.size} deals from Notion"
+      end
     end
   end
 end

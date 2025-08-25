@@ -1,1 +1,44 @@
-<code>views/webhooks/events/list_item/_index.html.erb</code>
+<%
+  menu_id = "webhook-event-dropdown--#{event.slug}"
+  menu_trigger_id = "#{menu_id}-button"
+%>
+<tr>
+  <td class="px-6 py-4 whitespace-nowrap">
+    <div class="text-sm font-medium dark:text-white">
+      <code><%= event.type %></code>
+    </div>
+  </td>
+  <td class="px-6 py-4 whitespace-nowrap">
+    <div class="text-sm font-medium dark:text-white">
+      <code><%= event.payload&.key %></code>
+    </div>
+  </td>
+  <td class="px-6 py-4 whitespace-nowrap">
+    <%= content_tag :span,
+                    class: compose_class_names(
+                      "px-2 inline-flex text-xs leading-5 font-semibold rounded-full",
+                      "bg-green-100 text-green-800" => event.completed?,
+                      "bg-red-100 text-red-800" => event.failed?,
+                      "bg-yellow-100 text-yellow-800" => event.pending?,
+                      "bg-orange-100 text-orange-800" => event.processing?
+                    ) do %>
+      <%= event.status.to_s.humanize %>
+    <% end %>
+  </td>
+  <td class="px-6 py-4 whitespace-nowrap text-sm">
+    <%= event.created_at.strftime("%B %d, %Y %I:%M %p") %>
+  </td>
+  <td class="flex flex-row justify-end items-center px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+    <%= link_to "View Details",
+                webhook_event_path(@webhook, event, format: :json),
+                class: primary_btn_classes("px-3 py-1 md:mb-0") %>
+    <!-- Dropdown button -->
+    <button id="<%= menu_trigger_id %>" data-dropdown-toggle="<%= menu_id %>" class="inline-flex items-center p-2 text-sm font-medium text-center text-gray-900 bg-white rounded-lg hover:bg-gray-100 focus:ring-4 focus:outline-none dark:text-white focus:ring-gray-50 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-600" type="button">
+      <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 3">
+        <path d="M2 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Zm6.041 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM14 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Z"/>
+      </svg>
+    </button>
+    <!-- Dropdown menu -->
+    <%= render webhook_event_action_menu_view, event:, menu_id:, menu_trigger_id: %>
+  </td>
+</tr>

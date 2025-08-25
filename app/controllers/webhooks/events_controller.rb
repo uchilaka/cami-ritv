@@ -15,6 +15,10 @@ module Webhooks
 
     def show; end
 
+    def view_exists?(relative_path, partial: false)
+      lookup_context.exists?(relative_path, [], partial)
+    end
+
     protected
 
     def event

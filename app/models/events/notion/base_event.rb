@@ -35,7 +35,8 @@ module Notion
 
     has_one :payload, as: :appendable, class_name: 'Notion::WebhookEventMetadatum'
 
-    alias webhook eventable
+    # TODO: Refactor this to make NotionDeal the eventable instead of the webhook
+    # alias webhook eventable
 
     aasm column: :status do
       state :pending, initial: true
