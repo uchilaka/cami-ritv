@@ -54,12 +54,40 @@ RSpec.describe Webhooks::EventSearchQuery do
     end
   end
 
-  describe '#compose_predicates' do
-    pending "add examples for predicates composition"
+  describe '#compose_filters' do
+    subject(:filters) { query.send(:compose_filters) }
+
+    context 'when filter params is a Hash' do
+      let(:params_input) { { 'f' => { 'status' => 'active', 'slug' => 'event-123' } } }
+      let(:params) { hash_params }
+
+      it { expect(filters).to eq('status' => 'active', 'slug' => 'event-123') }
+    end
+
+    context 'when filter params is an Array' do
+      let(:params_input) do
+        {
+          'f' => [
+            { 'field' => 'status', 'value' => 'active' },
+            { 'field' => 'slug', 'value' => 'event-123' },
+          ],
+        }
+      end
+      let(:params) { array_params }
+
+      it { expect(filters).to eq('status' => 'active', 'slug' => 'event-123') }
+    end
+
+    context 'when filter params is blank' do
+      let(:params_input) { {} }
+      let(:params) { hash_params }
+
+      it('returns empty filters') { expect(subject).to eq({}) }
+    end
   end
 
-  describe '#compose_filters' do
-    pending "add examples for filters composition"
+  describe '#compose_predicates' do
+    pending 'add examples for predicates composition'
   end
 end
 
