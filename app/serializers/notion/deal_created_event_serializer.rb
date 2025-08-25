@@ -27,7 +27,7 @@ module Notion
     attributes :id, :slug, :status, :workspace_id, :workspace_name,
                :subscription_id, :integration_id, :remote_record_id,
                :entity_id, :database_id, :created_at, :updated_at,
-               :type, :entity, :database, :url, :download_deal_url
+               :type, :entity, :database, :url, :deal_url, :download_deal_url
 
     def entity_id
       from_metadata('entity', 'id')
@@ -51,6 +51,10 @@ module Notion
 
     def url
       webhook_event_url(object.eventable, object, host: hostname, format: :json)
+    end
+
+    def deal_url
+      webhook_record_url(object.eventable, object, host: hostname)
     end
 
     def download_deal_url
