@@ -22,6 +22,6 @@ json.events do
     json.array! @events, partial: 'webhooks/notion/event', as: :event
   else
     # Render generic events
-    json.array! @events, partial: 'webhooks/events/event', as: :event
+    json.array! @events, partial: 'webhooks/event', as: :event
   end
 end

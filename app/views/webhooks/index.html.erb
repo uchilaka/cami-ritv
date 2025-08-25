@@ -4,10 +4,6 @@
     <%= link_to "New webhook", new_webhook_path, class: primary_btn_classes %>
   </div>
 
-  <% if notice.present? %>
-    <%= render "shared/alerts/info", message: notice %>
-  <% end %>
-
   <div id="webhooks" class="min-w-full">
     <% if @webhooks.any? %>
       <div class="bg-white dark:bg-gray-800 relative shadow-md sm:rounded-lg overflow-hidden">

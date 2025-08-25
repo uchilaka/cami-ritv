@@ -33,6 +33,8 @@ module Notion
              :database,
              :entity, to: :metadatum
 
+    has_one :payload, as: :appendable, class_name: 'Notion::WebhookEventMetadatum'
+
     aasm column: :status do
       state :pending, initial: true
       state :processing

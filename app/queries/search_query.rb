@@ -33,6 +33,14 @@ class SearchQuery
     raise NotImplementedError, "#{self.class.name} must implement #query_param"
   end
 
+  def filter_params
+    raise NotImplementedError, "#{self.class.name} must implement #filter_params"
+  end
+
+  def sort_params
+    raise NotImplementedError, "#{self.class.name} must implement #sort_params"
+  end
+
   def compose_filters(*fields)
     raise NotImplementedError, "#{self.class.name} must implement #compose_filters"
   end

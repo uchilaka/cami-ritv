@@ -32,6 +32,10 @@ module Notion
       database
     ]
 
+    def self.model_name
+      Metadatum.model_name
+    end
+
     def entity_id
       super.presence || (value || {}).dig('entity', 'id')
     end

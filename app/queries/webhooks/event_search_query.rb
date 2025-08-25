@@ -11,12 +11,35 @@ module Webhooks
 
     def build
       compose_predicates
+      compose_sorters
     end
 
     protected
 
     def fields
       @fields || []
+    end
+
+    def compose_sorters
+      return sorters if sort_params.blank?
+
+      @sorters =
+        if sort_params.is_a?(Hash)
+          sort_params.each_with_object([]) do |(field, direction), array|
+            next if fields.present? && fields.exclude?(field)
+
+            array << compose_sorter_clause(field:, direction:)
+          end
+        elsif sort_params.is_a?(Array)
+          sort_params.each_with_object([]) do |sorter, array|
+            field, direction = sorter.values_at 'field', 'direction'
+            next if fields.present? && fields.exclude?(field)
+
+            array << compose_sorter_clause(field:, direction:)
+          end
+        else
+          sorters
+        end
     end
 
     def compose_filters
@@ -80,6 +103,12 @@ module Webhooks
 
     def sort_params
       extract_search_params('s', [])
+    end
+
+    private
+
+    def compose_sorter_clause(field:, direction:)
+      "#{field.underscore} #{direction.upcase}"
     end
   end
 end
