@@ -16,7 +16,8 @@ Rails.application.routes.draw do
 
       namespace :webhooks, only: [] do
         post 'notion/events', controller: 'notion/events', action: :create
-        patch 'notion/events/:id/deal', controller: 'notion/events', action: :deal, as: :notion_event_deal
+        get 'notion/events/:id/deal', controller: 'notion/events', action: :deal, as: :notion_event_deal
+        patch 'notion/events/:id/deal', controller: 'notion/events', action: :deal, as: :update_notion_event_deal
       end
     end
   end
