@@ -1,2 +1,10 @@
-[env]
+[[env]]
+_.file = "{{config_root}}/.env"
+[[env]]
+_.file = "{{config_root}}/.env.local"
+[[env]]
+_.file = "{{config_root}}/.env.{{env.RAILS_ENV}}"
+[[env]]
+_.file = "{{config_root}}/.env.{{env.RAILS_ENV}}.local"
+[[env]]
 _.source = "{{config_root}}/.envrc"
