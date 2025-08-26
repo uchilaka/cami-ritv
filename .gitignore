@@ -63,7 +63,8 @@
 /.gem_rbs_collection
 
 # Environment variable files
-/.env.test.local
+/.env.*
+!/.env.development
 !/.envrc
 !/.env.example
 

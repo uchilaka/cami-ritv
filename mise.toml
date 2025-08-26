@@ -1,6 +1,2 @@
-[[env]]
-RAILS_ENV = "staging"
-NODE_ENV = "staging"
-
-[[env]]
+[env]
 _.source = "{{config_root}}/.envrc"
