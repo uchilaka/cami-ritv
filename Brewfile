@@ -13,7 +13,6 @@ if %w[staging production].include?(ENV['RAILS_ENV'])
 else
   # Dev & anonymous environments
   brew 'gh'
-  brew 'asdf'
   # Direnv will be managed as a mise dependency instead
   #brew 'direnv'
   brew 'goreman'
@@ -33,7 +32,7 @@ else
       cask 'rubymine'
     else
       cask 'visual-studio-code'
-      cask 'windsurf'
+      # cask 'windsurf'
     end
 
     # FYI: Brew cask only works on macOS
@@ -52,6 +51,8 @@ brew 'vips'
 # install only on specified OS
 if OS.mac?
   brew 'gnutls'
+  # NOTE: For info on setting this up (required to use `git crypt <...>`), run:
+  #   brew info pinentry-mac
   brew 'pinentry-mac'
   cask 'ngrok'
   cask 'pgadmin4'
