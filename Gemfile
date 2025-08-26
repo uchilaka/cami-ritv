@@ -9,7 +9,7 @@ gem 'mission_control-jobs'
 
 # Autoload dotenv in Rails https://github.com/bkeepers/dotenv
 # IMPORTANT: This should be loaded as early as possible
-gem 'dotenv', groups: %i[development test], require: 'dotenv/load'
+gem 'dotenv', require: 'dotenv/load'
 
 # Feature rich logging framework that replaces the Rails logger.
 gem 'rails_semantic_logger'
