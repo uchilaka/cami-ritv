@@ -113,6 +113,11 @@ class AppUtils
       end
     end
 
+    def log_file
+      @log_file ||= ENV.fetch('LOG_FILE', nil)
+      @log_file || Rails.root.join("log/#{ENV.fetch('RAILS_ENV', 'cami')}.log").to_s
+    end
+
     def allowed_hosts_for(provider:)
       Rails
         .application

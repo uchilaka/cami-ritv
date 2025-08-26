@@ -11,7 +11,7 @@
     "clobber": "bin/clobber-all",
     "build:css": "bin/rails tailwindcss:build",
     "build": "bin/vite build",
-    "start": "goreman -f Procfile.dev start",
+    "start": "bin/start",
     "lint": "eslint",
     "test:rspec": "RAILS_ENV=test bundle exec rspec",
     "test": "vitest",
