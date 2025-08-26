@@ -4,6 +4,12 @@ test:
   - accounts.larcity.ngrok.test
   - accounts.larcity.test
   - www.example.com
+staging:
+  - accounts.ho.lar.city
+  - accounts.staging.lar.city
+  - accounts.larcity.business
+  - accounts.madebylar.city
+  - accounts.larcity.com
 production:
   - accounts.larcity.com
   - accounts.lar.city
