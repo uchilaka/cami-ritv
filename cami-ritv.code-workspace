@@ -58,7 +58,7 @@
       "editor.defaultFormatter": "Shopify.ruby-lsp",
       "editor.formatOnSave": true
     },
-    "terminal.integrated.fontSize": 15,
+    "terminal.integrated.fontSize": 16,
     "window.zoomLevel": 0.125,
     "rubyLsp.rubyVersionManager": {
       "identifier": "mise"
