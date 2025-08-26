@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
-unless Rails.env.test?
+# TODO: Enable web console in Staging for admins
+if Rails.env.development?
   Rails.application.configure do
     # Note on issues with calling the web console:
     # https://github.com/rails/web-console?tab=readme-ov-file#why-does-the-console-only-appear-on-error-pages-but-not-when-i-call-it
