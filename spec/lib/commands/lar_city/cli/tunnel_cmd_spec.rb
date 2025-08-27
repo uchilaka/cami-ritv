@@ -13,7 +13,8 @@ RSpec.describe LarCity::CLI::TunnelCmd, type: :thor, devtool: true, skip_in_ci: 
 
     context 'when in test environment' do
       it 'skips initialization' do
-        expect(tunnel_cmd).to receive(:say).with('Skipping initialization of ngrok config in test environment.', anything)
+        expect(tunnel_cmd).to \
+          receive(:say).with('Skipping initialization of ngrok config in test environment.', anything)
         tunnel_cmd.init
       end
     end
@@ -94,9 +95,11 @@ RSpec.describe LarCity::CLI::TunnelCmd, type: :thor, devtool: true, skip_in_ci: 
         it do
           tunnel_cmd.invoke(:open_all, [], dry_run: true)
           expect(tunnel_cmd).to \
-            have_received(:run).with(
-              'ngrok start --all', "--config=#{Rails.root}/config/ngrok.yml"
-            )
+            have_received(:run)
+              .with(
+                'ngrok start --all',
+                "--config=#{Rails.root}/config/ngrok.yml"
+              )
         end
       end
 

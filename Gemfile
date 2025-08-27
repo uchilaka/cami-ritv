@@ -120,7 +120,10 @@ group :development, :test do
   gem 'strong_migrations'
 end
 
-
+group :development, :staging do
+  # Use console on exceptions pages https://github.com/rails/web-console
+  gem 'web-console'
+end
 
 group :development do
   # Ruby on Rails Live Reload https://github.com/railsjazz/rails_live_reload

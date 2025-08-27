@@ -4,18 +4,24 @@ en:
       lookup:
         short_desc: Lookup a service by its name
         long_desc: >
-          This command allows you to lookup services for the CAMI app, \
+          This command allows you to lookup services for the CAMI app,
           listing resources like the port number and PID file.
         no_port_specified_msg: >
-          No port number was specified. Please specify a port number \
+          No port number was specified. Please specify a port number
           using the --port option to lookup the service process.
+        options:
+          port:
+            short_desc: The port number of the service to lookup
+            long_desc: >
+              The port number is a numeric value e.g. `3000` and can be found in the
+              system process list (or someplace like your Rails console output in your IDE).
       kill:
         short_desc: Kill a service by its listening port
         long_desc: >
-          This command allows you to kill a service by its listening port. \
-          An example of when you would use this command is when a service is \
-          not responding (e.g. a zombie Rails server instance) or consuming \
-          too many resources and locking the UI of a specific application. \
+          This command allows you to kill a service by its listening port.
+          An example of when you would use this command is when a service is
+          not responding (e.g. a zombie Rails server instance) or consuming
+          too many resources and locking the UI of a specific application.
           Oracle doc reference: https://docs.oracle.com/cd/E19253-01/817-0403/eoizf/index.html
         completed_msg: >
           The request to kill service `%{service}` has been completed. If you were

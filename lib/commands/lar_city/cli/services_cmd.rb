@@ -13,10 +13,17 @@ module LarCity
                    enum: %w[all essential batteries-included],
                    default: 'batteries-included'
 
-      option :port,
-             type: :string,
-             desc: I18n.t('commands.services.kill.options.port.short_desc'),
-             long_desc: I18n.t('commands.services.kill.options.port.long_desc')
+      def self.add_port_option(
+        desc:,
+        long_desc: I18n.t('commands.services.lookup.options.port.long_desc'),
+        required: false
+      )
+        option :port,
+               type: :string,
+               long_desc:, desc:, required:
+      end
+
+      add_port_option(desc: I18n.t('commands.services.lookup.options.port.short_desc'))
       desc 'lookup', I18n.t('commands.services.lookup.short_desc')
       long_desc I18n.t('commands.services.lookup.long_desc')
       def lookup
@@ -71,11 +78,7 @@ module LarCity
         puts "Error looking up PID: #{e.message}"
       end
 
-      option :port,
-             type: :string,
-             desc: I18n.t('commands.services.kill.options.port.short_desc'),
-             long_desc: I18n.t('commands.services.kill.options.port.long_desc'),
-             required: true
+      add_port_option(desc: I18n.t('commands.services.kill.options.port.short_desc'), required: true)
       desc 'kill', I18n.t('commands.services.kill.short_desc')
       long_desc I18n.t('commands.services.kill.long_desc')
       def kill

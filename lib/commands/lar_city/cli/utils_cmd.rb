@@ -15,6 +15,17 @@ module LarCity
         end
 
         plist_file_template = Rails.root.join('config', 'com.larcity.cami.plist.erb').to_s
+        file_name = config_file_from(template: plist_file_template)
+        # Process the ERB template
+        if config_file_exists?(name: file_name)
+          say "Daemon config already exists at #{config_file(name: file_name)}.", :yellow
+          return
+        end
+
+        say 'Processing daemon config ERB...'
+        plist_config = ERB.new(File.read(plist_file_template)).result
+        say "Writing daemon config to #{config_file(name: file_name)}"
+        File.write config_file(name: file_name), plist_config unless dry_run?
       end
 
       desc 'setup_yarn', 'Setup Yarn package manager'
