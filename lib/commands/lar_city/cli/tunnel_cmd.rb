@@ -38,7 +38,7 @@ module LarCity
           end
 
           # Process an ERB config file if one is found
-          if config_file_exists?(name: config_file_name)
+          if !options[:force] && config_file_exists?(name: config_file_name)
             say "ngrok config already exists at #{config_file(name: config_file_name)}.", Color::YELLOW
             next
           end
