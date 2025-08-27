@@ -10,7 +10,7 @@ staging:
   - accounts.staging.larcity.business
   - accounts.staging.madebylar.city
   - accounts.staging.larcity.com
-production:bwer bew dddddddd
+production:
   - accounts.larcity.hopto.org
   - accounts.ho.lar.city
   - accounts.ho.madebylar.city

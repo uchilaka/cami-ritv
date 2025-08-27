@@ -7,6 +7,36 @@ module LarCity
     class UtilsCmd < BaseCmd
       namespace :utils
 
+      desc 'kick_nginx_config', 'Kick Nginx to reload its configuration'
+      def kick_nginx_config
+        if Rails.env.test?
+          say 'Skipping Nginx config kick in test environment.', :red
+          return
+        end
+
+        unless File.exist?(nginx_config_file)
+          raise Thor::Error, "Nginx config file not found at #{nginx_config_file}"
+        end
+
+        say 'Kicking Nginx to reload its configuration...', :yellow
+
+        # Symlink the config file
+        say "Symlinking Nginx config from #{nginx_config_file} to #{nginx_config_symlink}...", :yellow
+        FileUtils.ln_sf nginx_config_file, nginx_config_symlink, verbose: verbose?, noop: dry_run?
+
+        # Symlink each file in the SSL artifacts directory to the Nginx certs directory
+        Dir["#{nginx_ssl_artifacts_path}/*.pem"].each do |artifact|
+          # TODO: Write a test to assert that the correct basename (with .pem extension) is used
+          say "Symlinking Nginx SSL artifact from #{artifact} to #{nginx_ssl_artifacts_symlink}/#{File.basename(artifact)}...", :yellow
+          FileUtils.ln_sf artifact, "#{nginx_ssl_artifacts_symlink}/#{File.basename(artifact)}", verbose: verbose?, noop: dry_run?
+        end
+
+        say 'Nginx configuration reloaded successfully.', :green
+
+        run "brew", "services", "restart", "nginx"
+        run "brew", "services", "info", "nginx"
+      end
+
       desc 'setup_yarn', 'Setup Yarn package manager'
       def setup_yarn
         system 'corepack enable'
@@ -48,6 +78,38 @@ module LarCity
       end
 
       private
+
+      def nginx_ssl_artifacts_symlink
+        "#{nginx_path}/certs"
+      end
+
+      def nginx_ssl_artifacts_path
+        "#{nginx_config_path}/ssl"
+      end
+
+      def nginx_config_symlink
+        "#{nginx_servers_path}/cami.conf"
+      end
+
+      def nginx_config_file
+        "#{nginx_config_path}/conf.d/servers.conf"
+      end
+
+      def nginx_config_path
+        "#{Rails.root}/.nginx/#{Rails.env}"
+      end
+
+      def nginx_certs_path
+        "#{nginx_path}/certs"
+      end
+
+      def nginx_servers_path
+        "#{nginx_path}/servers"
+      end
+
+      def nginx_path
+        @nginx_path ||= ENV.fetch('NGINX_PATH', '/opt/homebrew/etc/nginx')
+      end
 
       def mv_tarball_contents_to_workspace_dir
         FileUtils.mv(extracted_dir, tarball_working_dir)
