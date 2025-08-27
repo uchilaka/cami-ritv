@@ -1,6 +1,24 @@
 en:
   commands:
     services:
+      daemonize:
+        short_desc: Configure the app service as a background daemon process
+        long_desc: >
+          This command configures the app service to run as a background daemon process.
+          It sets up the necessary files and directories to enable the service to
+          start automatically on system boot and run in the background.
+          For instructions on implementing a service demon on macOS, see:
+          https://developer.apple.com/library/archive/documentation/MacOSX/Conceptual/BPSystemStartup/Chapters/Introduction.html
+        macos_guide: >
+          For macOS instructions on managing daemons and agents, see:
+          https://developer.apple.com/library/archive/documentation/MacOSX/Conceptual/BPSystemStartup/Chapters/ManagingDaemonsAndAgents.html
+
+          %{user_guide}
+        user_guide: >
+          To manage the app daemon, use the `launchctl` command. For example:
+            sudo launchctl list | grep cami
+            sudo launchctl unload -w %{plist_file_path}
+            sudo launchctl load -w %{plist_file_path}
       lookup:
         short_desc: Lookup a service by its name
         long_desc: >

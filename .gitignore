@@ -40,11 +40,12 @@
 
 # Ignore proxy server config file (will be processed by initializer)
 /config/ngrok*.yml
-
 # Ignore master key for decrypting credentials and more.
 /config/credentials/*.key
 # Ignore backups of secrets file. See the command: bin/thor help lx-cli:secrets:backup
 /config/credentials/*--**-*-*T*.yml.enc
+# Ignore Daemon config file
+/config/*.plist
 
 ###################################################################
 

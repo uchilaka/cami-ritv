@@ -34,7 +34,7 @@ module LarCity
         file_name = config_file_from(template: plist_file_template)
         plist_file_path = config_file(name: file_name)
         # Process the ERB template
-        if config_file_exists?(name: file_name)
+        if !dry_run? && config_file_exists?(name: file_name)
           say "Daemon config already exists at #{plist_file_path}.", :yellow
           print_line_break
           say_info daemonize_guide(plist_file_path:)
@@ -45,10 +45,19 @@ module LarCity
         plist_config = ERB.new(File.read(plist_file_template)).result
         say "Writing daemon config to #{plist_file_path}", :yellow
         File.write plist_file_path, plist_config unless dry_run?
-        return unless verbose?
-
         print_line_break
-        say_info daemonize_guide(plist_file_path:)
+
+        if verbose?
+          say_info daemonize_guide(plist_file_path:)
+          print_line_break
+        end
+
+        say 'Loading the daemon with launchctl...', :yellow
+        run 'sudo', 'launchctl', 'load', '-w', plist_file_path
+        print_line_break
+        say 'Daemon loaded. You can manage it using launchctl commands.', :green
+      rescue StandardError => e
+        puts "Error setting up daemon: #{e.message}"
       end
 
       add_port_option(desc: I18n.t('commands.services.lookup.options.port.short_desc'))
@@ -179,21 +188,11 @@ module LarCity
         protected
 
         def daemonize_guide(plist_file_path:)
-          mgt_guide = <<~GUIDE
-            To manage the app daemon, use the `launchctl` command. For example:
-              launchctl list | grep cami
-              launchctl unload -w #{plist_file_path}
-              launchctl load -w #{plist_file_path}
-          GUIDE
-          macos_guide = <<~GUIDE
-            For instructions on implementing a service demon on macOS, see:
-            https://developer.apple.com/library/archive/documentation/MacOSX/Conceptual/BPSystemStartup/Chapters/Introduction.html
-
-            #{mgt_guide}
-          GUIDE
+          user_guide = I18n.t("commands.services.daemonize.user_guide", plist_file_path:)
+          macos_guide = I18n.t("commands.services.daemonize.macos_guide", user_guide:)
           return macos_guide if mac?
 
-          mgt_guide
+          user_guide
         end
 
         def lookup_by_configured_ports
