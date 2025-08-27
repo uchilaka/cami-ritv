@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_08_10_131301) do
+ActiveRecord::Schema[8.0].define(version: 2025_08_25_125426) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -110,6 +110,19 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_10_131301) do
   end
 
   create_table "data_migrations", primary_key: "version", id: :string, force: :cascade do |t|
+  end
+
+  create_table "deals", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "account_id"
+    t.money "amount", scale: 2
+    t.datetime "expected_close_at", precision: nil
+    t.datetime "last_contacted_at", precision: nil
+    t.string "priority"
+    t.string "stage", default: "discovery", null: false
+    t.string "type", default: "Deal", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["account_id"], name: "index_deals_on_account_id"
   end
 
   create_table "flipper_features", force: :cascade do |t|
@@ -405,6 +418,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_10_131301) do
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "allowlisted_jwts", "users", on_delete: :cascade
+  add_foreign_key "deals", "accounts"
   add_foreign_key "identity_provider_profiles", "users"
   add_foreign_key "solid_queue_blocked_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
   add_foreign_key "solid_queue_claimed_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade

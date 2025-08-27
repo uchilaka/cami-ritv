@@ -1,7 +1,7 @@
 <% deal_dom_id = "notion-deal-#{@record.remote_system_id}" %>
 
 <% content_for :form_actions do %>
-  <%= link_to "Back to deals", webhook_records_path(@webhook), class: secondary_btn_classes("px-5 py-3 md:mx-2") %>
+  <%= link_to "Back to deals", webhook_records_path(@webhook), class: secondary_btn_classes("px-5 py-3") %>
 <% end %>
 
 <div id="<%= deal_dom_id %>" class="flex min-h-[var(--lc-min-form-height)] flex-col justify-center items-center">

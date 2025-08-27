@@ -6,8 +6,7 @@ module Webhooks
 
     def index
       # TODO: Add test coverage for this use of workflow_by_action on :index
-      result = workflow_by_action.call(webhook:, event:)
-      flash[:success] = "Successfully fetched #{webhook.slug.humanize} records" if result.success?
+      result = workflow_by_action.call(webhook:, event:, controller: self)
       @records = result.records
 
       view_path =
@@ -37,13 +36,6 @@ module Webhooks
 
       # TODO: Implement webhook name to display here
       @record = result.record
-      # view_path =
-      #   if view_exists?(record_view_by_action)
-      #     record_view_by_action
-      #   else
-      #     "webhooks/records/#{action_name}"
-      #   end
-      # render view_path, locals: { record: result.record }
     end
 
     protected
@@ -73,11 +65,11 @@ module Webhooks
       nil
     end
 
-    private
-
     def view_exists?(relative_path, partial: false)
       lookup_context.exists?(relative_path, [], partial)
     end
+
+    private
 
     def record_id
       id, webhook_id, _event_id = identifiers

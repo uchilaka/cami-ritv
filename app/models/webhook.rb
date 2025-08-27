@@ -29,6 +29,7 @@ class Webhook < ApplicationRecord
                    integration_id
                    integration_name
                    dashboard_url
+                   content_management_url
                    records_index_workflow_name
                    record_download_workflow_name
                  ]

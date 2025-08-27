@@ -27,8 +27,11 @@ module LarCity
         with_interruption_rescue do
           case options[:vendor]
           when 'notion'
-            integration_id, verification_token, deal_database_id =
-              Rails.application.credentials.notion&.values_at :integration_id, :verification_token, :deal_database_id
+            integration_id, verification_token, deal_database_id, deal_database_url =
+              Rails
+                .application
+                .credentials
+                .notion&.values_at(:integration_id, :verification_token, :deal_database_id, :deal_database_url)
             dashboard_url = "https://www.notion.so/profile/integrations/internal/#{integration_id}"
             records_index_workflow_name = 'Notion::DownloadLatestDealsWorkflow'
             record_download_workflow_name = 'Notion::DownloadDealWorkflow'
@@ -43,9 +46,10 @@ module LarCity
                 integration_id:,
                 deal_database_id:,
                 dashboard_url:,
+                content_management_url: deal_database_url,
                 records_index_workflow_name:,
-                record_download_workflow_name:
-              }.compact
+                record_download_workflow_name:,
+              }
 
               if verbose?
                 if webhook.persisted?
@@ -57,22 +61,18 @@ module LarCity
                 ap updates, options: { indent: 2 }
               end
 
-              if webhook.new_record? || options[:force]
-                webhook.data = { integration_id:, deal_database_id:, dashboard_url: }.compact
-                if webhook.changed?
-                  webhook.save!
-                  say "⚡ Webhook for #{options[:vendor]} has been set up successfully.", :green
-                else
-                  say "💅🏾 Webhook for #{options[:vendor]} is already set up and no changes were made.", :cyan
-                end
+              if options[:force]
+                webhook.data = updates.compact
               else
-                updates.each { |k, v| webhook.send(:"#{k}=", v) if webhook.respond_to?("#{k}=") }
-                if webhook.changed?
-                  webhook.save!
-                  say "⚡ Webhook for #{options[:vendor]} has been updated successfully.", :green
-                else
-                  say "💅🏾 Webhook for #{options[:vendor]} is already up to date.", :cyan
-                end
+                updates.compact.each { |k, v| webhook.send(:"#{k}=", v) if webhook.respond_to?("#{k}=") }
+              end
+              was_new_record = webhook.new_record?
+              result_clause = was_new_record ? 'set up' : 'updated'
+              if webhook.changed?
+                webhook.save!
+                say "⚡ Webhook for #{options[:vendor]} has been #{result_clause} successfully.", :green
+              else
+                say "💅🏾 Webhook for #{options[:vendor]} is already #{result_clause} and no changes were made.", :cyan
               end
               raise ActiveRecord::Rollback if dry_run?
             end

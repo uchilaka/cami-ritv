@@ -44,6 +44,8 @@ development: &development
     enabled: true
   feat__notion_integration_dashboard:
     enabled: true
+  feat__lookup_by_configured_ports:
+    enabled: true
 test:
   <<: *default
 production:
