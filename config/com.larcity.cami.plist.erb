@@ -9,15 +9,15 @@ require 'lib/app_utils'
     <string>com.larcity.cami</string>
     <key>ProgramArguments</key>
     <array>
-      <string><%= Rails.root.join("bin/start").to_s %></string>
+      <string><%= AppUtils.daemon_script %></string>
     </array>
     <key>RunAtLoad</key>
     <true/>
     <key>KeepAlive</key>
     <true/>
     <key>StandardOutPath</key>
-    <string><%= Rails.root.join("log/#{ENV['RAILS_ENV']}.log").to_s %></string>
+    <string><%= AppUtils.log_file %></string>
     <key>StandardErrorPath</key>
-    <string><%= Rails.root.join("log/#{ENV['RAILS_ENV']}.log").to_s %></string>
+    <string><%= AppUtils.log_file %></string>
 </dict>
 </plist>

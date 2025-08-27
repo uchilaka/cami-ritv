@@ -113,6 +113,10 @@ class AppUtils
       end
     end
 
+    def daemon_script
+      @daemon_script ||= Rails.root.join("bin/start").to_s
+    end
+
     def log_file
       @log_file ||= ENV.fetch('LOG_FILE', nil)
       @log_file || Rails.root.join("log/#{ENV.fetch('RAILS_ENV', 'cami')}.log").to_s
