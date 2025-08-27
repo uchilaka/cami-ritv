@@ -6,6 +6,7 @@ test:
   - www.example.com
 staging:
   - accounts.staging.larcity.hopto.org
+  - accounts.staging.larcity.org
   - accounts.staging.lar.city
   - accounts.staging.larcity.business
   - accounts.staging.madebylar.city

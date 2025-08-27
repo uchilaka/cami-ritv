@@ -19,6 +19,7 @@ module LarCity
         end
 
         say 'Kicking Nginx to reload its configuration...', :yellow
+        FileUtils.mkdir_p(nginx_servers_path, verbose: verbose?, noop: dry_run?)
 
         # Symlink the config file
         say "Symlinking Nginx config from #{nginx_config_file} to #{nginx_config_symlink}...", :yellow
