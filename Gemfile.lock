@@ -93,7 +93,6 @@ GEM
     benchmark (0.4.0)
     bigdecimal (3.1.9)
     bindata (2.5.1)
-    bindex (0.8.1)
     brakeman (7.0.2)
       racc
     builder (3.3.0)
@@ -607,11 +606,6 @@ GEM
       dry-configurable (>= 0.13, < 2)
       jwt (~> 2.1)
       warden (~> 1.2)
-    web-console (4.2.1)
-      actionview (>= 6.0.0)
-      activemodel (>= 6.0.0)
-      bindex (>= 0.4.0)
-      railties (>= 6.0.0)
     websocket (1.2.11)
     websocket-driver (0.7.7)
       base64
@@ -705,7 +699,6 @@ DEPENDENCIES
   tzinfo-data
   vcr (~> 6.2)
   vite_rails
-  web-console
 
 BUNDLED WITH
    2.6.7

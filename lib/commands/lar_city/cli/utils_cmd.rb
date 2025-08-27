@@ -7,9 +7,19 @@ module LarCity
     class UtilsCmd < BaseCmd
       namespace :utils
 
+      desc 'daemonize', 'Run a command to setup the app service as a background daemon process'
+      def daemonize
+        if Rails.env.test?
+          say 'Skipping daemonize in test environment.', :red
+          return
+        end
+
+        plist_file_template = Rails.root.join('config', 'com.larcity.cami.plist.erb').to_s
+      end
+
       desc 'setup_yarn', 'Setup Yarn package manager'
       def setup_yarn
-        system `corepack enable`
+        system 'corepack enable'
         if File.exist?(tarball_path)
           say "Yarn tarball already exists at #{tarball_path}. Skipping download.", :green
         else

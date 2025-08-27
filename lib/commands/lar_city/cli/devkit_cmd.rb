@@ -7,16 +7,16 @@ module LarCity
     class DevkitCmd < BaseCmd
       namespace 'devkit'
 
-      method_option :force,
-                    desc: 'Force an upsert operation on any matching webhook (by vendor)',
-                    type: :boolean,
-                    default: false
-      method_option :vendor,
-                    desc: 'The vendor to use for the devkit',
-                    type: :string,
-                    aliases: '-s',
-                    enum: %w[zoho notion],
-                    required: true
+      option :force,
+             desc: 'Force an upsert operation on any matching webhook (by vendor)',
+             type: :boolean,
+             default: false
+      option :vendor,
+             desc: 'The vendor to use for the devkit',
+             type: :string,
+             aliases: '-s',
+             enum: %w[zoho notion],
+             required: true
       desc 'setup_webhooks', 'Setup webhooks for the project'
       def setup_webhooks
         if Rails.env.test?
@@ -44,7 +44,7 @@ module LarCity
                 deal_database_id:,
                 dashboard_url:,
                 records_index_workflow_name:,
-                record_download_workflow_name:
+                record_download_workflow_name:,
               }.compact
 
               if verbose?
