@@ -1,6 +1,11 @@
 # frozen_string_literal: true
 
-unless Rails.env.test?
+if Rails.env.test?
+  puts 'Skipping Brevo (Sendinblue) API initialization in test environment.'
+  return
+end
+
+if AppUtils.send_emails?
   require 'sib-api-v3-sdk'
 
   SibApiV3Sdk.configure do |config|

@@ -9,6 +9,11 @@ module LarCity
     class TunnelCmd < BaseCmd
       namespace 'tunnel'
 
+      option :force,
+             desc: I18n.t('commands.tunnel.init.options.force.short_desc'),
+             long_desc: I18n.t('commands.tunnel.init.options.force.long_desc'),
+             type: :boolean,
+             default: false
       desc 'init', 'Initialize ngrok config for the project'
       def init
         if Rails.env.test?
@@ -16,8 +21,22 @@ module LarCity
           return
         end
 
+        if options[:force]
+          force_msg = <<~WARNING
+            ************************************************************************
+            *  WARNING: Any existing NGROK configuration files will be overwritten *
+            ************************************************************************
+          WARNING
+          say force_msg, Color::YELLOW
+        end
+
         # Process each NGROK config file template found in the config directory
-        for_each_proxy_config_file(force: true) do |template_file, config_file_name|
+        for_each_app_proxy_config(force: options[:force]) do |template_file, config_file_name|
+          unless File.exist?(template_file)
+            say "No ngrok config template found at #{template_file}. Skipping.", Color::RED
+            next
+          end
+
           # Process an ERB config file if one is found
           if config_file_exists?(name: config_file_name)
             say "ngrok config already exists at #{config_file(name: config_file_name)}.", Color::YELLOW
@@ -83,13 +102,23 @@ module LarCity
       end
 
       no_commands do
-        def for_each_proxy_config_file(force: false, &)
-          Dir[Rails.root.join('config', 'ngrok*.yml.erb')].each do |config_file_template|
-            file_name = config_file_from(template: config_file_template)
+        def app_proxies_configured?
+          @app_proxies_configured ||= app_proxy_config_files.all? { |f| File.exist? f }
+        end
+
+        protected
+
+        def for_each_app_proxy_config(force: false, &)
+          app_proxy_config_files.each do |file_name|
+            config_file_template = "#{file_name}.erb"
             next if config_file_exists?(name: file_name) && !force
 
             yield config_file_template, file_name
           end
+        end
+
+        def app_proxy_config_files
+          @app_proxy_config_files ||= Dir[Rails.root.join('config', 'ngrok*.yml')]
         end
 
         def proxy_config_files

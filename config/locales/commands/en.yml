@@ -47,3 +47,18 @@ en:
           The request to kill process with PID `%{pid}` has been completed. If you were
           trying to kill a process, please check the system process list to confirm
           that it has been terminated.
+
+    tunnel:
+      init:
+        short_desc: Initialize proxy tunnel configuration for the CAMI app
+        long_desc: >
+          This command initializes the proxy tunnel configuration for the CAMI app.
+          It sets up the necessary files and directories to enable secure tunneling
+          for the application in non-production environments. This feature is currently
+          implemented with NGROK.
+        options:
+          force:
+            short_desc: Force re-initialization of the tunnel configuration
+            long_desc: >
+              If the tunnel configuration already exists, using this option will
+              overwrite the existing configuration and re-initialize it.
