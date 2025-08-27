@@ -5,12 +5,16 @@ test:
   - accounts.larcity.test
   - www.example.com
 staging:
-  - accounts.ho.lar.city
+  - accounts.staging.larcity.hopto.org
   - accounts.staging.lar.city
-  - accounts.larcity.business
-  - accounts.madebylar.city
-  - accounts.larcity.com
-production:
+  - accounts.staging.larcity.business
+  - accounts.staging.madebylar.city
+  - accounts.staging.larcity.com
+production:bwer bew dddddddd
+  - accounts.larcity.hopto.org
+  - accounts.ho.lar.city
+  - accounts.ho.madebylar.city
+  - accounts.ho.larcity.business
   - accounts.larcity.com
   - accounts.lar.city
   - www.larcity.com
