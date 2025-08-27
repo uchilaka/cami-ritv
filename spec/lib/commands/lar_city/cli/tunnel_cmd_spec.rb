@@ -49,6 +49,67 @@ RSpec.describe LarCity::CLI::TunnelCmd, type: :thor, devtool: true, skip_in_ci: 
           expect(File).to have_received(:write).with(%r{/config/ngrok-via-docker.yml$}, 'processed yaml content')
         end
       end
+
+      context 'and app proxy config files exist' do
+        context 'with force option set to true' do
+          before do
+            allow(Rails.env).to receive(:test?).and_return(false)
+            allow(tunnel_cmd).to receive(:options).and_return(force: true)
+            allow(tunnel_cmd).to receive(:config_file_exists?).with(name: %r{/ngrok(-via-docker)?.yml$}) { true }
+            allow(File).to receive(:exist?).with(%r{/config/ngrok.yml.erb$}).and_return(true)
+            allow(ERB).to receive_message_chain(:new, :result).and_return('processed yaml content')
+            allow(File).to receive(:write)
+          end
+
+          it 'warns about overwriting and writes the config file' do
+            expect(tunnel_cmd).to receive(:say).with(/WARNING: Any existing NGROK configuration files will be overwritten/, anything)
+            expect(File).to receive(:write).with(%r{/config/ngrok.yml$}, 'processed yaml content')
+            tunnel_cmd.init
+          end
+        end
+
+        context 'with force option set to false' do
+          before do
+            allow(Rails.env).to receive(:test?).and_return(false)
+            allow(tunnel_cmd).to receive(:options).and_return(force: false)
+            allow(tunnel_cmd).to receive(:config_file_exists?).with(name: %r{/ngrok(-via-docker)?.yml$}) { true }
+            allow(File).to receive(:exist?).with(%r{/config/ngrok.yml.erb$}).and_return(true)
+          end
+
+          it 'skips writing and warns that config already exists' do
+            expect(tunnel_cmd).to receive(:say).with(/ngrok config already exists/, anything)
+            expect(File).not_to receive(:write)
+            tunnel_cmd.init
+          end
+        end
+      end
+
+      context 'when template file does not exist' do
+        before do
+          allow(Rails.env).to receive(:test?).and_return(false)
+          allow(tunnel_cmd).to receive(:options).and_return(force: false)
+          allow(File).to receive(:exist?).with(%r{/config/ngrok(-with-docker)?.yml$}).and_return(false)
+          allow(File).to receive(:exist?).with(%r{/config/ngrok(-with-docker)?.yml.erb$}).and_return(false)
+        end
+
+        it 'warns and skips processing' do
+          output_match = %r{No ngrok config template found at (.*)/config/ngrok(-via-docker)?.yml.erb.}
+          expect { tunnel_cmd.invoke(:init, []) }.to output(output_match).to_stdout
+        end
+      end
+
+      context 'when dry_run? is true' do
+        before do
+          allow(Rails.env).to receive(:test?).and_return(false)
+          allow(tunnel_cmd).to receive(:config_file_exists?).with(name: %r{/ngrok(-with-docker)?.yml$}) { false }
+          allow(ERB).to receive_message_chain(:new, :result).and_return('processed yaml content')
+        end
+
+        it 'does not write the config file' do
+          expect(File).not_to receive(:write)
+          tunnel_cmd.invoke(:init, [], dry_run: true, force: false)
+        end
+      end
     end
   end
 
