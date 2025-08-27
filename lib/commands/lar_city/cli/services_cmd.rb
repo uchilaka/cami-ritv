@@ -23,6 +23,34 @@ module LarCity
                long_desc:, desc:, required:
       end
 
+      desc 'daemonize', 'Run a command to setup the app service as a background daemon process'
+      def daemonize
+        if Rails.env.test?
+          say 'Skipping daemonize in test environment.', :red
+          return
+        end
+
+        plist_file_template = Rails.root.join('config', 'com.larcity.cami.plist.erb').to_s
+        file_name = config_file_from(template: plist_file_template)
+        plist_file_path = config_file(name: file_name)
+        # Process the ERB template
+        if config_file_exists?(name: file_name)
+          say "Daemon config already exists at #{plist_file_path}.", :yellow
+          print_line_break
+          say_info daemonize_guide(plist_file_path:)
+          return
+        end
+
+        say 'Processing daemon config ERB...'
+        plist_config = ERB.new(File.read(plist_file_template)).result
+        say "Writing daemon config to #{plist_file_path}", :yellow
+        File.write plist_file_path, plist_config unless dry_run?
+        return unless verbose?
+
+        print_line_break
+        say_info daemonize_guide(plist_file_path:)
+      end
+
       add_port_option(desc: I18n.t('commands.services.lookup.options.port.short_desc'))
       desc 'lookup', I18n.t('commands.services.lookup.short_desc')
       long_desc I18n.t('commands.services.lookup.long_desc')
@@ -148,6 +176,26 @@ module LarCity
       end
 
       no_commands do
+        protected
+
+        def daemonize_guide(plist_file_path:)
+          mgt_guide = <<~GUIDE
+            To manage the app daemon, use the `launchctl` command. For example:
+              launchctl list | grep cami
+              launchctl unload -w #{plist_file_path}
+              launchctl load -w #{plist_file_path}
+          GUIDE
+          macos_guide = <<~GUIDE
+            For instructions on implementing a service demon on macOS, see:
+            https://developer.apple.com/library/archive/documentation/MacOSX/Conceptual/BPSystemStartup/Chapters/Introduction.html
+
+            #{mgt_guide}
+          GUIDE
+          return macos_guide if mac?
+
+          mgt_guide
+        end
+
         def lookup_by_configured_ports
           if configured_ports.blank?
             say 'No configured ports found. Please ensure your environment variables are set correctly.', :red
@@ -180,6 +228,8 @@ module LarCity
         def lookup_all_listening_ports_command
           'lsof -iTCP -sTCP:LISTEN -P -n'
         end
+
+        private
 
         def service_connect_command
           if use_database_service?

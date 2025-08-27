@@ -114,6 +114,10 @@ module LarCity
           Rails.root.join('config', name).to_s
         end
 
+        def print_line_break(span: 50)
+          say('=' * span)
+        end
+
         def say_info(message)
           say(message, :cyan)
         end
