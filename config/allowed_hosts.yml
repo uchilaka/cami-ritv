@@ -7,18 +7,19 @@ test:
 staging:
   - accounts.staging.larcity.hopto.org
   - accounts.staging.larcity.org
-  - accounts.staging.lar.city
+  - accounts.staging.larcity.tech
   - accounts.staging.larcity.business
-  - accounts.staging.madebylar.city
-  - accounts.staging.larcity.com
+  #- accounts.staging.madebylar.city
+  #- accounts.staging.larcity.com
 production:
   - accounts.larcity.hopto.org
-  - accounts.ho.lar.city
-  - accounts.ho.madebylar.city
+  #- accounts.ho.lar.city
+  #- accounts.ho.madebylar.city
   - accounts.ho.larcity.business
-  - accounts.larcity.com
-  - accounts.lar.city
-  - www.larcity.com
-  - www.lar.city
-  - larcity.com
-  - lar.city
+  #- accounts.larcity.com
+  - accounts.larcity.tech
+  #- accounts.lar.city
+  #- www.larcity.com
+  #- www.lar.city
+  #- larcity.com
+  #- lar.city

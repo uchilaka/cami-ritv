@@ -31,12 +31,16 @@ class AppUtils
       send_emails? && !letter_opener_enabled? && !mailhog_enabled?
     end
 
+    def hostname_is_proxied?
+      Rails.env.staging? || hostname_is_nginx_proxy?
+    end
+
     def hostname_is_nginx_proxy?
       /\.ngrok\.(dev|app)/.match?(hostname)
     end
 
     def use_secure_protocol?
-      Rails.env.production? || hostname_is_nginx_proxy?
+      Rails.env.production? || hostname_is_proxied?
     end
 
     # LetterOpener should be enabled by default in the development environment

@@ -58,6 +58,24 @@ Rails.application.configure do
   config.solid_queue.connects_to = { database: { writing: :queue } }
   config.active_job.connects_to = { database: { writing: :queue } }
 
+  # Store uploaded files on the local file system (see config/storage.yml for options).
+  config.active_storage.service = :local
+
+  # Action Mailer Config
+  config.action_mailer.perform_deliveries = AppUtils.send_emails?
+  config.action_mailer.delivery_method = :smtp
+  # Configure the mailer to use the SMTP server
+  config.action_mailer.smtp_settings =
+    {
+      address: ENV.fetch('SMTP_SERVER', Rails.application.credentials.brevo.smtp_server),
+      port: ENV.fetch('SMTP_PORT', Rails.application.credentials.brevo.smtp_port),
+      user_name: ENV.fetch('SMTP_USERNAME', Rails.application.credentials.brevo.smtp_user),
+      password: ENV.fetch('SMTP_PASSWORD', Rails.application.credentials.brevo.smtp_password),
+      enable_starttls_auto: true,
+    }
+  # Configure logging for the app's mail service.
+  config.action_mailer.logger = Rails.logger
+
   # Enable DNS rebinding protection and other `Host` header attacks.
   # config.hosts = [
   #   "example.com",     # Allow requests from example.com
