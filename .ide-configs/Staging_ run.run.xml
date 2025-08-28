@@ -1,6 +1,7 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="Staging: run" type="CompoundRunConfigurationType">
     <toRun name="Staging: jobs" type="CommandRunConfigurationType" />
+    <toRun name="rails assets:precompile" type="CommandRunConfigurationType" />
     <toRun name="Staging: CAMI" type="RailsRunConfigurationType" />
     <method v="2" />
   </configuration>

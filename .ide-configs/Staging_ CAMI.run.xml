@@ -21,8 +21,6 @@
     <RAILS_SERVER_CONFIG_SETTINGS_ID NAME="RAILS_SERVER_TYPE" VALUE="default" />
     <RAILS_SERVER_CONFIG_SETTINGS_ID NAME="ENVIRONMENT_TYPE" VALUE="staging" />
     <RAILS_SERVER_CONFIG_SETTINGS_ID NAME="LAUNCH_JS" VALUE="false" />
-    <method v="2">
-      <option name="RunConfigurationTask" enabled="true" run_configuration_name="rails assets:precompile" run_configuration_type="CommandRunConfigurationType" />
-    </method>
+    <method v="2" />
   </configuration>
 </component>
