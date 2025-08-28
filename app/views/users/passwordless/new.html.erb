@@ -6,7 +6,7 @@
         resource,
         as: resource_name,
         url: user_session_path,
-        html: { class: "space-y-6 text-default-font" }
+        html: { class: "space-y-6" }
       ) do |f| %>
     <div class="field">
       <%= f.label :email, class: "label" %>
@@ -21,7 +21,7 @@
     <% end %>
 
     <div class="field">
-      <%= f.submit "Send me an access link", class: "btn block bg-brand-primary hover:bg-brand-700 w-full" %>
+      <%= f.submit "Send me an access link", class: primary_btn_classes("block w-full") %>
     </div>
   <% end %>
   <div class="my-3">
