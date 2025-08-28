@@ -10,6 +10,7 @@
     "check": "tsc -p tsconfig.app.json && tsc -p tsconfig.node.json",
     "clobber": "bin/clobber-all",
     "build:css": "bin/rails tailwindcss:build",
+    "build:assets": "bin/rails assets:precompile",
     "build": "bin/vite build",
     "start": "bin/start",
     "lint": "eslint",
