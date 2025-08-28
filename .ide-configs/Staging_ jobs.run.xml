@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Development: jobs" type="CommandRunConfigurationType" factoryName="Gem Command">
+  <configuration default="false" name="Staging: jobs" type="CommandRunConfigurationType" factoryName="Gem Command">
     <module name="cami" />
     <COMMAND_RUN_CONFIGURATION NAME="RUBY_ARGS" VALUE="" />
     <COMMAND_RUN_CONFIGURATION NAME="WORK DIR" VALUE="" />
