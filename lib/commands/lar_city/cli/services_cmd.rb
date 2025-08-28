@@ -23,6 +23,10 @@ module LarCity
                long_desc:, desc:, required:
       end
 
+      option :force,
+              desc: 'Force overwrite of existing daemon config',
+              type: :boolean,
+              default: false
       desc 'daemonize', 'Run a command to setup the app service as a background daemon process'
       def daemonize
         if Rails.env.test?
@@ -34,11 +38,20 @@ module LarCity
         file_name = config_file_from(template: plist_file_template)
         plist_file_path = config_file(name: file_name)
         # Process the ERB template
-        if !dry_run? && config_file_exists?(name: file_name)
+        if !dry_run? && config_file_exists?(name: file_name) && !options[:force]
           say "Daemon config already exists at #{plist_file_path}.", :yellow
           print_line_break
           say_info daemonize_guide(plist_file_path:)
           return
+        end
+
+        if options[:force]
+          force_msg = <<~WARNING
+            **************************************************************************
+            *  WARNING: Any existing plist configuration file(s) will be overwritten *
+            **************************************************************************
+          WARNING
+          say force_msg, Color::YELLOW
         end
 
         say 'Processing daemon config ERB...'
@@ -47,15 +60,26 @@ module LarCity
         File.write plist_file_path, plist_config unless dry_run?
         print_line_break
 
+        # Make the plist file executable
+        FileUtils.chmod "+x", plist_file_path, verbose: verbose?, noop: dry_run?
+
+        # Symlink the plist file to /Library/LaunchAgents for system-wide daemons
+        launch_agents_path = '/Library/LaunchDaemons'
+        symlink_path = File.join(launch_agents_path, file_name)
+        # FileUtils.ln_sf plist_file_path, symlink_path, verbose: verbose?, noop: dry_run?
+        run "sudo", "ln", "-svf", plist_file_path, symlink_path
+
         if verbose?
-          say_info daemonize_guide(plist_file_path:)
+          say_info daemonize_guide(plist_file_path: symlink_path)
           print_line_break
         end
 
         say 'Loading the daemon with launchctl...', :yellow
-        run 'sudo', 'launchctl', 'load', '-w', plist_file_path
+        run 'sudo', 'launchctl', 'load', '-w', symlink_path
         print_line_break
-        say 'Daemon loaded. You can manage it using launchctl commands.', :green
+        say_success 'Daemon loaded. You can manage it using launchctl commands.'
+        print_line_break
+        say_success daemonize_guide(plist_file_path: symlink_path)
       rescue StandardError => e
         puts "Error setting up daemon: #{e.message}"
       end

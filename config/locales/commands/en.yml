@@ -16,9 +16,12 @@ en:
           %{user_guide}
         user_guide: >
           To manage the app daemon, use the `launchctl` command. For example:
+            sudo plutil -lint %{plist_file_path}
             sudo launchctl list | grep cami
+            sudo launchctl bootstrap system %{plist_file_path}
             sudo launchctl unload -w %{plist_file_path}
             sudo launchctl load -w %{plist_file_path}
+            sudo launchctl bootout system %{plist_file_path}
       lookup:
         short_desc: Lookup a service by its name
         long_desc: >

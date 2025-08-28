@@ -76,6 +76,17 @@ Rails.application.configure do
   # Configure logging for the app's mail service.
   config.action_mailer.logger = Rails.logger
 
+  config.action_mailer.default_url_options = { host: 'accounts.staging.larcity.tech' }
+
+  # Print deprecation notices to the Rails logger.
+  # config.active_support.deprecation = :log
+
+  # Highlight code that triggered database queries in logs.
+  # config.active_record.verbose_query_logs = false
+
+  # Append comments with runtime information tags to SQL queries in logs.
+  # config.active_record.query_log_tags_enabled = false
+
   # Enable DNS rebinding protection and other `Host` header attacks.
   # config.hosts = [
   #   "example.com",     # Allow requests from example.com
@@ -88,5 +99,5 @@ Rails.application.configure do
   # TODO: Disable basic auth for mission_control - to do this, confirm that
   #   in production, the route configured constraints for /admin/mission_control
   #   are working as intended to guard /admin/* routes.
-  # config.mission_control.jobs.http_basic_auth_enabled = false
+  config.mission_control.jobs.http_basic_auth_enabled = true
 end
