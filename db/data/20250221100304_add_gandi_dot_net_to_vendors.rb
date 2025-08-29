@@ -2,10 +2,7 @@
 
 class AddGandiDotNetToVendors < ActiveRecord::Migration[7.2]
   def up
-    updates = {
-      display_name: 'Gandi US, Inc.',
-      metadata:,
-    }
+    updates = { display_name: 'Gandi US, Inc.', metadata: }
     gandi = Vendor.find_or_initialize_by(slug: 'gandi-dot-net')
     gandi.assign_attributes(**updates)
     action_taken = gandi.new_record? ? 'create' : 'update'
