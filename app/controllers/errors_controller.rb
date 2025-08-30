@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class ErrorsController < ApplicationController
+  attr_reader :exception, :error_status_code
+
   layout 'error'
 
   # TODO: How does this impact analytics? E.g. reporting to tools like Heap that the
@@ -9,22 +11,23 @@ class ErrorsController < ApplicationController
 
   skip_before_action :authenticate_user!
 
+  before_action :set_error_status_code
+
   rescue_from LarCity::Errors::ElevatedPrivilegesRequired, with: :forbidden
   rescue_from LarCity::Errors::UnprocessableEntity, with: :unprocessable_entity
   rescue_from LarCity::Errors::InternalServerError, with: :server_error
   rescue_from LarCity::Errors::ResourceNotFound, with: :not_found
   rescue_from ActionController::InvalidAuthenticityToken, with: :unprocessable_entity
   rescue_from ActionController::RoutingError do |exception|
-    emit_routing_exception(exception)
+    if Flipper.enabled?(:feat__replay_routing_errors)
+      emit_routing_exception(exception)
+    else
+      handle_routing_error
+    end
   end
 
   def show
-    @exception = request.env['action_dispatch.exception']
-    @status_code =
-      @exception.try(:status_code) ||
-      ActionDispatch::ExceptionWrapper.new(request.env, @exception).status_code
-
-    render view_for_code(@status_code), status: @status_code
+    render view_for_code(error_status_code), status: error_status_code
   end
 
   def unprocessable_entity
@@ -56,9 +59,37 @@ class ErrorsController < ApplicationController
     end
   end
 
+  def handle_routing_error
+    @mutex ||= Mutex.new
+    @mutex.synchronize do
+      if %r{/admin/}.match?(request.fullpath)
+        if request.params[:unmatched].present?
+          render view_for_code(403), status: :forbidden
+        else
+          render view_for_code(422), status: :unprocessable_entity
+        end
+      else
+        render view_for_code(error_status_code), status: error_status_code
+      end
+    end
+  end
+
+  def status_code_from_exception
+    @exception = request.env['action_dispatch.exception']
+    @exception.try(:status_code) ||
+      ActionDispatch::ExceptionWrapper.new(request.env, @exception).status_code
+  end
+
   def render_static_error
     error_view, code = resolve_status
     render error_view, status: code
+  end
+
+  protected
+
+  # Also sets :exception
+  def set_error_status_code
+    @error_status_code = status_code_from_exception
   end
 
   private

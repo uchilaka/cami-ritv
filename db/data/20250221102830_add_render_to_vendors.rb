@@ -7,7 +7,7 @@ class AddRenderToVendors < ActiveRecord::Migration[7.2]
       display_name: 'Render',
       metadata: {
         website_url: 'https://render.com',
-        pricing_url: 'https://render.com/pricing'
+        pricing_url: 'https://render.com/pricing',
       },
       readme: <<~README
         # Render

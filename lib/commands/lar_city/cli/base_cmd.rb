@@ -88,7 +88,35 @@ module LarCity
           raise e
         end
 
+        def config_file_exists?(name:)
+          current_config_file = config_file(name:)
+          if Dir.exist?(current_config_file)
+            raise StandardError, <<~ERROR_MSG
+              #{current_config_file} is a directory - it should be a file. \
+              This can result if you attempted to start your app (dockerized) services \
+              before the app has had the chance to process the templates \
+              and setup your configuration files. The root cause is docker compose \
+              attempting to mount a file that doesn't exist (which creates a folder \
+              by default). Delete the directory and re-try the command.
+            ERROR_MSG
+          end
+
+          File.exist?(current_config_file)
+        end
+
         protected
+
+        def config_file_from(template:)
+          File.basename(template, File.extname(template))
+        end
+
+        def config_file(name:)
+          Rails.root.join('config', name).to_s
+        end
+
+        def print_line_break(span: 50)
+          say('=' * span)
+        end
 
         def say_info(message)
           say(message, :cyan)

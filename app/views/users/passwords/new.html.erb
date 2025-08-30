@@ -10,10 +10,11 @@
     </div>
 
     <div class="field">
-      <%= f.submit "Send me reset password instructions", class: "btn btn-primary w-full" %>
+      <%= f.submit "Send me reset password instructions", class: primary_btn_classes("block w-full") %>
     </div>
   <% end %>
   <hr class="my-5">
   <%= render "users/shared/links" %>
 <% end %>
-<%= render "layouts/centered-form" %>
+
+<%= render "layouts/centered-form-layout" %>

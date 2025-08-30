@@ -31,12 +31,16 @@ class AppUtils
       send_emails? && !letter_opener_enabled? && !mailhog_enabled?
     end
 
+    def hostname_is_proxied?
+      Rails.env.staging? || hostname_is_nginx_proxy?
+    end
+
     def hostname_is_nginx_proxy?
       /\.ngrok\.(dev|app)/.match?(hostname)
     end
 
     def use_secure_protocol?
-      Rails.env.production? || hostname_is_nginx_proxy?
+      Rails.env.production? || hostname_is_proxied?
     end
 
     # LetterOpener should be enabled by default in the development environment
@@ -111,6 +115,15 @@ class AppUtils
       else
         :info
       end
+    end
+
+    def daemon_script
+      @daemon_script ||= Rails.root.join("bin/start").to_s
+    end
+
+    def log_file
+      @log_file ||= ENV.fetch('LOG_FILE', nil)
+      @log_file || Rails.root.join("log/#{ENV.fetch('RAILS_ENV', 'cami')}.log").to_s
     end
 
     def allowed_hosts_for(provider:)

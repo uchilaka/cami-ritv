@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Development: jobs" type="CommandRunConfigurationType" factoryName="Gem Command">
+  <configuration default="false" name="rails assets:precompile" type="CommandRunConfigurationType" factoryName="Gem Command">
     <module name="cami" />
     <COMMAND_RUN_CONFIGURATION NAME="RUBY_ARGS" VALUE="" />
     <COMMAND_RUN_CONFIGURATION NAME="WORK DIR" VALUE="" />
@@ -15,7 +15,7 @@
     <EXTENSION ID="org.jetbrains.plugins.ruby.rails.run.RailsRunConfigurationExtension" SCRATCH_USE_RAILS_RUNNER="false" />
     <COMMAND_CONFIG_SETTINGS_ID NAME="GEM_NAME" VALUE="rails" />
     <COMMAND_CONFIG_SETTINGS_ID NAME="EXECUTABLE_NAME" VALUE="rails" />
-    <COMMAND_CONFIG_SETTINGS_ID NAME="EXECUTABLE_ARGS" VALUE="solid_queue:start" />
+    <COMMAND_CONFIG_SETTINGS_ID NAME="EXECUTABLE_ARGS" VALUE="assets:precompile" />
     <COMMAND_CONFIG_SETTINGS_ID NAME="WORKING_DIR" VALUE="" />
     <method v="2" />
   </configuration>

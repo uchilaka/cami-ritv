@@ -9,25 +9,8 @@ class VirtualOfficeManager
   class << self
     delegate :hostname,
              :use_secure_protocol?,
+             :hostname_is_proxied?,
              :hostname_is_nginx_proxy?, to: AppUtils
-
-    # # @deprecated use AppUtils.hostname instead
-    # def hostname
-    #   # TODO: Check if tunnel is available and use the NGROK hostname if so
-    #   #   otherwise, fallback to the configured hostname 👇🏾
-    #   ENV.fetch('HOSTNAME', Rails.application.credentials.hostname)
-    # end
-    #
-    # # @deprecated use AppUtils.hostname_is_nginx_proxy? instead
-    # def hostname_is_nginx_proxy?
-    #   /\.ngrok\.(dev|app)/.match?(hostname)
-    # end
-
-    # def job_queue_is_running?
-    #   scheduled_set = Sidekiq::ScheduledSet.new
-    #   job_stats = Sidekiq::Stats.new
-    #   scheduled_set.size.positive? || job_stats.enqueued.positive?
-    # end
 
     def default_url_options
       # Only run this in the context of a job
@@ -42,7 +25,7 @@ class VirtualOfficeManager
     end
 
     def initial_default_url_options
-      { host: hostname, port: hostname_is_nginx_proxy? ? nil : ENV.fetch('PORT') }.compact
+      { host: hostname, port: hostname_is_proxied? ? nil : ENV.fetch('PORT') }.compact
     end
 
     def default_entity

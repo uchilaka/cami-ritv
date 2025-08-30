@@ -1,0 +1,23 @@
+<%
+require 'lib/app_utils'
+%>
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.larcity.cami</string>
+    <key>ProgramArguments</key>
+    <array>
+      <string><%= AppUtils.daemon_script %></string>
+    </array>
+    <key>RunAtLoad</key>
+    <true/>
+    <key>KeepAlive</key>
+    <true/>
+    <key>StandardOutPath</key>
+    <string><%= AppUtils.log_file %></string>
+    <key>StandardErrorPath</key>
+    <string><%= AppUtils.log_file %></string>
+</dict>
+</plist>

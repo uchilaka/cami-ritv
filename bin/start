@@ -1,0 +1,7 @@
+#!/usr/bin/env zsh
+
+# Calculate the process file to run
+PROCESS_FILE="Procfile.${RAILS_ENV}"
+
+# Start the processes for the Rails application
+/opt/homebrew/bin/goreman -f "$PROCESS_FILE" start

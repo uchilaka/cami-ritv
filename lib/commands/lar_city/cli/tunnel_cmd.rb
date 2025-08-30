@@ -9,6 +9,11 @@ module LarCity
     class TunnelCmd < BaseCmd
       namespace 'tunnel'
 
+      option :force,
+             desc: I18n.t('commands.tunnel.init.options.force.short_desc'),
+             long_desc: I18n.t('commands.tunnel.init.options.force.long_desc'),
+             type: :boolean,
+             default: false
       desc 'init', 'Initialize ngrok config for the project'
       def init
         if Rails.env.test?
@@ -16,21 +21,32 @@ module LarCity
           return
         end
 
-        # Process each NGROK config file template found in the config directory
-        Dir[Rails.root.join('config', 'ngrok*.yml.erb')].each do |config_file_template|
-          next unless File.exist?(config_file_template)
+        if options[:force]
+          force_msg = <<~WARNING
+            ************************************************************************
+            *  WARNING: Any existing NGROK configuration files will be overwritten *
+            ************************************************************************
+          WARNING
+          say force_msg, Color::YELLOW
+        end
 
-          file_name = File.basename(config_file_template, File.extname(config_file_template))
+        # Process each NGROK config file template found in the config directory
+        for_each_app_proxy_config(force: options[:force]) do |template_file, config_file_name|
+          unless File.exist?(template_file)
+            say "No ngrok config template found at #{template_file}. Skipping.", Color::RED
+            next
+          end
+
           # Process an ERB config file if one is found
-          if config_file_exists?(name: file_name)
-            say "ngrok config already exists at #{config_file(name: file_name)}.", Color::YELLOW
+          if !options[:force] && config_file_exists?(name: config_file_name)
+            say "ngrok config already exists at #{config_file(name: config_file_name)}.", Color::YELLOW
             next
           end
 
           puts 'Processing ngrok config ERB...'
-          yaml_config = ERB.new(File.read(config_file_template)).result
-          puts "Writing ngrok config to #{config_file(name: file_name)}"
-          File.write config_file(name: file_name), yaml_config unless dry_run?
+          yaml_config = ERB.new(File.read(template_file)).result
+          puts "Writing ngrok config to #{config_file(name: config_file_name)}"
+          File.write config_file(name: config_file_name), yaml_config unless dry_run?
         end
       end
 
@@ -86,6 +102,25 @@ module LarCity
       end
 
       no_commands do
+        def app_proxies_configured?
+          @app_proxies_configured ||= app_proxy_config_files.all? { |f| File.exist? f }
+        end
+
+        protected
+
+        def for_each_app_proxy_config(force: false, &)
+          app_proxy_config_files.each do |file_name|
+            config_file_template = "#{file_name}.erb"
+            next if config_file_exists?(name: file_name) && !force
+
+            yield config_file_template, file_name
+          end
+        end
+
+        def app_proxy_config_files
+          @app_proxy_config_files ||= Dir[Rails.root.join('config', 'ngrok*.yml')]
+        end
+
         def proxy_config_files
           unless defined?(@proxy_config_files)
             # TODO: Check for ngrok config file(s) and exit if they don't exist
@@ -99,7 +134,7 @@ module LarCity
         end
 
         def app_config_file
-          File.join(project_root, 'config', 'ngrok.yml')
+          config_file(name: 'ngrok.yml')
         end
 
         def profile_config_file
@@ -112,26 +147,6 @@ module LarCity
 
       private
 
-      def config_file(name: 'ngrok.yml')
-        Rails.root.join('config', name).to_s
-      end
-
-      def config_file_exists?(name: 'ngrok.yml')
-        current_config_file = config_file(name:)
-        if Dir.exist?(current_config_file)
-          raise StandardError, <<~ERROR_MSG
-            #{current_config_file} is a directory - it should be a file. \
-            This can result if you attempted to start your app (dockerized) services \
-            before the app has had the chance to process the NGROK templates \
-            and setup your configuration files. The root cause is docker compose \
-            attempting to mount a file that doesn't exist (which creates a folder \
-            by default). Delete the directory and re-try the command.
-          ERROR_MSG
-        end
-
-        File.exist?(current_config_file)
-      end
-
       def auth_token_nil?
         ENV.fetch('NGROK_AUTH_TOKEN', nil).nil?
       end
@@ -139,24 +154,7 @@ module LarCity
       def project_root
         return @project_root if @project_root
 
-        # project_rel_path = File.expand_path('../../..', __dir__)
-        # if has_realpath_cmd?
-        #   project_root = `realpath "#{project_rel_path}"`
-        # elsif has_python_3?
-        #   project_root = `python3 -c "import os; print(os.path.realpath('#{project_rel_path}'))"`
-        # else
-        #   puts 'realpath could not be found. Tunnel will not be opened.'
-        #   exit 1
-        # end
-        #
-        # if project_root.empty?
-        #   puts 'realpath could not be found. Tunnel will not be opened.'
-        #   exit 1
-        # end
-        #
-        # @project_root = project_root.strip!
         @project_root = Rails.root.to_s
-
         if verbose?
           puts <<~CMD
             ===========================================================================

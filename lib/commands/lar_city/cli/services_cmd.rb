@@ -13,10 +13,78 @@ module LarCity
                    enum: %w[all essential batteries-included],
                    default: 'batteries-included'
 
-      option :port,
-             type: :string,
-             desc: I18n.t('commands.services.kill.options.port.short_desc'),
-             long_desc: I18n.t('commands.services.kill.options.port.long_desc')
+      def self.add_port_option(
+        desc:,
+        long_desc: I18n.t('commands.services.lookup.options.port.long_desc'),
+        required: false
+      )
+        option :port,
+               type: :string,
+               long_desc:, desc:, required:
+      end
+
+      option :force,
+              desc: 'Force overwrite of existing daemon config',
+              type: :boolean,
+              default: false
+      desc 'daemonize', 'Run a command to setup the app service as a background daemon process'
+      def daemonize
+        if Rails.env.test?
+          say 'Skipping daemonize in test environment.', :red
+          return
+        end
+
+        plist_file_template = Rails.root.join('config', 'com.larcity.cami.plist.erb').to_s
+        file_name = config_file_from(template: plist_file_template)
+        plist_file_path = config_file(name: file_name)
+        # Process the ERB template
+        if !dry_run? && config_file_exists?(name: file_name) && !options[:force]
+          say "Daemon config already exists at #{plist_file_path}.", :yellow
+          print_line_break
+          say_info daemonize_guide(plist_file_path:)
+          return
+        end
+
+        if options[:force]
+          force_msg = <<~WARNING
+            **************************************************************************
+            *  WARNING: Any existing plist configuration file(s) will be overwritten *
+            **************************************************************************
+          WARNING
+          say force_msg, Color::YELLOW
+        end
+
+        say 'Processing daemon config ERB...'
+        plist_config = ERB.new(File.read(plist_file_template)).result
+        say "Writing daemon config to #{plist_file_path}", :yellow
+        File.write plist_file_path, plist_config unless dry_run?
+        print_line_break
+
+        # Make the plist file executable
+        FileUtils.chmod "+x", plist_file_path, verbose: verbose?, noop: dry_run?
+
+        # Symlink the plist file to /Library/LaunchAgents for system-wide daemons
+        launch_agents_path = '/Library/LaunchDaemons'
+        symlink_path = File.join(launch_agents_path, file_name)
+        # FileUtils.ln_sf plist_file_path, symlink_path, verbose: verbose?, noop: dry_run?
+        run "sudo", "ln", "-svf", plist_file_path, symlink_path
+
+        if verbose?
+          say_info daemonize_guide(plist_file_path: symlink_path)
+          print_line_break
+        end
+
+        say 'Loading the daemon with launchctl...', :yellow
+        run 'sudo', 'launchctl', 'load', '-w', symlink_path
+        print_line_break
+        say_success 'Daemon loaded. You can manage it using launchctl commands.'
+        print_line_break
+        say_success daemonize_guide(plist_file_path: symlink_path)
+      rescue StandardError => e
+        puts "Error setting up daemon: #{e.message}"
+      end
+
+      add_port_option(desc: I18n.t('commands.services.lookup.options.port.short_desc'))
       desc 'lookup', I18n.t('commands.services.lookup.short_desc')
       long_desc I18n.t('commands.services.lookup.long_desc')
       def lookup
@@ -71,11 +139,7 @@ module LarCity
         puts "Error looking up PID: #{e.message}"
       end
 
-      option :port,
-             type: :string,
-             desc: I18n.t('commands.services.kill.options.port.short_desc'),
-             long_desc: I18n.t('commands.services.kill.options.port.long_desc'),
-             required: true
+      add_port_option(desc: I18n.t('commands.services.kill.options.port.short_desc'), required: true)
       desc 'kill', I18n.t('commands.services.kill.short_desc')
       long_desc I18n.t('commands.services.kill.long_desc')
       def kill
@@ -145,6 +209,16 @@ module LarCity
       end
 
       no_commands do
+        protected
+
+        def daemonize_guide(plist_file_path:)
+          user_guide = I18n.t("commands.services.daemonize.user_guide", plist_file_path:)
+          macos_guide = I18n.t("commands.services.daemonize.macos_guide", user_guide:)
+          return macos_guide if mac?
+
+          user_guide
+        end
+
         def lookup_by_configured_ports
           if configured_ports.blank?
             say 'No configured ports found. Please ensure your environment variables are set correctly.', :red
@@ -177,6 +251,8 @@ module LarCity
         def lookup_all_listening_ports_command
           'lsof -iTCP -sTCP:LISTEN -P -n'
         end
+
+        private
 
         def service_connect_command
           if use_database_service?

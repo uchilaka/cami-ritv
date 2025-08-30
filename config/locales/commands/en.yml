@@ -1,21 +1,48 @@
 en:
   commands:
     services:
+      daemonize:
+        short_desc: Configure the app service as a background daemon process
+        long_desc: >
+          This command configures the app service to run as a background daemon process.
+          It sets up the necessary files and directories to enable the service to
+          start automatically on system boot and run in the background.
+          For instructions on implementing a service demon on macOS, see:
+          https://developer.apple.com/library/archive/documentation/MacOSX/Conceptual/BPSystemStartup/Chapters/Introduction.html
+        macos_guide: >
+          For macOS instructions on managing daemons and agents, see:
+          https://developer.apple.com/library/archive/documentation/MacOSX/Conceptual/BPSystemStartup/Chapters/ManagingDaemonsAndAgents.html
+
+          %{user_guide}
+        user_guide: >
+          To manage the app daemon, use the `launchctl` command. For example:
+            sudo plutil -lint %{plist_file_path}
+            sudo launchctl list | grep cami
+            sudo launchctl bootstrap system %{plist_file_path}
+            sudo launchctl unload -w %{plist_file_path}
+            sudo launchctl load -w %{plist_file_path}
+            sudo launchctl bootout system %{plist_file_path}
       lookup:
         short_desc: Lookup a service by its name
         long_desc: >
-          This command allows you to lookup services for the CAMI app, \
+          This command allows you to lookup services for the CAMI app,
           listing resources like the port number and PID file.
         no_port_specified_msg: >
-          No port number was specified. Please specify a port number \
+          No port number was specified. Please specify a port number
           using the --port option to lookup the service process.
+        options:
+          port:
+            short_desc: The port number of the service to lookup
+            long_desc: >
+              The port number is a numeric value e.g. `3000` and can be found in the
+              system process list (or someplace like your Rails console output in your IDE).
       kill:
         short_desc: Kill a service by its listening port
         long_desc: >
-          This command allows you to kill a service by its listening port. \
-          An example of when you would use this command is when a service is \
-          not responding (e.g. a zombie Rails server instance) or consuming \
-          too many resources and locking the UI of a specific application. \
+          This command allows you to kill a service by its listening port.
+          An example of when you would use this command is when a service is
+          not responding (e.g. a zombie Rails server instance) or consuming
+          too many resources and locking the UI of a specific application.
           Oracle doc reference: https://docs.oracle.com/cd/E19253-01/817-0403/eoizf/index.html
         completed_msg: >
           The request to kill service `%{service}` has been completed. If you were
@@ -41,3 +68,18 @@ en:
           The request to kill process with PID `%{pid}` has been completed. If you were
           trying to kill a process, please check the system process list to confirm
           that it has been terminated.
+
+    tunnel:
+      init:
+        short_desc: Initialize proxy tunnel configuration for the CAMI app
+        long_desc: >
+          This command initializes the proxy tunnel configuration for the CAMI app.
+          It sets up the necessary files and directories to enable secure tunneling
+          for the application in non-production environments. This feature is currently
+          implemented with NGROK.
+        options:
+          force:
+            short_desc: Force re-initialization of the tunnel configuration
+            long_desc: >
+              If the tunnel configuration already exists, using this option will
+              overwrite the existing configuration and re-initialize it.

@@ -9,7 +9,7 @@ gem 'mission_control-jobs'
 
 # Autoload dotenv in Rails https://github.com/bkeepers/dotenv
 # IMPORTANT: This should be loaded as early as possible
-gem 'dotenv', groups: %i[development test], require: 'dotenv/load'
+gem 'dotenv', require: 'dotenv/load'
 
 # Feature rich logging framework that replaces the Rails logger.
 gem 'rails_semantic_logger'
@@ -123,15 +123,12 @@ end
 group :development do
   # Ruby on Rails Live Reload https://github.com/railsjazz/rails_live_reload
   gem 'rails_live_reload'
-
   # Speed up commands on slow machines / big apps https://github.com/rails/spring
   # gem "spring"
   # Use console on exceptions pages https://github.com/rails/web-console
   gem 'web-console'
-
   # Annotates Rails Models, routes, fixtures, and others based on the database schema.
   gem 'annotaterb'
-
   # Preview mail in browser instead of sending https://github.com/ryanb/letter_opener
   gem 'letter_opener'
 end

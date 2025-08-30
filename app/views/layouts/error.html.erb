@@ -2,10 +2,7 @@
 <html lang="en" class="h-full bg-gray-100">
   <%= content_for :head do %>
     <!-- include via CDN for turbo support -->
-    <%= stylesheet_link_tag "application",
-                            "tailwind",
-                            "actiontext", media: 'all' %>
-  <!-- <script src="https://cdn.tailwindcss.com"></script>-->
+    <script src="https://cdn.tailwindcss.com"></script>
   <% end %>
   <%= render partial: "layouts/shared/head", locals: { expect_flash_of_unstyled_content: false } %>
 
