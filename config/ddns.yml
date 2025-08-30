@@ -95,3 +95,8 @@ shared:
     content: ftps
     type: A
     ttl: 3600
+
+  - domain: larcity.tech
+    content: registry.ho
+    type: A
+    ttl: 3600
