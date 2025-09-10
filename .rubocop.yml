@@ -10,11 +10,11 @@
 # See https://docs.rubocop.org/rubocop/configuration
 
 # These are cops we need to re-enable section by section
-require:
+plugins:
   - rubocop-performance
 
 AllCops:
-  TargetRubyVersion: 3.2.2
+  TargetRubyVersion: 3.2
   # For more information: https://docs.rubocop.org/rubocop/versioning.html
   #  NewCops: disable
   Exclude:
