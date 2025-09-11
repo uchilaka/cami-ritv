@@ -19,7 +19,7 @@ common: &common
 home_office: &home_office
   <<: *common
   ddns_update_job:
-    class: DDNSUpdateJob
+    class: DDNSUpsertJob
     queue: yeet
     # args: [ 1000, { batch_size: 500 } ]
     schedule: 'every 15 minutes America/New_York' # every 15 minutes

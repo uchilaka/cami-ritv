@@ -86,7 +86,7 @@ RSpec.describe LarCity::CLI::DDNSCmd do
       expect(instance).to receive(:fetch_public_ip).and_return(ip_address)
 
       # Expect the update_dns_record method to be called with the correct arguments
-      expect(instance).to receive(:update_dns_record).with(
+      expect(instance).to receive(:upsert_dns_record).with(
         token: access_token,
         domain:,
         record_name:,
@@ -190,7 +190,7 @@ RSpec.describe LarCity::CLI::DDNSCmd do
       end
 
       it 'updates the existing record' do
-        instance.send(:update_dns_record,
+        instance.send(:upsert_dns_record,
                       token: access_token,
                       domain:,
                       record_name:,
@@ -228,7 +228,7 @@ RSpec.describe LarCity::CLI::DDNSCmd do
       end
 
       it 'creates a new record' do
-        instance.send(:update_dns_record,
+        instance.send(:upsert_dns_record,
                       token: access_token,
                       domain:,
                       record_name:,
@@ -253,7 +253,7 @@ RSpec.describe LarCity::CLI::DDNSCmd do
         expect(instance).to receive(:exit).with(1)
 
 
-        instance.send(:update_dns_record,
+        instance.send(:upsert_dns_record,
                       token: 'invalid_token',
                       domain:,
                       record_name:,

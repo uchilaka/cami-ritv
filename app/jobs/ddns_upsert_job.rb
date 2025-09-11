@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class DDNSUpdateJob < ApplicationJob
+class DDNSUpsertJob < ApplicationJob
   queue_as :yeet
 
   def perform(domain: nil, content: nil, type: nil, ttl: 1800)

@@ -95,3 +95,9 @@ shared:
     content: ftps
     type: A
     ttl: 3600
+
+# TODO: Uncomment this record once registry.larcity.tech is set up
+#  - domain: larcity.tech
+#    content: registry
+#    type: A
+#    ttl: 3600

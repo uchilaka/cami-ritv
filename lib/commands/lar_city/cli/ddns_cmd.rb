@@ -25,7 +25,7 @@ module LarCity
         public_ip = fetch_public_ip
         say "Current public IP: #{public_ip}", :green
 
-        update_dns_record(
+        upsert_dns_record(
           token: access_token,
           domain: options[:domain],
           record_name: options[:record],
@@ -70,7 +70,7 @@ module LarCity
         # @param ip_address [String] IP address to set
         # @param ttl [Integer] Time to live in seconds (default: 300)
         # @return [void]
-        def update_dns_record(
+        def upsert_dns_record(
           token:,
           domain:,
           record_name:,
