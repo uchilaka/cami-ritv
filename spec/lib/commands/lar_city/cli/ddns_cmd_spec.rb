@@ -188,13 +188,39 @@ RSpec.describe LarCity::CLI::DDNSCmd do
         end
       end
 
-      it 'updates the existing record' do
-        instance.send(:upsert_dns_record,
-                      domain:,
-                      record_name:,
-                      record_type:,
-                      ip_address:,
-                      ttl:)
+      context 'and IP is the same' do
+        before do
+          allow(instance).to receive(:fetch_public_ip).and_return(ip_address)
+        end
+
+        it 'does not update the record' do
+          # Does not send HTTP request
+
+
+          expect(instance).to receive(:say).with(/No update needed for/, :green)
+
+          instance.send(:upsert_dns_record,
+                        domain:,
+                        record_name:,
+                        record_type:,
+                        ip_address:,
+                        ttl:)
+        end
+      end
+
+      context 'and IP is different' do
+        before do
+          allow(instance).to receive(:fetch_public_ip).and_return('192.4.2.1')
+        end
+
+        it 'updates the existing record' do
+          instance.send(:upsert_dns_record,
+                        domain:,
+                        record_name:,
+                        record_type:,
+                        ip_address:,
+                        ttl:)
+        end
       end
     end
 

@@ -156,6 +156,12 @@ module LarCity
                 (record_name == '@' ? r['name'].nil? || r['name'].empty? : r['name'] == record_name)
             end
 
+            if record.present? && record['data'] == ip_address
+              record_details = record_info(name: record_name, domain:, type: record_type, content: ip_address)
+              say "No update needed for #{record_details}", :green
+              return
+            end
+
             if record
               # Update existing record
               client.patch(
