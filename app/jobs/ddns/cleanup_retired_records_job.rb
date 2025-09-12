@@ -4,6 +4,8 @@ require 'lib/commands/lar_city/cli/ddns_cmd'
 
 module DDNS
   class CleanupRetiredRecordsJob < ApplicationJob
+    queue_as :yeet
+
     def perform
       Rails.application.config_for('ddns/retired').each do |record|
         domain, record, record_type =

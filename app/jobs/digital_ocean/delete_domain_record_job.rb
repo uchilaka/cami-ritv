@@ -2,6 +2,8 @@
 
 module DigitalOcean
   class DeleteDomainRecordJob < ApplicationJob
+    queue_as :yeet
+
     def perform(id, domain:, access_token: nil, pretend: false)
       DigitalOcean::API.delete_domain_record(id, domain:, access_token:, pretend:)
     end
