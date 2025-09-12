@@ -13,8 +13,20 @@ module DigitalOcean
         end
       end
 
-      def delete_domain_record(id)
-        http_client.delete(v2_endpoint("domains/#{domain}/records/#{id}"))
+      def delete_domain_record(id, domain:, access_token: default_access_token, pretend: false)
+        if pretend
+          puts "Pretending to delete domain record with ID #{id}"
+          return
+        end
+
+        http_client(access_token:).delete(v2_endpoint("domains/#{domain}/records/#{id}"))
+      end
+
+      def get_records(domain:, name:, type: 'A', page_page: 20, access_token: default_access_token)
+        http_client = http_client(access_token:)
+        query_string = { name:, type:, page_page: }.to_query
+        response = http_client.get(v2_endpoint("domains/#{domain}/records?#{query_string}"))
+        response.body['domain_records']
       end
 
       def v2_endpoint(uri = '')

@@ -2,13 +2,14 @@
 
 module DigitalOcean
   class DeleteDomainRecordJob < ApplicationJob
-    def perform(domain:, name:, type:)
+    def perform(id, domain:, access_token: nil, pretend: false)
+      DigitalOcean::API.delete_domain_record(id, domain:, access_token:, pretend:)
     end
 
     private
 
-    def client
-      @client ||= DigitalOcean::API.http_client
+    def client(access_token: nil)
+      @client ||= DigitalOcean::API.http_client(access_token:)
     end
   end
 end

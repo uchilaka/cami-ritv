@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'lib/digital_ocean/api'
+require 'lib/digital_ocean'
 
 module LarCity
   module CLI
@@ -10,25 +10,53 @@ module LarCity
 
       namespace :ddns
 
-      def self.set_dns_record_options
+      def self.set_dns_record_options(required: [])
         option :access_token, type: :string, aliases: '-p', desc: 'DigitalOcean API token'
-        option :domain, type: :string, required: true, desc: 'Domain name (e.g., example.com)'
-        option :record, type: :string, aliases: '-r', default: '@', desc: 'Record name (e.g., @ or subdomain)'
-        option :type, type: :string, aliases: '-t', default: 'A', desc: 'Record type (A, AAAA, etc.)'
-        option :ttl, type: :numeric, default: 300, desc: 'Time to live in seconds (default: 300)'
+        option :domain,
+               desc: 'Domain name (e.g., example.com)',
+               type: :string,
+               required: true
+        option :record,
+               desc: 'Record name (e.g., @ or subdomain)',
+               type: :string,
+               aliases: %w[-r -n],
+               default: required.include?(:record) ? nil : '@',
+               required: required.include?(:record)
+        option :type,
+               desc: 'Record type (A, AAAA, etc.)',
+               type: :string,
+               aliases: '-t',
+               default: required.include?(:type) ? nil : 'A',
+               required: required.include?(:type)
+        option :ttl,
+               desc: 'Time to live in seconds (default: 300)',
+               type: :numeric,
+               default: 300
       end
 
       desc 'cleanup', 'Cleanup retired DNS records'
-      set_dns_record_options
+      set_dns_record_options(required: %i[record])
+      option :batch_size, type: :numeric, default: 100, desc: 'Number of records to be processed'
       def cleanup
         domain = options[:domain]
         name = [options[:record], options[:domain]].join('.')
-        records = get_records(domain:, name:, type: options[:type])
+        with_http_error_rescue do
+          records = get_records(domain:, name:, type: options[:type], access_token:, page_page: options[:batch_size])
 
-        if records&.any?
-          say_info "Found #{records.size} records for #{name} on #{domain}"
-        else
-          say_warning "No records found for #{name} on #{domain}"
+          if records&.any?
+            say_info "Found #{records.size} records for #{name} on #{domain}"
+
+            records.each_with_index do |record, index|
+              backoff_seconds = (index + 1) * 5
+              record_details = record_info(name: record['name'], domain:, type: record['type'], content: record['data'])
+              say "Enqueueing deletion for #{record_details}", :yellow
+              DigitalOcean::DeleteDomainRecordJob
+                .set(wait: backoff_seconds.seconds)
+                .perform_later(record['id'], domain:, access_token:, pretend: dry_run?)
+            end
+          else
+            say_warning "No records found for #{name} on #{domain}"
+          end
         end
       end
 
@@ -48,6 +76,8 @@ module LarCity
       end
 
       no_commands do
+        delegate :get_records, :v2_endpoint, to: DigitalOcean::API
+
         # Fetches the current public IP address by trying multiple services
         # @return [String] The public IP address
         # @raise [SystemExit] if no valid IP address can be determined
@@ -73,14 +103,6 @@ module LarCity
           exit 1
         end
 
-        def get_records(domain:, name:, type: 'A')
-          with_http_error_rescue('Error communicating with DigitalOcean API') do
-            params = { name:, type: }
-            response = client.get("https://api.digitalocean.com/v2/domains/#{domain}/records", params:)
-            response.body['domain_records']
-          end
-        end
-
         # Updates or creates a DNS record in DigitalOcean
         #
         # @param domain [String] Domain name
@@ -98,7 +120,7 @@ module LarCity
         )
           with_http_error_rescue('Error communicating with DigitalOcean API') do
             # Get all domain records
-            response = client.get("https://api.digitalocean.com/v2/domains/#{domain}/records")
+            response = client.get(v2_endpoint("domains/#{domain}/records"))
             records = response.body['domain_records']
 
             # Find the record to update
@@ -110,7 +132,7 @@ module LarCity
             if record
               # Update existing record
               client.patch(
-                "https://api.digitalocean.com/v2/domains/#{domain}/records/#{record['id']}",
+                v2_endpoint("domains/#{domain}/records/#{record['id']}"),
                 {
                   type: record_type,
                   data: ip_address,
@@ -122,7 +144,7 @@ module LarCity
             else
               # Create new record
               client.post(
-                "https://api.digitalocean.com/v2/domains/#{domain}/records",
+                v2_endpoint("domains/#{domain}/records"),
                 {
                   type: record_type,
                   name: (record_name == '@' ? nil : record_name),
