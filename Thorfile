@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+ENV['MJOLNIR_IS_UP'] = 'yes'
+
 # Guide on Thor in place of Rake: https://technology.doximity.com/articles/move-over-rake-thor-is-the-new-king
 # Guide on getting started with Thor: https://github.com/rails/thor/wiki/Getting-Started
 #

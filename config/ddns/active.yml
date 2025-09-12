@@ -1,0 +1,103 @@
+shared:
+    # The shared section is used to define variables that are common across all environments.
+    # These variables can be overridden in the environment-specific sections if needed.
+    # For example, you can define a default domain name here and override it in the production section.
+  - domain: larcity.tech
+    content: accounts.staging
+    type: A
+    ttl: 3600
+
+  - domain: larcity.business
+    content: accounts.staging
+    type: A
+    ttl: 3600
+
+  - domain: larcity.org
+    content: nas-1.ho
+    type: A
+    ttl: 3600
+
+  - domain: larcity.org
+    content: nas-2.ho
+    type: A
+    ttl: 3600
+
+  - domain: larcity.business
+    content: auth
+    type: A
+    ttl: 3600
+
+  - domain: larcity.org
+    content: auth.ho
+    type: A
+    ttl: 3600
+
+  - domain: larcity.org
+    content: sso.ho
+    type: A
+    ttl: 3600
+
+  - domain: larcity.org
+    content: accounts.ho
+    type: A
+    ttl: 3600
+
+  - domain: larcity.org
+    content: staging.ho
+    type: A
+    ttl: 3600
+
+  - domain: larcity.org
+    content: auth.staging
+    type: A
+    ttl: 3600
+
+  - domain: larcity.org
+    content: 1.nas.ho
+    type: A
+    ttl: 3600
+
+  - domain: larcity.org
+    content: 2.nas.ho
+    type: A
+    ttl: 3600
+
+  - domain: larcity.org
+    content: accounts.staging
+    type: A
+    ttl: 3600
+
+##############################################
+########## ho.larcity.tech (Cert) ############
+##############################################
+
+  - domain: larcity.tech
+    content: ho
+    type: A
+    ttl: 3600
+
+  - domain: larcity.business
+    content: ho
+    type: A
+    ttl: 3600
+
+  - domain: larcity.org
+    content: vo
+    type: A
+    ttl: 3600
+
+  - domain: larcity.business
+    content: vo
+    type: A
+    ttl: 3600
+
+  - domain: larcity.tech
+    content: ftps
+    type: A
+    ttl: 3600
+
+# TODO: Uncomment this record once registry.larcity.tech is set up
+#  - domain: larcity.tech
+#    content: registry
+#    type: A
+#    ttl: 3600
