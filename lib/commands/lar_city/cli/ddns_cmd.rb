@@ -36,26 +36,46 @@ module LarCity
 
       desc 'cleanup', 'Cleanup retired DNS records'
       set_dns_record_options(required: %i[record])
-      option :batch_size, type: :numeric, default: 100, desc: 'Number of records to be processed'
+      option :batch_size,
+             desc: 'Number of records to be processed',
+             type: :numeric,
+             default: 200
       def cleanup
-        domain = options[:domain]
-        name = [options[:record], options[:domain]].join('.')
-        with_http_error_rescue do
-          records = get_records(domain:, name:, type: options[:type], access_token:, page_page: options[:batch_size])
+        batch_size = options[:batch_size].to_i
+        with_interruption_rescue do
+          raise ArgumentError, 'Batch size must be <= 200' if batch_size > 200
 
-          if records&.any?
-            say_info "Found #{records.size} records for #{name} on #{domain}"
+          domain = options[:domain]
+          name = [options[:record], options[:domain]].join('.')
+          record_type = options[:type]
+          with_http_error_rescue do
+            records = []
+            per_page = [batch_size, 100].min
+            page = 1
+            # Iterate over the pages and fetch records as long as a result is returned
+            while (next_records = get_records(domain:, name:, type: record_type, access_token:, page:, per_page:))&.any?
+              # Exit while loop if we exceed the batch size
+              break if records.size >= batch_size
 
-            records.each_with_index do |record, index|
-              backoff_seconds = (index + 1) * 5
-              record_details = record_info(name: record['name'], domain:, type: record['type'], content: record['data'])
-              say "Enqueueing deletion for #{record_details}", :yellow
-              DigitalOcean::DeleteDomainRecordJob
-                .set(wait: backoff_seconds.seconds)
-                .perform_later(record['id'], domain:, access_token:, pretend: dry_run?)
+              records += next_records
+              # say_info "Found #{records.size} records for #{name} on #{domain} (page #{page})"
+              page += 1
             end
-          else
-            say_warning "No records found for #{name} on #{domain}"
+
+            if records&.any?
+              say_info "Found #{records.size} records for #{name} on #{domain}"
+
+              records.each_with_index do |record, index|
+                backoff_seconds = (index + 1) * 5
+                record_details = record_info(name: record['name'], domain:, type: record['type'], content: record['data'])
+                say "Enqueueing deletion for #{record_details}", :yellow
+                DigitalOcean::DeleteDomainRecordJob
+                  .set(wait: backoff_seconds.seconds)
+                  .perform_later(record['id'], domain:, access_token:, pretend: dry_run?)
+              end
+            else
+              say_warning "No records found for #{name} on #{domain}"
+            end
           end
         end
       end

@@ -22,9 +22,9 @@ module DigitalOcean
         http_client(access_token:).delete(v2_endpoint("domains/#{domain}/records/#{id}"))
       end
 
-      def get_records(domain:, name:, type: 'A', page_page: 20, access_token: default_access_token)
+      def get_records(domain:, name:, type: 'A', page: 1, per_page: 20, access_token: default_access_token)
         http_client = http_client(access_token:)
-        query_string = { name:, type:, page_page: }.to_query
+        query_string = { name:, type:, page:, per_page: }.to_query
         response = http_client.get(v2_endpoint("domains/#{domain}/records?#{query_string}"))
         response.body['domain_records']
       end
