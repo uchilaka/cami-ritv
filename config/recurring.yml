@@ -9,18 +9,26 @@ common: &common
   cleanup_retired_ddns_records_job:
     class: DDNS::CleanupRetiredRecordsJob
     queue: yeet
-    # args: [ 1000, { batch_size: 500 } ]
-    schedule: '*/15 5-9,12-13,18-22 * * 1-6 America/New_York' # Every 15 minutes from 06:00 to 09:00 from Monday to Saturday
+    # At every 15th minute past every hour from 7 through 10
+    # and every hour from 18 through 22 on every day-of-week
+    # from Monday through Saturday.
+    schedule: '*/15 7-10,18-22 * * 1-6 America/New_York'
 
   fetch_paypal_invoices_job:
     class: PayPal::FetchInvoicesJob
     queue: default
-    schedule: '*/15 5-9,12-13,18-22 * * 1-6 America/New_York' # At 05:45 from Monday to Saturday
+    # At every 15th minute past every hour from 5 through 9,
+    # every hour from 12 through 13, and every hour from 18 through 22
+    # on every day-of-week from Monday through Saturday.
+    schedule: '*/15 5-9,12-13,18-22 * * 1-6 America/New_York'
 
   upsert_invoice_records_job:
     class: UpsertInvoiceRecordsJob
     queue: yeet
-    schedule: '*/15 5-9,12-13,18-22 * * 1-6 America/New_York' # Every 15 minutes from 06:00 to 21:00 from Monday to Saturday
+    # At every 15th minute past every hour from 5 through 9,
+    # every hour from 12 through 13, and every hour from 18 through 22
+    # on every day-of-week from Monday through Saturday.
+    schedule: '*/15 5-9,12-13,18-22 * * 1-6 America/New_York'
 
 home_office: &home_office
   <<: *common
