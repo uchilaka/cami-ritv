@@ -68,6 +68,8 @@ module LarCity
               records.each_with_index do |record, index|
                 backoff_seconds = (index + 1) * 5
                 record_details = record_info(name: record['name'], domain:, type: record['type'], content: record['data'])
+                next unless cleanup_hit?(domain:, **record.symbolize_keys.slice(:name, :type))
+
                 say "Enqueueing deletion for #{record_details}", :yellow
                 DigitalOcean::DeleteDomainRecordJob
                   .set(wait: backoff_seconds.seconds)
@@ -183,6 +185,10 @@ module LarCity
       end
 
       private
+
+      def cleanup_hit?(domain:, name:, type:)
+        domain == options[:domain] && name == options[:record] && type == options[:type]
+      end
 
       def with_http_error_rescue(caption = 'An HTTP Error occurred', &)
         yield
