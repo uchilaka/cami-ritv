@@ -13,6 +13,14 @@ module DigitalOcean
         end
       end
 
+      def delete_domain_record(id)
+        http_client.delete(v2_endpoint("domains/#{domain}/records/#{id}"))
+      end
+
+      def v2_endpoint(uri = '')
+        "https://api.digitalocean.com/v2/#{uri}"
+      end
+
       private
 
       def new_http_client(access_token: nil)

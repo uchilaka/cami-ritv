@@ -181,7 +181,7 @@ RSpec.describe LarCity::CLI::DDNSCmd do
           [200, api_response_headers, { domain_records: [existing_record] }.to_json]
         end
 
-        stubs.put(%r{/v2/domains/#{domain}/records/\d+}) do |env|
+        stubs.patch(%r{/v2/domains/#{domain}/records/\d+}) do |env|
           request_body = JSON.parse(env.body)
           expect(request_body).to include('data' => ip_address, 'ttl' => ttl)
           [200, api_response_headers, { domain_record: existing_record.merge('data' => ip_address) }.to_json]

@@ -8,10 +8,7 @@ module DigitalOcean
     private
 
     def client
-      @client ||=
-        begin
-
-        end
+      @client ||= DigitalOcean::API.http_client
     end
   end
 end

@@ -10,12 +10,6 @@ module LarCity
 
       namespace :ddns
 
-      def self.http_client(access_token:)
-        new_client = ::LarCity::HttpClient.new_client
-        new_client.headers['Authorization'] = "Bearer #{access_token}" if access_token.present?
-        new_client
-      end
-
       def self.set_dns_record_options
         option :access_token, type: :string, aliases: '-p', desc: 'DigitalOcean API token'
         option :domain, type: :string, required: true, desc: 'Domain name (e.g., example.com)'
@@ -30,7 +24,12 @@ module LarCity
         domain = options[:domain]
         name = [options[:record], options[:domain]].join('.')
         records = get_records(domain:, name:, type: options[:type])
-        say_info "Found #{records&.size} records for #{name} on #{domain}"
+
+        if records&.any?
+          say_info "Found #{records.size} records for #{name} on #{domain}"
+        else
+          say_warning "No records found for #{name} on #{domain}"
+        end
       end
 
       desc 'upsert', 'Update DNS record with current public IP'
@@ -75,18 +74,15 @@ module LarCity
         end
 
         def get_records(domain:, name:, type: 'A')
-          query_string = { name:, type: }.to_query
-          response = client.get("https://api.digitalocean.com/v2/domains/#{domain}/records?#{query_string}")
-          response.body['domain_records']
-        rescue Faraday::Error => e
-          say "Error communicating with DigitalOcean API: #{e.message}", :red
-          say "Response: #{e.response[:body]}" if e.response
-          exit 1
+          with_http_error_rescue('Error communicating with DigitalOcean API') do
+            params = { name:, type: }
+            response = client.get("https://api.digitalocean.com/v2/domains/#{domain}/records", params:)
+            response.body['domain_records']
+          end
         end
 
         # Updates or creates a DNS record in DigitalOcean
         #
-        # @param token [String] DigitalOcean API token
         # @param domain [String] Domain name
         # @param record_name [String] Record name (e.g., '@' for root, 'www' for subdomain)
         # @param record_type [String] Record type (A, AAAA, etc.)
@@ -100,44 +96,43 @@ module LarCity
           record_type: 'A',
           ttl: 300
         )
-          # Get all domain records
-          response = client.get("https://api.digitalocean.com/v2/domains/#{domain}/records")
-          records = response.body['domain_records']
+          with_http_error_rescue('Error communicating with DigitalOcean API') do
+            # Get all domain records
+            response = client.get("https://api.digitalocean.com/v2/domains/#{domain}/records")
+            records = response.body['domain_records']
 
-          # Find the record to update
-          record = records&.find do |r|
-            r['type'] == record_type &&
-              (record_name == '@' ? r['name'].nil? || r['name'].empty? : r['name'] == record_name)
-          end
+            # Find the record to update
+            record = records&.find do |r|
+              r['type'] == record_type &&
+                (record_name == '@' ? r['name'].nil? || r['name'].empty? : r['name'] == record_name)
+            end
 
-          if record
-            # Update existing record
-            client.put(
-              "https://api.digitalocean.com/v2/domains/#{domain}/records/#{record['id']}",
-              {
-                data: ip_address,
-                ttl:,
-              }.to_json
-            )
-            record_details = record_info(name: record_name, domain:, type: record_type, content: ip_address)
-            say "Successfully updated #{record_details}", :green
-          else
-            # Create new record
-            client.post(
-              "https://api.digitalocean.com/v2/domains/#{domain}/records",
-              {
-                type: record_type,
-                name: (record_name == '@' ? nil : record_name),
-                data: ip_address,
-                ttl:,
-              }.to_json
-            )
-            say "Successfully created #{record_type} record #{record_name}.#{domain} with IP #{ip_address}", :green
+            if record
+              # Update existing record
+              client.patch(
+                "https://api.digitalocean.com/v2/domains/#{domain}/records/#{record['id']}",
+                {
+                  type: record_type,
+                  data: ip_address,
+                  ttl:,
+                }.to_json
+              )
+              record_details = record_info(name: record_name, domain:, type: record_type, content: ip_address)
+              say "Successfully updated #{record_details}", :green
+            else
+              # Create new record
+              client.post(
+                "https://api.digitalocean.com/v2/domains/#{domain}/records",
+                {
+                  type: record_type,
+                  name: (record_name == '@' ? nil : record_name),
+                  data: ip_address,
+                  ttl:,
+                }.to_json
+              )
+              say "Successfully created #{record_type} record #{record_name}.#{domain} with IP #{ip_address}", :green
+            end
           end
-        rescue Faraday::Error => e
-          say "Error communicating with DigitalOcean API: #{e.message}", :red
-          say "Response: #{e.response[:body]}" if e.response
-          exit 1
         end
 
         def access_token
@@ -146,6 +141,14 @@ module LarCity
       end
 
       private
+
+      def with_http_error_rescue(caption = 'An HTTP Error occurred', &)
+        yield
+      rescue Faraday::Error => e
+        say "#{caption}: #{e.message}", :red
+        say "Response: #{e.response[:body]}" if e.response
+        exit 1
+      end
 
       def record_info(name:, domain:, content:, type: 'A')
         "\"#{type}\" record with name \"#{name}\" on #{domain} -> #{content}"
