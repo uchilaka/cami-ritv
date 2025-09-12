@@ -7,7 +7,7 @@ require 'faraday/adapter/test'
 RSpec.describe LarCity::CLI::DDNSCmd do
   let(:instance) { described_class.new }
   let(:access_token) { 'test_token' }
-  let(:domain) { 'example.com' }
+  let(:domain) { 'larcity.test' }
   let(:record_name) { '@' }
   let(:record_type) { 'A' }
   let(:ip_address) { '203.0.113.1' }
@@ -189,15 +189,24 @@ RSpec.describe LarCity::CLI::DDNSCmd do
       end
 
       context 'and IP is the same' do
+        let(:existing_record) do
+          {
+            'id' => '12345',
+            'type' => record_type,
+            'name' => '',
+            'data' => ip_address,
+            'ttl' => 300,
+          }
+        end
+
         before do
           allow(instance).to receive(:fetch_public_ip).and_return(ip_address)
         end
 
         it 'does not update the record' do
           # Does not send HTTP request
-
-
           expect(instance).to receive(:say).with(/No update needed for/, :green)
+          expect(test_client).not_to receive(:patch)
 
           instance.send(:upsert_dns_record,
                         domain:,
@@ -209,11 +218,32 @@ RSpec.describe LarCity::CLI::DDNSCmd do
       end
 
       context 'and IP is different' do
-        before do
-          allow(instance).to receive(:fetch_public_ip).and_return('192.4.2.1')
+        let(:existing_record) do
+          {
+            'id' => '12345',
+            'type' => record_type,
+            'name' => '',
+            'data' => '203.0.133.44',
+            'ttl' => 300,
+          }
+        end
+        let(:expected_request_url) do
+          "https://api.digitalocean.com/v2/domains/#{domain}/records/#{existing_record['id']}"
+        end
+        let(:expected_patch_payload) do
+          {
+            type: record_type,
+            data: ip_address,
+            ttl:,
+          }
         end
 
+
         it 'updates the existing record' do
+          expect(instance).to receive(:say).with(/Updated record/, :green)
+          expect(test_client).to \
+            receive(:patch).once.with(expected_request_url, JSON.generate(expected_patch_payload))
+
           instance.send(:upsert_dns_record,
                         domain:,
                         record_name:,
