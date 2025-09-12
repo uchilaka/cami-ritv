@@ -54,7 +54,7 @@ RSpec.describe LarCity::CLI::DDNSCmd do
     Rails.logger.warn("Faraday stubs verification failed: #{e.message}")
   end
 
-  describe '#update' do
+  describe '#upsert' do
     let(:options) do
       {
         domain:,
@@ -87,7 +87,6 @@ RSpec.describe LarCity::CLI::DDNSCmd do
 
       # Expect the update_dns_record method to be called with the correct arguments
       expect(instance).to receive(:upsert_dns_record).with(
-        token: access_token,
         domain:,
         record_name:,
         record_type:,
@@ -95,7 +94,7 @@ RSpec.describe LarCity::CLI::DDNSCmd do
         ttl:
       )
 
-      instance.update
+      instance.upsert
     end
   end
 
@@ -150,7 +149,7 @@ RSpec.describe LarCity::CLI::DDNSCmd do
     end
   end
 
-  describe '#update_dns_record' do
+  describe '#upsert_dns_record' do
     let(:existing_record) do
       {
         'id' => '12345',
@@ -191,7 +190,6 @@ RSpec.describe LarCity::CLI::DDNSCmd do
 
       it 'updates the existing record' do
         instance.send(:upsert_dns_record,
-                      token: access_token,
                       domain:,
                       record_name:,
                       record_type:,
@@ -229,7 +227,6 @@ RSpec.describe LarCity::CLI::DDNSCmd do
 
       it 'creates a new record' do
         instance.send(:upsert_dns_record,
-                      token: access_token,
                       domain:,
                       record_name:,
                       record_type:,
@@ -254,7 +251,6 @@ RSpec.describe LarCity::CLI::DDNSCmd do
 
 
         instance.send(:upsert_dns_record,
-                      token: 'invalid_token',
                       domain:,
                       record_name:,
                       record_type:,
@@ -294,7 +290,8 @@ RSpec.describe LarCity::CLI::DDNSCmd do
       end
     end
 
-    context 'when token is in environment' do
+    context 'when token is in environment',
+            skip: 'deprecated in favor of handling within the DigitalOcean::API implementation' do
       before do
         allow(instance).to receive(:options).and_return({})
       end
@@ -310,7 +307,8 @@ RSpec.describe LarCity::CLI::DDNSCmd do
       end
     end
 
-    context 'when token is in credentials' do
+    context 'when token is in credentials',
+            skip: 'deprecated in favor of handling within the DigitalOcean::API implementation' do
       before do
         allow(instance).to receive(:options).and_return({})
         allow(Rails.application.credentials).to \

@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
-require 'faraday'
-require 'lib/lar_city/http_client'
+require 'lib/digital_ocean/api'
 
 module LarCity
   module CLI
@@ -11,10 +10,6 @@ module LarCity
 
       namespace :ddns
 
-      def self.default_access_token
-        ENV.fetch('DIGITALOCEAN_ACCESS_TOKEN', Rails.application.credentials.digitalocean&.access_token)
-      end
-
       def self.http_client(access_token:)
         new_client = ::LarCity::HttpClient.new_client
         new_client.headers['Authorization'] = "Bearer #{access_token}" if access_token.present?
@@ -23,7 +18,7 @@ module LarCity
 
       def self.set_dns_record_options
         option :access_token, type: :string, aliases: '-p', desc: 'DigitalOcean API token'
-        option :domain, type: :string, aliases: '-d', required: true, desc: 'Domain name (e.g., example.com)'
+        option :domain, type: :string, required: true, desc: 'Domain name (e.g., example.com)'
         option :record, type: :string, aliases: '-r', default: '@', desc: 'Record name (e.g., @ or subdomain)'
         option :type, type: :string, aliases: '-t', default: 'A', desc: 'Record type (A, AAAA, etc.)'
         option :ttl, type: :numeric, default: 300, desc: 'Time to live in seconds (default: 300)'
@@ -32,8 +27,10 @@ module LarCity
       desc 'cleanup', 'Cleanup retired DNS records'
       set_dns_record_options
       def cleanup
-        domain_name = [options[:record], options[:domain]].join('.')
-        query_string = { name: domain_name, type: options[:type] }.to_query
+        domain = options[:domain]
+        name = [options[:record], options[:domain]].join('.')
+        records = get_records(domain:, name:, type: options[:type])
+        say_info "Found #{records&.size} records for #{name} on #{domain}"
       end
 
       desc 'upsert', 'Update DNS record with current public IP'
@@ -43,7 +40,6 @@ module LarCity
         say "Current public IP: #{public_ip}", :green
 
         upsert_dns_record(
-          token: access_token,
           domain: options[:domain],
           record_name: options[:record],
           record_type: options[:type],
@@ -78,6 +74,16 @@ module LarCity
           exit 1
         end
 
+        def get_records(domain:, name:, type: 'A')
+          query_string = { name:, type: }.to_query
+          response = client.get("https://api.digitalocean.com/v2/domains/#{domain}/records?#{query_string}")
+          response.body['domain_records']
+        rescue Faraday::Error => e
+          say "Error communicating with DigitalOcean API: #{e.message}", :red
+          say "Response: #{e.response[:body]}" if e.response
+          exit 1
+        end
+
         # Updates or creates a DNS record in DigitalOcean
         #
         # @param token [String] DigitalOcean API token
@@ -88,7 +94,6 @@ module LarCity
         # @param ttl [Integer] Time to live in seconds (default: 300)
         # @return [void]
         def upsert_dns_record(
-          token:,
           domain:,
           record_name:,
           ip_address:,
@@ -96,11 +101,11 @@ module LarCity
           ttl: 300
         )
           # Get all domain records
-          response = client(token:).get("https://api.digitalocean.com/v2/domains/#{domain}/records")
+          response = client.get("https://api.digitalocean.com/v2/domains/#{domain}/records")
           records = response.body['domain_records']
 
           # Find the record to update
-          record = records.find do |r|
+          record = records&.find do |r|
             r['type'] == record_type &&
               (record_name == '@' ? r['name'].nil? || r['name'].empty? : r['name'] == record_name)
           end
@@ -114,8 +119,8 @@ module LarCity
                 ttl:,
               }.to_json
             )
-            record_info = "name \"#{record_name}\" on #{domain} to #{ip_address}"
-            say "Successfully updated #{record_type} record with #{record_info}", :green
+            record_details = record_info(name: record_name, domain:, type: record_type, content: ip_address)
+            say "Successfully updated #{record_details}", :green
           else
             # Create new record
             client.post(
@@ -137,22 +142,20 @@ module LarCity
 
         def access_token
           @access_token ||= options[:access_token]
-          @access_token ||= self.class.default_access_token
-          unless @access_token
-            say_error 'DigitalOcean API token not provided. Use --token or set DIGITALOCEAN_TOKEN environment variable.'
-            exit 1
-          end
-          @access_token
         end
       end
 
       private
 
-      def client(token: nil)
+      def record_info(name:, domain:, content:, type: 'A')
+        "\"#{type}\" record with name \"#{name}\" on #{domain} -> #{content}"
+      end
+
+      def client(token: access_token)
         if token.blank?
-          @client ||= self.class.http_client(access_token:)
+          @client ||= DigitalOcean::API.http_client
         else
-          @client = self.class.http_client(access_token: token)
+          @client = DigitalOcean::API.http_client(access_token: token)
         end
       end
     end
