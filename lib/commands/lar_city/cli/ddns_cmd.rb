@@ -35,11 +35,11 @@ module LarCity
       end
 
       desc 'cleanup', 'Cleanup retired DNS records'
-      set_dns_record_options(required: %i[record])
+      set_dns_record_options(required: %i[record type])
       option :batch_size,
              desc: 'Number of records to be processed',
              type: :numeric,
-             default: 200
+             default: 25
       def cleanup
         batch_size = options[:batch_size].to_i
         with_interruption_rescue do

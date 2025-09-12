@@ -6,6 +6,12 @@ common: &common
     # args: [ 1000, { batch_size: 500 } ]
     schedule: '0 5 * * 0' # every Sunday at 5am
 
+  cleanup_retired_ddns_records_job:
+    class: DDNS::CleanupRetiredRecordsJob
+    queue: yeet
+    # args: [ 1000, { batch_size: 500 } ]
+    schedule: '*/15 5-9,12-13,18-22 * * 1-6 America/New_York' # Every 15 minutes from 06:00 to 09:00 from Monday to Saturday
+
   fetch_paypal_invoices_job:
     class: PayPal::FetchInvoicesJob
     queue: default
