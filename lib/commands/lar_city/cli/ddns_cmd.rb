@@ -69,7 +69,7 @@ module LarCity
               records.each_with_index do |record, index|
                 backoff_seconds = (index + 1) * 5
                 record_details =
-                  record_info(name: record['name'], domain:, type: record['type'], content: record['data'])
+                  record_info(id: record['id'], name: record['name'], domain:, type: record['type'], content: record['data'])
                 next unless cleanup_hit?(domain:, **record.symbolize_keys.slice(:name, :type))
 
                 verified_count += 1
@@ -209,8 +209,8 @@ module LarCity
         exit 1
       end
 
-      def record_info(name:, domain:, content:, type: 'A')
-        "\"#{type}\" record with name \"#{name}\" on #{domain} -> #{content}"
+      def record_info(name:, domain:, content:, type: 'A', id: nil)
+        "\"#{type}\" record #{id || ''} with name \"#{name}\" on #{domain} -> #{content}"
       end
 
       def client(token: access_token)
