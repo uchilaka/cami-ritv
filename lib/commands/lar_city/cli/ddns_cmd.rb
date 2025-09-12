@@ -62,6 +62,7 @@ module LarCity
               page += 1
             end
 
+            verified_count = 0
             if records&.any?
               say_info "Found #{records.size} records for #{name} on #{domain}"
 
@@ -70,11 +71,14 @@ module LarCity
                 record_details = record_info(name: record['name'], domain:, type: record['type'], content: record['data'])
                 next unless cleanup_hit?(domain:, **record.symbolize_keys.slice(:name, :type))
 
+                verified_count += 1
                 say "Enqueueing deletion for #{record_details}", :yellow
                 DigitalOcean::DeleteDomainRecordJob
                   .set(wait: backoff_seconds.seconds)
                   .perform_later(record['id'], domain:, access_token:, pretend: dry_run?)
               end
+
+              say_info "Enqueued #{verified_count} of #{records.size} records for #{name} on #{domain}"
             else
               say_warning "No records found for #{name} on #{domain}"
             end
