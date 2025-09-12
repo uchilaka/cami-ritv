@@ -17,6 +17,6 @@ class DDNSUpsertJob < ApplicationJob
   private
 
   def records
-    Rails.application.config_for(:ddns) || []
+    Rails.application.config_for('ddns/active') || []
   end
 end

@@ -16,7 +16,7 @@ module DDNS
         LarCity::CLI::DDNSCmd
           .new
           .invoke(
-            :cleanup, [],
+            :cleanup, [], batch_size: 100,
             domain:, record:, type: record_type, verbose: Rails.env.development?
           )
       end

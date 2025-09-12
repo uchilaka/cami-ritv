@@ -9,10 +9,10 @@ common: &common
   cleanup_retired_ddns_records_job:
     class: DDNS::CleanupRetiredRecordsJob
     queue: yeet
-    # At every 15th minute past every hour from 7 through 10
+    # At every 3rd minute past every hour from 7 through 10
     # and every hour from 18 through 22 on every day-of-week
     # from Monday through Saturday.
-    schedule: '*/15 7-10,18-22 * * 1-6 America/New_York'
+    schedule: '*/3 7-10,18-22 * * 1-6 America/New_York'
 
   fetch_paypal_invoices_job:
     class: PayPal::FetchInvoicesJob
