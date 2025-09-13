@@ -18,6 +18,9 @@ config/credentials.yml.enc diff=rails_credentials
 spec/fixtures/pii/** filter=git-crypt diff=git-crypt
 db/development/postgres/downloads/**/*.sql filter=git-crypt diff=git-crypt
 
+# Encrypt database backups
+db/development/postgres/**/*.dump filter=git-crypt diff=git-crypt
+
 # Identify the Yarn releases and plugin bundles as binary
 .yarn/releases/** binary
 .yarn/plugins/** binary

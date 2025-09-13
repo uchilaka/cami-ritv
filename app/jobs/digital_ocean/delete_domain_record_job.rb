@@ -23,9 +23,16 @@ module DigitalOcean
       # job failed and is pending retry.
       jobs_schema = SolidQueue::Job.arel_table.name.to_s.to_sym
       failed_execution_schema = SolidQueue::FailedExecution.arel_table.name.to_s.to_sym
+
+      failed_executions =
+        SolidQueue::FailedExecution.joins(
+          "INNER JOIN #{jobs_schema} ON #{failed_execution_schema}.job_id = #{jobs_schema}.id"
+        ).where("(#{jobs_schema}.arguments->>0)::numeric = ?", id)
+
+
       failed_jobs = SolidQueue::Job.joins(
         "INNER JOIN #{failed_execution_schema} ON #{jobs_schema}.id = #{failed_execution_schema}.job_id"
-      ).where('arguments ->> 0 = ?', id.to_s)
+      ).where('(arguments->>0)::numeric = ?', id)
 
 
       # SolidQueue::FailedExecution
