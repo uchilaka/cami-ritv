@@ -150,11 +150,12 @@ RSpec.describe LarCity::CLI::DDNSCmd do
   end
 
   describe '#upsert_dns_record' do
+    let(:record_name) { '' }
     let(:existing_record) do
       {
         'id' => '12345',
         'type' => record_type,
-        'name' => '',
+        'name' => record_name,
         'data' => '192.0.2.1',
         'ttl' => 300,
       }
@@ -193,7 +194,7 @@ RSpec.describe LarCity::CLI::DDNSCmd do
           {
             'id' => '12345',
             'type' => record_type,
-            'name' => '',
+            'name' => record_name,
             'data' => ip_address,
             'ttl' => 300,
           }
@@ -255,6 +256,18 @@ RSpec.describe LarCity::CLI::DDNSCmd do
     end
 
     context 'when record does not exist' do
+      let(:expected_request_url) do
+        "https://api.digitalocean.com/v2/domains/#{domain}/records"
+      end
+      let(:expected_patch_payload) do
+        {
+          data: ip_address,
+          name: '',
+          type: record_type,
+          ttl:,
+        }
+      end
+
       before do
         stubs.get(%r{/v2/domains/#{domain}/records}) do |_env|
           [200, api_response_headers, { domain_records: [] }.to_json]
@@ -282,6 +295,8 @@ RSpec.describe LarCity::CLI::DDNSCmd do
       end
 
       it 'creates a new record' do
+        expect(test_client).to \
+          receive(:post).once.with(expected_request_url, JSON.generate(expected_patch_payload))
         instance.send(:upsert_dns_record,
                       domain:,
                       record_name:,

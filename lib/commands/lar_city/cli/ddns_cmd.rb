@@ -162,29 +162,30 @@ module LarCity
               return
             end
 
+            record_details = record_info(name: record_name, domain:, type: record_type, content: ip_address)
             if record
               # Update existing record
-              client.patch(
-                v2_endpoint("domains/#{domain}/records/#{record['id']}"),
-                {
-                  type: record_type,
-                  data: ip_address,
-                  ttl:,
-                }.to_json
-              )
-              record_details = record_info(name: record_name, domain:, type: record_type, content: ip_address)
+              resource_url = v2_endpoint("domains/#{domain}/records/#{record['id']}")
+              payload = { data: ip_address, type: record_type, ttl: }
+              if dry_run?
+                say "Dry-run: Would have updated #{record_details}", :magenta
+                return
+              end
+
+              say "Updating existing record at #{resource_url}", :yellow if verbose?
+              client.patch(resource_url, payload.to_json)
               say "Successfully updated #{record_details}", :green
             else
+              resource_url = v2_endpoint("domains/#{domain}/records")
+              payload = { data: ip_address, name: (record_name == '@' ? nil : record_name), type: record_type, ttl: }
+              if dry_run?
+                say "Dry-run: Would have created #{record_details}", :magenta
+                return
+              end
+
+              say "Creating new record at #{resource_url}", :yellow if verbose?
               # Create new record
-              client.post(
-                v2_endpoint("domains/#{domain}/records"),
-                {
-                  type: record_type,
-                  name: (record_name == '@' ? nil : record_name),
-                  data: ip_address,
-                  ttl:,
-                }.to_json
-              )
+              client.post(resource_url, payload.to_json)
               say "Successfully created #{record_type} record #{record_name}.#{domain} with IP #{ip_address}", :green
             end
           end
