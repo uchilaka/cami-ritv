@@ -1,4 +1,6 @@
 #!/usr/bin/env zsh
+# Working script for creating a PostgreSQL database dump for the primary
+# database of the CAMI Rails application.
 BACKUP_PATH="db/${RAILS_ENV}/postgres/backups"
 mkdir -p "$BACKUP_PATH"
 BACKUP_FILE="${BACKUP_PATH}/primary_($(date +'%Y%m%d.%H%M%S.%z')).dump"
