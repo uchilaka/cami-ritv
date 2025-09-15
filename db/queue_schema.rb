@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_08_10_131301) do
+ActiveRecord::Schema[8.0].define(version: 2025_09_12_145949) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -412,4 +412,23 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_10_131301) do
   add_foreign_key "solid_queue_ready_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
   add_foreign_key "solid_queue_recurring_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
   add_foreign_key "solid_queue_scheduled_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
+
+  create_view "delete_domain_record_failed_jobs", materialized: true, sql_definition: <<-SQL
+      SELECT j.id,
+      j.class_name,
+      j.queue_name,
+      j.priority,
+      j.active_job_id,
+      j.scheduled_at,
+      j.finished_at,
+      j.concurrency_key,
+      (fx.error)::jsonb AS exception,
+      ((fx.error)::jsonb ->> 'message'::text) AS error_message,
+      ARRAY( SELECT jsonb_array_elements_text(((fx.error)::jsonb -> 'backtrace'::text)) AS jsonb_array_elements_text) AS error_backtrace,
+      (((j.arguments)::jsonb ->> 'arguments'::text))::jsonb AS arguments,
+      (((((j.arguments)::jsonb ->> 'arguments'::text))::jsonb ->> 0))::bigint AS record_id
+     FROM (solid_queue_failed_executions fx
+       JOIN solid_queue_jobs j ON ((fx.job_id = j.id)))
+    WHERE ((j.class_name)::text = 'DigitalOcean::DeleteDomainRecordJob'::text);
+  SQL
 end

@@ -1,0 +1,5 @@
+shared:
+  - domain: larcity.tech
+    content: registry.ho
+    type: A
+    ttl: 3600

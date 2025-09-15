@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class DDNSUpdateJob < ApplicationJob
+class DDNSUpsertJob < ApplicationJob
   queue_as :yeet
 
   def perform(domain: nil, content: nil, type: nil, ttl: 1800)
@@ -10,13 +10,13 @@ class DDNSUpdateJob < ApplicationJob
         self.class.set(wait: ((index + 1) * 15).seconds).perform_later(domain:, content:, type:, ttl:)
       end
     else
-      ::LarCity::CLI::DDNSCmd.new.invoke(:update, [], domain:, record: content, type:, ttl:)
+      ::LarCity::CLI::DDNSCmd.new.invoke(:upsert, [], domain:, record: content, type:, ttl:)
     end
   end
 
   private
 
   def records
-    Rails.application.config_for(:ddns) || []
+    Rails.application.config_for('ddns/active') || []
   end
 end

@@ -7,7 +7,7 @@ require 'faraday/adapter/test'
 RSpec.describe LarCity::CLI::DDNSCmd do
   let(:instance) { described_class.new }
   let(:access_token) { 'test_token' }
-  let(:domain) { 'example.com' }
+  let(:domain) { 'larcity.test' }
   let(:record_name) { '@' }
   let(:record_type) { 'A' }
   let(:ip_address) { '203.0.113.1' }
@@ -54,7 +54,7 @@ RSpec.describe LarCity::CLI::DDNSCmd do
     Rails.logger.warn("Faraday stubs verification failed: #{e.message}")
   end
 
-  describe '#update' do
+  describe '#upsert' do
     let(:options) do
       {
         domain:,
@@ -86,8 +86,7 @@ RSpec.describe LarCity::CLI::DDNSCmd do
       expect(instance).to receive(:fetch_public_ip).and_return(ip_address)
 
       # Expect the update_dns_record method to be called with the correct arguments
-      expect(instance).to receive(:update_dns_record).with(
-        token: access_token,
+      expect(instance).to receive(:upsert_dns_record).with(
         domain:,
         record_name:,
         record_type:,
@@ -95,7 +94,7 @@ RSpec.describe LarCity::CLI::DDNSCmd do
         ttl:
       )
 
-      instance.update
+      instance.upsert
     end
   end
 
@@ -150,12 +149,13 @@ RSpec.describe LarCity::CLI::DDNSCmd do
     end
   end
 
-  describe '#update_dns_record' do
+  describe '#upsert_dns_record' do
+    let(:record_name) { '' }
     let(:existing_record) do
       {
         'id' => '12345',
         'type' => record_type,
-        'name' => '',
+        'name' => record_name,
         'data' => '192.0.2.1',
         'ttl' => 300,
       }
@@ -182,25 +182,92 @@ RSpec.describe LarCity::CLI::DDNSCmd do
           [200, api_response_headers, { domain_records: [existing_record] }.to_json]
         end
 
-        stubs.put(%r{/v2/domains/#{domain}/records/\d+}) do |env|
+        stubs.patch(%r{/v2/domains/#{domain}/records/\d+}) do |env|
           request_body = JSON.parse(env.body)
           expect(request_body).to include('data' => ip_address, 'ttl' => ttl)
           [200, api_response_headers, { domain_record: existing_record.merge('data' => ip_address) }.to_json]
         end
       end
 
-      it 'updates the existing record' do
-        instance.send(:update_dns_record,
-                      token: access_token,
-                      domain:,
-                      record_name:,
-                      record_type:,
-                      ip_address:,
-                      ttl:)
+      context 'and IP is the same' do
+        let(:existing_record) do
+          {
+            'id' => '12345',
+            'type' => record_type,
+            'name' => record_name,
+            'data' => ip_address,
+            'ttl' => 300,
+          }
+        end
+
+        before do
+          allow(instance).to receive(:fetch_public_ip).and_return(ip_address)
+        end
+
+        it 'does not update the record' do
+          # Does not send HTTP request
+          expect(instance).to receive(:say).with(/No update needed for/, :green)
+          expect(test_client).not_to receive(:patch)
+
+          instance.send(:upsert_dns_record,
+                        domain:,
+                        record_name:,
+                        record_type:,
+                        ip_address:,
+                        ttl:)
+        end
+      end
+
+      context 'and IP is different' do
+        let(:existing_record) do
+          {
+            'id' => '12345',
+            'type' => record_type,
+            'name' => '',
+            'data' => '203.0.133.44',
+            'ttl' => 300,
+          }
+        end
+        let(:expected_request_url) do
+          "https://api.digitalocean.com/v2/domains/#{domain}/records/#{existing_record['id']}"
+        end
+        let(:expected_patch_payload) do
+          {
+            type: record_type,
+            data: ip_address,
+            ttl:,
+          }
+        end
+
+
+        it 'updates the existing record' do
+          expect(instance).to receive(:say).with(/Updated record/, :green)
+          expect(test_client).to \
+            receive(:patch).once.with(expected_request_url, JSON.generate(expected_patch_payload))
+
+          instance.send(:upsert_dns_record,
+                        domain:,
+                        record_name:,
+                        record_type:,
+                        ip_address:,
+                        ttl:)
+        end
       end
     end
 
     context 'when record does not exist' do
+      let(:expected_request_url) do
+        "https://api.digitalocean.com/v2/domains/#{domain}/records"
+      end
+      let(:expected_patch_payload) do
+        {
+          data: ip_address,
+          name: '',
+          type: record_type,
+          ttl:,
+        }
+      end
+
       before do
         stubs.get(%r{/v2/domains/#{domain}/records}) do |_env|
           [200, api_response_headers, { domain_records: [] }.to_json]
@@ -228,8 +295,9 @@ RSpec.describe LarCity::CLI::DDNSCmd do
       end
 
       it 'creates a new record' do
-        instance.send(:update_dns_record,
-                      token: access_token,
+        expect(test_client).to \
+          receive(:post).once.with(expected_request_url, JSON.generate(expected_patch_payload))
+        instance.send(:upsert_dns_record,
                       domain:,
                       record_name:,
                       record_type:,
@@ -253,8 +321,7 @@ RSpec.describe LarCity::CLI::DDNSCmd do
         expect(instance).to receive(:exit).with(1)
 
 
-        instance.send(:update_dns_record,
-                      token: 'invalid_token',
+        instance.send(:upsert_dns_record,
                       domain:,
                       record_name:,
                       record_type:,
@@ -294,7 +361,8 @@ RSpec.describe LarCity::CLI::DDNSCmd do
       end
     end
 
-    context 'when token is in environment' do
+    context 'when token is in environment',
+            skip: 'deprecated in favor of handling within the DigitalOcean::API implementation' do
       before do
         allow(instance).to receive(:options).and_return({})
       end
@@ -310,7 +378,8 @@ RSpec.describe LarCity::CLI::DDNSCmd do
       end
     end
 
-    context 'when token is in credentials' do
+    context 'when token is in credentials',
+            skip: 'deprecated in favor of handling within the DigitalOcean::API implementation' do
       before do
         allow(instance).to receive(:options).and_return({})
         allow(Rails.application.credentials).to \
