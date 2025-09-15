@@ -1,5 +1,14 @@
 # frozen_string_literal: true
 
+puts "Are we in Thor mode? #{ENV['MJOLNIR_IS_UP'] || 'no'}"
+
+# TODO: Figure out if logging is useful when in Thor mode
+#   If so, we may need to initialize logging differently
+#   when in Thor mode vs. normal Rails mode
+
+# Initialize logging before the application fully initializes
+# This ensures that any logs generated during initialization
+# are streamed appropriately
 Rails.configuration.before_initialize do |app|
   # NOTE: Initialize the log stream unless we are running tests
   #   or streaming is already initialized

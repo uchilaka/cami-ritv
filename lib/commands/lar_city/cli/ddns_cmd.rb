@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
-require 'faraday'
-require 'lib/lar_city/http_client'
+require 'lib/digital_ocean'
 
 module LarCity
   module CLI
@@ -11,22 +10,90 @@ module LarCity
 
       namespace :ddns
 
-      def self.default_access_token
-        ENV.fetch('DIGITALOCEAN_ACCESS_TOKEN', Rails.application.credentials.digitalocean&.access_token)
+      def self.set_dns_record_options(required: [])
+        option :access_token, type: :string, aliases: '-p', desc: 'DigitalOcean API token'
+        option :domain,
+               desc: 'Domain name (e.g., example.com)',
+               type: :string,
+               required: true
+        option :record,
+               desc: 'Record name (e.g., @ or subdomain)',
+               type: :string,
+               aliases: %w[-r -n],
+               default: required.include?(:record) ? nil : '@',
+               required: required.include?(:record)
+        option :type,
+               desc: 'Record type (A, AAAA, etc.)',
+               type: :string,
+               aliases: '-t',
+               default: required.include?(:type) ? nil : 'A',
+               required: required.include?(:type)
+        option :ttl,
+               desc: 'Time to live in seconds (default: 300)',
+               type: :numeric,
+               default: 300
       end
 
-      desc 'update', 'Update DNS record with current public IP'
-      option :access_token, type: :string, aliases: '-p', desc: 'DigitalOcean API token'
-      option :domain, type: :string, aliases: '-d', required: true, desc: 'Domain name (e.g., example.com)'
-      option :record, type: :string, aliases: '-r', default: '@', desc: 'Record name (e.g., @ or subdomain)'
-      option :type, type: :string, aliases: '-t', default: 'A', desc: 'Record type (A, AAAA, etc.)'
-      option :ttl, type: :numeric, default: 300, desc: 'Time to live in seconds (default: 300)'
-      def update
+      desc 'cleanup', 'Cleanup retired DNS records'
+      set_dns_record_options(required: %i[record type])
+      option :batch_size,
+             desc: 'Number of records to be processed',
+             type: :numeric,
+             default: 25
+      def cleanup
+        batch_size = options[:batch_size].to_i
+        with_interruption_rescue do
+          raise ArgumentError, 'Batch size must be <= 200' if batch_size > 200
+
+          domain = options[:domain]
+          name = [options[:record], options[:domain]].join('.')
+          record_type = options[:type]
+          with_http_error_rescue do
+            records = []
+            per_page = [batch_size, 100].min
+            page = 1
+            # Iterate over the pages and fetch records as long as a result is returned
+            while (next_records = get_records(domain:, name:, type: record_type, access_token:, page:, per_page:))&.any?
+              # Exit while loop if we exceed the batch size
+              break if records.size >= batch_size
+
+              records += next_records
+              # say_info "Found #{records.size} records for #{name} on #{domain} (page #{page})"
+              page += 1
+            end
+
+            verified_count = 0
+            if records&.any?
+              say_info "Found #{records.size} records for #{name} on #{domain}"
+
+              records.each_with_index do |record, index|
+                backoff_seconds = (index + 1) * 5
+                record_details =
+                  record_info(id: record['id'], name: record['name'], domain:, type: record['type'], content: record['data'])
+                next unless cleanup_hit?(domain:, **record.symbolize_keys.slice(:name, :type))
+
+                verified_count += 1
+                say "Enqueueing deletion for #{record_details}", :yellow
+                DigitalOcean::DeleteDomainRecordJob
+                  .set(wait: backoff_seconds.seconds)
+                  .perform_later(record['id'], domain:, access_token:, pretend: dry_run?)
+              end
+
+              say_info "Enqueued #{verified_count} of #{records.size} records for #{name} on #{domain}"
+            else
+              say_warning "No records found for #{name} on #{domain}"
+            end
+          end
+        end
+      end
+
+      desc 'upsert', 'Update DNS record with current public IP'
+      set_dns_record_options
+      def upsert
         public_ip = fetch_public_ip
         say "Current public IP: #{public_ip}", :green
 
-        update_dns_record(
-          token: access_token,
+        upsert_dns_record(
           domain: options[:domain],
           record_name: options[:record],
           record_type: options[:type],
@@ -36,6 +103,8 @@ module LarCity
       end
 
       no_commands do
+        delegate :get_records, :v2_endpoint, to: DigitalOcean::API
+
         # Fetches the current public IP address by trying multiple services
         # @return [String] The public IP address
         # @raise [SystemExit] if no valid IP address can be determined
@@ -63,73 +132,93 @@ module LarCity
 
         # Updates or creates a DNS record in DigitalOcean
         #
-        # @param token [String] DigitalOcean API token
         # @param domain [String] Domain name
         # @param record_name [String] Record name (e.g., '@' for root, 'www' for subdomain)
         # @param record_type [String] Record type (A, AAAA, etc.)
         # @param ip_address [String] IP address to set
         # @param ttl [Integer] Time to live in seconds (default: 300)
         # @return [void]
-        def update_dns_record(
-          token:,
+        def upsert_dns_record(
           domain:,
           record_name:,
           ip_address:,
           record_type: 'A',
           ttl: 300
         )
-          client = ::LarCity::HttpClient.new_client
-          client.headers['Authorization'] = "Bearer #{token}"
-
-          begin
+          with_http_error_rescue('Error communicating with DigitalOcean API') do
             # Get all domain records
-            response = client.get("https://api.digitalocean.com/v2/domains/#{domain}/records")
+            response = client.get(v2_endpoint("domains/#{domain}/records"))
             records = response.body['domain_records']
 
             # Find the record to update
-            record = records.find do |r|
+            record = records&.find do |r|
               r['type'] == record_type &&
                 (record_name == '@' ? r['name'].nil? || r['name'].empty? : r['name'] == record_name)
             end
 
+            if record.present? && record['data'] == ip_address
+              record_details = record_info(name: record_name, domain:, type: record_type, content: ip_address)
+              say "No update needed for #{record_details}", :green
+              return
+            end
+
+            record_details = record_info(name: record_name, domain:, type: record_type, content: ip_address)
             if record
               # Update existing record
-              client.put(
-                "https://api.digitalocean.com/v2/domains/#{domain}/records/#{record['id']}",
-                {
-                  data: ip_address,
-                  ttl:,
-                }.to_json
-              )
-              say "Successfully updated #{record_type} record #{record_name}.#{domain} to #{ip_address}", :green
+              resource_url = v2_endpoint("domains/#{domain}/records/#{record['id']}")
+              payload = { data: ip_address, type: record_type, ttl: }
+              if dry_run?
+                say "Dry-run: Would have updated #{record_details}", :magenta
+                return
+              end
+
+              say "Updating existing record at #{resource_url}", :yellow if verbose?
+              client.patch(resource_url, payload.to_json)
+              say "Successfully updated #{record_details}", :green
             else
+              resource_url = v2_endpoint("domains/#{domain}/records")
+              payload = { data: ip_address, name: (record_name == '@' ? nil : record_name), type: record_type, ttl: }
+              if dry_run?
+                say "Dry-run: Would have created #{record_details}", :magenta
+                return
+              end
+
+              say "Creating new record at #{resource_url}", :yellow if verbose?
               # Create new record
-              client.post(
-                "https://api.digitalocean.com/v2/domains/#{domain}/records",
-                {
-                  type: record_type,
-                  name: (record_name == '@' ? nil : record_name),
-                  data: ip_address,
-                  ttl:,
-                }.to_json
-              )
+              client.post(resource_url, payload.to_json)
               say "Successfully created #{record_type} record #{record_name}.#{domain} with IP #{ip_address}", :green
             end
-          rescue Faraday::Error => e
-            say "Error communicating with DigitalOcean API: #{e.message}", :red
-            say "Response: #{e.response[:body]}" if e.response
-            exit 1
           end
         end
 
         def access_token
           @access_token ||= options[:access_token]
-          @access_token ||= self.class.default_access_token
-          unless @access_token
-            say_error 'DigitalOcean API token not provided. Use --token or set DIGITALOCEAN_TOKEN environment variable.'
-            exit 1
-          end
-          @access_token
+        end
+      end
+
+      private
+
+      def cleanup_hit?(domain:, name:, type:)
+        domain == options[:domain] && name == options[:record] && type == options[:type]
+      end
+
+      def with_http_error_rescue(caption = 'An HTTP Error occurred', &)
+        yield
+      rescue Faraday::Error => e
+        say "#{caption}: #{e.message}", :red
+        say "Response: #{e.response[:body]}" if e.response
+        exit 1
+      end
+
+      def record_info(name:, domain:, content:, type: 'A', id: nil)
+        "\"#{type}\" record #{id || ''} with name \"#{name}\" on #{domain} -> #{content}"
+      end
+
+      def client(token: access_token)
+        if token.blank?
+          @client ||= DigitalOcean::API.http_client
+        else
+          @client = DigitalOcean::API.http_client(access_token: token)
         end
       end
     end

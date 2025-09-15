@@ -1,0 +1,7 @@
+#!/usr/bin/env zsh
+# Working script to restore a database from a dump file.
+# TODO: Implement a command for selecting from available dump files interactively.
+TARGET_FILE="db/development/postgres/backups/primary_(20250914.065345.-0400).dump"
+
+pg_restore --no-owner --single-transaction --host localhost --port 16032 --clean --if-exists --verbose \
+  --username "$APP_DATABASE_USER" --dbname sails_experimental "$TARGET_FILE"
