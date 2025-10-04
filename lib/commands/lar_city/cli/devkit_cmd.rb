@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative 'base_cmd'
+require_relative 'prompt_utils'
 
 module LarCity
   module CLI
@@ -155,6 +156,18 @@ module LarCity
           CMD
         end
         system(cmd) unless dry_run?
+      end
+
+      desc 'basic_auth_codegen', 'Manage basic auth records in a htpasswd file'
+      long_desc <<-LONGDESC
+        This command allows you to manage basic authentication records in a htpasswd file.
+        You can add, update, delete, or list users in the specified htpasswd file.
+      LONGDESC
+      def basic_auth_codegen
+        username, password =
+          PromptUtils
+            .enter_basic_auth_credentials(creating: true)
+            .values_at(:username, :password)
       end
 
       no_commands do

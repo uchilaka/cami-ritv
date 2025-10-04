@@ -151,6 +151,19 @@ GEM
       concurrent-ruby (~> 1.0)
       logger
       zeitwerk (~> 2.6)
+    dry-inflector (1.2.0)
+    dry-logic (1.6.0)
+      bigdecimal
+      concurrent-ruby (~> 1.0)
+      dry-core (~> 1.1)
+      zeitwerk (~> 2.6)
+    dry-types (1.8.3)
+      bigdecimal (~> 3.0)
+      concurrent-ruby (~> 1.0)
+      dry-core (~> 1.0)
+      dry-inflector (~> 1.0)
+      dry-logic (~> 1.4)
+      zeitwerk (~> 2.6)
     ed25519 (1.4.0)
     erubi (1.13.1)
     et-orbi (1.2.11)
@@ -201,6 +214,8 @@ GEM
       bigdecimal
       rake (>= 13)
     hashie (5.0.0)
+    highline (3.1.2)
+      reline
     i18n (1.14.7)
       concurrent-ruby (~> 1.0)
     image_processing (1.14.0)
@@ -670,6 +685,7 @@ DEPENDENCIES
   devise-passwordless (~> 1.1)
   discard (~> 1.4)
   dotenv
+  dry-types (~> 1.8)
   fabrication
   faker
   faraday (~> 2.13)
@@ -679,6 +695,7 @@ DEPENDENCIES
   flipper-ui
   friendly_id (~> 5.5)
   globalid (~> 1.2)
+  highline (~> 3.1)
   image_processing (~> 1.2)
   inertia_rails
   interactor (~> 3.1)
