@@ -20,25 +20,29 @@ require 'open3'
 module LarCity
   module CLI
     class BaseCmd < Thor
-      class_option :dry_run,
-                   type: :boolean,
-                   aliases: %w[-d --pretend --preview],
-                   desc: 'Dry run',
-                   default: false
-      class_option :environment,
-                   type: :string,
-                   aliases: '--env',
-                   desc: 'Environment',
-                   required: false
-      class_option :verbose,
-                   type: :boolean,
-                   aliases: '-v',
-                   desc: 'Verbose output',
-                   default: false
-
       def self.exit_on_failure?
         true
       end
+
+      def self.define_class_options
+        class_option :dry_run,
+                     type: :boolean,
+                     aliases: %w[-d --pretend --preview],
+                     desc: 'Dry run',
+                     default: false
+        class_option :environment,
+                     type: :string,
+                     aliases: '--env',
+                     desc: 'Environment',
+                     required: false
+        class_option :verbose,
+                     type: :boolean,
+                     aliases: '-v',
+                     desc: 'Verbose output',
+                     default: false
+      end
+
+      define_class_options
 
       no_commands do
         include OperatingSystemDetectable
@@ -86,6 +90,28 @@ module LarCity
           say "An error occurred: #{e.message}", :red
           exit(1) unless verbose?
           raise e
+        end
+
+        def with_optional_pretend_safety(&block)
+          with_interruption_rescue do
+            if dry_run?
+              say_warning 'Dry-run mode enabled - no changes will be made.'
+              say_warning <<-TIP
+                To execute the operation with persisted changes, re-run
+                without the --dry-run flag.
+              TIP
+            end
+
+            ActiveRecord::Base.transaction do
+              result = yield block
+              if dry_run?
+                say_warning 'Dry-run mode enabled - triggering rollback.'
+                raise ActiveRecord::Rollback
+              else
+                result
+              end
+            end
+          end
         end
 
         def config_file_exists?(name:)

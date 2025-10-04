@@ -7,25 +7,35 @@ module LarCity
   module CLI
     class PromptUtils
       class << self
-        def enter_basic_auth_credentials(cli: HighLine.new, creating: false)
+        def prompt_for_auth_credentials(cli: HighLine.new, creating: false)
+          username =
+            prompt_for_username(cli:, creating:)
+          password =
+            prompt_for_password(cli:, creating:)
+          { username:, password: }
+        end
+
+        def prompt_for_username(cli: HighLine.new, creating: false)
           username_prompt =
             if creating
-              "#{I18n.t('globals.prompts.basic_auth.new_username')}:"
+              "#{I18n.t('globals.prompts.auth.new_username')}:"
             else
-              "#{I18n.t('globals.prompts.basic_auth.username')}:"
+              "#{I18n.t('globals.prompts.auth.username')}:"
             end
+          cli.ask(username_prompt) { |q| q.validate = /\A\w+\Z/ }
+        end
 
+        def prompt_for_password(cli: HighLine.new, creating: false)
           password_prompt =
             if creating
-              "#{I18n.t('globals.prompts.basic_auth.new_password')}:"
+              "#{I18n.t('globals.prompts.auth.new_password')}:"
             else
-              "#{I18n.t('globals.prompts.basic_auth.password')}:"
+              "#{I18n.t('globals.prompts.auth.password')}:"
             end
 
           confirm_password_prompt =
-            "#{I18n.t('globals.prompts.basic_auth.confirm_password')}:"
+            "#{I18n.t('globals.prompts.auth.confirm_password')}:"
 
-          username = cli.ask(username_prompt) { |q| q.validate = /\A\w+\Z/ }
           password = cli.ask(password_prompt) do |q|
             q.validate = Types::Coercible::String
             q.echo = '*'
@@ -43,7 +53,7 @@ module LarCity
             raise Thor::Error, I18n.t('globals.validators.errors.password_mismatch')
           end
 
-          { username:, password: }
+          password
         end
       end
     end

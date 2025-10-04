@@ -47,7 +47,7 @@ en:
         search: "Search for accounts"
 
     prompts:
-      basic_auth:
+      auth:
         username: "Enter your username"
         password: "Enter your password"
         new_username: "Enter a new username"
