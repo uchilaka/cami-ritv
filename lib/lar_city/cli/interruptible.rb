@@ -3,13 +3,11 @@
 module LarCity
   module CLI
     module Interruptible
-      class << self
-        def included(base)
-          base.include OutputHelpers
+      def self.included(base)
+        base.include OutputHelpers
 
-          # Make InstanceMethods available to the base context
-          base.include InstanceMethods
-        end
+        # Make InstanceMethods available to the base context
+        base.include InstanceMethods
       end
 
       module InstanceMethods
