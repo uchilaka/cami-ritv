@@ -70,8 +70,14 @@ module Cami
     # config.time_zone = "Central Time (US & Canada)"
     # config.eager_load_paths << Rails.root.join("extras")
     config.eager_load_paths << "#{root}/lib"
+    config.eager_load_paths << "#{root}/lib/generators"
     config.eager_load_paths << "#{root}/app/concerns"
     config.eager_load_paths << "#{root}/app/queries"
+    Dir["#{root}/lib/generators/*"].each do |path|
+      next unless File.directory?(path)
+
+      config.eager_load_paths << path
+    end
 
     # Autoload paths
     config.autoload_paths << "#{root}/lib/workflows"
