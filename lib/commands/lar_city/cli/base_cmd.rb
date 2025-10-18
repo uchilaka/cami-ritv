@@ -7,6 +7,10 @@ $LOAD_PATH.unshift(app_path) unless $LOAD_PATH.include?(app_path)
 require 'thor'
 require 'awesome_print'
 require 'concerns/operating_system_detectable'
+require 'lar_city/cli/utils'
+require 'lar_city/cli/interruptible'
+require 'lar_city/cli/reversible'
+# require 'lar_city/cli/output_helpers'
 require 'open3'
 # require_relative '../../../lar_city'
 # require 'lar_city'
@@ -46,6 +50,9 @@ module LarCity
 
       no_commands do
         include OperatingSystemDetectable
+        include OutputHelpers
+        include Interruptible
+        include Reversible
 
         def run(*args, inline: false, eval: false, &block)
           with_interruption_rescue do
@@ -80,39 +87,39 @@ module LarCity
           end
         end
 
-        def with_interruption_rescue(&block)
-          yield block
-        rescue SystemExit, Interrupt => e
-          say "\nTask interrupted.", :red
-          exit(1) unless verbose?
-          raise e
-        rescue StandardError => e
-          say "An error occurred: #{e.message}", :red
-          exit(1) unless verbose?
-          raise e
-        end
-
-        def with_optional_pretend_safety(&block)
-          with_interruption_rescue do
-            if dry_run?
-              say_warning 'Dry-run mode enabled - no changes will be made.'
-              say_warning <<-TIP
-                To execute the operation with persisted changes, re-run
-                without the --dry-run flag.
-              TIP
-            end
-
-            ActiveRecord::Base.transaction do
-              result = yield block
-              if dry_run?
-                say_warning 'Dry-run mode enabled - triggering rollback.'
-                raise ActiveRecord::Rollback
-              else
-                result
-              end
-            end
-          end
-        end
+        # def with_interruption_rescue(&block)
+        #   yield block
+        # rescue SystemExit, Interrupt => e
+        #   say "\nTask interrupted.", :red
+        #   exit(1) unless verbose?
+        #   raise e
+        # rescue StandardError => e
+        #   say "An error occurred: #{e.message}", :red
+        #   exit(1) unless verbose?
+        #   raise e
+        # end
+        #
+        # def with_optional_pretend_safety(&block)
+        #   with_interruption_rescue do
+        #     if dry_run?
+        #       say_warning 'Dry-run mode enabled - no changes will be made.'
+        #       say_warning <<-TIP
+        #         To execute the operation with persisted changes, re-run
+        #         without the --dry-run flag.
+        #       TIP
+        #     end
+        #
+        #     ActiveRecord::Base.transaction do
+        #       result = yield block
+        #       if dry_run?
+        #         say_warning 'Dry-run mode enabled - triggering rollback.'
+        #         raise ActiveRecord::Rollback
+        #       else
+        #         result
+        #       end
+        #     end
+        #   end
+        # end
 
         def config_file_exists?(name:)
           current_config_file = config_file(name:)
@@ -132,6 +139,8 @@ module LarCity
 
         protected
 
+        # include LarCity::CLI::OutputHelpers
+
         def config_file_from(template:)
           File.basename(template, File.extname(template))
         end
@@ -140,29 +149,29 @@ module LarCity
           Rails.root.join('config', name).to_s
         end
 
-        def print_line_break(span: 50)
-          say('=' * span)
-        end
-
-        def say_info(message)
-          say(message, :cyan)
-        end
-
-        def say_warning(message)
-          say(message, :yellow)
-        end
-
-        def say_success(message)
-          say(message, :green)
-        end
-
-        def say_highlight(message)
-          say(message, :magenta)
-        end
-
-        def say_error(message)
-          say(message, :red)
-        end
+        # def print_line_break(span: 50)
+        #   say('=' * span)
+        # end
+        #
+        # def say_info(message)
+        #   say(message, :cyan)
+        # end
+        #
+        # def say_warning(message)
+        #   say(message, :yellow)
+        # end
+        #
+        # def say_success(message)
+        #   say(message, :green)
+        # end
+        #
+        # def say_highlight(message)
+        #   say(message, :magenta)
+        # end
+        #
+        # def say_error(message)
+        #   say(message, :red)
+        # end
 
         def things(count, name: 'item')
           name.pluralize(count)

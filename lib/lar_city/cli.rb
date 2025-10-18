@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative 'cli/colors'
+require_relative 'cli/utils'
 
 module LarCity
   module CLI
