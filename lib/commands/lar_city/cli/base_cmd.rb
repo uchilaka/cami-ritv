@@ -103,13 +103,13 @@ module LarCity
           collection.class.ancestors.include?(Enumerable)
         end
 
-        def verbose?
-          options[:verbose]
-        end
-
-        def dry_run?
-          options[:dry_run]
-        end
+        # def verbose?
+        #   options[:verbose]
+        # end
+        #
+        # def dry_run?
+        #   options[:dry_run]
+        # end
       end
     end
   end

@@ -12,12 +12,11 @@ module LarCity
         context 'when no configured ports are present' do
           before do
             allow(command).to receive(:configured_ports).and_return([])
-            allow(command).to receive(:say)
           end
 
           it 'notifies the user about missing ports' do
-            expect(command).to receive(:say).with('No configured ports found. Please ensure your environment variables are set correctly.', :red)
-            command.lookup
+            expect { command.lookup }.to \
+              output(/No configured ports found. Please ensure your environment variables are set correctly/).to_stdout
           end
         end
 

@@ -31,8 +31,8 @@ class HtpasswdGenerator < Rails::Generators::Base
   end
 
   def show_credentials
-    say_highlight "Username: #{@username}"
-    say_highlight "Password: #{@password}"
+    msg = { username:, password: }.inspect
+    say_highlight msg
   end
 
   def setup_auth_config_directory
@@ -45,7 +45,7 @@ class HtpasswdGenerator < Rails::Generators::Base
             Rails.root.join(auth_config_path).to_s
           end
 
-        rel_path = auth_dir.split('/').reject(&:blank?)
+        rel_path = auth_dir.gsub(/^#{Rails.root}/, '').split('/').reject(&:blank?)
         rel_path << 'auth' unless rel_path.last == 'auth'
         auth_dir = Rails.root.join(*rel_path).to_s
 
@@ -62,7 +62,20 @@ class HtpasswdGenerator < Rails::Generators::Base
       end
   end
 
+  def codegen
+    cmd = [
+      'docker run',
+      '--rm',
+      '--entrypoint htpasswd',
+      "--mount type=volume,source=#{auth_dir_mount_source},target=/auth",
+      'httpd:2', '-Bbn', username, password,
+      (windows? ? '| Set-Content -Encoding ASCII auth/htpasswd' : '> auth/htpasswd'),
+    ]
+    run(*cmd, inline: true)
+  end
+
   no_commands do
+    include ::OperatingSystemDetectable
     include ::LarCity::CLI::OutputHelpers
     include ::LarCity::CLI::Runnable
 
