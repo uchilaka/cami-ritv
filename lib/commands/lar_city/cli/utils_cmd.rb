@@ -7,6 +7,16 @@ module LarCity
     class UtilsCmd < BaseCmd
       namespace :utils
 
+      desc 'sync_certs', 'Sync SSL certificates to Nginx certs directory'
+      def setup_certs
+        %w[*.crt *.key].each do |pattern|
+          Dir["#{tailscale_certs_path}/#{pattern}"].each do |file|
+            say_info "Copying #{file} to #{nginx_certs_path}/#{File.basename(file)}"
+            FileUtils.cp file, "#{nginx_certs_path}/#{File.basename(file)}", verbose: verbose?, noop: dry_run?
+          end
+        end
+      end
+
       desc 'kick_nginx_config', 'Kick Nginx to reload its configuration'
       def kick_nginx_config
         if Rails.env.test?
@@ -14,9 +24,7 @@ module LarCity
           return
         end
 
-        unless File.exist?(nginx_config_file)
-          raise Thor::Error, "Nginx config file not found at #{nginx_config_file}"
-        end
+        raise Thor::Error, "Nginx config file not found at #{nginx_config_file}" unless File.exist?(nginx_config_file)
 
         say 'Kicking Nginx to reload its configuration...', :yellow
         FileUtils.mkdir_p(nginx_servers_path, verbose: verbose?, noop: dry_run?)
@@ -34,8 +42,8 @@ module LarCity
 
         say 'Nginx configuration reloaded successfully.', :green
 
-        run "brew", "services", "restart", "nginx"
-        run "brew", "services", "info", "nginx"
+        run 'brew', 'services', 'restart', 'nginx'
+        run 'brew', 'services', 'info', 'nginx'
       end
 
       desc 'setup_yarn', 'Setup Yarn package manager'
@@ -102,6 +110,10 @@ module LarCity
 
       def nginx_certs_path
         "#{nginx_path}/certs"
+      end
+
+      def tailscale_certs_path
+        "#{Dir.home}/Library/Containers/io.tailscale.ipn.macos/Data"
       end
 
       def nginx_servers_path

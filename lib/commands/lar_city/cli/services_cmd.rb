@@ -24,9 +24,9 @@ module LarCity
       end
 
       option :force,
-              desc: 'Force overwrite of existing daemon config',
-              type: :boolean,
-              default: false
+             desc: 'Force overwrite of existing daemon config',
+             type: :boolean,
+             default: false
       desc 'daemonize', 'Run a command to setup the app service as a background daemon process'
       def daemonize
         if Rails.env.test?
