@@ -10,9 +10,10 @@ module LarCity
       desc 'setup_nginx_certs', 'Sync SSL certificates to Nginx certs directory'
       def setup_nginx_certs
         %w[*.crt *.key].each do |pattern|
-          Dir["#{tailscale_certs_path}/#{pattern}"].each do |file|
-            say_info "Copying #{file} to #{nginx_certs_path}/#{File.basename(file)}"
-            FileUtils.cp file, "#{nginx_certs_path}/#{File.basename(file)}", verbose: verbose?, noop: dry_run?
+          Dir["#{tailscale_certs_path}/#{pattern}"].each do |source_file|
+            target_file = "#{nginx_certs_path}/#{File.basename(source_file)}"
+            say_info "Copying #{source_file} to #{target_file}"
+            FileUtils.cp(source_file, target_file, verbose: verbose?, noop: dry_run?)
           end
         end
       end
