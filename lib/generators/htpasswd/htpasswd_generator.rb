@@ -31,8 +31,8 @@ class HtpasswdGenerator < Rails::Generators::Base
   end
 
   def show_credentials
-    msg = { username:, password: }.inspect
-    say_highlight msg
+    credentials = { username:, password: partially_masked_secret(password) }
+    say_highlight "Generated HTTP basic auth credentials: #{credentials}"
   end
 
   def setup_auth_config_directory

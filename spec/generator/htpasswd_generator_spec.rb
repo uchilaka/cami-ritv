@@ -25,11 +25,19 @@ RSpec.describe HtpasswdGenerator, type: :generator do
   end
 
   describe '#show_credentials' do
-    it 'shows the credentials' do
+    let(:expected_output) do
+      <<~OUTPUT
+        Generated HTTP basic auth credentials: {username: "testuser", password: "tes******ord"}
+      OUTPUT
+    end
+
+    before do
       generator.username = 'testuser'
       generator.password = 'testpassword'
-      expect(generator).to receive(:say_highlight).with('{username: "testuser", password: "testpassword"}')
-      generator.show_credentials
+    end
+
+    it 'shows the credentials' do
+      expect { generator.show_credentials }.to output(expected_output).to_stdout
     end
   end
 

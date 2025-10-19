@@ -33,6 +33,19 @@ module LarCity
           say('=' * span)
         end
 
+        # Show the first 2 and the last 4 characters or 1/4 of the secret, whichever is greater
+        def partially_masked_secret(secret)
+          return '' if secret.nil? || secret.empty?
+
+          visible_length = [2, (secret.length / 4).ceil].max
+          masked_length = secret.length - (visible_length * 2)
+          if masked_length.positive?
+            "#{secret[0, visible_length]}#{'*' * masked_length}#{secret[-visible_length, visible_length]}"
+          else
+            secret
+          end
+        end
+
         def say_info(message)
           say(message, :cyan)
         end
