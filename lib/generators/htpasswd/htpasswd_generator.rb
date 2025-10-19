@@ -64,6 +64,7 @@ class HtpasswdGenerator < Rails::Generators::Base
 
   no_commands do
     include ::LarCity::CLI::OutputHelpers
+    include ::LarCity::CLI::Runnable
 
     def auth_config_path
       options[:auth_config_path]
