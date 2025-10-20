@@ -10,6 +10,7 @@ puts "Environment: #{ENV.fetch('RAILS_ENV', '<N/A>')}"
 # Environment specific dependencies
 if %w[staging production].include?(ENV['RAILS_ENV'])
   brew 'mise'
+  brew 'certbot'
 else
   # Dev & anonymous environments
   brew 'gh'
