@@ -5,7 +5,7 @@ require 'open3'
 module LarCity
   module CLI
     module Runnable
-      extend Utils::ClassValidators
+      extend Utils::ClassHelpers
 
       def self.included(base)
         # Throw an error unless included in a Thor class

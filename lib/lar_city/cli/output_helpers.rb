@@ -1,15 +1,14 @@
 # frozen_string_literal: true
 
-require_relative 'utils/class_validators'
+require_relative 'utils/class_helpers'
 
 module LarCity
   module CLI
     module OutputHelpers
-      extend Utils::ClassValidators
+      extend Utils::ClassHelpers
 
       def self.included(base)
         # Throw an error unless included in a Thor class
-
         missing_ancestor_msg = <<~MSG
           #{base.name} is not a descendant of Thor or Thor::Group.
           #{name} can only be included in Thor or Thor::Group descendants.

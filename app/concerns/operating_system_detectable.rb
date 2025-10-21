@@ -62,7 +62,7 @@ module OperatingSystemDetectable
         windows: 'Windows',
         solaris: 'Solaris',
         bsd: 'BSD',
-        unsupported: 'Unsupported'
+        unsupported: 'Unsupported',
       }
     end
   end

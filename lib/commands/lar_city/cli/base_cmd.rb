@@ -47,6 +47,7 @@ module LarCity
 
       no_commands do
         include OperatingSystemDetectable
+        include EnvHelpers
         include OutputHelpers
         include Interruptible
         include Reversible

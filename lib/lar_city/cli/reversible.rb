@@ -4,7 +4,7 @@ module LarCity
   module CLI
     module Reversible
       extend ActiveSupport::Concern
-      extend Utils::ClassValidators
+      extend Utils::ClassHelpers
 
       def self.included(base)
         # Throw an error unless included in a Thor class

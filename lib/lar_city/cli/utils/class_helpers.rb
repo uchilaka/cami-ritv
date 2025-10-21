@@ -3,7 +3,7 @@
 module LarCity
   module CLI
     module Utils
-      module ClassValidators
+      module ClassHelpers
         protected
 
         def has_thor_ancestor?(base)

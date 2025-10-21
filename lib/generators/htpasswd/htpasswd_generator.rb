@@ -75,7 +75,7 @@ class HtpasswdGenerator < Rails::Generators::Base
   end
 
   no_commands do
-    include ::OperatingSystemDetectable
+    include ::LarCity::CLI::EnvHelpers
     include ::LarCity::CLI::OutputHelpers
     include ::LarCity::CLI::Runnable
 
