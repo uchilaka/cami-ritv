@@ -9,10 +9,47 @@ module LarCity
 
       desc 'setup_nginx_certs', 'Sync SSL certificates to Nginx certs directory'
       def setup_nginx_certs
+        unless Dir.exist?(tailscale_certs_path)
+          missing_dir_msg = <<~MSG
+            Tailscale certificates directory not found at #{tailscale_certs_path}. \
+            Please ensure Tailscale is installed and configured properly.
+          MSG
+          raise Thor::Error, missing_dir_msg
+        end
+
+        unless Dir.exist?(nginx_certs_path)
+          missing_dir_msg = <<~MSG
+            NGINX certificates directory not found at #{nginx_certs_path}. \
+            Please ensure NGINX is installed and the path is correct.
+          MSG
+          raise Thor::Error, missing_dir_msg
+        end
+
+        copy_over_msg = <<~MSG
+          **********************************************************************
+          *  Copying SSL certificates from Tailscale to NGINX certs directory  *
+          **********************************************************************
+        MSG
+        say_info copy_over_msg
+        dir_info_msg = <<~MSG
+          NGINX Certificates Directory: #{nginx_certs_path}
+          NGINX Certificates Directory Exists: #{Dir.exist?(nginx_certs_path)}
+          Tailscale Certificates Directory: #{tailscale_certs_path}
+          Tailscale Certificates Directory Exists: #{Dir.exist?(tailscale_certs_path)}
+        MSG
+        say_info dir_info_msg if verbose?
         %w[*.crt *.key].each do |pattern|
-          Dir["#{tailscale_certs_path}/#{pattern}"].each do |source_file|
+          resource_pattern = "#{tailscale_certs_path}/#{pattern}"
+          say_info "Processing resource pattern: #{resource_pattern}" if verbose?
+          Dir[resource_pattern].each do |source_file|
             target_file = "#{nginx_certs_path}/#{File.basename(source_file)}"
-            say_info "Copying #{source_file} to #{target_file}"
+            if verbose?
+              if dry_run?
+                say_highlight "(Dry-run) Copying #{source_file} to #{target_file}"
+              else
+                say_info "Copying #{source_file} to #{target_file}"
+              end
+            end
             FileUtils.cp(source_file, target_file, verbose: verbose?, noop: dry_run?)
           end
         end
