@@ -63,6 +63,8 @@ RSpec.describe LarCity::CLI::UtilsCmd, type: :command do
       allow(command).to receive(:nginx_certs_path).and_return(nginx_certs_path)
       allow(Dir).to receive(:[]).with("#{tailscale_certs_path}/*.crt").and_return([crt_file])
       allow(Dir).to receive(:[]).with("#{tailscale_certs_path}/*.key").and_return([key_file])
+      allow(Dir).to receive(:exist?).with(tailscale_certs_path).and_return(true)
+      allow(Dir).to receive(:exist?).with(nginx_certs_path).and_return(true)
       allow(FileUtils).to receive(:cp)
     end
 
