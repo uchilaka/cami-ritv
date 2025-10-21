@@ -56,14 +56,14 @@ module LarCity
               rel_path << 'auth' unless rel_path.last == 'auth'
               auth_dir = Rails.root.join(*rel_path).to_s
 
-              # if Dir.exist?(auth_dir)
-              #   say_status :exist, "directory: #{auth_dir}" if verbose?
-              # elsif dry_run?
-              #   say_highlight "Dry-run: Would have created directory #{auth_dir}"
-              # else
-              #   say_status :create, "directory: #{auth_dir}" if verbose?
-              #   FileUtils.mkdir_p(auth_dir, noop: pretend?, verbose: verbose?)
-              # end
+              if Dir.exist?(auth_dir)
+                say_status :exist, "directory: #{auth_dir}" if verbose?
+              elsif dry_run?
+                say_highlight "Dry-run: Would have created directory #{auth_dir}"
+              else
+                say_status :create, "directory: #{auth_dir}" if verbose?
+                FileUtils.mkdir_p(auth_dir, noop: pretend?, verbose: verbose?)
+              end
 
               auth_dir
             end
