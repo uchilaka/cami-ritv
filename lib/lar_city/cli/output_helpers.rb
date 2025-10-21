@@ -74,7 +74,7 @@ module LarCity
           options[:dry_run]
         end
 
-        alias pretend dry_run?
+        alias pretend? dry_run?
       end
     end
   end

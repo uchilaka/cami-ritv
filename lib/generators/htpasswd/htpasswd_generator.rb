@@ -69,7 +69,7 @@ class HtpasswdGenerator < Rails::Generators::Base
       '--entrypoint htpasswd',
       "--mount type=volume,source=#{auth_dir_mount_source},target=/auth",
       'httpd:2', '-Bbn', username, password,
-      (windows? ? '| Set-Content -Encoding ASCII auth/htpasswd' : '> auth/htpasswd'),
+      (windows? ? '| Set-Content -Encoding ASCII /auth/htpasswd' : '> /auth/htpasswd'),
     ]
     run(*cmd, inline: true)
   end
