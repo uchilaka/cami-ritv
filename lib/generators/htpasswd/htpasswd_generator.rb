@@ -4,6 +4,13 @@ require 'lar_city/cli/utils'
 require 'lib/commands/lar_city/cli/htpasswd_cmd'
 
 class HtpasswdGenerator < Rails::Generators::Base
+  no_commands do
+    include ::LarCity::CLI::EnvHelpers
+    include ::LarCity::CLI::IoHelpers
+    include ::LarCity::CLI::OutputHelpers
+    include ::LarCity::CLI::Runnable
+  end
+
   attr_accessor :username, :password
 
   source_root File.expand_path('templates', File.dirname(__FILE__))
@@ -13,11 +20,12 @@ class HtpasswdGenerator < Rails::Generators::Base
 
   LarCity::CLI::BaseCmd.define_class_options
 
-  class_option :auth_config_path,
-               type: :string,
-               aliases: '-o',
-               desc: 'The directory to store the htpasswd file',
-               default: 'config/httpd'
+  LarCity::CLI::IoHelpers.define_auth_config_path_option(self, class_option: true)
+  # class_option :auth_config_path,
+  #              type: :string,
+  #              aliases: '-o',
+  #              desc: 'The directory to store the htpasswd file',
+  #              default: 'config/httpd'
 
   # --- Sequential steps ---
 
@@ -49,12 +57,5 @@ class HtpasswdGenerator < Rails::Generators::Base
       output_redirection_fragment,
     ]
     run(*cmd, inline: true)
-  end
-
-  no_commands do
-    include ::LarCity::CLI::EnvHelpers
-    include ::LarCity::CLI::IoHelpers
-    include ::LarCity::CLI::OutputHelpers
-    include ::LarCity::CLI::Runnable
   end
 end

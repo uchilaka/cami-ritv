@@ -91,7 +91,7 @@ RSpec.describe HtpasswdGenerator, type: :generator do
     before do
       generator.username = 'testuser'
       generator.password = 'testpassword'
-      generator.auth_dir_mount_source = '/path/to/auth'
+      generator.instance_variable_set(:@auth_dir_mount_source, '/path/to/auth')
     end
 
     context 'when on windows' do

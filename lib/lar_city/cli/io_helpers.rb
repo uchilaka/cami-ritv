@@ -8,21 +8,6 @@ module LarCity
     module IoHelpers
       extend Utils::ClassHelpers
 
-      def self.define_auth_config_path_option(thor_class, class_option: false)
-        option_params = [
-          :auth_config_path,
-          type: :string,
-          aliases: '-o',
-          desc: 'The directory to store the htpasswd file',
-          default: 'config/httpd',
-        ]
-        if class_option
-          thor_class.class_option(*option_params)
-        else
-          thor_class.option(*option_params)
-        end
-      end
-
       def self.included(base)
         # Throw an error unless included in a Thor class
         missing_ancestor_msg = <<~MSG
@@ -41,9 +26,22 @@ module LarCity
         base.include InstanceMethods
       end
 
-      module InstanceMethods
-        protected
+      def self.define_auth_config_path_option(thor_class, class_option: false)
+        option_params = [
+          :auth_config_path,
+          type: :string,
+          aliases: '-o',
+          desc: 'The directory to store the htpasswd file',
+          default: 'config/httpd',
+        ]
+        if class_option
+          thor_class.class_option(*option_params)
+        else
+          thor_class.option(*option_params)
+        end
+      end
 
+      module InstanceMethods
         def auth_dir_mount_source
           @auth_dir_mount_source ||=
             begin
@@ -71,7 +69,7 @@ module LarCity
             end
         end
 
-        private
+        protected
 
         def auth_config_path
           options[:auth_config_path]
