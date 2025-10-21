@@ -8,6 +8,25 @@ RSpec.describe LarCity::CLI::UtilsCmd, type: :command do
 
   let(:domain) { 'accounts.larcity.test' }
 
+  describe '#httpd' do
+    before do
+      allow(command).to receive(:run)
+      command.instance_variable_set(:@auth_dir_mount_source, '/src/path/to/auth')
+    end
+
+    it 'constructs and runs the correct Docker command' do
+      expected_cmd = [
+        'docker run',
+        '--rm',
+        '--mount type=volume,source=/src/path/to/auth,target=/auth',
+        'httpd:2.4',
+        'touch /auth/htpasswd',
+      ]
+      expect(command).to receive(:run).with(*expected_cmd, inline: true)
+      command.httpd
+    end
+  end
+
   describe '#kick_nginx_config' do
     let(:nginx_config_file) { "#{Rails.root}/.nginx/test/conf.d/servers.conf" }
     let(:nginx_config_symlink) { '/opt/homebrew/etc/nginx/servers/cami.conf' }
@@ -22,7 +41,6 @@ RSpec.describe LarCity::CLI::UtilsCmd, type: :command do
       allow(FileUtils).to receive(:ln_sf)
       allow(Dir).to receive(:[]).with("#{nginx_ssl_artifacts_path}/*.pem").and_return([artifact_path])
       allow(command).to receive(:run)
-      # allow(command).to receive(:say)
     end
 
     it 'symlinks SSL artifacts using the correct basename' do
@@ -46,7 +64,6 @@ RSpec.describe LarCity::CLI::UtilsCmd, type: :command do
       allow(Dir).to receive(:[]).with("#{tailscale_certs_path}/*.crt").and_return([crt_file])
       allow(Dir).to receive(:[]).with("#{tailscale_certs_path}/*.key").and_return([key_file])
       allow(FileUtils).to receive(:cp)
-      # allow(command).to receive(:say_info)
     end
 
     it 'copies .crt and .key files to the nginx certs path' do
