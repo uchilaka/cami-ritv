@@ -4,9 +4,7 @@ require 'lar_city/cli/utils'
 require 'lib/commands/lar_city/cli/htpasswd_cmd'
 
 class HtpasswdGenerator < Rails::Generators::Base
-  # include LarCity::CLI::OutputHelpers
-
-  attr_accessor :username, :password, :auth_dir_mount_source
+  attr_accessor :username, :password
 
   source_root File.expand_path('templates', File.dirname(__FILE__))
 
@@ -36,51 +34,27 @@ class HtpasswdGenerator < Rails::Generators::Base
   end
 
   def setup_auth_config_directory
-    @auth_dir_mount_source ||=
-      begin
-        auth_dir =
-          if auth_config_path.start_with?('/')
-            auth_config_path
-          else
-            Rails.root.join(auth_config_path).to_s
-          end
-
-        rel_path = auth_dir.gsub(/^#{Rails.root}/, '').split('/').reject(&:blank?)
-        rel_path << 'auth' unless rel_path.last == 'auth'
-        auth_dir = Rails.root.join(*rel_path).to_s
-
-        if Dir.exist?(auth_dir)
-          say_status :exist, "directory: #{auth_dir}" if verbose?
-        elsif dry_run?
-          say_highlight "Dry-run: Would have created directory #{auth_dir}"
-        else
-          say_status :create, "directory: #{auth_dir}" if verbose?
-          FileUtils.mkdir_p(auth_dir)
-        end
-
-        auth_dir
-      end
+    auth_dir_mount_source
   end
 
   def codegen
+    output_redirection_fragment =
+      (windows? ? '| Set-Content -Encoding ASCII /auth/htpasswd' : '> /auth/htpasswd')
     cmd = [
       'docker run',
       '--rm',
       '--entrypoint htpasswd',
       "--mount type=volume,source=#{auth_dir_mount_source},target=/auth",
       'httpd:2', '-Bbn', username, password,
-      (windows? ? '| Set-Content -Encoding ASCII /auth/htpasswd' : '> /auth/htpasswd'),
+      output_redirection_fragment,
     ]
     run(*cmd, inline: true)
   end
 
   no_commands do
     include ::LarCity::CLI::EnvHelpers
+    include ::LarCity::CLI::IoHelpers
     include ::LarCity::CLI::OutputHelpers
     include ::LarCity::CLI::Runnable
-
-    def auth_config_path
-      options[:auth_config_path]
-    end
   end
 end

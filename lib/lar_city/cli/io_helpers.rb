@@ -1,0 +1,82 @@
+# frozen_string_literal: true
+
+require_relative 'utils/class_helpers'
+require_relative 'output_helpers'
+
+module LarCity
+  module CLI
+    module IoHelpers
+      extend Utils::ClassHelpers
+
+      def self.define_auth_config_path_option(thor_class, class_option: false)
+        option_params = [
+          :auth_config_path,
+          type: :string,
+          aliases: '-o',
+          desc: 'The directory to store the htpasswd file',
+          default: 'config/httpd',
+        ]
+        if class_option
+          thor_class.class_option(*option_params)
+        else
+          thor_class.option(*option_params)
+        end
+      end
+
+      def self.included(base)
+        # Throw an error unless included in a Thor class
+        missing_ancestor_msg = <<~MSG
+          #{base.name} is not a descendant of Thor or Thor::Group.
+          #{name} can only be included in Thor or Thor::Group descendants.
+        MSG
+        raise missing_ancestor_msg unless has_thor_ancestor?(base)
+
+        missing_options_method_msg = <<~MSG
+          #{base.name} does not support options.
+          #{name} can only be included in Thor classes that support options.
+        MSG
+        raise missing_options_method_msg unless supports_options?(base)
+
+        base.include OutputHelpers
+        base.include InstanceMethods
+      end
+
+      module InstanceMethods
+        protected
+
+        def auth_dir_mount_source
+          @auth_dir_mount_source ||=
+            begin
+              auth_dir =
+                if auth_config_path.start_with?('/')
+                  auth_config_path
+                else
+                  Rails.root.join(auth_config_path).to_s
+                end
+
+              rel_path = auth_dir.gsub(/^#{Rails.root}/, '').split('/').reject(&:blank?)
+              rel_path << 'auth' unless rel_path.last == 'auth'
+              auth_dir = Rails.root.join(*rel_path).to_s
+
+              if Dir.exist?(auth_dir)
+                say_status :exist, "directory: #{auth_dir}" if verbose?
+              elsif dry_run?
+                say_highlight "Dry-run: Would have created directory #{auth_dir}"
+              else
+                say_status :create, "directory: #{auth_dir}" if verbose?
+                FileUtils.mkdir_p(auth_dir, noop: pretend?, verbose: verbose?)
+              end
+
+              auth_dir
+            end
+        end
+
+        private
+
+        def auth_config_path
+          options[:auth_config_path]
+        end
+      end
+    end
+  end
+end

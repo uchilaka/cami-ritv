@@ -7,6 +7,23 @@ module LarCity
     class UtilsCmd < BaseCmd
       namespace :utils
 
+      no_commands do
+        include IoHelpers
+      end
+
+      IoHelpers.define_auth_config_path_option(self)
+      desc 'httpd', 'Run an httpd Docker container with auth volume mounted'
+      def httpd
+        cmd = [
+          'docker run',
+          '--rm',
+          "--mount type=volume,source=#{auth_dir_mount_source},target=/auth",
+          'httpd:2.4',
+          'touch /auth/htpasswd',
+        ]
+        run(*cmd, inline: true)
+      end
+
       desc 'setup_nginx_certs', 'Sync SSL certificates to Nginx certs directory'
       def setup_nginx_certs
         unless Dir.exist?(tailscale_certs_path)
