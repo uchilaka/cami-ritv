@@ -5,10 +5,13 @@ test:
   - accounts.larcity.test
   - www.example.com
 staging:
-  - accounts.staging.larcity.hopto.org
   - accounts.staging.larcity.org
   - accounts.staging.larcity.tech
   - accounts.staging.larcity.business
+  - accounts.larcity.dev
+  - uches-m4-home-mini
+  - uches-m4-home-mini.tail83bfcb.ts.net
+  - accounts.staging.larcity.hopto.org
   #- accounts.staging.madebylar.city
   #- accounts.staging.larcity.com
 production:

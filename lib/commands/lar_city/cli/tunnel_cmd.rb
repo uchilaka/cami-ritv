@@ -52,56 +52,72 @@ module LarCity
 
       desc 'open_all', 'Open ngrok tunnels for the project'
       def open_all
-        if auth_token_nil?
-          say_info <<~ERROR
-            No ngrok auth token found. Please set NGROK_AUTH_TOKEN in your environment.#{' '}
-            You will need an ngrok account to use this CLI command.#{' '}
-            See https://dashboard.ngrok.com/get-started/your-authtoken for more information.
-          ERROR
-
-          return
-        end
-
-        # TODO: Make sure this works without issues on macOS
-        invoke :init, [], verbose: Rails.env.development?
-
-        if verbose?
-          say_info <<~BANNER
-            Starting ngrok tunnels for #{project_root}...
-          BANNER
-        end
-
-        if proxy_config_files.empty? && !dry_run?
-          say_info <<~ERROR
-            No ngrok config files found. Please create one at #{app_config_file} or #{profile_config_file}.
-          ERROR
-
-          return
-        end
-
-        if windows? || linux?
-          bottom_bar = '============================================================================'
-          os_banner = " OS DETECTED: #{human_friendly_os_name.upcase} "
-          top_bar_ends = '=' * ((bottom_bar.length - os_banner.length) / 2.0)
-          launch_msg = <<~MSG
-
-            #{top_bar_ends} OS DETECTED: #{human_friendly_os_name} #{top_bar_ends}
-            Your dev proxy tunnel is about to launch via a Docker container.
-
-            Visit your NGROK dashboard to view information on available endpoints:
-            https://dashboard.ngrok.com/endpoints?sortBy=updatedAt&orderBy=desc
-            ============================================================================
-
-          MSG
-          say launch_msg, :yellow
-          run 'docker compose up tunnel'
+        case options[:environment]
+        when 'staging'
+          run 'tailscale', 'funnel', '--bg', '--https=443', 80
+        when 'development'
+          open_via_ngrok
         else
-          run 'ngrok start --all',
-              (proxy_config_files.empty? ? nil : "--config=#{proxy_config_files.join(',')}")
+          error_msg = <<~ERROR
+            ************************************************************************
+            *  ERROR: proxy tunnels can only be opened in supported environments.  *
+            ************************************************************************
+          ERROR
+          say_error error_msg
         end
       end
 
       no_commands do
+        def open_via_ngrok
+          if auth_token_nil?
+            say_info <<~ERROR
+              No ngrok auth token found. Please set NGROK_AUTH_TOKEN in your environment.#{' '}
+              You will need an ngrok account to use this CLI command.#{' '}
+              See https://dashboard.ngrok.com/get-started/your-authtoken for more information.
+            ERROR
+
+            return
+          end
+
+          # TODO: Make sure this works without issues on macOS
+          invoke :init, [], verbose: Rails.env.development?
+
+          if verbose?
+            say_info <<~BANNER
+              Starting ngrok tunnels for #{project_root}...
+            BANNER
+          end
+
+          if proxy_config_files.empty? && !dry_run?
+            say_info <<~ERROR
+              No ngrok config files found. Please create one at #{app_config_file} or #{profile_config_file}.
+            ERROR
+
+            return
+          end
+
+          if windows? || linux?
+            bottom_bar = '============================================================================'
+            os_banner = " OS DETECTED: #{human_friendly_os_name.upcase} "
+            top_bar_ends = '=' * ((bottom_bar.length - os_banner.length) / 2.0)
+            launch_msg = <<~MSG
+
+              #{top_bar_ends} OS DETECTED: #{human_friendly_os_name} #{top_bar_ends}
+              Your dev proxy tunnel is about to launch via a Docker container.
+
+              Visit your NGROK dashboard to view information on available endpoints:
+              https://dashboard.ngrok.com/endpoints?sortBy=updatedAt&orderBy=desc
+              ============================================================================
+
+            MSG
+            say launch_msg, :yellow
+            run 'docker compose up tunnel'
+          else
+            run 'ngrok start --all',
+                (proxy_config_files.empty? ? nil : "--config=#{proxy_config_files.join(',')}")
+          end
+        end
+
         def app_proxies_configured?
           @app_proxies_configured ||= app_proxy_config_files.all? { |f| File.exist? f }
         end
