@@ -47,14 +47,14 @@ class HtpasswdGenerator < Rails::Generators::Base
 
   def codegen
     output_redirection_fragment =
-      (windows? ? '| Set-Content -Encoding ASCII /auth/htpasswd' : '> /auth/htpasswd')
+      (windows? ? '| Set-Content -Encoding ASCII auth/htpasswd' : '> auth/htpasswd')
+    entrypoint_args = ['-Bbn', username, password, output_redirection_fragment].join(' ')
     cmd = [
       'docker run',
-      '--rm',
       '--entrypoint htpasswd',
-      "--mount type=volume,source=#{auth_dir_mount_source},target=/auth",
-      'httpd:2', '-Bbn', username, password,
-      output_redirection_fragment,
+      '--rm',
+      # "--mount type=volume,source=#{auth_dir_mount_source},target=/auth",
+      'httpd:2', entrypoint_args,
     ]
     run(*cmd, inline: true)
   end
