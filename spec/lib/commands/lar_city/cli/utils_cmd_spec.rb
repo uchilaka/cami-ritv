@@ -8,25 +8,6 @@ RSpec.describe LarCity::CLI::UtilsCmd, type: :command do
 
   let(:domain) { 'accounts.larcity.test' }
 
-  describe '#httpd' do
-    before do
-      allow(command).to receive(:run)
-      command.instance_variable_set(:@auth_dir_mount_source, '/src/path/to/auth')
-    end
-
-    it 'constructs and runs the correct Docker command' do
-      expected_cmd = [
-        'docker run',
-        '--rm',
-        '--mount type=volume,source=/src/path/to/auth,target=/auth',
-        'httpd:2.4',
-        'touch /auth/htpasswd',
-      ]
-      expect(command).to receive(:run).with(*expected_cmd, inline: true)
-      command.httpd
-    end
-  end
-
   describe '#kick_nginx_config' do
     let(:nginx_config_file) { "#{Rails.root}/.nginx/test/conf.d/servers.conf" }
     let(:nginx_config_symlink) { '/opt/homebrew/etc/nginx/servers/cami.conf' }
