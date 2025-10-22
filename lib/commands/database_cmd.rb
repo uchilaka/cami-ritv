@@ -27,7 +27,7 @@ class DatabaseCmd < LarCity::CLI::BaseCmd
 
       abs_backup_path = "#{Rails.root}/#{backup_path}"
       FileUtils.mkdir_p(abs_backup_path, verbose: verbose?, noop: pretend?)
-      dump_file = "#{abs_backup_path}/#{options[:name]}_(#{file_timestamp}).dump"
+      dump_file = "#{abs_backup_path}/#{options[:name]}_#{file_timestamp}.dump"
       say_info "Backing up database to #{dump_file}..."
       run 'pg_dump', *pg_dump_options,
           "--username=#{config['username']}",
