@@ -9,6 +9,7 @@
 
 ## Homework
 
+- [ ] [Rails Guides](https://guides.rubyonrails.org/v8.0/index.html)
 - [ ] [Session storage caveat(s) with devise-jwt](https://github.com/waiting-for-dev/devise-jwt?tab=readme-ov-file#session-storage-caveat)
 - [ ] [Tailwind dark mode guide](https://v3.tailwindcss.com/docs/dark-mode)
 - [ ] [Flowbite dark mode guide](https://flowbite.com/docs/customize/dark-mode/)
