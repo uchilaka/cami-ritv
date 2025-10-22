@@ -10,8 +10,6 @@ RSpec.describe HtpasswdGenerator, type: :generator do
     allow(LarCity::CLI::Utils::Ask).to \
       receive(:prompt_for_auth_credentials)
         .and_return({ username: 'testuser', password: 'testpassword' })
-    # allow(generator).to receive(:say_highlight)
-    # allow(generator).to receive(:say_status)
     allow(generator).to receive(:run)
     allow(FileUtils).to receive(:mkdir_p)
   end
@@ -47,7 +45,6 @@ RSpec.describe HtpasswdGenerator, type: :generator do
     context 'when directory exists' do
       before do
         allow(Dir).to receive(:exist?).with(auth_dir).and_return(true)
-        # allow(generator).to receive(:verbose?).and_return(true)
       end
 
       it 'says directory exists' do
@@ -62,10 +59,6 @@ RSpec.describe HtpasswdGenerator, type: :generator do
       end
 
       context 'when dry run' do
-        # before do
-        #   allow(generator).to receive(:dry_run?).and_return(true)
-        # end
-
         it 'says it would have created directory' do
           expect(generator).to receive(:say_highlight).with("Dry-run: Would have created directory #{auth_dir}")
           generator.setup_auth_config_directory
@@ -73,11 +66,6 @@ RSpec.describe HtpasswdGenerator, type: :generator do
       end
 
       context 'when not dry run' do
-        # before do
-        #   allow(generator).to receive(:dry_run?).and_return(false)
-        #   allow(generator).to receive(:verbose?).and_return(true)
-        # end
-
         it 'creates directory' do
           expect(generator).to receive(:say_status).with(:create, "directory: #{auth_dir}")
           expect(FileUtils).to receive(:mkdir_p).with(auth_dir)
