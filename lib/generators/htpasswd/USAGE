@@ -1,8 +1,10 @@
 Description:
-    Explain the generator
+    Generates an htpasswd file for HTTP basic authentication. This file can be used to protect web resources by requiring a username and password.
 
 Example:
-    bin/rails generate htpasswd Thing
+    bin/rails generate htpasswd
 
     This will create:
-        what/will/it/create
+        config/httpd/auth/htpasswd
+
+    The generated htpasswd file will contain entries for HTTP basic authentication. You can edit this file to add or remove users as needed.
