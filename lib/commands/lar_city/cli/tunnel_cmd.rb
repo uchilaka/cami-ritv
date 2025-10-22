@@ -52,7 +52,7 @@ module LarCity
 
       desc 'open_all', 'Open ngrok tunnels for the project'
       def open_all
-        case options[:environment]
+        case detected_environment
         when 'staging'
           run 'tailscale', 'funnel', '--bg', '--https=443', 80
         when 'development'
@@ -64,6 +64,7 @@ module LarCity
             ************************************************************************
           ERROR
           say_error error_msg
+          say_error "Unsupported environment: #{detected_environment}"
         end
       end
 

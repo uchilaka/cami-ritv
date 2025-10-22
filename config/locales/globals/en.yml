@@ -46,6 +46,14 @@ en:
         create: "New account"
         search: "Search for accounts"
 
+    prompts:
+      auth:
+        username: "Enter your username"
+        password: "Enter your password"
+        new_username: "Enter a new username"
+        new_password: "Enter a new password"
+        confirm_password: "Confirm your new password"
+
     shared:
       navbar:
         home: "Home"
@@ -84,3 +92,7 @@ en:
         invalid_username: "%{value} is not a valid username"
         invalid_phone_number: "%{value} is not a valid phone number"
         invalid_url: "%{value} is not a valid URL"
+        password_mismatch: "new password and confirmation do not match"
+        password_too_simple: "is too simple (must include uppercase, lowercase, number, and special character)"
+        password_too_short: "is too short (minimum is %{count} characters)"
+        password_too_long: "is too long (maximum is %{count} characters)"

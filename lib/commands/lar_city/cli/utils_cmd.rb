@@ -7,35 +7,81 @@ module LarCity
     class UtilsCmd < BaseCmd
       namespace :utils
 
+      desc 'setup_nginx_certs', 'Sync SSL certificates to Nginx certs directory'
+      def setup_nginx_certs
+        unless Dir.exist?(tailscale_certs_path)
+          missing_dir_msg = <<~MSG
+            Tailscale certificates directory not found at #{tailscale_certs_path}. \
+            Please ensure Tailscale is installed and configured properly.
+          MSG
+          raise Thor::Error, missing_dir_msg
+        end
+
+        unless Dir.exist?(nginx_certs_path)
+          missing_dir_msg = <<~MSG
+            NGINX certificates directory not found at #{nginx_certs_path}. \
+            Please ensure NGINX is installed and the path is correct.
+          MSG
+          raise Thor::Error, missing_dir_msg
+        end
+
+        copy_over_msg = <<~MSG
+          **********************************************************************
+          *  Copying SSL certificates from Tailscale to NGINX certs directory  *
+          **********************************************************************
+        MSG
+        say_info copy_over_msg
+        dir_info_msg = <<~MSG
+          NGINX Certificates Directory: #{nginx_certs_path}
+          NGINX Certificates Directory Exists: #{Dir.exist?(nginx_certs_path)}
+          Tailscale Certificates Directory: #{tailscale_certs_path}
+          Tailscale Certificates Directory Exists: #{Dir.exist?(tailscale_certs_path)}
+        MSG
+        say_info dir_info_msg if verbose?
+        %w[*.crt *.key].each do |pattern|
+          resource_pattern = "#{tailscale_certs_path}/#{pattern}"
+          say_info "Processing resource pattern: #{resource_pattern}" if verbose?
+          Dir[resource_pattern].each do |source_file|
+            target_file = "#{nginx_certs_path}/#{File.basename(source_file)}"
+            if verbose?
+              if dry_run?
+                say_highlight "(Dry-run) Copying #{source_file} to #{target_file}"
+              else
+                say_info "Copying #{source_file} to #{target_file}"
+              end
+            end
+            FileUtils.cp(source_file, target_file, verbose: verbose?, noop: dry_run?)
+          end
+        end
+      end
+
       desc 'kick_nginx_config', 'Kick Nginx to reload its configuration'
       def kick_nginx_config
-        if Rails.env.test?
-          say 'Skipping Nginx config kick in test environment.', :red
-          return
-        end
+        # if Rails.env.test?
+        #   say 'Skipping Nginx config kick in test environment.', :red
+        #   return
+        # end
 
-        unless File.exist?(nginx_config_file)
-          raise Thor::Error, "Nginx config file not found at #{nginx_config_file}"
-        end
+        raise Thor::Error, "Nginx config file not found at #{nginx_config_file}" unless File.exist?(nginx_config_file)
 
-        say 'Kicking Nginx to reload its configuration...', :yellow
-        FileUtils.mkdir_p(nginx_servers_path, verbose: verbose?, noop: dry_run?)
+        say_info 'Kicking Nginx to reload its configuration...'
+        FileUtils.mkdir_p(nginx_servers_path, verbose: verbose?, noop: dry_run? || Rails.env.test?)
 
         # Symlink the config file
-        say "Symlinking Nginx config from #{nginx_config_file} to #{nginx_config_symlink}...", :yellow
-        FileUtils.ln_sf nginx_config_file, nginx_config_symlink, verbose: verbose?, noop: dry_run?
+        say_info "Symlinking Nginx config from #{nginx_config_file} to #{nginx_config_symlink}..."
+        FileUtils.ln_sf(nginx_config_file, nginx_config_symlink, verbose: verbose?, noop: dry_run? || Rails.env.test?)
 
         # Symlink each file in the SSL artifacts directory to the Nginx certs directory
-        Dir["#{nginx_ssl_artifacts_path}/*.pem"].each do |artifact|
-          # TODO: Write a test to assert that the correct basename (with .pem extension) is used
-          say "Symlinking Nginx SSL artifact from #{artifact} to #{nginx_ssl_artifacts_symlink}/#{File.basename(artifact)}...", :yellow
-          FileUtils.ln_sf artifact, "#{nginx_ssl_artifacts_symlink}/#{File.basename(artifact)}", verbose: verbose?, noop: dry_run?
+        Dir["#{nginx_ssl_artifacts_path}/*.pem"].each do |artifact_source|
+          link_target = "#{nginx_ssl_artifacts_symlink}/#{File.basename(artifact_source)}"
+          say_info "Symlinking Nginx SSL artifact from #{artifact_source} to #{link_target}..."
+          FileUtils.ln_sf(artifact_source, link_target, verbose: verbose?, noop: dry_run? || Rails.env.test?)
         end
 
         say 'Nginx configuration reloaded successfully.', :green
 
-        run "brew", "services", "restart", "nginx"
-        run "brew", "services", "info", "nginx"
+        run 'brew', 'services', 'restart', 'nginx'
+        run 'brew', 'services', 'info', 'nginx'
       end
 
       desc 'setup_yarn', 'Setup Yarn package manager'
@@ -102,6 +148,10 @@ module LarCity
 
       def nginx_certs_path
         "#{nginx_path}/certs"
+      end
+
+      def tailscale_certs_path
+        "#{Dir.home}/Library/Containers/io.tailscale.ipn.macos/Data"
       end
 
       def nginx_servers_path

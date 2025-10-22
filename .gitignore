@@ -35,6 +35,9 @@
 # Ignore secret files
 /config/secrets/
 
+# Ignore HTTP basic auth credentials
+/config/httpd/auth/htpasswd
+
 # Ignore sensitive files
 /spec/fixtures/pii/
 

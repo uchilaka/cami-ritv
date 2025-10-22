@@ -15,7 +15,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        ruby-version: [3.2.2]
+        ruby-version: [3.4.4]
         node-version: [22.x]
         # TODO: CI node total and index are used by Knapsack Pro
         #ci_node_total: [2]

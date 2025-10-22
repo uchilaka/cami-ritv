@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative 'cli/utils'
+load 'commands/lar_city/cli/entrypoint.thor'
 
 module LarCity
   module CLI
