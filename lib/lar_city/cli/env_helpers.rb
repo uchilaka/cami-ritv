@@ -8,6 +8,14 @@ module LarCity
     module EnvHelpers
       extend Utils::ClassHelpers
 
+      def self.define_class_options(thor_class)
+        thor_class.class_option :environment,
+                                type: :string,
+                                aliases: '--env',
+                                desc: 'Environment',
+                                required: false
+      end
+
       def self.included(base)
         base.include OperatingSystemDetectable
 

@@ -25,30 +25,36 @@ module LarCity
         true
       end
 
-      def self.define_class_options
-        class_option :dry_run,
-                     type: :boolean,
-                     aliases: %w[-d --pretend --preview],
-                     desc: 'Dry run',
-                     default: false
-        class_option :environment,
-                     type: :string,
-                     aliases: '--env',
-                     desc: 'Environment',
-                     required: false
-        class_option :verbose,
-                     type: :boolean,
-                     aliases: '-v',
-                     desc: 'Verbose output',
-                     default: false
-      end
-
-      define_class_options
-
       no_commands do
         include OperatingSystemDetectable
         include EnvHelpers
         include OutputHelpers
+      end
+
+      # def self.define_class_options
+      #   class_option :dry_run,
+      #                type: :boolean,
+      #                aliases: %w[-d --pretend --preview],
+      #                desc: 'Dry run',
+      #                default: false
+      #   class_option :environment,
+      #                type: :string,
+      #                aliases: '--env',
+      #                desc: 'Environment',
+      #                required: false
+      #   class_option :verbose,
+      #                type: :boolean,
+      #                aliases: %w[-v --debug],
+      #                desc: 'Verbose output',
+      #                default: false
+      # end
+      #
+      # define_class_options
+
+      EnvHelpers.define_class_options(self)
+      OutputHelpers.define_class_options(self)
+
+      no_commands do
         include Interruptible
         include Reversible
         include Runnable

@@ -7,6 +7,22 @@ module LarCity
     module OutputHelpers
       extend Utils::ClassHelpers
 
+      def self.define_class_options(thor_class)
+        thor_class.class_option :help,
+                                type: :boolean,
+                                default: false
+        thor_class.class_option :dry_run,
+                                type: :boolean,
+                                aliases: %w[-d --pretend --preview],
+                                desc: 'Dry run',
+                                default: false
+        thor_class.class_option :verbose,
+                                type: :boolean,
+                                aliases: %w[-v --debug],
+                                desc: 'Verbose output',
+                                default: false
+      end
+
       def self.included(base)
         # Throw an error unless included in a Thor class
         missing_ancestor_msg = <<~MSG
@@ -65,6 +81,10 @@ module LarCity
           say(message, :red)
         end
 
+        def help?
+          options[:help]
+        end
+
         def verbose?
           options[:verbose]
         end
@@ -74,6 +94,7 @@ module LarCity
         end
 
         alias pretend? dry_run?
+        alias debug? verbose?
       end
     end
   end
