@@ -17,8 +17,8 @@ module LarCity
              type: :string,
              aliases: '--ide',
              desc: 'Editor to use',
-             default: 'rubymine --wait',
              enum: %w[nano code rubymine],
+             default: 'rubymine',
              required: true
       def edit
         executable = Rails.root.join('bin', 'rails')
@@ -143,7 +143,7 @@ module LarCity
       end
 
       def editor
-        @editor ||= detected_editor || selected_or_default_editor
+        @editor ||= selected_or_default_editor
       end
 
       def detected_editor
@@ -156,13 +156,7 @@ module LarCity
       end
 
       def selected_or_default_editor
-        input_editor = ENV.fetch('EDITOR', options[:editor])
-        case input_editor
-        when 'code', 'rubymine'
-          input_editor
-        else
-          'nano'
-        end
+        options[:editor] || ENV.fetch('EDITOR', detected_editor)
       end
     end
   end

@@ -1,0 +1,103 @@
+# frozen_string_literal: true
+
+require_relative 'utils/class_helpers'
+
+module LarCity
+  module CLI
+    module OutputHelpers
+      extend Utils::ClassHelpers
+
+      def self.define_class_options(thor_class)
+        thor_class.class_option :help,
+                                type: :boolean,
+                                default: false
+        thor_class.class_option :dry_run,
+                                type: :boolean,
+                                aliases: %w[-d --pretend --preview],
+                                desc: 'Dry run',
+                                default: false
+        thor_class.class_option :verbose,
+                                type: :boolean,
+                                aliases: %w[-v --debug],
+                                desc: 'Verbose output',
+                                default: false
+      end
+
+      def self.included(base)
+        # Throw an error unless included in a Thor class
+        missing_ancestor_msg = <<~MSG
+          #{base.name} is not a descendant of Thor or Thor::Group.
+          #{name} can only be included in Thor or Thor::Group descendants.
+        MSG
+        raise missing_ancestor_msg unless has_thor_ancestor?(base)
+
+        missing_options_method_msg = <<~MSG
+          #{base.name} does not support options.
+          #{name} can only be included in Thor classes that support options.
+        MSG
+        raise missing_options_method_msg unless supports_options?(base)
+
+        # Check if thor option exists in base context
+        base.include SayHelperMethods
+      end
+
+      module SayHelperMethods
+        protected
+
+        def print_line_break(span: 50)
+          say('=' * span)
+        end
+
+        # Shows a calculated number of visible characters (i.e. visible_length)
+        # at both the start and end, where visible_length is the maximum
+        # of 2 or 1/4 of the secret length.
+        def partially_masked_secret(secret)
+          return '' if secret.nil? || secret.empty?
+
+          visible_length = [2, (secret.length / 4).ceil].max
+          masked_length = secret.length - (visible_length * 2)
+          if masked_length.positive?
+            "#{secret[0, visible_length]}#{'*' * masked_length}#{secret[-visible_length, visible_length]}"
+          else
+            secret
+          end
+        end
+
+        def say_info(message)
+          say(message, :cyan)
+        end
+
+        def say_warning(message)
+          say(message, :yellow)
+        end
+
+        def say_success(message)
+          say(message, :green)
+        end
+
+        def say_highlight(message)
+          say(message, :magenta)
+        end
+
+        def say_error(message)
+          say(message, :red)
+        end
+
+        def help?
+          options[:help]
+        end
+
+        def verbose?
+          options[:verbose]
+        end
+
+        def dry_run?
+          options[:dry_run]
+        end
+
+        alias pretend? dry_run?
+        alias debug? verbose?
+      end
+    end
+  end
+end

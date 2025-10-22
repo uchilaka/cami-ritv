@@ -7,9 +7,10 @@ $LOAD_PATH.unshift(app_path) unless $LOAD_PATH.include?(app_path)
 require 'thor'
 require 'awesome_print'
 require 'concerns/operating_system_detectable'
-require 'open3'
-# require_relative '../../../lar_city'
-# require 'lar_city'
+require 'lar_city/cli/utils'
+require 'lar_city/cli/interruptible'
+require 'lar_city/cli/reversible'
+require 'lar_city/cli/runnable'
 
 # Conventions for command or task implementation classes:
 # - Use the namespace method to define a namespace for the Thor class.
@@ -20,73 +21,23 @@ require 'open3'
 module LarCity
   module CLI
     class BaseCmd < Thor
-      class_option :dry_run,
-                   type: :boolean,
-                   aliases: %w[-d --pretend --preview],
-                   desc: 'Dry run',
-                   default: false
-      class_option :environment,
-                   type: :string,
-                   aliases: '--env',
-                   desc: 'Environment',
-                   required: false
-      class_option :verbose,
-                   type: :boolean,
-                   aliases: '-v',
-                   desc: 'Verbose output',
-                   default: false
-
       def self.exit_on_failure?
         true
       end
 
       no_commands do
         include OperatingSystemDetectable
+        include EnvHelpers
+        include OutputHelpers
+      end
 
-        def run(*args, inline: false, eval: false, &block)
-          with_interruption_rescue do
-            cmd = args.compact.join(' ')
-            if verbose? || dry_run?
-              msg = <<~CMD
-                Executing#{dry_run? ? ' (dry-run)' : ''}: #{cmd}
-              CMD
-              say(msg, dry_run? ? :magenta : :yellow)
-            end
-            return if dry_run?
+      EnvHelpers.define_class_options(self)
+      OutputHelpers.define_class_options(self)
 
-            if eval
-              if block_given?
-                # Example: doing this with Open3
-                Open3.popen2e(cmd) do |_stdin, stdout_stderr, wait_thread|
-                  Thread.new do
-                    stdout_stderr.each(&block)
-                  end
-                  wait_thread.value
-                end
-              else
-                result = `#{cmd}`
-                return result
-              end
-            else
-              result = system(cmd, out: $stdout, err: :out)
-              return result if inline
-
-              # exit 0 if result
-            end
-          end
-        end
-
-        def with_interruption_rescue(&block)
-          yield block
-        rescue SystemExit, Interrupt => e
-          say "\nTask interrupted.", :red
-          exit(1) unless verbose?
-          raise e
-        rescue StandardError => e
-          say "An error occurred: #{e.message}", :red
-          exit(1) unless verbose?
-          raise e
-        end
+      no_commands do
+        include Interruptible
+        include Reversible
+        include Runnable
 
         def config_file_exists?(name:)
           current_config_file = config_file(name:)
@@ -114,30 +65,6 @@ module LarCity
           Rails.root.join('config', name).to_s
         end
 
-        def print_line_break(span: 50)
-          say('=' * span)
-        end
-
-        def say_info(message)
-          say(message, :cyan)
-        end
-
-        def say_warning(message)
-          say(message, :yellow)
-        end
-
-        def say_success(message)
-          say(message, :green)
-        end
-
-        def say_highlight(message)
-          say(message, :magenta)
-        end
-
-        def say_error(message)
-          say(message, :red)
-        end
-
         def things(count, name: 'item')
           name.pluralize(count)
         end
@@ -161,14 +88,6 @@ module LarCity
 
         def is_enumerable?(collection)
           collection.class.ancestors.include?(Enumerable)
-        end
-
-        def verbose?
-          options[:verbose]
-        end
-
-        def dry_run?
-          options[:dry_run]
         end
       end
     end

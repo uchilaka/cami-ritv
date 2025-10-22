@@ -61,13 +61,13 @@ module LarCity
         print_line_break
 
         # Make the plist file executable
-        FileUtils.chmod "+x", plist_file_path, verbose: verbose?, noop: dry_run?
+        FileUtils.chmod '+x', plist_file_path, verbose: verbose?, noop: dry_run?
 
         # Symlink the plist file to /Library/LaunchAgents for system-wide daemons
         launch_agents_path = '/Library/LaunchDaemons'
         symlink_path = File.join(launch_agents_path, file_name)
         # FileUtils.ln_sf plist_file_path, symlink_path, verbose: verbose?, noop: dry_run?
-        run "sudo", "ln", "-svf", plist_file_path, symlink_path
+        run 'sudo', 'ln', '-svf', plist_file_path, symlink_path
 
         if verbose?
           say_info daemonize_guide(plist_file_path: symlink_path)
@@ -212,8 +212,8 @@ module LarCity
         protected
 
         def daemonize_guide(plist_file_path:)
-          user_guide = I18n.t("commands.services.daemonize.user_guide", plist_file_path:)
-          macos_guide = I18n.t("commands.services.daemonize.macos_guide", user_guide:)
+          user_guide = I18n.t('commands.services.daemonize.user_guide', plist_file_path:)
+          macos_guide = I18n.t('commands.services.daemonize.macos_guide', user_guide:)
           return macos_guide if mac?
 
           user_guide

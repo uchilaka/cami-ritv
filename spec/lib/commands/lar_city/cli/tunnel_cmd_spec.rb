@@ -114,70 +114,88 @@ RSpec.describe LarCity::CLI::TunnelCmd, type: :thor, devtool: true, skip_in_ci: 
   end
 
   describe '#open_all' do
-    context 'when NGROK_AUTH_TOKEN is not set' do
-      around do |example|
-        with_modified_env(NGROK_AUTH_TOKEN: nil) { example.run }
+    context 'when in unsupported environment' do
+      before do
+        allow(Rails.env).to receive(:test?).and_return(false)
+        allow(tunnel_cmd).to receive(:detected_environment).and_return('production')
       end
 
       it 'prints an error message' do
-        expect { tunnel_cmd.invoke(:open_all) }.to output(/No ngrok auth token found/).to_stdout
+        expect { tunnel_cmd.open_all }.to output(/Unsupported environment: production/).to_stdout
       end
     end
 
-    context 'when NGROK_AUTH_TOKEN is set', skip: 'wip: all tests failing as at last check' do
+    context 'when in supported environment' do
       before do
-        allow(File).to receive(:exist?).with(%r{/.ngrok2/ngrok.yml$}).and_return(false)
-        allow(File).to receive(:exist?).with(%r{/config/ngrok-via-docker.yml.erb$}).and_return(true)
-        allow(File).to receive(:exist?).with(%r{/config/ngrok.yml.erb$}).and_return(true)
-        allow(File).to receive(:exist?).with(%r{/config/ngrok(-via-docker)?.yml$}) { false }
-        allow(tunnel_cmd).to receive(:run)
+        allow(Rails.env).to receive(:test?).and_return(false)
+        allow(tunnel_cmd).to receive(:detected_environment).and_return('staging')
       end
 
-      after do
-        allow(File).to receive(:exist?).and_call_original
-      end
+      context 'when NGROK_AUTH_TOKEN is not set' do
+        around do |example|
+          with_modified_env(NGROK_AUTH_TOKEN: nil) { example.run }
+        end
 
-      around do |example|
-        with_modified_env(NGROK_AUTH_TOKEN: 'mock_ngrok_auth_token') { example.run }
-      end
-
-      shared_examples 'ngrok starts with the expected command' do |expected_command|
-        it do
-          tunnel_cmd.invoke(:open_all, [], dry_run: true)
-          expect(tunnel_cmd).to have_received(:run).with(expected_command)
+        it 'prints an error message' do
+          expect { tunnel_cmd.open_all }.to output(/No ngrok auth token found/).to_stdout
         end
       end
 
-      context 'and the detected OS is NOT Windows or Linux' do
+      context 'when NGROK_AUTH_TOKEN is set', skip: 'wip: all tests failing as at last check' do
         before do
-          allow(tunnel_cmd).to receive(:friendly_os_name).and_return(:macos)
+          allow(File).to receive(:exist?).with(%r{/.ngrok2/ngrok.yml$}).and_return(false)
+          allow(File).to receive(:exist?).with(%r{/config/ngrok-via-docker.yml.erb$}).and_return(true)
+          allow(File).to receive(:exist?).with(%r{/config/ngrok.yml.erb$}).and_return(true)
+          allow(File).to receive(:exist?).with(%r{/config/ngrok(-via-docker)?.yml$}) { false }
+          allow(tunnel_cmd).to receive(:run)
         end
 
-        it do
-          tunnel_cmd.invoke(:open_all, [], dry_run: true)
-          expect(tunnel_cmd).to \
-            have_received(:run)
-              .with(
-                'ngrok start --all',
-                "--config=#{Rails.root}/config/ngrok.yml"
-              )
-        end
-      end
-
-      context 'and the detected OS is Windows' do
-        before do
-          allow(tunnel_cmd).to receive(:friendly_os_name).and_return(:windows)
+        after do
+          allow(File).to receive(:exist?).and_call_original
         end
 
-        it_should_behave_like 'ngrok starts with the expected command', 'docker compose up tunnel'
-      end
-
-      context 'when the detected OS is Linux' do
-        before do
-          allow(tunnel_cmd).to receive(:friendly_os_name).and_return(:linux)
+        around do |example|
+          with_modified_env(NGROK_AUTH_TOKEN: 'mock_ngrok_auth_token') { example.run }
         end
 
-        it_should_behave_like 'ngrok starts with the expected command', 'docker compose up tunnel'
+        shared_examples 'ngrok starts with the expected command' do |expected_command|
+          it do
+            tunnel_cmd.invoke(:open_all, [], dry_run: true)
+            expect(tunnel_cmd).to have_received(:run).with(expected_command)
+          end
+        end
+
+        context 'and the detected OS is NOT Windows or Linux' do
+          before do
+            allow(tunnel_cmd).to receive(:friendly_os_name).and_return(:macos)
+          end
+
+          it do
+            tunnel_cmd.invoke(:open_all, [], dry_run: true)
+            expect(tunnel_cmd).to \
+              have_received(:run)
+                .with(
+                  'ngrok start --all',
+                  "--config=#{Rails.root}/config/ngrok.yml"
+                )
+          end
+        end
+
+        context 'and the detected OS is Windows' do
+          before do
+            allow(tunnel_cmd).to receive(:friendly_os_name).and_return(:windows)
+          end
+
+          it_should_behave_like 'ngrok starts with the expected command', 'docker compose up tunnel'
+        end
+
+        context 'when the detected OS is Linux' do
+          before do
+            allow(tunnel_cmd).to receive(:friendly_os_name).and_return(:linux)
+          end
+
+          it_should_behave_like 'ngrok starts with the expected command', 'docker compose up tunnel'
+        end
       end
     end
   end

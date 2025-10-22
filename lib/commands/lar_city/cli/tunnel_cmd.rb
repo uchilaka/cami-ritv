@@ -52,16 +52,15 @@ module LarCity
 
       desc 'open_all', 'Open ngrok tunnels for the project'
       def open_all
-        case options[:environment]
+        case detected_environment
         when 'staging'
           run 'tailscale', 'funnel', '--bg', '--https=443', 80
         when 'development'
           open_via_ngrok
         else
           error_msg = <<~ERROR
-            ************************************************************************
-            *  ERROR: proxy tunnels can only be opened in supported environments.  *
-            ************************************************************************
+            Unsupported environment: #{detected_environment}. A proxy tunnel \
+            can only be opened in the development or staging environments.
           ERROR
           say_error error_msg
         end
