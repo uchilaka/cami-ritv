@@ -53,6 +53,7 @@ module Notion
           context.fail!(message:, errors: system_event.error.full_messages)
         end
       ensure
+        context.result = system_event
         remote_event_id = context.event.id
         status = context.success? ? 'success' : 'failure'
         log_message =

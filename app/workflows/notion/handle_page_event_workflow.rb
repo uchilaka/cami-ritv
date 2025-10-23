@@ -21,13 +21,13 @@ module Notion
           case database&.id
           when webhook.data['deal_database_id']
             # Proceed
-            result = ::Notion::Deals::UpsertEventWorkflow.call(event:, webhook:, database:)
-            if result.success?
+            workflow = ::Notion::Deals::UpsertEventWorkflow.call(event:, webhook:, database:)
+            if workflow.success?
               :ok
             else
               Rails.logger.error(
                 "Failed to process Notion event: #{event.type}",
-                error: result.error,
+                error: workflow.error,
                 event: event.serializable_hash
               )
               :server_error

@@ -7,7 +7,7 @@ module Notion
       include DealProcessable
 
       delegate :webhook, :source_event, :remote_record_id,
-               :record_data, :result, to: :context
+               :record_data, to: :context
 
       # Each record of the Deal Pipeline database is a page in Notion.
       alias page_id remote_record_id
@@ -16,15 +16,20 @@ module Notion
         fetch_remote_record
         process_result
       rescue StandardError => e
-        context.fail!(error: e, message: "Failed to download deal from Notion: #{e.message}")
+        Rails.logger.error(e.message || 'Failed to download deal from Notion', error: e)
+        context.fail!(message: e.message, error: e)
       end
 
       private
 
       def process_result
-        return context.fail!(message: 'No results returned from Notion') if context.record_data.blank?
+        if record_data.blank?
+          context.fail!(message: 'No results returned from Notion')
+          return
+        end
 
-        context.record = process_deal(record_data)
+        @deal = process_deal(record_data)
+        context.record = @deal
       end
 
       def fetch_remote_record
