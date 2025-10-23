@@ -10,7 +10,7 @@ module Notion
       # TODO: Is context.results being used?
       delegate :webhook, :database_id,
                :interval, :query_params, :filters,
-               :response_hash, :results, to: :context
+               :response_hash, :success?, :results, to: :context
 
       INTERVALS = {
         six_months: 6.months,
@@ -33,6 +33,8 @@ module Notion
         context.query_params = build_query_params
 
         fetch_remote_records
+        return unless success?
+
         process_results
       rescue StandardError => e
         context.fail!(error: e, message: "Failed to download deals from Notion: #{e.message}")

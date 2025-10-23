@@ -43,26 +43,24 @@ RSpec.describe Notion::Deals::DownloadWorkflow, type: :workflow do
 
     context 'when the Notion client returns no data' do
       let(:record_data) { nil }
+      let(:error_message) { 'No data returned from Notion' }
+
+      let!(:result) { workflow_call }
 
       it { is_expected.to be_a_failure }
-      it { is_expected.to have_attributes(message: 'No results returned from Notion') }
+      it { expect(result).to have_attributes(message: error_message) }
     end
 
     context 'when the Notion client raises an error' do
       let(:error_message) { 'Something went wrong' }
+      let(:result) { workflow_call }
 
       before do
         allow(client).to receive(:get_entity).and_raise(StandardError, error_message)
       end
 
-      it 'fails' do
-        expect(workflow_call).to be_a_failure
-      end
-
-      it 'returns a formatted error message' do
-        result = workflow_call
-        expect(result.message).to eq(error_message)
-      end
+      it { is_expected.to be_a_failure }
+      it { expect(result).to have_attributes(message: error_message) }
     end
   end
 end
