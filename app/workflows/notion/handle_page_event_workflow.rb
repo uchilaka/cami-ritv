@@ -17,8 +17,11 @@ module Notion
         when 'page.created', 'page.properties_updated', 'page.deleted'
           page = event.entity
           database = event.parent.type == 'database' ? event.parent : nil
-          if database&.id == webhook.data['deal_database_id']
-            result = ::Notion::UpsertDealEventWorkflow.call(event:, webhook:, database:)
+
+          case database&.id
+          when webhook.data['deal_database_id']
+            # Proceed
+            result = ::Notion::Deals::UpsertEventWorkflow.call(event:, webhook:, database:)
             if result.success?
               :ok
             else
