@@ -4,51 +4,135 @@ module Notion
   class HandlePageEventWorkflow
     include Interactor
 
+    delegate :database, :event, :webhook, to: :context
+
+    def self.page_event_class_mapping
+      {
+        deals: {
+          'page.created' => 'Notion::DealCreatedEvent',
+          'page.properties_updated' => 'Notion::DealUpdatedEvent',
+          # 'page.deleted' => 'Notion::DealDeletedEvent',
+        },
+        vendors: {
+          'page.created' => 'Notion::VendorCreatedEvent',
+          'page.properties_updated' => 'Notion::VendorUpdatedEvent',
+          # 'page.deleted' => 'Notion::VendorDeletedEvent',
+        },
+      }
+    end
+
     def call
-      event = context.event
       if event.blank?
         context.fail!(I18n.t('workflows.handle_notion_page_event_workflow.errors.invalid_or_missing_event'))
         return
       end
 
-      webhook = context.webhook
-      context.response_http_status =
-        case event.type
-        when 'page.created', 'page.properties_updated', 'page.deleted'
-          page = event.entity
-          database = event.parent.type == 'database' ? event.parent : nil
+      # Ensure event type is supported
+      require_event_type_support!
+      # Set database based on event parent before any further processing
+      context.database = event.parent.type == 'database' ? event.parent : nil
 
-          case database&.id
-          when webhook.data['deal_database_id']
-            # Proceed
-            workflow = ::Notion::Deals::UpsertEventWorkflow.call(event:, webhook:, database:)
-            if workflow.success?
-              :ok
+      if Flipper.enabled?(:feat__use_shared_upsert_event_workflow)
+        UpsertEventWorkflow.call(event:, webhook:, database:, database_type:, klass_type:)
+      else
+        context.response_http_status =
+          case event.type
+          when 'page.created', 'page.properties_updated', 'page.deleted'
+            page = event.entity
+            case database&.id
+            when webhook.data['deal_database_id']
+              # Proceed
+              workflow = ::Notion::Deals::UpsertEventWorkflow.call(event:, webhook:, database:)
+              if workflow.success?
+                :ok
+              else
+                Rails.logger.error(
+                  "Failed to process Notion event: #{event.type}",
+                  error: workflow.error,
+                  event: event.serializable_hash
+                )
+                :server_error
+              end
             else
-              Rails.logger.error(
-                "Failed to process Notion event: #{event.type}",
-                error: workflow.error,
-                event: event.serializable_hash
+              Rails.logger.warn(
+                "Unhandled notion #{event.type} event for parent type #{event.parent.type}",
+                event.serializable_hash
               )
-              :server_error
+              :unprocessable_entity
             end
           else
-            Rails.logger.warn(
-              "Unhandled notion #{event.type} event for parent type #{event.parent.type}",
-              event.serializable_hash
-            )
+            Rails.logger.warn("Unhandled notion #{event.type} event", event.serializable_hash)
             :unprocessable_entity
           end
-        else
-          Rails.logger.warn("Unhandled notion #{event.type} event", event.serializable_hash)
-          :unprocessable_entity
-        end
+      end
     ensure
       status = context.success? ? 'succeeded' : 'failed'
       message =
         I18n.t('workflows.handle_notion_page_event_workflow.completed.log',
                event_type: event.type, page: page&.id, status:)
       Rails.logger.info(message, event: event.serializable_hash)
+    end
+
+    def database_type
+      context.database_type ||= calculate_database_type!
+    end
+
+    def klass_type
+      context.klass_type ||= calculate_klass_type!
+    end
+
+    protected
+
+    def require_event_type_support!
+      event_type ||= event.type
+      supported_event_types = self.class.page_event_class_mapping.values.map(&:keys).flatten.uniq
+      unless supported_event_types.include?(event_type)
+        unsupported_msg =
+          I18n.t(
+            'workflows.notion.hangle_page_workflow.errors.unsupported_event_type_v2',
+            event_type:, workflow: self.class.name
+          )
+        raise unsupported_msg
+      end
+
+      true
+    end
+
+    def calculate_database_type!
+      @database_type =
+        case database&.id
+        when webhook.data['deal_database_id']
+          :deals
+        when webhook.data['vendor_database_id']
+          :vendors
+        else
+          nil
+        end
+      if @database_type.blank?
+        unsupported_msg =
+          I18n.t(
+            'workflows.notion.hangle_page_workflow.errors.unsupported_db',
+            database_id: event.parent.id,
+            workflow: self.class.name
+          )
+        raise unsupported_msg
+      end
+
+      @database_type
+    end
+
+    def calculate_klass_type!
+      @klass_type = self.class.page_event_class_mapping.dig(database_type, event.type)
+      if @klass_type.blank?
+        unsupported_msg =
+          I18n.t(
+            'workflows.notion.hangle_page_workflow.errors.unsupported_event_type_for_db',
+            event_type: event.type, database_type:, workflow: self.class.name
+          )
+        raise unsupported_msg
+      end
+
+      @klass_type
     end
   end
 end
