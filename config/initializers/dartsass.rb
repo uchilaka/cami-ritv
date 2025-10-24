@@ -11,7 +11,7 @@ Rails.application.config.after_initialize do
     # i.e. the last :after_initialize block to run
     puts <<~MSG
       ******************************************************************
-      *  Asset pipeline is disabled; skipping Dart SASS configuration. *
+      * Asset pipeline is disabled; skipping Dart SASS configuration.  *
       ******************************************************************
     MSG
   else
