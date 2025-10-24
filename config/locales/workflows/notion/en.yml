@@ -23,7 +23,7 @@ en:
             The event type %{event_type} is not supported by %{workflow}
           unsupported_event_type_for_db: >
             The event type %{event_type} from the %{database_type} database is not supported by %{workflow}
-          unsupported_db: "The database (id: #{database_id}, type: %{database_type}) is not supported by %{workflow}"
+          unsupported_db: The database %{id} in "%{workspace}" is not supported by %{workflow}
         completed:
           message: "Notion page %{event_type} workflow %{status}"
           log: "Notion page %{event_type} workflow %{status} for page %{page}"

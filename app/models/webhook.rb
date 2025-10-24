@@ -83,6 +83,16 @@ class Webhook < ApplicationRecord
     "https://#{hostname}/api/v2/webhooks/#{slug}/events"
   end
 
+  def set_on_data(**values)
+    values.each do |(key, value)|
+      if respond_to?("#{key}=")
+        send("#{key}=", value)
+      else
+        data[key.to_s] = value
+      end
+    end
+  end
+
   protected
 
   def hostname

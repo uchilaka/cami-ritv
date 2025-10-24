@@ -25,7 +25,7 @@ module API
                 event.validate!
                 ::Notion::HandlePageEventWorkflow.call(webhook:, event:)
               end
-            http_status = result.response_http_status || :server_error
+            http_status = result.response_http_status || 500
             head http_status
           rescue ActiveModel::ValidationError => e
             Rails.logger.error('Failed to process Notion event', webhook_event_params:, message: e.message)

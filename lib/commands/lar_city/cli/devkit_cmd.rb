@@ -62,7 +62,7 @@ module LarCity
               end
 
               if webhook.new_record? || options[:force]
-                webhook.data = { integration_id:, deal_database_id:, dashboard_url: }.compact
+                webhook.data = { integration_id:, deal_database_id:, vendor_database_id:, dashboard_url: }.compact
                 if webhook.changed?
                   webhook.save!
                   say "⚡ Webhook for #{options[:vendor]} has been set up successfully.", :green
@@ -70,7 +70,8 @@ module LarCity
                   say "💅🏾 Webhook for #{options[:vendor]} is already set up and no changes were made.", :cyan
                 end
               else
-                updates.each { |k, v| webhook.send(:"#{k}=", v) if webhook.respond_to?("#{k}=") }
+                webhook.set_on_data(**updates)
+                # updates.each { |k, v| webhook.send(:"#{k}=", v) if webhook.respond_to?("#{k}=") }
                 if webhook.changed?
                   webhook.save!
                   say "⚡ Webhook for #{options[:vendor]} has been updated successfully.", :green

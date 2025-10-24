@@ -28,12 +28,26 @@ module Notion
       end
 
       # Ensure event type is supported
-      require_event_type_support!
+      return :unprocessable_entity unless event_type_supported?
+
       # Set database based on event parent before any further processing
       context.database = event.parent.type == 'database' ? event.parent : nil
 
-      if Flipper.enabled?(:feat__use_shared_upsert_event_workflow)
-        UpsertEventWorkflow.call(event:, webhook:, database:, database_type:, klass_type:)
+      if Flipper.enabled?(:feat__notion_use_upsert_event_workflow_v2)
+        context.response_http_status =
+          begin
+            workflow = UpsertEventWorkflow.call(event:, webhook:, database:, database_type:, klass_type:)
+            if workflow.success?
+              :ok
+            else
+              Rails.logger.error(
+                "Failed to process Notion event: #{event.type}",
+                error: workflow.error,
+                event: event.serializable_hash
+              )
+              500
+            end
+          end
       else
         context.response_http_status =
           case event.type
@@ -51,7 +65,7 @@ module Notion
                   error: workflow.error,
                   event: event.serializable_hash
                 )
-                :server_error
+                500
               end
             else
               Rails.logger.warn(
@@ -65,6 +79,10 @@ module Notion
             :unprocessable_entity
           end
       end
+    rescue NotImplementedError => e
+      Rails.logger.error('Failed to handle Notion page event', error: e, event: event.serializable_hash)
+      context.fail!(message: e.message, error: e)
+      :not_implemented
     ensure
       status = context.success? ? 'succeeded' : 'failed'
       message =
@@ -83,7 +101,7 @@ module Notion
 
     protected
 
-    def require_event_type_support!
+    def event_type_supported?
       event_type ||= event.type
       supported_event_types = self.class.page_event_class_mapping.values.map(&:keys).flatten.uniq
       unless supported_event_types.include?(event_type)
@@ -92,13 +110,15 @@ module Notion
             'workflows.notion.hangle_page_workflow.errors.unsupported_event_type_v2',
             event_type:, workflow: self.class.name
           )
-        raise unsupported_msg
+        context.fail!(message: unsupported_msg)
+        return false
       end
 
       true
     end
 
     def calculate_database_type!
+      # Unknown database ID(s): 25a31362-3069-80ee-8a4a-fbe081d7898c
       @database_type =
         case database&.id
         when webhook.data['deal_database_id']
@@ -112,10 +132,9 @@ module Notion
         unsupported_msg =
           I18n.t(
             'workflows.notion.hangle_page_workflow.errors.unsupported_db',
-            database_id: event.parent.id,
-            workflow: self.class.name
+            id: database.id, workspace: event.workspace_name, workflow: self.class.name
           )
-        raise unsupported_msg
+        raise NotImplementedError, unsupported_msg
       end
 
       @database_type
@@ -127,9 +146,9 @@ module Notion
         unsupported_msg =
           I18n.t(
             'workflows.notion.hangle_page_workflow.errors.unsupported_event_type_for_db',
-            event_type: event.type, database_type:, workflow: self.class.name
+            event_type: event.type, database_type:, workspace: event.workspace_name, workflow: self.class.name
           )
-        raise unsupported_msg
+        raise NotImplementedError, unsupported_msg
       end
 
       @klass_type
