@@ -27,8 +27,11 @@ module LarCity
         with_optional_pretend_safety do
           case options[:vendor]
           when 'notion'
-            integration_id, verification_token, deal_database_id =
-              Rails.application.credentials.notion&.values_at :integration_id, :verification_token, :deal_database_id
+            integration_id, verification_token, deal_database_id, vendor_database_id =
+              Rails.application.credentials.notion&.values_at :integration_id,
+                                                              :verification_token,
+                                                              :deal_database_id,
+                                                              :vendor_database_id
             dashboard_url = "https://www.notion.so/profile/integrations/internal/#{integration_id}"
             records_index_workflow_name = 'Notion::Deals::DownloadLatestWorkflow'
             record_download_workflow_name = 'Notion::Deals::DownloadWorkflow'
@@ -42,6 +45,7 @@ module LarCity
               updates = {
                 integration_id:,
                 deal_database_id:,
+                vendor_database_id:,
                 dashboard_url:,
                 records_index_workflow_name:,
                 record_download_workflow_name:,
