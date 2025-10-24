@@ -10,11 +10,13 @@ shared:
           type: uuid
       - workspace_id:
           type: uuid
+      - workspace_name:
+          type: uuid
       required:
-      - entity_id
-      - database_id
-      - workspace_id
-      - workspace_name
+      - :entity_id
+      - :database_id
+      - :workspace_id
+      - :workspace_name
     vendor_events:
       type: event
       properties:
@@ -22,6 +24,8 @@ shared:
           type: uuid
       - database_id:
           type: uuid
+      - workspace_id:
+          type: uuid
       required:
-      - entity_id
-      - database_id
+      - :entity_id
+      - :database_id

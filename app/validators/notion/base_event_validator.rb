@@ -2,7 +2,8 @@
 
 module Notion
   class BaseEventValidator < ActiveModel::Validator
-    @required_fields = %i[entity_id database_id]
+    @config_key = nil
+    @required_fields = %i[]
 
     class << self
       attr_reader :required_fields
@@ -11,6 +12,17 @@ module Notion
 
       def set_required_fields(*fields)
         @required_fields = fields
+      end
+
+      def required_fields_for(config_key)
+        Rails
+          .application
+          .config_for('integrations/validations')
+          .dig(:notion, config_key.to_sym, :required)
+      end
+
+      def set_config_key(key)
+        @config_key = key
       end
     end
 
