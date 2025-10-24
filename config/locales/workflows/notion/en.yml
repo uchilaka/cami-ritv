@@ -6,14 +6,14 @@ en:
           generic: "An error occurred while processing the Notion %{event_type} workflow"
           missing_required_fields: "Required fields are missing for the Notion %{event_type} workflow"
           invalid_status: "The provided status %{status} is not valid for the Notion %{event_type} workflow"
-          invalid_event_data: "The %{event_type} event data is invalid for the Notion %{event_type} workflow"
+          invalid_event_data: "The %{event_type} event data is invalid for %{workflow}"
           unsupported_event_type: >
             The event type %{event_type} is not supported by %{workflow}
           unsupported_event_type_for_db: >
             The event type %{event_type} from the %{database_type} database is not supported by %{workflow}
         completed:
           message: "Notion %{event_type} workflow %{status}"
-          log: "Notion %{event_type} workflow %{status} for deal %{slug}"
+          log: Notion %{event_type} workflow %{status} for event %{id} from "%{workspace}"
       hangle_page_workflow:
         errors:
           generic: "An error occurred while processing the Notion page workflow"

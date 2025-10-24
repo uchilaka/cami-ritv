@@ -38,17 +38,20 @@ module Notion
         system_event.save!
       else
         message = I18n.t(
-          'workflows.upsert_notion_deal_workflow.errors.invalid_event_data',
-          event_type:
+          'workflows.notion.upsert_event_workflow.errors.invalid_event_data',
+          event_type: event.type, workflow: self.class.name
         )
         context.fail!(message:, errors: system_event.error.full_messages)
       end
     ensure
       context.result = system_event
-      remote_event_id = context.event.id
+      remote_event_id = event.id
       status = context.success? ? 'success' : 'failure'
       log_message =
-        I18n.t('workflows.upsert_notion_deal_workflow.completed.log', status:, slug: 'fake-deal-slug')
+        I18n.t(
+          'workflows.notion.upsert_event_workflow.completed.log',
+          status:, id: event.id, event_type: event.type, workspace: event.workspace_name
+        )
       Rails.logger.info(log_message, remote_event_id:, system_event: system_event.serializable_hash)
     end
   end
