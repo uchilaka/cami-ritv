@@ -9,8 +9,12 @@ on:
         default: 'Ad-hoc deployment to production'
       git_ref:
         description: 'Git reference (branch, tag, or commit SHA) to deploy'
+        type: choice
         required: true
         default: 'releases/production'
+        options:
+          - 'releases/production'
+          - 'releases/staging'
 
 jobs:
   deploy:
@@ -29,12 +33,13 @@ jobs:
 
     env:
       RAILS_ENV: production
+      WORKFLOW_GIT_REF: ${{ github.ref }}
 
     steps:
-    - name: Checkout ref ${{ github.event.inputs.git_ref }}
+    - name: Checkout workflow branch
       uses: actions/checkout@v4
-      with:
-        ref: ${{ github.event.inputs.git_ref }}
+      #with:
+      #  ref: ${{ github.event.inputs.git_ref }}
 
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
@@ -51,9 +56,15 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-gems-
 
-    - name: Deploy to Production
+    - name: Check workflow git ref
+      run: |
+        echo "Workflow Git Ref: $WORKFLOW_GIT_REF"
+
+    - name: Deploy ${{ env.WORKFLOW_GIT_REF }} to Production
       env:
         DEPLOY_MESSAGE: ${{ github.event.inputs.deploy_message }}
+        # Capture the workflow branch (from workflow_dispatch:) selected ref as an ENV variable
+        #WORKFLOW_GIT_REF: ${{ github.ref }}
       run: |
         # Replace the following command with your actual deployment command/script
         echo "Deploying to production with message: $DEPLOY_MESSAGE"
@@ -63,6 +74,7 @@ jobs:
         # Merge the ref into the releases/production branch and push
         git config user.name "github-actions[bot]"
         git config user.email "github-actions[bot]@users.noreply.github.com"
-        git checkout releases/production
-        git merge ${{ github.event.inputs.git_ref }} --no-ff -m "Merge ${{ github.event.inputs.git_ref }} into releases/production for deployment"
-        git push origin releases/production
+        git checkout ${{ github.event.inputs.git_ref }}
+        # Merge in the workflow branch (from a workflow_dispatch: run) to capture any changes
+        git merge $WORKFLOW_GIT_REF --ff -m "Merge workflow branch into ${{ github.event.inputs.git_ref }} for deployment"
+        git push origin ${{ github.event.inputs.git_ref }}
