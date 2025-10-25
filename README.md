@@ -98,6 +98,7 @@ Please refer to the [CONTRIBUTING.md](./docs/CONTRIBUTING.md) file for contribut
 
 ## Future work
 
+- [ ] Review legacy notes on performance testing Rails apps: <https://guides.rubyonrails.org/v3.1.1/performance_testing.html>
 - [ ] Google Workspace IAM Identity Provider for AWS: <https://docs.aws.amazon.com/singlesignon/latest/userguide/gs-gwp.html>
 - [ ] Implement dark mode switcher: <https://flowbite.com/docs/customize/dark-mode/#dark-mode-switcher>
 - [ ] Implement a Simple Form config (with Flowbite): <https://github.com/heartcombo/simple_form?tab=readme-ov-file#installation>
