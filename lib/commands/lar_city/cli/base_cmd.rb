@@ -31,26 +31,6 @@ module LarCity
         include OutputHelpers
       end
 
-      # def self.define_class_options
-      #   class_option :dry_run,
-      #                type: :boolean,
-      #                aliases: %w[-d --pretend --preview],
-      #                desc: 'Dry run',
-      #                default: false
-      #   class_option :environment,
-      #                type: :string,
-      #                aliases: '--env',
-      #                desc: 'Environment',
-      #                required: false
-      #   class_option :verbose,
-      #                type: :boolean,
-      #                aliases: %w[-v --debug],
-      #                desc: 'Verbose output',
-      #                default: false
-      # end
-      #
-      # define_class_options
-
       EnvHelpers.define_class_options(self)
       OutputHelpers.define_class_options(self)
 
@@ -109,14 +89,6 @@ module LarCity
         def is_enumerable?(collection)
           collection.class.ancestors.include?(Enumerable)
         end
-
-        # def verbose?
-        #   options[:verbose]
-        # end
-        #
-        # def dry_run?
-        #   options[:dry_run]
-        # end
       end
     end
   end

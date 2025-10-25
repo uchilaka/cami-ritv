@@ -48,7 +48,9 @@ module LarCity
           say('=' * span)
         end
 
-        # Show the first 2 and the last 4 characters or 1/4 of the secret, whichever is greater
+        # Shows a calculated number of visible characters (i.e. visible_length)
+        # at both the start and end, where visible_length is the maximum
+        # of 2 or 1/4 of the secret length.
         def partially_masked_secret(secret)
           return '' if secret.nil? || secret.empty?
 

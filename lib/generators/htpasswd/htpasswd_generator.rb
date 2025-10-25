@@ -51,17 +51,20 @@ class HtpasswdGenerator < Rails::Generators::Base
   # interactive CLI command or using a dedicated library for htpasswd management
   # or review the --help output of this group command.
   def codegen
-    codegen_target_file = File.join(auth_dir_mount_source, 'htpasswd')
-    output_redirection_fragment =
-      (windows? ? "| Set-Content -Encoding ASCII #{codegen_target_file}" : "> #{codegen_target_file}")
-    entrypoint_args =
-      (help? ? ['--help'] : ['-Bbn', username, password, output_redirection_fragment]).join(' ')
-    cmd = [
-      'docker run',
-      '--entrypoint htpasswd',
-      '--rm',
-      'httpd:2', entrypoint_args,
-    ]
-    run(*cmd, inline: true)
+    if help?
+      run(*run_cmd_prefix, '--help', inline: true)
+    else
+      codegen_target_file = File.join(auth_dir_mount_source, 'htpasswd')
+      output_redirection_fragment =
+        (windows? ? "| Set-Content -Encoding ASCII #{codegen_target_file}" : "> #{codegen_target_file}")
+      run(*run_cmd_prefix, '-Bbn', username, password, output_redirection_fragment, inline: true)
+      say_success "Created .htpasswd file at #{codegen_target_file}" unless pretend?
+    end
+  end
+
+  no_commands do
+    def run_cmd_prefix
+      %w[docker run --rm --entrypoint htpasswd httpd:2]
+    end
   end
 end

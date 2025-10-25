@@ -59,9 +59,8 @@ module LarCity
           open_via_ngrok
         else
           error_msg = <<~ERROR
-            ************************************************************************
-            *  ERROR: proxy tunnels can only be opened in supported environments.  *
-            ************************************************************************
+            Unsupported environment: #{detected_environment}. A proxy tunnel \
+            can only be opened in the development or staging environments.
           ERROR
           say_error error_msg
           say_error "Unsupported environment: #{detected_environment}"
