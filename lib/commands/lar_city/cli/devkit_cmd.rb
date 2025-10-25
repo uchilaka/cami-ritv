@@ -84,6 +84,51 @@ module LarCity
         end
       end
 
+      desc 'yeet_deploy', 'Shove the current code to production'
+      long_desc <<-LONGDESC
+        🚨 WARNING: This command forcefully deploys the current code to production
+        without any checks or confirmations.
+
+        This deployment pipeline operates via the releases/production branch and a deploy
+        hook configured in the repository settings on the hosting platform.
+
+        This deployment method is highly discouraged for regular use and should only
+        be used in emergency situations where immediate action is required to resolve
+        critical issues.
+      LONGDESC
+      def yeet_deploy
+        # Check to make sure current branch is clean (no dangling changes)
+        with_interruption_rescue do
+          status_output = `git status --porcelain`.strip
+          unless status_output.blank?
+            raise 'Current branch has uncommitted changes. Please commit or stash them before deploying.'
+          end
+
+          # Save current branch
+          current_branch = `git rev-parse --abbrev-ref HEAD`.strip
+
+          # Merge the current branch into releases/production
+          checkout_cmd = 'git checkout releases/production'
+          run checkout_cmd, inline: true
+
+          success = system(checkout_cmd)
+          raise 'Failed to checkout releases/production branch.' unless success
+
+          commit_msg = <<~COMMIT_MSG
+            Merging #{current_branch} into releases/production for emergency deploy
+          COMMIT_MSG
+          merge_cmd = "git merge --no-ff #{current_branch} -m '#{commit_msg.strip}'"
+          run merge_cmd, inline: true
+
+          deploy_cmd = 'git push origin HEAD:releases/production'
+          success = run deploy_cmd, inline: true
+          raise 'Deployment failed. Please check the output above for details.' unless success
+
+          say '🚀 Code has been forcefully deployed to production.', :green
+          system("git switch #{current_branch}")
+        end
+      end
+
       option :interactive,
              type: :boolean,
              aliases: '-i',
