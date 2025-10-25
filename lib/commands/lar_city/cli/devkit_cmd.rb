@@ -104,10 +104,7 @@ module LarCity
             raise 'Current branch has uncommitted changes. Please commit or stash them before deploying.'
           end
 
-          # run 'git fetch origin', inline: true
-          run 'git pull --ff-only', inline: true
-          # run 'git fetch origin releases/production', inline: true
-          # run 'git pull origin releases/production', inline: true
+          run 'git pull --ff', inline: true
           run 'git push', inline: true
 
           # Save current branch
@@ -119,11 +116,11 @@ module LarCity
 
           # Merge the current branch into the target releases/* branch
           checkout_cmd = "git checkout #{target_branch}"
-          run checkout_cmd, inline: true
 
           success = system(checkout_cmd)
           raise "Failed to checkout #{target_branch} branch." unless success
 
+          run 'git pull --ff', inline: true
           commit_msg = <<~COMMIT_MSG
             Merging #{working_branch} into #{target_branch} for emergency deploy
           COMMIT_MSG
