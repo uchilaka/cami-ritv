@@ -131,22 +131,28 @@ module LarCity
           success = run(*deploy_cmd, inline: true)
           raise 'Deployment failed. Please check the output above for details.' unless success || pretend?
 
-          say_success "🚀 Code has been forcefully deployed to #{target_branch}."
-
           # Use curl to trigger the deploy hook if one is configured
           deploy_hook_url = ENV.fetch('APP_DEPLOY_HOOK_URL', nil)
-          if deploy_hook_url.present?
-            curl_cmd = "curl -X POST #{deploy_hook_url}"
-            # Extract domain name from deploy hook URL for logging
-            uri = URI.parse(deploy_hook_url)
-            say_info "Triggering deployment via #{uri.host}..."
-            run(curl_cmd, inline: true)
-          else
-            say_warning <<~MSG
-              ⚠️ No deploy hook URL configured. Please ensure that the deployment \
-              process is triggered manually if required.
-            MSG
-          end
+          result =
+            if deploy_hook_url.present?
+              curl_cmd = "curl -X POST #{deploy_hook_url}"
+              # Extract domain name from deploy hook URL for logging
+              uri = URI.parse(deploy_hook_url)
+              if pretend?
+                say_highlight "Pretending to execute: #{curl_cmd}"
+                true
+              else
+                say_info "Triggering deployment via #{uri.host}..."
+                system(curl_cmd)
+              end
+            else
+              say_warning <<~MSG
+                ⚠️ No deploy hook URL configured. Please ensure that the deployment \
+                process is triggered manually if required.
+              MSG
+              true if pretend?
+            end
+          say_success "🚀 Code has been forcefully deployed to #{target_branch}." if result
         ensure
           # Switch back to the original working branch
           system("git switch #{working_branch}")
