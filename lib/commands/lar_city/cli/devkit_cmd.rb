@@ -104,6 +104,12 @@ module LarCity
             raise 'Current branch has uncommitted changes. Please commit or stash them before deploying.'
           end
 
+          run 'git fetch origin', inline: true
+          run 'git pull origin', inline: true
+          run 'git fetch origin releases/production', inline: true
+          run 'git pull origin releases/production', inline: true
+          run 'git push', inline: true
+
           # Save current branch
           working_branch = `git rev-parse --abbrev-ref HEAD`.strip
           target_branch = 'releases/production'
