@@ -39,8 +39,6 @@ jobs:
     steps:
     - name: Checkout workflow branch
       uses: actions/checkout@v4
-      #with:
-      #  ref: ${{ github.event.inputs.git_ref }}
 
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
@@ -59,7 +57,7 @@ jobs:
 
     - name: Check workflow git ref
       run: |
-        echo "Workflow Git Ref: $WORKFLOW_GIT_REF"
+        echo "Workflow Git Ref: $WORKFLOW_REF"
 
     - name: Checkout deploy branch
       uses: actions/checkout@v4
