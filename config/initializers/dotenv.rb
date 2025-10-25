@@ -6,11 +6,12 @@ production_env_vars = %w[
   APP_DATABASE_PORT
 ]
 
+# TODO: Taking REDIS_URL out for now, since we're running jobs against a postgres
+#   co-located database instance. Revisit this later.
 required_env_vars =
   %w[
     PORT
     RAILS_ENV
-    REDIS_URL
     APP_DATABASE_USER
     APP_DATABASE_PASSWORD
   ]
