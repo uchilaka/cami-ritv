@@ -128,7 +128,7 @@ module LarCity
           raise 'Deployment failed. Please check the output above for details.' unless success || pretend?
 
           say '🚀 Code has been forcefully deployed to production.', :green
-          system("git switch #{current_branch}")
+          system('git switch -')
         end
       end
 
