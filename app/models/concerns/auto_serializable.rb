@@ -21,8 +21,9 @@ module AutoSerializable
     protected
 
     def serializer_class_presence(name_prefix: self.class.name)
-      adhoc_serializer_class(name_prefix:)
-    rescue NameError
+      serializer_klass = self.class.serializer_klass if self.class.respond_to?(:serializer_klass)
+      serializer_klass.presence || adhoc_serializer_class(name_prefix:)
+    rescue NameError => _e
       false
     end
 

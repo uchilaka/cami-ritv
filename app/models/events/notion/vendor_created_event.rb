@@ -2,6 +2,8 @@
 
 module Notion
   class VendorCreatedEvent < BaseEvent
+    set_serializer_klass Notion::VendorEventSerializer
+
     # See SO recommendation: https://stackoverflow.com/a/9463495/3726759
     def self.model_name
       GenericEvent.model_name
