@@ -76,6 +76,6 @@ jobs:
         # Merge the ref into the releases/production branch and push
         git config user.name "github-actions[bot]"
         git config user.email "github-actions[bot]@users.noreply.github.com"
-        git merge $WORKFLOW_REF -m "Merge workflow SHA for deployment"
+        git merge $WORKFLOW_REF --ff-only -m "Merge workflow SHA for deployment"
         # Push the checked out branch back to origin
         git push origin ${{ github.event.inputs.git_ref }}
