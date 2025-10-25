@@ -9,14 +9,14 @@ module Notion
     def self.page_event_class_mapping
       {
         deals: {
-          'page.created' => 'Notion::DealCreatedEvent',
-          'page.properties_updated' => 'Notion::DealUpdatedEvent',
-          # 'page.deleted' => 'Notion::DealDeletedEvent',
+          'page.created' => Notion::DealCreatedEvent.name,
+          'page.properties_updated' => Notion::DealUpdatedEvent.name,
+          # 'page.deleted' => Notion::DealDeletedEvent.name,
         },
         vendors: {
-          'page.created' => 'Notion::VendorCreatedEvent',
-          'page.properties_updated' => 'Notion::VendorUpdatedEvent',
-          # 'page.deleted' => 'Notion::VendorDeletedEvent',
+          'page.created' => Notion::VendorCreatedEvent.name,
+          'page.properties_updated' => Notion::VendorUpdatedEvent.name,
+          # 'page.deleted' => Notion::VendorDeletedEvent.name,
         },
       }
     end
@@ -33,7 +33,7 @@ module Notion
       # Set database based on event parent before any further processing
       context.database = event.parent.type == 'database' ? event.parent : nil
 
-      if Flipper.enabled?(:feat__notion_use_upsert_event_workflow_v2)
+      if Flipper.enabled?(:feat__notion_use_persist_event_workflow)
         context.response_http_status =
           begin
             workflow = PersistEventWorkflow.call(event:, webhook:, database:, database_type:, klass_type:)

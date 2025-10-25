@@ -3,7 +3,7 @@
 require 'swagger_helper'
 
 RSpec.describe 'API::V2::Webhooks::Notion::Events', type: :request do
-  let(:deal_database_id) { SecureRandom.uuid }
+  let(:vendor_database_id) { SecureRandom.uuid }
   let(:integration_id) { SecureRandom.uuid }
   let(:integration_name) { 'CAMI Lab Integration' }
   let(:verification_token) { SecureRandom.hex(24) }
@@ -12,22 +12,20 @@ RSpec.describe 'API::V2::Webhooks::Notion::Events', type: :request do
     let(:'X-Notion-Signature') { 'valid-notion-request-signature' }
 
     before do
-      Fabricate(:notion_webhook, data: { integration_id:, integration_name:, deal_database_id: })
+      Flipper.enable(:feat__notion_webhook_skip_signature_validation)
+      Flipper.enable(:feat__notion_use_persist_event_workflow)
+      Fabricate(:notion_webhook, data: { integration_id:, integration_name:, vendor_database_id: })
       allow(ActiveSupport::SecurityUtils).to \
         receive(:secure_compare).and_return(true)
-    end
-
-    around do |example|
-      Flipper.enable(:feat__notion_webhook_skip_signature_validation)
-      example.run
     end
 
     after do
       allow(ActiveSupport::SecurityUtils).to \
         receive(:secure_compare).and_call_original
+      Flipper.disable(:feat__notion_use_persist_event_workflow)
     end
 
-    post 'Notion deal database event' do
+    post 'Notion vendor database event' do
       # TODO: Read up on how the tags feature works in rswag
       tags 'Webhooks'
       consumes 'application/json'
@@ -68,7 +66,7 @@ RSpec.describe 'API::V2::Webhooks::Notion::Events', type: :request do
             'type' => event_type,
             'data' => {
               'parent' => {
-                'id' => deal_database_id,
+                'id' => vendor_database_id,
                 'type' => 'database',
               },
               'updated_properties' => ['y_%3D%3C'],
@@ -106,7 +104,7 @@ RSpec.describe 'API::V2::Webhooks::Notion::Events', type: :request do
   #   but still need to be tested
   context 'when a verification_token is sent', skip: 'TODO: Not debugging this right now. Re-enable later.' do
     before do
-      Fabricate(:notion_webhook, data: { integration_id:, integration_name:, deal_database_id: })
+      Fabricate(:notion_webhook, data: { integration_id:, integration_name:, vendor_database_id: })
     end
 
     it 'validates the Notion verification token' do
