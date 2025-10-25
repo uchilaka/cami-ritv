@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Notion
-  class EventSerializer < ActiveModel::Serializer
+  class BaseEventSerializer < ActiveModel::Serializer
     include Rails.application.routes.url_helpers
 
     delegate :hostname, to: AppUtils
