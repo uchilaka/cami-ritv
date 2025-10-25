@@ -15,6 +15,7 @@ staging:
   #- accounts.staging.madebylar.city
   #- accounts.staging.larcity.com
 production:
+  - cami-production.onrender.com
   - accounts.larcity.hopto.org
   #- accounts.ho.lar.city
   #- accounts.ho.madebylar.city
