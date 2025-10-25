@@ -8,9 +8,9 @@ on:
         required: true
         default: 'Ad-hoc deployment to production'
       git_ref:
-        description: 'Git reference (branch, tag, or commit SHA) to deploy'
         type: choice
         required: true
+        description: 'Git reference (branch, tag, or commit SHA) to deploy'
         default: 'releases/production'
         options:
           - 'releases/production'
