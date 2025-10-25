@@ -105,30 +105,31 @@ module LarCity
           end
 
           # Save current branch
-          current_branch = `git rev-parse --abbrev-ref HEAD`.strip
-          if current_branch == 'releases/production'
+          working_branch = `git rev-parse --abbrev-ref HEAD`.strip
+          target_branch = 'releases/production'
+          if working_branch == target_branch
             raise 'You are already on the releases/production branch. Please switch to another branch before deploying.'
           end
 
-          # Merge the current branch into releases/production
-          checkout_cmd = 'git checkout releases/production'
+          # Merge the current branch into the target releases/* branch
+          checkout_cmd = "git checkout #{target_branch}"
           run checkout_cmd, inline: true
 
           success = system(checkout_cmd)
-          raise 'Failed to checkout releases/production branch.' unless success
+          raise "Failed to checkout #{target_branch} branch." unless success
 
           commit_msg = <<~COMMIT_MSG
-            Merging #{current_branch} into releases/production for emergency deploy
+            Merging #{working_branch} into #{target_branch} for emergency deploy
           COMMIT_MSG
-          merge_cmd = "git merge --no-ff #{current_branch} -m '#{commit_msg.strip}'"
+          merge_cmd = "git merge --no-ff #{working_branch} -m '#{commit_msg.strip}'"
           run merge_cmd, inline: true
 
-          deploy_cmd = 'git push origin HEAD:releases/production'
-          success = run deploy_cmd, inline: true
+          deploy_cmd = ['git push origin', "HEAD:#{target_branch}"]
+          success = run(*deploy_cmd, inline: true)
           raise 'Deployment failed. Please check the output above for details.' unless success || pretend?
 
-          say '🚀 Code has been forcefully deployed to production.', :green
-          system('git switch -')
+          say_success "🚀 Code has been forcefully deployed to #{target_branch}."
+          system("git switch #{working_branch}")
         end
       end
 
