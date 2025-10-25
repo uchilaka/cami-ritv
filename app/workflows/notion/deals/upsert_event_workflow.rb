@@ -2,6 +2,8 @@
 
 module Notion
   module Deals
+    # TODO: Refactor to Notion::Deals::UpsertWorkflow to handle both event upsert
+    #   as well as enqueue the deal upsert as a side effect of processing the event
     class UpsertEventWorkflow
       include Interactor
 

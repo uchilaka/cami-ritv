@@ -36,7 +36,7 @@ module Notion
       if Flipper.enabled?(:feat__notion_use_upsert_event_workflow_v2)
         context.response_http_status =
           begin
-            workflow = UpsertEventWorkflow.call(event:, webhook:, database:, database_type:, klass_type:)
+            workflow = PersistEventWorkflow.call(event:, webhook:, database:, database_type:, klass_type:)
             if workflow.success?
               :ok
             else

@@ -1,7 +1,12 @@
 # frozen_string_literal: true
 
 module Notion
-  class UpsertEventWorkflow
+  # Create new system events based on incoming webhooks as part of the CRM integration
+  # workflow of processing Notion webhook events (e.g., page.created, page.properties_updated)
+  # for various Notion entity types (e.g., Deal, Vendor or Service). The system events are
+  # stored in the database for further processing to synchronize changes in remote Notion "page"
+  # data with the local application database.
+  class PersistEventWorkflow
     include Interactor
 
     delegate :database_type,

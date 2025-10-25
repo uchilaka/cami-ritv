@@ -33,8 +33,8 @@ module LarCity
                                                               :deal_database_id,
                                                               :vendor_database_id
             dashboard_url = "https://www.notion.so/profile/integrations/internal/#{integration_id}"
-            records_index_workflow_name = 'Notion::Deals::DownloadLatestWorkflow'
-            record_download_workflow_name = 'Notion::Deals::DownloadWorkflow'
+            records_index_workflow_name = Notion::Deals::DownloadLatestWorkflow.name
+            record_download_workflow_name = Notion::Deals::DownloadWorkflow.name
             ::Webhook.transaction do
               webhook =
                 ::Webhook
