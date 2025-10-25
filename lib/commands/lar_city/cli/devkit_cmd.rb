@@ -106,6 +106,9 @@ module LarCity
 
           # Save current branch
           current_branch = `git rev-parse --abbrev-ref HEAD`.strip
+          if current_branch == 'releases/production'
+            raise 'You are already on the releases/production branch. Please switch to another branch before deploying.'
+          end
 
           # Merge the current branch into releases/production
           checkout_cmd = 'git checkout releases/production'
@@ -122,7 +125,7 @@ module LarCity
 
           deploy_cmd = 'git push origin HEAD:releases/production'
           success = run deploy_cmd, inline: true
-          raise 'Deployment failed. Please check the output above for details.' unless success
+          raise 'Deployment failed. Please check the output above for details.' unless success || pretend?
 
           say '🚀 Code has been forcefully deployed to production.', :green
           system("git switch #{current_branch}")
