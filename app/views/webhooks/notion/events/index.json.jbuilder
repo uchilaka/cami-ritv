@@ -1,1 +1,1 @@
-json.array! @events, partial: 'webhooks/events/event', as: :event
+json.array! @events, partial: 'webhooks/event', as: :event

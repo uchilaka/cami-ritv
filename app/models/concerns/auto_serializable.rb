@@ -4,8 +4,17 @@ module AutoSerializable
   extend ActiveSupport::Concern
 
   included do
-    include ActiveModel::Serialization
+    @serializer_klass = nil
 
+    class_eval do
+      include ClassMethods
+    end
+
+    include ActiveModel::Serialization
+    include InstanceMethods
+  end
+
+  module InstanceMethods
     def serializable_hash(options = {})
       if (serializer_class = serializer_class_presence)
         serializer_class.new(self, options).serializable_hash.with_indifferent_access
@@ -29,6 +38,16 @@ module AutoSerializable
 
     def adhoc_serializer_class(name_prefix:)
       "#{name_prefix}Serializer".constantize
+    end
+  end
+
+  module ClassMethods
+    def set_serializer_klass(klass)
+      @serializer_klass = klass
+    end
+
+    def serializer_klass
+      @serializer_klass ||= "#{name}Serializer".constantize
     end
   end
 end
