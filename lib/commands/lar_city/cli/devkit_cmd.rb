@@ -139,7 +139,7 @@ module LarCity
               # Extract domain name from deploy hook URL for logging
               uri = URI.parse(deploy_hook_url)
               if pretend?
-                say_highlight "Pretending to execute: #{curl_cmd}"
+                say_highlight "Pretending to execute deployment via #{uri.host}..."
                 true
               else
                 say_info "Triggering deployment via #{uri.host}..."
