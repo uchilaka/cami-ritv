@@ -59,3 +59,10 @@ jobs:
         echo "Deploying to production with message: $DEPLOY_MESSAGE"
         # Example deployment command:
         # bundle exec cap production deploy MESSAGE="$DEPLOY_MESSAGE"
+        #
+        # Merge the ref into the releases/production branch and push
+        git config user.name "github-actions[bot]"
+        git config user.email "github-actions[bot]@users.noreply.github.com"
+        git checkout releases/production
+        git merge ${{ github.event.inputs.git_ref }} --no-ff -m "Merge ${{ github.event.inputs.git_ref }} into releases/production for deployment"
+        git push origin releases/production
