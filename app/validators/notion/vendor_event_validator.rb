@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 module Notion
-  class DealEventValidator < BaseEventValidator
-    set_required_fields(*required_fields_for(:deal_events))
+  class VendorEventValidator < BaseEventValidator
+    set_required_fields(*required_fields_for(:vendor_events))
 
     def validate(record)
       validate_metadatum_presence(record)

@@ -25,6 +25,7 @@ en:
       completed:
         message: "Deal workflow %{status}"
         log: "Deal workflow %{status} for deal %{slug}"
+    # @deprecated use notion namespace instead
     upsert_notion_deal_workflow:
       errors:
         generic: "An error occurred while processing the Notion deal workflow"
@@ -35,6 +36,7 @@ en:
       completed:
         message: "Notion deal workflow %{status}"
         log: "Notion deal workflow %{status} for deal %{slug}"
+    # @deprecated use notion namespace instead
     handle_notion_page_event_workflow:
       errors:
         generic: "An error occurred while processing the Notion page event workflow"
@@ -43,6 +45,7 @@ en:
       completed:
         message: "Notion page %{event_type} event workflow %{status}"
         log: "Notion page %{event_type} event workflow %{status} for page %{page}"
+    # @deprecated use notion namespace instead
     register_notion_verification_token_workflow:
       errors:
         generic: "An error occurred while registering the Notion verification token"
