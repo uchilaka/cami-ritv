@@ -33,7 +33,7 @@ jobs:
 
     env:
       RAILS_ENV: production
-      WORKFLOW_SHA: ${{ github.sha }}
+      WORKFLOW_REF: ${{ github.head_ref }}
       DEPLOY_TARGET_REF: refs/heads/${{ github.event.inputs.git_ref }}
 
     steps:
@@ -66,11 +66,9 @@ jobs:
       with:
         ref: ${{ github.event.inputs.git_ref }}
 
-    - name: Deploy ${{ env.WORKFLOW_GIT_REF }} to ${{ github.event.inputs.git_ref }}
+    - name: Deploy ${{ env.WORKFLOW_REF }} to ${{ github.event.inputs.git_ref }}
       env:
         DEPLOY_MESSAGE: ${{ github.event.inputs.deploy_message }}
-        # Capture the workflow branch (from workflow_dispatch:) selected ref as an ENV variable
-        #WORKFLOW_GIT_REF: ${{ github.ref }}
       run: |
         # Replace the following command with your actual deployment command/script
         echo "Deploying to production with message: $DEPLOY_MESSAGE"
@@ -80,6 +78,6 @@ jobs:
         # Merge the ref into the releases/production branch and push
         git config user.name "github-actions[bot]"
         git config user.email "github-actions[bot]@users.noreply.github.com"
-        git merge $WORKFLOW_SHA --ff -m "Merge workflow SHA into ${{ github.event.inputs.git_ref }} for deployment"
+        git merge $WORKFLOW_REF -m "Merge workflow SHA for deployment"
         # Push the checked out branch back to origin
         git push origin ${{ github.event.inputs.git_ref }}
