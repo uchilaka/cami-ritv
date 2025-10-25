@@ -29,6 +29,7 @@ module AutoSerializable
 
     protected
 
+    # Check for explicitly set serializer class or try to find one based on naming convention.
     def serializer_class_presence(name_prefix: self.class.name)
       serializer_klass = self.class.serializer_klass if self.class.respond_to?(:serializer_klass)
       serializer_klass.presence || adhoc_serializer_class(name_prefix:)
@@ -36,6 +37,8 @@ module AutoSerializable
       false
     end
 
+    # This is where the "auto-serialization" magic happens.
+    # It supports finding a serializer class based on naming convention.
     def adhoc_serializer_class(name_prefix:)
       "#{name_prefix}Serializer".constantize
     end

@@ -2,9 +2,9 @@
 
 module Notion
   class RemoteEventSerializer < ActiveModel::Serializer
-    attributes :id, :workspace_id, :workspace_name, :timestamp,
+    attributes :id, :type, :workspace_id, :workspace_name, :timestamp,
                :subscription_id, :integration_id, :attempt_number,
-               :type, :parent, :entity, :database
+               :parent, :entity, :authors, :database
 
     def database
       object.parent if object.parent&.type == 'database'
