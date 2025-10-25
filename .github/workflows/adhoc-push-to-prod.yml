@@ -61,7 +61,12 @@ jobs:
       run: |
         echo "Workflow Git Ref: $WORKFLOW_GIT_REF"
 
-    - name: Deploy ${{ env.WORKFLOW_GIT_REF }} to ${{ env.DEPLOY_TARGET_REF }}
+    - name: Checkout deploy branch
+      uses: actions/checkout@v4
+      with:
+        ref: ${{ github.event.inputs.git_ref }}
+
+    - name: Deploy ${{ env.WORKFLOW_GIT_REF }} to ${{ github.event.inputs.git_ref }}
       env:
         DEPLOY_MESSAGE: ${{ github.event.inputs.deploy_message }}
         # Capture the workflow branch (from workflow_dispatch:) selected ref as an ENV variable
@@ -75,7 +80,7 @@ jobs:
         # Merge the ref into the releases/production branch and push
         git config user.name "github-actions[bot]"
         git config user.email "github-actions[bot]@users.noreply.github.com"
-        git checkout $DEPLOY_TARGET_REF
         # Merge in the workflow branch (from a workflow_dispatch: run) to capture any changes
-        git merge $WORKFLOW_GIT_REF --ff -m "Merge workflow branch into $DEPLOY_TARGET_REF for deployment"
-        git push origin $DEPLOY_TARGET_REF
+        git merge $WORKFLOW_GIT_REF --ff -m "Merge workflow branch into ${{ github.event.inputs.git_ref }} for deployment"
+        # Push the checked out branch back to origin
+        git push origin ${{ github.event.inputs.git_ref }}
