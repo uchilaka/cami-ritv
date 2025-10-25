@@ -1,0 +1,61 @@
+name: Ad-hoc Push to Production
+
+on:
+  workflow_dispatch:
+    inputs:
+      deploy_message:
+        description: 'Deployment message'
+        required: true
+        default: 'Ad-hoc deployment to production'
+      git_ref:
+        description: 'Git reference (branch, tag, or commit SHA) to deploy'
+        required: true
+        default: 'releases/production'
+
+jobs:
+  deploy:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      deployments: write
+
+    strategy:
+      fail-fast: true
+      matrix:
+        ruby-version: [3.4]
+        node-version: [22.x]
+
+    env:
+      RAILS_ENV: production
+
+    steps:
+    - name: Checkout ref ${{ github.event.inputs.git_ref }}
+      uses: actions/checkout@v4
+      with:
+        ref: ${{ github.event.inputs.git_ref }}
+
+    - name: Set up Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: ${{ matrix.ruby-version }}
+
+    - name: Check ruby version
+      run: ruby -v
+
+    - uses: actions/cache@v4
+      with:
+        path: vendor/bundle
+        key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-gems-
+
+    - name: Deploy to Production
+      env:
+        DEPLOY_MESSAGE: ${{ github.event.inputs.deploy_message }}
+      run: |
+        # Replace the following command with your actual deployment command/script
+        echo "Deploying to production with message: $DEPLOY_MESSAGE"
+        # Example deployment command:
+        # bundle exec cap production deploy MESSAGE="$DEPLOY_MESSAGE"
