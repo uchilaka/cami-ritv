@@ -88,6 +88,10 @@ When running the database in Docker, you will need to ensure you have the right 
 docker compose up -d app-store && docker compose logs -f app-store --since 5m
 ```
 
+# Contributing
+
+Please refer to the [CONTRIBUTING.md](./docs/CONTRIBUTING.md) file for contribution guidelines.
+
 ## Known issues
 
 - [ ] SSL certificate verification fails on macOS (OpenSSL 3.6 + Ruby 3.4) due to CRL check <https://github.com/rails/rails/issues/55886>
