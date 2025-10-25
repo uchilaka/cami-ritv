@@ -33,7 +33,7 @@ jobs:
 
     env:
       RAILS_ENV: production
-      WORKFLOW_REF: ${{ github.head_ref }}
+      WORKFLOW_REF: ${{ github.ref }}
       DEPLOY_TARGET_REF: refs/heads/${{ github.event.inputs.git_ref }}
 
     steps:
