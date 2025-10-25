@@ -61,7 +61,7 @@ jobs:
       run: |
         echo "Workflow Git Ref: $WORKFLOW_GIT_REF"
 
-    - name: Deploy ${{ env.WORKFLOW_GIT_REF }} to Production
+    - name: Deploy ${{ env.WORKFLOW_GIT_REF }} to ${{ env.DEPLOY_TARGET_REF }}
       env:
         DEPLOY_MESSAGE: ${{ github.event.inputs.deploy_message }}
         # Capture the workflow branch (from workflow_dispatch:) selected ref as an ENV variable
