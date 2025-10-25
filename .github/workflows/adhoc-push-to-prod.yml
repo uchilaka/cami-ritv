@@ -34,6 +34,7 @@ jobs:
     env:
       RAILS_ENV: production
       WORKFLOW_GIT_REF: ${{ github.ref }}
+      DEPLOY_TARGET_REF: refs/heads/${{ github.event.inputs.git_ref }}
 
     steps:
     - name: Checkout workflow branch
@@ -74,7 +75,7 @@ jobs:
         # Merge the ref into the releases/production branch and push
         git config user.name "github-actions[bot]"
         git config user.email "github-actions[bot]@users.noreply.github.com"
-        git checkout ${{ github.event.inputs.git_ref }}
+        git checkout $DEPLOY_TARGET_REF
         # Merge in the workflow branch (from a workflow_dispatch: run) to capture any changes
-        git merge $WORKFLOW_GIT_REF --ff -m "Merge workflow branch into ${{ github.event.inputs.git_ref }} for deployment"
-        git push origin ${{ github.event.inputs.git_ref }}
+        git merge $WORKFLOW_GIT_REF --ff -m "Merge workflow branch into $DEPLOY_TARGET_REF for deployment"
+        git push origin $DEPLOY_TARGET_REF
