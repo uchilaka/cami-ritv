@@ -114,8 +114,9 @@ production:
     variables:
       statement_timeout: 15s
       lock_timeout: 10s
-    database: sails_production
-    username: <%= ENV.fetch('APP_DATABASE_USER', 'postgres') %>
+    database: <%= ENV.fetch('APP_DATABASE_NAME', 'sails_production') %>
+    host: <%= ENV.fetch('APP_DATABASE_HOST', Rails.application.credentials.postgres&.host) %>
+    username: <%= ENV.fetch('APP_DATABASE_USER', Rails.application.credentials.postgres&.user) %>
     password: <%= ENV.fetch("APP_DATABASE_PASSWORD", Rails.application.credentials.postgres&.password) %>
   queue:
     <<: *primary_production
