@@ -1,0 +1,35 @@
+version: "1"
+projects:
+  - name: CAMI(S) - Customer Account Management & Invoicing System
+    environments:
+      - name: Staging
+        databases:
+          - name: cami-staging-db
+            databaseName: sails_staging
+            user: sails_staging_user
+            plan: free
+            region: virginia
+            ipAllowList:
+              - source: 0.0.0.0/0
+                description: everywhere
+            postgresMajorVersion: "17"
+        services:
+          - type: web
+            name: cami-staging-app
+            runtime: ruby
+            repo: https://github.com/uchilaka/cami-ritv
+            plan: free
+            envVars:
+              - key: RAILS_ENV
+                sync: false
+              - key: WEB_CONCURRENCY
+                sync: false
+              - fromGroup: CRM Staging
+              - fromGroup: Logtail Staging
+              - fromGroup: Database Staging
+              - fromGroup: PayPal Staging
+              - fromGroup: SMTP Live
+            region: virginia
+            buildCommand: ./bin/pre-deploy
+            startCommand: bundle exec rails server
+            autoDeployTrigger: commit
