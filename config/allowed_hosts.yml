@@ -18,11 +18,11 @@ production:
   - cami-production.onrender.com
   - accounts.larcity.hopto.org
   #- accounts.ho.lar.city
-  #- accounts.ho.madebylar.city
-  - accounts.ho.larcity.business
-  #- accounts.larcity.com
+  - accounts.madebylar.city
+#  - accounts.ho.larcity.business
+  - accounts.larcity.com
   - accounts.larcity.tech
-  #- accounts.lar.city
+  - accounts.lar.city
   #- www.larcity.com
   #- www.lar.city
   #- larcity.com
