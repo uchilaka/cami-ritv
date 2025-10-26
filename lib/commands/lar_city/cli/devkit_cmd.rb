@@ -125,7 +125,7 @@ module LarCity
           commit_msg = <<~COMMIT_MSG
             Merging #{current_branch} into #{selected_branch} for emergency deploy
           COMMIT_MSG
-          merge_cmd = "git merge --no-ff #{current_branch} -m '#{commit_msg.strip}'"
+          merge_cmd = "git merge --no-ff #{current_branch} -m \"#{commit_msg.strip}\""
           run merge_cmd, inline: true
 
           deploy_cmd = ['git push origin', "HEAD:#{selected_branch}"]
