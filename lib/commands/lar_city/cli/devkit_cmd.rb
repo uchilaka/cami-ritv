@@ -133,7 +133,7 @@ module LarCity
           raise 'Deployment failed. Please check the output above for details.' unless success || pretend?
 
           # Use curl to trigger the deploy hook if one is configured
-          env_name = "app_deploy_#{detected_environment}_hook_url".upcase
+          env_name = ['app_deploy', detected_environment, 'hook_url'].join('_').upcase
           deploy_hook_url = ENV.fetch(env_name, nil)
           result =
             if deploy_hook_url.present?
