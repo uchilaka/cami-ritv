@@ -20,6 +20,19 @@ class AppUtils
   end
 
   class << self
+    def smtp_settings
+      smtp_config_to_env_mapping.to_h do |(rails_key, brevo_key), env_var|
+        value = ENV.fetch(env_var, nil)
+        if value.present?
+          [rails_key, value]
+        else
+          credential_value =
+            Rails.application.credentials.dig(:brevo, brevo_key)
+          [rails_key, credential_value]
+        end
+      end.merge(enable_starttls_auto: yes?(ENV.fetch('SMTP_ENABLE_STARTTLS_AUTO', 'yes')))
+    end
+
     def crm_org_id
       override_value = ENV.fetch('CRM_ORG_ID', nil)
       return override_value if override_value.present?
@@ -80,7 +93,7 @@ class AppUtils
     def healthy?(resource_url)
       response = Faraday.get(resource_url) do |options|
         options.headers = {
-          'User-Agent' => 'VirtualOfficeManager health check bot v1.0'
+          'User-Agent' => 'VirtualOfficeManager health check bot v1.0',
         }
       end
       Rails.logger.info "Health check for #{resource_url}", response: response.inspect
@@ -160,6 +173,18 @@ class AppUtils
         keys = Rails.application.credentials&.jbuilder&.pre_keys || %i[predicate]
         keys.is_a?(Array) ? keys : [keys]
       end
+    end
+
+    private
+
+    def smtp_config_to_env_mapping
+      {
+        # [rails_config, brevo_config] => env_var_name
+        %i[address smtp_server] => 'SMTP_SERVER',
+        %i[port smtp_port] => 'SMTP_PORT',
+        %i[user_name smtp_user] => 'SMTP_USERNAME',
+        %i[password smtp_password] => 'SMTP_PASSWORD',
+      }
     end
   end
 end
