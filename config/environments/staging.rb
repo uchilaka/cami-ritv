@@ -67,18 +67,11 @@ Rails.application.configure do
   config.action_mailer.perform_deliveries = AppUtils.send_emails?
   config.action_mailer.delivery_method = :smtp
   # Configure the mailer to use the SMTP server
-  config.action_mailer.smtp_settings =
-    {
-      address: ENV.fetch('SMTP_SERVER', Rails.application.credentials.brevo.smtp_server),
-      port: ENV.fetch('SMTP_PORT', Rails.application.credentials.brevo.smtp_port),
-      user_name: ENV.fetch('SMTP_USERNAME', Rails.application.credentials.brevo.smtp_user),
-      password: ENV.fetch('SMTP_PASSWORD', Rails.application.credentials.brevo.smtp_password),
-      enable_starttls_auto: true,
-    }
+  config.action_mailer.smtp_settings = AppUtils.smtp_settings
   # Configure logging for the app's mail service.
   config.action_mailer.logger = Rails.logger
 
-  config.action_mailer.default_url_options = { host: 'accounts.staging.larcity.tech' }
+  config.action_mailer.default_url_options = { host: ENV.fetch('HOSTNAME', 'accounts.staging.larcity.tech') }
 
   # Print deprecation notices to the Rails logger.
   # config.active_support.deprecation = :log
