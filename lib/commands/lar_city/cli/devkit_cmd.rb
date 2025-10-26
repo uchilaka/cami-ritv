@@ -99,35 +99,36 @@ module LarCity
       def yeet_deploy
         # Check to make sure current branch is clean (no dangling changes)
         with_interruption_rescue do
-          status_output = `git status --porcelain`.strip
-          unless status_output.blank?
-            raise 'Current branch has uncommitted changes. Please commit or stash them before deploying.'
-          end
+          # status_output = `git status --porcelain`.strip
+          # unless status_output.blank?
+          #   raise 'Current branch has uncommitted changes. Please commit or stash them before deploying.'
+          # end
+          block_deployment_on_uncommitted_changes!
 
           run 'git pull --ff', inline: true
           run 'git push', inline: true
 
-          # Save current branch
-          working_branch = `git rev-parse --abbrev-ref HEAD`.strip
-          target_branch = 'releases/production'
-          if working_branch == target_branch
-            raise 'You are already on the releases/production branch. Please switch to another branch before deploying.'
-          end
+          @selected_branch = "releases/#{detected_environment}"
+          # if current_branch == selected_branch
+          #   raise 'You are already on the releases/production branch. Please switch to another branch before deploying.'
+          # end
+          block_deployment_on_same_branch!
+          block_deployment_on_release_branches!
 
           # Merge the current branch into the target releases/* branch
-          checkout_cmd = "git checkout #{target_branch}"
+          checkout_cmd = "git checkout #{selected_branch}"
 
           success = system(checkout_cmd)
-          raise "Failed to checkout #{target_branch} branch." unless success
+          raise "Failed to checkout #{selected_branch} branch." unless success
 
           run 'git pull --ff', inline: true
           commit_msg = <<~COMMIT_MSG
-            Merging #{working_branch} into #{target_branch} for emergency deploy
+            Merging #{current_branch} into #{selected_branch} for emergency deploy
           COMMIT_MSG
-          merge_cmd = "git merge --no-ff #{working_branch} -m '#{commit_msg.strip}'"
+          merge_cmd = "git merge --no-ff #{current_branch} -m '#{commit_msg.strip}'"
           run merge_cmd, inline: true
 
-          deploy_cmd = ['git push origin', "HEAD:#{target_branch}"]
+          deploy_cmd = ['git push origin', "HEAD:#{selected_branch}"]
           success = run(*deploy_cmd, inline: true)
           raise 'Deployment failed. Please check the output above for details.' unless success || pretend?
 
@@ -152,10 +153,10 @@ module LarCity
               MSG
               true if pretend?
             end
-          say_success "🚀 Code has been forcefully deployed to #{target_branch}." if result
+          say_success "🚀 Code has been forcefully deployed to #{selected_branch}." if result
         ensure
           # Switch back to the original working branch
-          system("git switch #{working_branch}")
+          system("git switch #{current_branch}")
         end
       end
 
@@ -421,6 +422,34 @@ module LarCity
       end
 
       private
+
+      def block_deployment_on_release_branches!
+        return unless current_branch.start_with?('releases/')
+
+        raise Errors::Forbidden, <<~MSG
+          🙅🏾‍♂️ Deployment operations are blocked on release branches (current branch: #{current_branch}).
+          Please switch to a non-release branch to proceed.
+        MSG
+      end
+
+      def block_deployment_on_same_branch!
+        return if selected_branch != current_branch
+
+        raise Errors::Forbidden, <<~MSG
+          🙅🏾‍♂️ Deployment operations are blocked on the current branch (#{current_branch}).
+          Please switch to a different branch to proceed.
+        MSG
+      end
+
+      def block_deployment_on_uncommitted_changes!
+        status_output = `git status --porcelain`.strip
+        return if status_output.blank?
+
+        raise Errors::Forbidden, <<~MSG
+          🙅🏾‍♂️ Deployment operations are blocked due to uncommitted changes in the current branch (#{current_branch}).
+          Please commit or stash your changes before proceeding.
+        MSG
+      end
 
       def interactive?
         options[:interactive]
