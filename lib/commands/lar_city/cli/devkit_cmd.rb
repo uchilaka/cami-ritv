@@ -99,19 +99,12 @@ module LarCity
       def yeet_deploy
         # Check to make sure current branch is clean (no dangling changes)
         with_interruption_rescue do
-          # status_output = `git status --porcelain`.strip
-          # unless status_output.blank?
-          #   raise 'Current branch has uncommitted changes. Please commit or stash them before deploying.'
-          # end
           block_deployment_on_uncommitted_changes!
-
           run 'git pull --ff', inline: true
           run 'git push', inline: true
 
           @selected_branch = "releases/#{detected_environment}"
-          # if current_branch == selected_branch
-          #   raise 'You are already on the releases/production branch. Please switch to another branch before deploying.'
-          # end
+
           block_deployment_on_same_branch!
           block_deployment_on_release_branches!
 
