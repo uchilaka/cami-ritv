@@ -5,6 +5,10 @@ test:
   - accounts.larcity.test
   - www.example.com
 staging:
+  # TODO: Consolidate all these staging domains. Only accounts.staging.larcity.tech
+  # should be actively used in testing for now since that's the only one that will
+  # work with Google Omniauth. Alternatively, we can update the Google OAuth settings
+  # to include all these domains, but that seems unnecessary.
   - accounts.staging.larcity.org
   - accounts.staging.larcity.tech
   - accounts.staging.larcity.business

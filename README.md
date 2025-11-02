@@ -9,6 +9,7 @@
 
 ## Homework
 
+- [ ] [Review valid use cases of the Highline gem](https://github.com/uchilaka/cami-ritv/pull/224#discussion_r2450778775)
 - [ ] [Session storage caveat(s) with devise-jwt](https://github.com/waiting-for-dev/devise-jwt?tab=readme-ov-file#session-storage-caveat)
 - [ ] [Tailwind dark mode guide](https://v3.tailwindcss.com/docs/dark-mode)
 - [ ] [Flowbite dark mode guide](https://flowbite.com/docs/customize/dark-mode/)
