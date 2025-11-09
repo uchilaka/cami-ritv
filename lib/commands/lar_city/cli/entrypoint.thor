@@ -7,6 +7,7 @@ require_relative 'secrets_cmd'
 require_relative 'services_cmd'
 require_relative 'tunnel_cmd'
 require_relative 'accounts_cmd'
+require_relative 'remote_cmd'
 
 module LarCity
   module CLI
@@ -37,6 +38,9 @@ module LarCity
 
         desc 'tunnel [SUBCOMMAND]', 'Manage the dev proxy tunnel (for testing the app with a public URL)'
         subcommand 'tunnel', TunnelCmd
+
+        desc 'remote', 'Remote into the LarCity Home Office system'
+        subcommand 'remote', RemoteCmd
       end
 
       desc 'setup', 'Install LarCity CLI on your system'
