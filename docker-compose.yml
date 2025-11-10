@@ -44,8 +44,8 @@ services:
       - "16032:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./db/development/postgres/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
-      - ./db/development/postgres/downloads:/usr/local/downloads
+      - ./db/${RAILS_ENV:-development}/postgres/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
+      - ./db/${RAILS_ENV:-development}/postgres/downloads:/usr/local/downloads
     profiles:
       - batteries-included
       - essential
