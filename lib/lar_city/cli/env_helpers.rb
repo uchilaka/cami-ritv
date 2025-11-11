@@ -16,6 +16,14 @@ module LarCity
                                 required: false
       end
 
+      def self.define_sudo_option(thor_class)
+        thor_class.option :sudo,
+                          type: :boolean,
+                          desc: 'Run command with sudo (only applies to Unix-based systems)',
+                          required: false,
+                          default: false
+      end
+
       def self.included(base)
         base.include OperatingSystemDetectable
 

@@ -39,10 +39,18 @@ module LarCity
         subcommand 'tunnel', TunnelCmd
       end
 
+      EnvHelpers.define_sudo_option(self)
       desc 'setup', 'Install LarCity CLI on your system'
       def setup
         FileUtils.rm(system_bin_path, verbose: verbose?) if File.symlink?(self.class.system_bin_path) && !dry_run?
-        run 'ln -s', cli_exec_path, self.class.system_bin_path
+        cmd = ['ln -s', cli_exec_path, self.class.system_bin_path]
+        # Prepend sudo if --sudo
+        cmd.unshift('sudo') if options[:sudo]
+        result = run(*cmd, inline: true)
+        if verbose?
+          say_info "Returned value: #{result.inspect}"
+          say_highlight "Created symlink at #{self.class.system_bin_path} pointing to #{cli_exec_path}" if result
+        end
         say <<~README
           LarCity CLI installed at #{self.class.system_bin_path}
           To see available commands, run: lx-cli -T
@@ -51,9 +59,14 @@ module LarCity
 
       desc 'uninstall', 'Uninstall LarCity CLI from your system'
       def uninstall
-        FileUtils.rm(self.class.system_bin_path, verbose: verbose?) \
+        # TODO: What is returned?
+        result =
           if File.symlink?(self.class.system_bin_path) && !dry_run?
-        say "LarCity CLI uninstalled from #{self.class.system_bin_path}."
+            FileUtils.rm(self.class.system_bin_path, noop: dry_run?, verbose: verbose?)
+          end
+        # TODO: Refactor to support sudo permissions
+        # TODO: Handle the result when the uninstallation fails e.g. if we need sudo permissions
+        say "LarCity CLI uninstalled from #{self.class.system_bin_path}." if result || dry_run?
       end
 
       private
