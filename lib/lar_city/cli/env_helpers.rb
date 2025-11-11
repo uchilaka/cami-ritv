@@ -16,12 +16,15 @@ module LarCity
                                 required: false
       end
 
-      def self.define_sudo_option(thor_class)
-        thor_class.option :sudo,
-                          type: :boolean,
-                          desc: 'Run command with sudo (only applies to Unix-based systems)',
-                          required: false,
-                          default: false
+      def self.define_sudo_option(thor_class, type: nil, default: false, required: false)
+        option_method = type.to_s == 'class' ? :class_option : :option
+        thor_class
+          .public_send(
+            option_method, :sudo,
+            type: :boolean,
+            desc: 'Run command with sudo (only applies to Unix-based systems)',
+            default:, required:
+          )
       end
 
       def self.included(base)

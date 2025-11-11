@@ -57,15 +57,20 @@ module LarCity
         README
       end
 
+      EnvHelpers.define_sudo_option(self)
       desc 'uninstall', 'Uninstall LarCity CLI from your system'
       def uninstall
-        # TODO: What is returned?
+        if !File.symlink?(self.class.system_bin_path) && !dry_run?
+          say_warning "LarCity CLI is not installed at #{self.class.system_bin_path}."
+          return
+        end
+
         result =
-          if File.symlink?(self.class.system_bin_path) && !dry_run?
+          if options[:sudo]
+            run('sudo', 'rm', self.class.system_bin_path, inline: true)
+          else
             FileUtils.rm(self.class.system_bin_path, noop: dry_run?, verbose: verbose?)
           end
-        # TODO: Refactor to support sudo permissions
-        # TODO: Handle the result when the uninstallation fails e.g. if we need sudo permissions
         say "LarCity CLI uninstalled from #{self.class.system_bin_path}." if result || dry_run?
       end
 
