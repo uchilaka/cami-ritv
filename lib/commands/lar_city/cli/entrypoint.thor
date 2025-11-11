@@ -7,7 +7,6 @@ require_relative 'secrets_cmd'
 require_relative 'services_cmd'
 require_relative 'tunnel_cmd'
 require_relative 'accounts_cmd'
-require_relative 'remote_cmd'
 
 module LarCity
   module CLI
@@ -38,26 +37,41 @@ module LarCity
 
         desc 'tunnel [SUBCOMMAND]', 'Manage the dev proxy tunnel (for testing the app with a public URL)'
         subcommand 'tunnel', TunnelCmd
-
-        desc 'remote', 'Remote into the LarCity Home Office system'
-        subcommand 'remote', RemoteCmd
       end
 
+      EnvHelpers.define_sudo_option(self)
       desc 'setup', 'Install LarCity CLI on your system'
       def setup
         FileUtils.rm(system_bin_path, verbose: verbose?) if File.symlink?(self.class.system_bin_path) && !dry_run?
-        run 'ln -s', cli_exec_path, self.class.system_bin_path
+        cmd = ['ln -s', cli_exec_path, self.class.system_bin_path]
+        # Prepend sudo if --sudo
+        cmd.unshift('sudo') if options[:sudo]
+        result = run(*cmd, inline: true)
+        if verbose?
+          say_info "Returned value: #{result.inspect}"
+          say_highlight "Created symlink at #{self.class.system_bin_path} pointing to #{cli_exec_path}" if result
+        end
         say <<~README
           LarCity CLI installed at #{self.class.system_bin_path}
           To see available commands, run: lx-cli -T
         README
       end
 
+      EnvHelpers.define_sudo_option(self)
       desc 'uninstall', 'Uninstall LarCity CLI from your system'
       def uninstall
-        FileUtils.rm(self.class.system_bin_path, verbose: verbose?) \
-          if File.symlink?(self.class.system_bin_path) && !dry_run?
-        say "LarCity CLI uninstalled from #{self.class.system_bin_path}."
+        if !File.symlink?(self.class.system_bin_path) && !dry_run?
+          say_warning "LarCity CLI is not installed at #{self.class.system_bin_path}."
+          return
+        end
+
+        result =
+          if options[:sudo]
+            run('sudo', 'rm', self.class.system_bin_path, inline: true)
+          else
+            FileUtils.rm(self.class.system_bin_path, noop: dry_run?, verbose: verbose?)
+          end
+        say "LarCity CLI uninstalled from #{self.class.system_bin_path}." if result || dry_run?
       end
 
       private
