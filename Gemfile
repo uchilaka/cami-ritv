@@ -104,6 +104,7 @@ gem 'terminal-table'
 
 gem 'nokogiri'
 gem 'reverse_markdown'
+gem 'kamal'
 gem 'highline', '~> 3.1'
 gem 'dry-types', '~> 1.8'
 

@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative 'base_cmd'
+require_relative 'htpasswd_cmd'
 
 module LarCity
   module CLI
@@ -156,6 +157,9 @@ module LarCity
         end
         system(cmd) unless dry_run?
       end
+
+      desc 'htpasswd [SUBCOMMAND]', 'Manage basic auth records in a htpasswd file'
+      subcommand 'htpasswd', HtpasswdCmd
 
       no_commands do
         def check_or_prompt_for_branch_to_review

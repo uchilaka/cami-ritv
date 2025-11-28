@@ -63,6 +63,7 @@ module LarCity
             can only be opened in the development or staging environments.
           ERROR
           say_error error_msg
+          say_error "Unsupported environment: #{detected_environment}"
         end
       end
 
