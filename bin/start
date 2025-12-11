@@ -3,5 +3,14 @@
 # Calculate the process file to run
 PROCESS_FILE="Procfile.${RAILS_ENV}"
 
+# Build css
+yarn build:css
+
+# Pre-build app assets
+yarn build:assets
+
+# Build frontend
+yarn build
+
 # Start the processes for the Rails application
 /opt/homebrew/bin/goreman -f "$PROCESS_FILE" start
