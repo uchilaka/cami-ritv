@@ -10,19 +10,28 @@ module LogUtils
       SemanticLogger.appenders.any? { |a| a.is_a?(SemanticLogger::Appender::Http) }
     end
 
+    def log_stream_token!
+      @log_stream_token = ENV.fetch('BETTERSTACK_SOURCE_TOKEN', nil)
+      @log_stream_token ||= Rails.application.credentials.betterstack.source_token!
+    end
+
+    def log_stream_ingestion_host!
+      @log_stream_ingestion_host = ENV.fetch('BETTERSTACK_INGESTION_HOST', 'in.logs.betterstack.com')
+      @log_stream_ingestion_host ||= Rails.application.credentials.betterstack.ingestion_host!
+    end
+
     def initialize_stream
       # Stdout appender
       SemanticLogger.add_appender(io: $stdout, level: :debug, formatter: :color)
       if streaming_enabled?
         # BetterStack via HTTPS Appender
-        source_token = ENV.fetch('BETTERSTACK_SOURCE_TOKEN', Rails.application.credentials.betterstack.source_token)
         SemanticLogger.add_appender(
           appender: SemanticLogger::Appender::Http.new(
-            url: 'https://in.logs.betterstack.com',
+            url: "https://#{log_stream_ingestion_host!}",
             ssl: { verify: OpenSSL::SSL::VERIFY_NONE },
             header: {
               'Content-Type': 'application/json',
-              Authorization: "Bearer #{source_token}"
+              Authorization: "Bearer #{log_stream_token!}",
             }
           )
         )
