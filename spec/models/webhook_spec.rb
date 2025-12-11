@@ -4,6 +4,7 @@
 #
 #  id                 :uuid             not null, primary key
 #  data               :jsonb
+#  dataset            :string
 #  name               :string
 #  slug               :string
 #  status             :string           not null
@@ -13,9 +14,10 @@
 #
 # Indexes
 #
-#  index_webhooks_on_name    (name) UNIQUE
-#  index_webhooks_on_slug    (slug) UNIQUE
-#  index_webhooks_on_status  (status)
+#  index_webhooks_on_name              (name) UNIQUE
+#  index_webhooks_on_slug              (slug) UNIQUE
+#  index_webhooks_on_slug_and_dataset  (slug,dataset) UNIQUE WHERE (dataset IS NOT NULL)
+#  index_webhooks_on_status            (status)
 #
 require 'rails_helper'
 

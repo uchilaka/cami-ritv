@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_09_12_145949) do
+ActiveRecord::Schema[8.0].define(version: 2025_12_11_193859) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -394,7 +394,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_12_145949) do
     t.datetime "updated_at", null: false
     t.string "status", null: false
     t.string "name"
+    t.string "dataset"
     t.index ["name"], name: "index_webhooks_on_name", unique: true
+    t.index ["slug", "dataset"], name: "index_webhooks_on_slug_and_dataset", unique: true, where: "(dataset IS NOT NULL)"
     t.index ["slug"], name: "index_webhooks_on_slug", unique: true
     t.index ["status"], name: "index_webhooks_on_status"
   end

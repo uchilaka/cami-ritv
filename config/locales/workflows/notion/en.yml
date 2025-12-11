@@ -36,3 +36,14 @@ en:
         completed:
           message: "Notion verification token registered successfully"
           log: "Notion verification token registered by user %{email} for workspace %{workspace}"
+      upsert_webhook_workflow:
+        errors:
+          generic: "An error occurred while setting up the Notion %{dataset} webhook"
+          unsupported_dataset: "The Notion dataset %{dataset} is not supported"
+          missing_integration: "The Notion integration is missing for %{dataset} in workspace %{workspace}"
+          missing_verification_token: "The Notion verification token is missing for %{dataset} in workspace %{workspace}"
+          invalid_integration: "The Notion integration is invalid for workspace %{workspace}"
+          webhook_creation_failed: "Failed to create Notion %{dataset} webhook for workspace %{workspace}"
+        completed:
+          message: "Notion webhook set up successfully"
+          log: "Notion webhook set up for %{dataset} dataset in workspace %{workspace} by user %{email}"
