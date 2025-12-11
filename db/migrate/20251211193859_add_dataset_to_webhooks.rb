@@ -8,7 +8,6 @@ class AddDatasetToWebhooks < ActiveRecord::Migration[8.0]
     add_column :webhooks, :dataset, :string, if_not_exists: true
     add_index :webhooks,
               %i[slug dataset],
-              unique: true,
               algorithm: :concurrently,
               if_not_exists: true,
               where: 'dataset IS NOT NULL',

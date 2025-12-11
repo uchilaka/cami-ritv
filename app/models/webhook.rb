@@ -13,12 +13,13 @@
 #  verification_token :string
 #  created_at         :datetime         not null
 #  updated_at         :datetime         not null
+#  vendor_account_id  :uuid
 #
 # Indexes
 #
 #  index_webhooks_on_name              (name) UNIQUE
 #  index_webhooks_on_slug              (slug) UNIQUE
-#  index_webhooks_on_slug_and_dataset  (slug,dataset) UNIQUE WHERE (dataset IS NOT NULL)
+#  index_webhooks_on_slug_and_dataset  (slug,dataset) WHERE (dataset IS NOT NULL)
 #  index_webhooks_on_status            (status)
 #
 class Webhook < ApplicationRecord
@@ -40,6 +41,8 @@ class Webhook < ApplicationRecord
   has_rich_text :readme
 
   friendly_id :slug, use: :slugged
+
+  belongs_to :vendor, foreign_key: 'vendor_account_id', class_name: 'Account', optional: true
 
   has_many :generic_events, as: :eventable, dependent: :nullify
 
