@@ -1,8 +1,10 @@
 # frozen_string_literal: true
 
 module Notion
-  # A webhook can utilize the same vendor credentials but will need separate
+  # A dataset-specific webhook can utilize the same vendor credentials but will need separate
   # instances to manage different datasets/databases vendor (e.g., deals, vendors).
+  #
+  # If dataset is unset for a webhook record, it is assumed to be a generic webhook for the vendor.
   class UpsertWebhookWorkflow
     include Interactor
 
@@ -13,7 +15,9 @@ module Notion
     delegate :dataset, to: :context
 
     def call
-      unless supported_datasets.include?(dataset)
+      raise I18n.t('workflows.notion.upsert_webhook_workflow.errors.missing_dataset') if dataset.blank?
+
+      unless supported_datasets.include?(dataset.to_s)
         raise I18n.t('workflows.notion.upsert_webhook_workflow.errors.unsupported_dataset', dataset:)
       end
 
@@ -78,7 +82,7 @@ module Notion
     end
 
     def slug
-      [vendor.to_s, dataset.to_s].compact.join('-').to_sym
+      [vendor.to_s, dataset.to_s.pluralize].compact.join('-').to_sym
     end
 
     def vendor
