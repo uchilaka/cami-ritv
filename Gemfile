@@ -56,7 +56,7 @@ gem 'devise-passwordless', '~> 1.1'
 gem 'omniauth-apple', '~> 1.3'
 gem 'omniauth-google-oauth2', '~> 1.2'
 gem 'omniauth-rails_csrf_protection'
-gem 'rack-cors', '~> 2.0'
+gem 'rack-cors', '~> 3.0'
 gem 'simple_form', '~> 5.3'
 
 # Not supported yet on Rails 8.0
