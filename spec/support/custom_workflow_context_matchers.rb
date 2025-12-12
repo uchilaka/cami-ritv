@@ -26,14 +26,23 @@ RSpec::Matchers.define :have_failed_with_message do |expected_message|
   end
 
   failure_message do |obj|
-    workflow = workflow_under_test(obj)
-    "expected workflow to fail with message '#{expected_message}', " \
-    "but got error '#{workflow.error}' and message '#{workflow.message}'"
+    context = workflow_under_test(obj)
+    message_buffer = []
+    message_buffer <<
+      if context.success?
+        "expected workflow to fail with message '#{expected_message}', " \
+          "but it succeeded"
+      else
+        "expected workflow to fail with message '#{expected_message}', " \
+          "but got error '#{context.error}'"
+      end
+    message_buffer << "with message '#{context.message}'" if context.message.present?
+    message_buffer.join(' ')
   end
 
   failure_message_when_negated do |obj|
-    _workflow = workflow_under_test(obj)
+    _context = workflow_under_test(obj)
     "expected workflow not to fail with message '#{expected_message}', " \
-    "but it did."
+      "but it did."
   end
 end
