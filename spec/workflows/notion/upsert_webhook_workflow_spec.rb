@@ -71,9 +71,8 @@ RSpec.describe Notion::UpsertWebhookWorkflow do
         it('returns the existing webhook') { expect(workflow.webhook).to eq(existing_webhook) }
 
         it { expect { workflow }.not_to(change { Webhook.count }) }
-        it { expect(workflow.webhook, :data).to match(hash_including(expected_data)) }
-        it { expect(workflow.webhook, :records_index_workflow_name).to eq(Notion::Deals::DownloadLatestWorkflow.name.to_s) }
-        it { expect(workflow.webhook, :record_download_workflow_name).to eq(Notion::Deals::DownloadWorkflow.name.to_s) }
+
+        it_should_behave_like "updated Notion deals webhook"
       end
     end
   end
