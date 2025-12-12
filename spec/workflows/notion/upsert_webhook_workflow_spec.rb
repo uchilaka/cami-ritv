@@ -35,24 +35,45 @@ RSpec.describe Notion::UpsertWebhookWorkflow do
         }
       end
 
+      shared_examples "updated Notion deals webhook" do
+        subject(:webhook) { workflow.webhook }
+
+        let(:expected_data) do
+          {
+            'deal_database_id' => deal_database_id,
+            'vendor_database_id' => vendor_database_id,
+            'integration_id' => webhook_data[:integration_id],
+            'records_index_workflow_name' => Notion::Deals::DownloadLatestWorkflow.name.to_s,
+            'record_download_workflow_name' => Notion::Deals::DownloadWorkflow.name.to_s,
+          }
+        end
+
+        it { expect(webhook.data).to match(hash_including(expected_data)) }
+        it { expect(webhook.records_index_workflow_name).to eq(Notion::Deals::DownloadLatestWorkflow.name.to_s) }
+        it { expect(webhook.record_download_workflow_name).to eq(Notion::Deals::DownloadWorkflow.name.to_s) }
+      end
+
       context 'when webhook does not exist' do
         let(:webhook) { Webhook.find_by(slug: 'notion-deals') }
 
         it { expect { workflow }.to change { Webhook.count }.by(1) }
+
+        it_should_behave_like "updated Notion deals webhook"
       end
 
       context 'when webhook already exists' do
-        let(:expected_slug) { "#{vendor}-#{dataset.to_s.pluralize}" }
         let!(:existing_webhook) do
           Fabricate(:webhook, slug: expected_slug, dataset:, verification_token: webhook_data[:verification_token])
         end
 
+        let(:expected_slug) { "#{vendor}-#{dataset.to_s.pluralize}" }
+
+        it('returns the existing webhook') { expect(workflow.webhook).to eq(existing_webhook) }
+
         it { expect { workflow }.not_to(change { Webhook.count }) }
-        xit { expect { workflow }.to(change { existing_webhook.data[:database_id] }) }
-        xit { expect { workflow }.to change(existing_webhook.data, :deal_database_id) }
-        xit { expect { workflow }.to change(existing_webhook.data, :vendor_database_id) }
-        xit { expect { workflow }.to change(existing_webhook.data, :integration_id) }
-        xit { expect { workflow }.to change(existing_webhook.data, :dashboard_url) }
+        it { expect(workflow.webhook, :data).to match(hash_including(expected_data)) }
+        it { expect(workflow.webhook, :records_index_workflow_name).to eq(Notion::Deals::DownloadLatestWorkflow.name.to_s) }
+        it { expect(workflow.webhook, :record_download_workflow_name).to eq(Notion::Deals::DownloadWorkflow.name.to_s) }
       end
     end
   end

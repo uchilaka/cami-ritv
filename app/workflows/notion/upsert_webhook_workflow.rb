@@ -12,7 +12,7 @@ module Notion
              :verification_token,
              :database_id,
              to: :credentials
-    delegate :dataset, to: :context
+    delegate :dataset, :webhook, to: :context
 
     def call
       raise I18n.t('workflows.notion.upsert_webhook_workflow.errors.missing_dataset') if dataset.blank?
@@ -46,36 +46,51 @@ module Notion
         upserts[config_key] = credentials.send(config_key)
       end
 
-      ::Webhook.transaction do
-        webhook = ::Webhook.find_or_initialize_by(dataset:, slug:, verification_token:)
+      context.webhook = Webhook.find_or_initialize_by(dataset:, slug:, verification_token:)
 
+      Webhook.transaction do
         if webhook.persisted?
           Rails.logger.info('⏳️ Updating webhook', slug: webhook.slug)
         else
           Rails.logger.info('⏳️ Setting up webhook', vendor:, slug: webhook.slug)
         end
 
-        if webhook.new_record? || force?
-          webhook.data = upserts.compact!
-          if webhook.changed?
-            webhook.save!
-            Rails.logger.info('⚡ Webhook has been set up successfully.', vendor:, dataset:)
-          else
-            Rails.logger.info('💅🏾 Webhook is already set up and no changes were made.', vendor:, dataset:)
-          end
+        @new_record = webhook.new_record?
+
+        if new_record? || force?
+          webhook.data = upserts.compact
         else
-          webhook.set_on_data(**upserts)
-          if webhook.changed?
-            webhook.save!
-            Rails.logger.info('⚡ Webhook has been updated successfully.', vendor:, dataset:)
-          else
-            Rails.logger.info('💅🏾 Webhook is already up to date.', vendor:, dataset:)
-          end
+          webhook.set_on_data(**upserts.compact)
         end
+
+        if webhook.changed?
+          webhook.save!
+          message =
+            if new_record?
+              '🚀 Webhook has been created successfully.'
+            else
+              '⚡ Webhook has been updated successfully.'
+            end
+          Rails.logger.info(message, vendor:, dataset:)
+        else
+          Rails.logger.info('💅🏾 Webhook is already up to date.', vendor:, dataset:)
+        end
+      end
+    ensure
+      if webhook&.persisted? && webhook.errors.none?
+        Rails.logger.info("✅ #{self.class.name} succeeded", vendor:, dataset:)
+      else
+        message = "❌ #{self.class.name} failed"
+        context.fail!(message:)
+        Rails.logger.error(message, vendor:, dataset:, errors: webhook&.errors&.full_messages)
       end
     end
 
     protected
+
+    def new_record?
+      @new_record
+    end
 
     def force?
       context.force || false
@@ -109,7 +124,7 @@ module Notion
             .merge(
               deal: {
                 records_index_workflow_name: Notion::Deals::DownloadLatestWorkflow.name,
-                records_download_workflow_name: Notion::Deals::DownloadWorkflow.name,
+                record_download_workflow_name: Notion::Deals::DownloadWorkflow.name,
               },
               vendor: {}
             )
