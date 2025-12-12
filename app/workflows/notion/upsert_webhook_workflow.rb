@@ -15,11 +15,7 @@ module Notion
     delegate :dataset, :webhook, to: :context
 
     def call
-      raise I18n.t('workflows.notion.upsert_webhook_workflow.errors.missing_dataset') if dataset.blank?
-
-      unless supported_datasets.include?(dataset.to_s)
-        raise I18n.t('workflows.notion.upsert_webhook_workflow.errors.unsupported_dataset', dataset:)
-      end
+      require_dataset_support_if_set!
 
       integration_id, verification_token =
         Rails.application.credentials.notion&.values_at :integration_id, :verification_token
@@ -88,6 +84,14 @@ module Notion
 
     protected
 
+    def require_dataset_support_if_set!
+      return if dataset.blank?
+
+      unless supported_datasets.include?(dataset.to_s)
+        raise I18n.t('workflows.notion.upsert_webhook_workflow.errors.unsupported_dataset', dataset:)
+      end
+    end
+
     def new_record?
       @new_record
     end
@@ -119,16 +123,24 @@ module Notion
     def actions_map
       @actions_map ||=
         begin
-          register = Hash.new({})
+          # Return a hash that defaults to deal_actions_map for any unsupported dataset.
+          # This ensures that even if a dataset is not explicitly defined, it will still
+          # have the deal actions available for backward compatibility.
+          register = Hash.new(deal_actions_map)
           register
             .merge(
-              deal: {
-                records_index_workflow_name: Notion::Deals::DownloadLatestWorkflow.name,
-                record_download_workflow_name: Notion::Deals::DownloadWorkflow.name,
-              },
+              deal: deal_actions_map,
+              # Ensure vendor dataset actions are defined when supported in the future
               vendor: {}
             )
         end
+    end
+
+    def deal_actions_map
+      {
+        records_index_workflow_name: Notion::Deals::DownloadLatestWorkflow.name,
+        record_download_workflow_name: Notion::Deals::DownloadWorkflow.name,
+      }
     end
   end
 end

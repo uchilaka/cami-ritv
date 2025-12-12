@@ -23,6 +23,68 @@ RSpec.describe Notion::UpsertWebhookWorkflow do
   end
 
   describe '#call' do
+    shared_examples "updated Notion deals webhook" do
+      subject(:webhook) { workflow.webhook }
+
+      let(:expected_data) do
+        {
+          'deal_database_id' => deal_database_id,
+          'vendor_database_id' => vendor_database_id,
+          'integration_id' => webhook_data[:integration_id],
+          'records_index_workflow_name' => Notion::Deals::DownloadLatestWorkflow.name.to_s,
+          'record_download_workflow_name' => Notion::Deals::DownloadWorkflow.name.to_s,
+        }
+      end
+
+      it { expect(webhook.data).to match(hash_including(expected_data)) }
+      it { expect(webhook.records_index_workflow_name).to eq(Notion::Deals::DownloadLatestWorkflow.name.to_s) }
+      it { expect(webhook.record_download_workflow_name).to eq(Notion::Deals::DownloadWorkflow.name.to_s) }
+    end
+
+    context 'when dataset is nil', skip: "TODO: Implement backward compatibility support" do
+      let(:webhook_data) do
+        {
+          **shared_webhook_data,
+          database_id: deal_database_id,
+          dataset: nil,
+          deal_database_id:,
+          vendor_database_id:,
+        }
+      end
+
+      context 'and webhook does not exist' do
+        let(:webhook) { Webhook.find_by(slug: 'notion') }
+
+        it { expect { workflow }.to change { Webhook.count }.by(1) }
+
+        it_should_behave_like "updated Notion deals webhook"
+      end
+    end
+
+    context 'when dataset is unsupported' do
+      let(:database_id) { Faker::Alphanumeric.alpha(number: 32) }
+      let(:webhook_data) do
+        {
+          **shared_webhook_data,
+          dataset: :unsupported_dataset,
+          database_id:,
+          deal_database_id:,
+          vendor_database_id:,
+        }
+      end
+      let(:expected_message) do
+        I18n.t(
+          'workflows.notion.upsert_webhook_workflow.errors.unsupported_dataset',
+          dataset: :unsupported_dataset
+        )
+      end
+
+      # TODO: Implement a mocked test for custom_workflow_context_mater.rb
+      xit { is_expected.to have_failed_with_message(expected_message) }
+      # it { expect { workflow }.to have_failed_with_message(expected_message) }
+      # it { should have_failed_with_message(expected_message) }
+    end
+
     context "for 'deals' dataset" do
       let(:dataset) { :deal }
       let(:webhook_data) do
@@ -33,24 +95,6 @@ RSpec.describe Notion::UpsertWebhookWorkflow do
           deal_database_id:,
           vendor_database_id:,
         }
-      end
-
-      shared_examples "updated Notion deals webhook" do
-        subject(:webhook) { workflow.webhook }
-
-        let(:expected_data) do
-          {
-            'deal_database_id' => deal_database_id,
-            'vendor_database_id' => vendor_database_id,
-            'integration_id' => webhook_data[:integration_id],
-            'records_index_workflow_name' => Notion::Deals::DownloadLatestWorkflow.name.to_s,
-            'record_download_workflow_name' => Notion::Deals::DownloadWorkflow.name.to_s,
-          }
-        end
-
-        it { expect(webhook.data).to match(hash_including(expected_data)) }
-        it { expect(webhook.records_index_workflow_name).to eq(Notion::Deals::DownloadLatestWorkflow.name.to_s) }
-        it { expect(webhook.record_download_workflow_name).to eq(Notion::Deals::DownloadWorkflow.name.to_s) }
       end
 
       context 'when webhook does not exist' do
