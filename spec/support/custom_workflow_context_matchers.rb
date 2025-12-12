@@ -1,7 +1,10 @@
 # frozen_string_literal: true
 
-# TODO: Implement :supports_block_expectations? for this matcher.
-#   See doc: https://rspec.info/features/3-13/rspec-expectations/custom-matchers/define-matcher/
+# TODO: Implement a custom RSpec matcher `succeed_with_context_message`
+
+# See doc: https://rspec.info/features/3-13/rspec-expectations/custom-matchers/define-matcher/
+# TODO: Implement alias for `have_failed_with_error_message`
+#   as `fail_with_context_error`
 RSpec::Matchers.define :have_failed_with_message do |expected_message|
   define_method :supports_block_expectations? do
     true
@@ -15,7 +18,7 @@ RSpec::Matchers.define :have_failed_with_message do |expected_message|
   end
 
   define_method :has_expected_error_message? do |workflow|
-    return true if workflow.error == expected_message
+    return true if workflow&.error&.to_s == expected_message
 
     workflow.message == expected_message
   end

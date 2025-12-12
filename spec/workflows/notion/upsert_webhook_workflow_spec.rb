@@ -41,7 +41,11 @@ RSpec.describe Notion::UpsertWebhookWorkflow do
       it { expect(webhook.record_download_workflow_name).to eq(Notion::Deals::DownloadWorkflow.name.to_s) }
     end
 
-    context 'when dataset is nil', skip: "TODO: Implement backward compatibility support" do
+    # TODO: Test backward compatibility support for command:
+    #   `bin/thor [help] devkit:setup_webhooks`
+    #   which relies on creating a Notion webhook without specifying
+    #   a dataset.
+    context 'when dataset is nil', skip: 'TODO: implement backward compatibility support' do
       let(:webhook_data) do
         {
           **shared_webhook_data,
@@ -80,7 +84,7 @@ RSpec.describe Notion::UpsertWebhookWorkflow do
       end
 
       # TODO: Implement a mocked test for custom_workflow_context_mater.rb
-      xit { is_expected.to have_failed_with_message(expected_message) }
+      it { is_expected.to have_failed_with_message(expected_message) }
       # it { expect { workflow }.to have_failed_with_message(expected_message) }
       # it { should have_failed_with_message(expected_message) }
     end

@@ -75,11 +75,13 @@ module Notion
     ensure
       if webhook&.persisted? && webhook.errors.none?
         Rails.logger.info("✅ #{self.class.name} succeeded", vendor:, dataset:)
-      else
-        message = "❌ #{self.class.name} failed"
-        context.fail!(message:)
-        Rails.logger.error(message, vendor:, dataset:, errors: webhook&.errors&.full_messages)
+        return
       end
+
+      # Since there's no persisted webhook, this should be treated as a failure.
+      message = "❌ #{self.class.name} failed"
+      context.fail!(message:) if context.success?
+      Rails.logger.error(message, vendor:, dataset:, errors: webhook&.errors&.full_messages)
     end
 
     protected
@@ -88,7 +90,12 @@ module Notion
       return if dataset.blank?
 
       unless supported_datasets.include?(dataset.to_s)
-        raise I18n.t('workflows.notion.upsert_webhook_workflow.errors.unsupported_dataset', dataset:)
+        error =
+          StandardError.new(
+            I18n.t('workflows.notion.upsert_webhook_workflow.errors.unsupported_dataset', dataset:)
+          )
+        context.fail!(error:)
+        raise error
       end
     end
 
