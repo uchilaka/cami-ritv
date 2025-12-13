@@ -6,7 +6,7 @@ module Notion
   #
   # If dataset is unset for a webhook record, it is assumed to be a generic webhook for the vendor.
   class UpsertWebhookWorkflow
-    include ::Webhookable
+    include ::WebhookingWorkflow
 
     delegate :integration_id,
              :verification_token,

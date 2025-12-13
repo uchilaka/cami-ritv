@@ -2,7 +2,7 @@
 
 # Abstract module to be included in workflows that handle webhooks
 # for different vendors and datasets.
-module Webhookable
+module WebhookingWorkflow
   def self.included(base)
     base.extend ClassMethods
 
