@@ -19,7 +19,7 @@ module LarCity
              required: true
       desc 'setup_webhooks', 'Setup webhooks for the project'
       def setup_webhooks
-        if Rails.env.test?
+        if Rails.env.test? && !debug?
           say_highlight('🚫 Skipping webhook setup in test environment')
           return
         end
@@ -42,7 +42,7 @@ module LarCity
                     slug: options[:vendor],
                     verification_token:
                   )
-              updates = {
+              upserts = {
                 integration_id:,
                 deal_database_id:,
                 vendor_database_id:,
@@ -58,11 +58,11 @@ module LarCity
                 else
                   say "⏳️ Setting up webhook '#{options[:vendor]}'", :yellow
                 end
-                ap updates, options: { indent: 2 }
+                ap upserts, options: { indent: 2 }
               end
 
-              if webhook.new_record? || options[:force]
-                webhook.data = { integration_id:, deal_database_id:, vendor_database_id:, dashboard_url: }.compact
+              if webhook.new_record? || force?
+                webhook.data = upserts.compact
                 if webhook.changed?
                   webhook.save!
                   say "⚡ Webhook for #{options[:vendor]} has been set up successfully.", :green
@@ -70,7 +70,7 @@ module LarCity
                   say "💅🏾 Webhook for #{options[:vendor]} is already set up and no changes were made.", :cyan
                 end
               else
-                webhook.set_on_data(**updates)
+                webhook.set_on_data(**upserts)
                 # updates.each { |k, v| webhook.send(:"#{k}=", v) if webhook.respond_to?("#{k}=") }
                 if webhook.changed?
                   webhook.save!
@@ -257,6 +257,10 @@ module LarCity
       end
 
       no_commands do
+        def force?
+          options[:force] || false
+        end
+
         def check_or_prompt_for_branch_to_review
           say "Checking branch status for #{selected_branch}...", :yellow
           check_pr_cmd = "gh pr list --head #{selected_branch} --json number -q '.[].number'"
