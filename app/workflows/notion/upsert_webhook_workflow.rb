@@ -12,8 +12,6 @@ module Notion
              :verification_token,
              :database_id,
              to: :credentials
-    # delegate :dataset, :webhook, :message, to: :context
-    # delegate :actions_map, to: :class
 
     SUPPORTED_DATASETS = %w[deal vendor].freeze
 
@@ -140,6 +138,7 @@ module Notion
       end
     end
 
+    # The :vendor option must match a slug for an account of type "Vendor"
     def require_vendor_support!
       return if self.class.vendor_supported?(vendor)
 
