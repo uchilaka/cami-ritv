@@ -68,11 +68,11 @@ RSpec.describe LarCity::CLI::DevkitCmd, type: :command do
           end
 
           context 'and the webhook does not exist' do
-            before do
-              # TODO: Have the RSpec configuration handle cleaning the DB before each test
-              matching_webhook = Webhook.find_by(slug: vendor_slug)
-              matching_webhook.destroy if matching_webhook.present?
-            end
+            # before do
+            #   # TODO: Have the RSpec configuration handle cleaning the DB before each test
+            #   matching_webhook = Webhook.find_by(slug: vendor_slug)
+            #   matching_webhook.destroy if matching_webhook.present?
+            # end
 
             it 'creates a new webhook' do
               expect { run_command }.to change(Webhook, :count).by(1).and \
@@ -198,7 +198,7 @@ RSpec.describe LarCity::CLI::DevkitCmd, type: :command do
     end
   end
 
-  describe '#swaggerize', "TODO: validate possibly sloppy codegen" do
+  describe '#swaggerize', skip: "TODO: validate possibly sloppy codegen" do
     it 'executes the rswag command' do
       expect(ClimateControl).to receive(:modify).with(RAILS_ENV: 'test').and_yield
       expect(command).to receive(:system).with('bundle exec rails rswag')
@@ -212,7 +212,7 @@ RSpec.describe LarCity::CLI::DevkitCmd, type: :command do
     end
   end
 
-  describe '#logs', "TODO: validate possibly sloppy codegen" do
+  describe '#logs', skip: "TODO: validate possibly sloppy codegen" do
     before do
       credentials = { betterstack: { team_id: 'team-id', source_id: 'source-id' } }
       allow(Rails.application).to receive(:credentials).and_return(credentials.with_indifferent_access)
