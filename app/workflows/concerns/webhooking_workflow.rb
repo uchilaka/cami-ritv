@@ -9,6 +9,7 @@ module WebhookingWorkflow
     base.include Interactor unless base.ancestors.include?(Interactor)
 
     base.delegate :dataset, :webhook, :message, to: :context
+    base.delegate :actions_map, to: :class
 
     base.include InstanceMethods
   end
@@ -16,7 +17,25 @@ module WebhookingWorkflow
   # Abstract class methods to be implemented by including classes.
   module ClassMethods
     def actions_map
+      return @actions_map if defined?(@actions_map)
+
       raise NotImplementedError, "#{name} must implement .actions_map"
+    end
+
+    # Support configurable actions_map with optional default values
+    def set_actions_map(hash = {}, default: {}, &)
+      @actions_map =
+        begin
+          # Use to be Hash.new
+          register = ActiveSupport::OrderedOptions.new(default)
+          composed_hash =
+            if block_given?
+              yield hash
+            else
+              hash
+            end
+          register.merge(composed_hash)
+        end
     end
 
     def supported?(vendor_slug:)

@@ -13,7 +13,7 @@ module Notion
              :database_id,
              to: :credentials
     # delegate :dataset, :webhook, :message, to: :context
-    delegate :actions_map, to: :class
+    # delegate :actions_map, to: :class
 
     SUPPORTED_DATASETS = %w[deal vendor].freeze
 
@@ -31,27 +31,7 @@ module Notion
         Vendor.exists?(slug:)
       end
 
-      def actions_map
-        @actions_map ||=
-          begin
-            # Return a hash that defaults to deal_actions_map for any unsupported dataset.
-            # This ensures that even if a dataset is not explicitly defined, it will still
-            # have the deal actions available for backward compatibility.
-            register = Hash.new(default_actions_map)
-            register
-              .merge(
-                deal: deal_actions_map,
-                # Ensure vendor dataset actions are defined when supported in the future
-                vendor: {}
-              )
-          end
-      end
-
       private
-
-      def default_actions_map
-        deal_actions_map
-      end
 
       def deal_actions_map
         {
@@ -59,6 +39,17 @@ module Notion
           record_download_workflow_name: Notion::Deals::DownloadWorkflow.name,
         }
       end
+    end
+
+    # Return a hash that defaults to deal_actions_map for any unsupported dataset.
+    # This ensures that even if a dataset is not explicitly defined, it will still
+    # have the deal actions available for backward compatibility.
+    set_actions_map(default: deal_actions_map) do |_init_hash|
+      {
+        deal: deal_actions_map,
+        # Ensure vendor dataset actions are defined when supported in the future
+        vendor: {}
+      }
     end
 
     def call
