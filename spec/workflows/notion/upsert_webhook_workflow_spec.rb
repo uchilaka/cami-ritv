@@ -45,7 +45,7 @@ RSpec.describe Notion::UpsertWebhookWorkflow do
     #   `bin/thor [help] devkit:setup_webhooks`
     #   which relies on creating a Notion webhook without specifying
     #   a dataset.
-    context 'when dataset is nil', skip: 'TODO: implement backward compatibility support' do
+    context 'when dataset is nil' do
       let(:webhook_data) do
         {
           **shared_webhook_data,

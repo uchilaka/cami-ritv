@@ -28,7 +28,7 @@ module Notion
       end
 
       dashboard_url = "https://www.notion.so/profile/integrations/internal/#{integration_id}"
-      workflow_actions = actions_map[dataset.to_sym]
+      workflow_actions = actions_map[dataset]
       upserts = {
         integration_id:,
         database_id:,
@@ -116,6 +116,9 @@ module Notion
     end
 
     def database_id_key(supported_dataset = dataset)
+      # If no supported dataset is provided, default to deal_database_id for backward compatibility.
+      return :deal_database_id if supported_dataset.blank?
+
       :"#{supported_dataset}_database_id"
     end
 
@@ -140,6 +143,7 @@ module Notion
               # Ensure vendor dataset actions are defined when supported in the future
               vendor: {}
             )
+            .with_indifferent_access
         end
     end
 
