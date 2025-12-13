@@ -62,6 +62,9 @@ module Cami
         job
       ]
 
+    # Set the application log level
+    config.log_level = ENV.fetch('RAILS_LOG_LEVEL', 'debug')
+
     # Highlight code that triggered database queries in logs.
     config.active_record.verbose_query_logs = LogUtils.verbose_query_logs?
 
