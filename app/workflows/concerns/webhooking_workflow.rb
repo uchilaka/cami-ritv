@@ -63,13 +63,21 @@ module WebhookingWorkflow
     end
 
     def slug
-      [vendor.to_s, dataset.to_s.pluralize].compact.join('-').to_sym
+      [vendor.to_s, pluralized_dataset_or_blank].compact.join('-').to_sym
     end
 
     def vendor
       return @vendor if defined?(@vendor)
 
       raise NotImplementedError, "#{self.class.name} must implement #vendor"
+    end
+
+    protected
+
+    def pluralized_dataset_or_blank
+      return nil unless dataset.present?
+
+      dataset.to_s.pluralize
     end
   end
 end

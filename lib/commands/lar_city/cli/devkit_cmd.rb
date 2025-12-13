@@ -17,6 +17,10 @@ module LarCity
              aliases: '-s',
              enum: %w[zoho notion],
              required: true
+      option :dataset,
+             desc: 'The vendor dataset serviced by the webhook (if applicable)',
+             type: :string,
+             enum: %w[deal vendor product]
       desc 'setup_webhooks', 'Setup webhooks for the project'
       def setup_webhooks
         if Rails.env.test? && !debug?
@@ -40,6 +44,7 @@ module LarCity
                 ::Webhook
                   .find_or_initialize_by(
                     slug: options[:vendor],
+                    dataset: options[:dataset],
                     verification_token:
                   )
               upserts = {

@@ -91,6 +91,18 @@ RSpec.describe Notion::UpsertWebhookWorkflow do
 
         it_should_behave_like "updated Notion deals webhook"
       end
+
+      context 'and webhook already exists' do
+        let!(:existing_webhook) do
+          Fabricate(:webhook, slug: vendor, verification_token: webhook_data[:verification_token])
+        end
+
+        it('returns the existing webhook') { expect(workflow.webhook).to eq(existing_webhook) }
+
+        it { expect { workflow }.not_to(change { Webhook.count }) }
+
+        it_should_behave_like "updated Notion deals webhook"
+      end
     end
 
     context 'when dataset is unsupported' do
@@ -112,10 +124,7 @@ RSpec.describe Notion::UpsertWebhookWorkflow do
         )
       end
 
-      # TODO: Implement a mocked test for custom_workflow_context_mater.rb
       it { is_expected.to have_failed_with_message(expected_message) }
-      # it { expect { workflow }.to have_failed_with_message(expected_message) }
-      # it { should have_failed_with_message(expected_message) }
     end
 
     context "for 'deals' dataset" do
