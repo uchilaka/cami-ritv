@@ -6,13 +6,13 @@ module Notion
   #
   # If dataset is unset for a webhook record, it is assumed to be a generic webhook for the vendor.
   class UpsertWebhookWorkflow
-    include Interactor
+    include ::Webhookable
 
     delegate :integration_id,
              :verification_token,
              :database_id,
              to: :credentials
-    delegate :dataset, :webhook, :message, to: :context
+    # delegate :dataset, :webhook, :message, to: :context
     delegate :actions_map, to: :class
 
     SUPPORTED_DATASETS = %w[deal vendor].freeze
@@ -158,18 +158,6 @@ module Notion
         )
       context.fail!(error:)
       raise error
-    end
-
-    def new_record?
-      @new_record
-    end
-
-    def force?
-      context.force || false
-    end
-
-    def slug
-      [vendor.to_s, dataset.to_s.pluralize].compact.join('-').to_sym
     end
 
     def vendor
