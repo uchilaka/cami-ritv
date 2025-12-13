@@ -267,3 +267,8 @@ Style/TrailingCommaInArrayLiteral:
 Style/TrailingCommaInHashLiteral:
   Enabled: true
   EnforcedStyleForMultiline: consistent_comma
+
+Style/EmptyElse:
+  Enabled: true
+  Exclude:
+    - 'app/workflows/notion/handle_page_event_workflow.rb'

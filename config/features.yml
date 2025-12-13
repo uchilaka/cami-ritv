@@ -44,6 +44,8 @@ development: &development
     enabled: true
   feat__notion_integration_dashboard:
     enabled: true
+  feat__notion_use_persist_event_workflow:
+    enabled: true
 test:
   <<: *default
 staging:

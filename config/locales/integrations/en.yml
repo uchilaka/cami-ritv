@@ -1,0 +1,11 @@
+en:
+  integrations:
+    errors:
+      generic: "An error occurred while processing the %{service} action"
+      missing_response: >
+        No response received from %{service}. You might need to (re)send the request
+        or a prior one might have suffered a timeout
+      unsupported_integration_type: "The integration type %{service} is not supported"
+      authentication_failed: "Authentication failed for %{service}"
+      connection_timeout: "Connection timed out while communicating with %{service}"
+      invalid_configuration: "The configuration for %{service} is invalid"
