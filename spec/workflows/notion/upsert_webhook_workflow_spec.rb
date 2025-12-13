@@ -22,7 +22,33 @@ RSpec.describe Notion::UpsertWebhookWorkflow do
     allow(Rails.application.credentials).to receive(vendor).and_return(stub_credentials)
   end
 
-  describe '#call' do
+  describe '.supported?' do
+    subject(:result) { described_class.supported?(vendor_slug: vendor) }
+
+    context 'when vendor is supported' do
+      before { Fabricate(:vendor, slug: vendor) }
+
+      context 'with string value for vendor_slug' do
+        let(:vendor) { 'notion' }
+
+        it { is_expected.to be true }
+      end
+
+      context 'with symbol value for vendor_slug' do
+        let(:vendor) { :notion }
+
+        it { is_expected.to be true }
+      end
+    end
+
+    context 'when vendor is not supported' do
+      let(:vendor) { :non_existent_vendor }
+
+      it { is_expected.to be false }
+    end
+  end
+
+  describe '.call' do
     shared_examples "updated Notion deals webhook" do
       subject(:webhook) { workflow.webhook }
 
@@ -41,6 +67,8 @@ RSpec.describe Notion::UpsertWebhookWorkflow do
       it { expect(webhook.record_download_workflow_name).to eq(Notion::Deals::DownloadWorkflow.name.to_s) }
     end
 
+    before { Fabricate(:vendor, slug: vendor) }
+
     # TODO: Test backward compatibility support for command:
     #   `bin/thor [help] devkit:setup_webhooks`
     #   which relies on creating a Notion webhook without specifying
@@ -57,7 +85,7 @@ RSpec.describe Notion::UpsertWebhookWorkflow do
       end
 
       context 'and webhook does not exist' do
-        let(:webhook) { Webhook.find_by(slug: 'notion') }
+        let(:webhook) { Webhook.find_by(slug: vendor) }
 
         it { expect { workflow }.to change { Webhook.count }.by(1) }
 
@@ -78,7 +106,8 @@ RSpec.describe Notion::UpsertWebhookWorkflow do
       end
       let(:expected_message) do
         I18n.t(
-          'workflows.notion.upsert_webhook_workflow.errors.unsupported_dataset',
+          'workflows.upsert_webhook_workflow.errors.unsupported_dataset',
+          name: vendor.to_s.humanize,
           dataset: :unsupported_dataset
         )
       end
@@ -100,9 +129,10 @@ RSpec.describe Notion::UpsertWebhookWorkflow do
           vendor_database_id:,
         }
       end
+      let(:vendor_slug) { :deal }
 
       context 'when webhook does not exist' do
-        let(:webhook) { Webhook.find_by(slug: 'notion-deals') }
+        let(:webhook) { Webhook.find_by(slug: "#{vendor.to_s.downcase}-deals") }
 
         it { expect { workflow }.to change { Webhook.count }.by(1) }
 

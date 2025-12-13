@@ -79,23 +79,26 @@ RSpec.describe LarCity::CLI::DevkitCmd, type: :command do
                 output(%r{⚡ Webhook for notion has been set up successfully}).to_stdout
             end
 
-            it 'updates the expected webhook data' do
-              run_command
-              mock_notion_creds.each_pair do |key, value|
-                next if %w[verification_token].include?(key.to_s)
+            context 'after creating the webhook' do
+              before { run_command }
 
-                expect(webhook.data[key.to_s]).to eq(value)
+              it 'updates the expected webhook data' do
+                mock_notion_creds.each_pair do |key, value|
+                  next if %w[verification_token].include?(key.to_s)
+
+                  expect(webhook.data[key.to_s]).to eq(value)
+                end
               end
-            end
 
-            it 'sets :records_index_workflow_name to the expected value' do
-              run_command
-              expect(webhook.records_index_workflow_name).to eq(Notion::Deals::DownloadLatestWorkflow.name.to_s)
-            end
+              it { expect(webhook.verification_token).to eq(verification_token) }
 
-            it 'sets :record_download_workflow_name to the expected value' do
-              run_command
-              expect(webhook.record_download_workflow_name).to eq(Notion::Deals::DownloadWorkflow.name.to_s)
+              it 'sets :records_index_workflow_name to the expected value' do
+                expect(webhook.records_index_workflow_name).to eq(Notion::Deals::DownloadLatestWorkflow.name.to_s)
+              end
+
+              it 'sets :record_download_workflow_name to the expected value' do
+                expect(webhook.record_download_workflow_name).to eq(Notion::Deals::DownloadWorkflow.name.to_s)
+              end
             end
           end
 

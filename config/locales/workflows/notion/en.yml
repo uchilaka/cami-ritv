@@ -1,5 +1,13 @@
 en:
   workflows:
+    upsert_webhook_workflow:
+      errors:
+        unsupported_dataset: The %{dataset} dataset is not supported for vendor "%{name}"
+        unsupported_vendor: The vendor "%{name}" is not supported
+        missing_integration: The vendor "%{name}" integration is missing for %{dataset}
+        missing_verification_token: The verification token for "%{name}" is missing for %{dataset} dataset
+        invalid_integration: The "%{vendor}" integration is invalid
+        webhook_creation_failed: Failed to create vendor "%{vendor}" %{dataset} webhook
     notion:
       upsert_event_workflow:
         errors:
@@ -41,6 +49,7 @@ en:
           generic: "An error occurred while setting up the Notion %{dataset} webhook"
           missing_dataset: "A Notion dataset is required for webhook setup"
           unsupported_dataset: "The Notion dataset %{dataset} is not supported"
+          unsupported_vendor: "The Notion vendor %{vendor} is not supported"
           missing_integration: "The Notion integration is missing for %{dataset}"
           missing_verification_token: "The Notion verification token is missing for %{dataset}"
           invalid_integration: "The Notion integration is invalid"

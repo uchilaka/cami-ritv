@@ -13,9 +13,57 @@ module Notion
              :database_id,
              to: :credentials
     delegate :dataset, :webhook, :message, to: :context
+    delegate :actions_map, to: :class
+
+    SUPPORTED_DATASETS = %w[deal vendor].freeze
+
+    class << self
+      # The default dataset is :deal for backward compatibility.
+      def supported?(dataset: :deal, vendor_slug:)
+        dataset_supported?(dataset) && vendor_supported?(vendor_slug)
+      end
+
+      def dataset_supported?(dataset)
+        SUPPORTED_DATASETS.include?(dataset.to_s) && actions_map.stringify_keys.key?(dataset.to_s)
+      end
+
+      def vendor_supported?(slug)
+        Vendor.exists?(slug:)
+      end
+
+      def actions_map
+        @actions_map ||=
+          begin
+            # Return a hash that defaults to deal_actions_map for any unsupported dataset.
+            # This ensures that even if a dataset is not explicitly defined, it will still
+            # have the deal actions available for backward compatibility.
+            register = Hash.new(default_actions_map)
+            register
+              .merge(
+                deal: deal_actions_map,
+                # Ensure vendor dataset actions are defined when supported in the future
+                vendor: {}
+              )
+          end
+      end
+
+      private
+
+      def default_actions_map
+        deal_actions_map
+      end
+
+      def deal_actions_map
+        {
+          records_index_workflow_name: Notion::Deals::DownloadLatestWorkflow.name,
+          record_download_workflow_name: Notion::Deals::DownloadWorkflow.name,
+        }
+      end
+    end
 
     def call
       require_dataset_support_if_set!
+      require_vendor_support!
 
       integration_id, verification_token =
         Rails.application.credentials.notion&.values_at :integration_id, :verification_token
@@ -28,7 +76,7 @@ module Notion
       end
 
       dashboard_url = "https://www.notion.so/profile/integrations/internal/#{integration_id}"
-      workflow_actions = actions_map[dataset]
+      workflow_actions = actions_map.with_indifferent_access[dataset]
       upserts = {
         integration_id:,
         database_id:,
@@ -88,16 +136,28 @@ module Notion
     protected
 
     def require_dataset_support_if_set!
+      # If dataset is not set, skip the check for backward compatibility.
       return if dataset.blank?
 
-      unless supported_datasets.include?(dataset.to_s)
+      unless self.class.dataset_supported?(dataset)
         error =
           StandardError.new(
-            I18n.t('workflows.notion.upsert_webhook_workflow.errors.unsupported_dataset', dataset:)
+            I18n.t('workflows.upsert_webhook_workflow.errors.unsupported_dataset', name: vendor.to_s.humanize, dataset:)
           )
         context.fail!(error:)
         raise error
       end
+    end
+
+    def require_vendor_support!
+      return if self.class.vendor_supported?(vendor)
+
+      error =
+        StandardError.new(
+          I18n.t('workflows.upsert_webhook_workflow.errors.unsupported_vendor', name: vendor.to_s.humanize)
+        )
+      context.fail!(error:)
+      raise error
     end
 
     def new_record?
@@ -123,36 +183,8 @@ module Notion
       :"#{supported_dataset}_database_id"
     end
 
-    def supported_datasets
-      %w[deal vendor]
-    end
-
     def credentials
       Rails.application.credentials.notion
-    end
-
-    def actions_map
-      @actions_map ||=
-        begin
-          # Return a hash that defaults to deal_actions_map for any unsupported dataset.
-          # This ensures that even if a dataset is not explicitly defined, it will still
-          # have the deal actions available for backward compatibility.
-          register = Hash.new(deal_actions_map)
-          register
-            .merge(
-              deal: deal_actions_map,
-              # Ensure vendor dataset actions are defined when supported in the future
-              vendor: {}
-            )
-            .with_indifferent_access
-        end
-    end
-
-    def deal_actions_map
-      {
-        records_index_workflow_name: Notion::Deals::DownloadLatestWorkflow.name,
-        record_download_workflow_name: Notion::Deals::DownloadWorkflow.name,
-      }
     end
   end
 end
