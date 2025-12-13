@@ -12,7 +12,7 @@ module Notion
              :verification_token,
              :database_id,
              to: :credentials
-    delegate :dataset, :webhook, to: :context
+    delegate :dataset, :webhook, :message, to: :context
 
     def call
       require_dataset_support_if_set!
@@ -61,7 +61,7 @@ module Notion
 
         if webhook.changed?
           webhook.save!
-          message =
+          context.message =
             if new_record?
               '🚀 Webhook has been created successfully.'
             else
@@ -69,7 +69,8 @@ module Notion
             end
           Rails.logger.info(message, vendor:, dataset:)
         else
-          Rails.logger.info('💅🏾 Webhook is already up to date.', vendor:, dataset:)
+          context.message = '💅🏾 Webhook is already up to date.'
+          Rails.logger.info(message, vendor:, dataset:)
         end
       end
     ensure
@@ -79,7 +80,7 @@ module Notion
       end
 
       # Since there's no persisted webhook, this should be treated as a failure.
-      message = "❌ #{self.class.name} failed"
+      context.message = "❌ #{self.class.name} failed"
       context.fail!(message:) if context.success?
       Rails.logger.error(message, vendor:, dataset:, errors: webhook&.errors&.full_messages)
     end
