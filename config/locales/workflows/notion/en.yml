@@ -1,0 +1,59 @@
+en:
+  workflows:
+    upsert_webhook_workflow:
+      errors:
+        unsupported_dataset: The %{dataset} dataset is not supported for vendor "%{name}"
+        unsupported_vendor: The vendor "%{name}" is not supported
+        missing_integration: The vendor "%{name}" integration is missing for %{dataset}
+        missing_verification_token: The verification token for "%{name}" is missing for %{dataset} dataset
+        invalid_integration: The "%{vendor}" integration is invalid
+        webhook_creation_failed: Failed to create vendor "%{vendor}" %{dataset} webhook
+    notion:
+      upsert_event_workflow:
+        errors:
+          generic: "An error occurred while processing the Notion %{event_type} workflow"
+          missing_required_fields: "Required fields are missing for the Notion %{event_type} workflow"
+          invalid_status: "The provided status %{status} is not valid for the Notion %{event_type} workflow"
+          invalid_event_data: "The %{event_type} event data is invalid for %{workflow}"
+          unsupported_event_type: >
+            The event type %{event_type} is not supported by %{workflow}
+          unsupported_event_type_for_db: >
+            The event type %{event_type} from the %{database_type} database is not supported by %{workflow}
+        completed:
+          message: "Notion %{event_type} workflow %{status}"
+          log: Notion %{event_type} workflow %{status} for event %{id} from "%{workspace}"
+      hangle_page_workflow:
+        errors:
+          generic: "An error occurred while processing the Notion page workflow"
+          invalid_or_missing_event: "Invalid or missing event for the Notion page workflow"
+          unsupported_event_type: "The event type %{event_type} is not supported for the Notion page workflow"
+          unsupported_event_type_v2: >
+            The event type %{event_type} is not supported by %{workflow}
+          unsupported_event_type_for_db: >
+            The event type %{event_type} from the %{database_type} database is not supported by %{workflow}
+          unsupported_db: The database %{id} in "%{workspace}" is not supported by %{workflow}
+        completed:
+          message: "Notion page %{event_type} workflow %{status}"
+          log: "Notion page %{event_type} workflow %{status} for page %{page}"
+      register_verification_token_workflow:
+        errors:
+          generic: "An error occurred while registering the Notion verification token"
+          missing_webhook: "The Notion webhook has not been set up for %{environment}"
+          missing_token: "The Notion verification token is missing"
+          invalid_token: "The Notion verification token is invalid"
+        completed:
+          message: "Notion verification token registered successfully"
+          log: "Notion verification token registered by user %{email} for workspace %{workspace}"
+      upsert_webhook_workflow:
+        errors:
+          generic: "An error occurred while setting up the Notion %{dataset} webhook"
+          missing_dataset: "A Notion dataset is required for webhook setup"
+          unsupported_dataset: "The Notion dataset %{dataset} is not supported"
+          unsupported_vendor: "The Notion vendor %{vendor} is not supported"
+          missing_integration: "The Notion integration is missing for %{dataset}"
+          missing_verification_token: "The Notion verification token is missing for %{dataset}"
+          invalid_integration: "The Notion integration is invalid"
+          webhook_creation_failed: "Failed to create Notion %{dataset} webhook"
+        completed:
+          message: "Notion webhook set up successfully"
+          log: "Notion webhook set up for %{dataset} dataset in workspace %{workspace} by user %{email}"

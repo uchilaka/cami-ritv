@@ -19,6 +19,7 @@
 #  index_generic_events_on_slug       (slug) UNIQUE
 #
 module Notion
+  # TODO: Implement after_commit to enqueue job to process the deal update as a side effect of upserting the event
   class DealCreatedEvent < BaseEvent
     # See SO recommendation: https://stackoverflow.com/a/9463495/3726759
     def self.model_name
