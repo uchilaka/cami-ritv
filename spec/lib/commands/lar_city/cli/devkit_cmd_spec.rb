@@ -6,17 +6,6 @@ RSpec.describe LarCity::CLI::DevkitCmd, type: :command do
   let(:stdout) { StringIO.new }
   let(:stderr) { StringIO.new }
 
-  before do
-    # command.shell = Thor::Shell::IO.new(stdout, stderr)
-    # TODO: Consider refactoring to use ClimateControl (via setting RAILS_ENV value) instead of stubbing Rails.env
-    # allow(Rails).to receive(:env).and_return(ActiveSupport::StringInquirer.new('development'))
-    # # Stub constants that might not be loaded
-    # stub_const('Notion::Deals::DownloadLatestWorkflow', Class.new { def self.name; 'Notion::Deals::DownloadLatestWorkflow'; end })
-    # stub_const('Notion::Deals::DownloadWorkflow', Class.new { def self.name; 'Notion::Deals::DownloadWorkflow'; end })
-    # # Stub custom error class
-    # stub_const('LarCity::CLI::Errors::UnsupportedOSError', Class.new(StandardError))
-  end
-
   describe '#setup_webhooks' do
     subject(:run_command) { command.invoke(:setup_webhooks, [], **command_opts) }
 
@@ -25,10 +14,6 @@ RSpec.describe LarCity::CLI::DevkitCmd, type: :command do
     let(:vendor_slug) { nil }
 
     context 'in test environment' do
-      # before do
-      #   allow(Rails.env).to receive(:test?).and_return(true)
-      # end
-
       let(:command_opts) { { vendor: 'notion' } }
 
       around do |example|
@@ -68,12 +53,6 @@ RSpec.describe LarCity::CLI::DevkitCmd, type: :command do
           end
 
           context 'and the webhook does not exist' do
-            # before do
-            #   # TODO: Have the RSpec configuration handle cleaning the DB before each test
-            #   matching_webhook = Webhook.find_by(slug: vendor_slug)
-            #   matching_webhook.destroy if matching_webhook.present?
-            # end
-
             it 'creates a new webhook' do
               expect { run_command }.to change(Webhook, :count).by(1).and \
                 output(%r{⚡ Webhook for notion has been set up successfully}).to_stdout
@@ -102,23 +81,35 @@ RSpec.describe LarCity::CLI::DevkitCmd, type: :command do
             end
           end
 
-          context 'when webhook exists', skip: "TODO: validate possibly sloppy codegen" do
+          context 'when webhook exists' do
             let!(:webhook) { Fabricate(:webhook, integration: :notion, verification_token:, status: :active) }
 
-            it 'updates the existing webhook' do
-              expect { command.invoke(:setup_webhooks, [], { vendor: 'notion' }) }.not_to change(Webhook, :count)
-              expect(stdout.string).to include('⚡ Webhook for notion has been updated successfully.')
-              expect(webhook.reload.data['integration_id']).to eq('notion-int-id')
+            it { expect { run_command }.not_to(change(Webhook, :count)) }
+            it { expect { run_command }.to change { webhook.reload.data['deal_database_id'] }.to(deal_database_id) }
+            it { expect { run_command }.to change { webhook.reload.data['vendor_database_id'] }.to(vendor_database_id) }
+
+            it do
+              expect { run_command }.to \
+                change { webhook.reload.data['records_index_workflow_name'] }
+                  .to(Notion::Deals::DownloadLatestWorkflow.name.to_s)
             end
 
-            it 'reports no changes if the webhook is up to date' do
+            it do
+              expect { run_command }.to \
+                change { webhook.reload.data['record_download_workflow_name'] }
+                  .to(Notion::Deals::DownloadWorkflow.name.to_s)
+            end
+
+            # TODO: still sloppy codegen - verify all fields are updated as expected
+            xit 'reports no changes if the webhook is up to date' do
               webhook.set_on_data(integration_id: 'notion-int-id', deal_database_id: 'deal-db-id')
               webhook.save!
               command.invoke(:setup_webhooks, [], { vendor: 'notion' })
               expect(stdout.string).to include('💅🏾 Webhook for notion is already up to date.')
             end
 
-            it 'forces an upsert with the --force option' do
+            # TODO: still sloppy codegen - verify all fields are updated as expected
+            xit 'forces an upsert with the --force option' do
               command.invoke(:setup_webhooks, [], { vendor: 'notion', force: true })
               expect(stdout.string).to include('⚡ Webhook for notion has been set up successfully.')
               expect(webhook.reload.data['integration_id']).to eq('notion-int-id')

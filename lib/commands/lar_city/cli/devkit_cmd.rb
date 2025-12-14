@@ -5,12 +5,16 @@ require_relative 'base_cmd'
 module LarCity
   module CLI
     class DevkitCmd < BaseCmd
+      include ControlFlowHelpers
+
       namespace 'devkit'
 
-      option :force,
-             desc: 'Force an upsert operation on any matching webhook (by vendor)',
-             type: :boolean,
-             default: false
+      define_force_option(self, desc: 'Force an upsert operation on any matching webhook (by vendor)')
+
+      # option :force,
+      #        desc: 'Force an upsert operation on any matching webhook (by vendor)',
+      #        type: :boolean,
+      #        default: false
       option :vendor,
              desc: 'The vendor to use for the devkit',
              type: :string,
