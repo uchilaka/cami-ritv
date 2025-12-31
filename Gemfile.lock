@@ -558,9 +558,9 @@ GEM
       addressable (~> 2.3, >= 2.3.0)
       json (~> 2.1, >= 2.1.0)
       typhoeus (~> 1.0, >= 1.0.1)
-    simple_form (5.3.1)
-      actionpack (>= 5.2)
-      activemodel (>= 5.2)
+    simple_form (5.4.0)
+      actionpack (>= 7.0)
+      activemodel (>= 7.0)
     snaky_hash (2.0.1)
       hashie
       version_gem (~> 1.1, >= 1.1.1)
@@ -715,7 +715,7 @@ DEPENDENCIES
   selenium-webdriver
   shoulda-matchers
   sib-api-v3-sdk
-  simple_form (~> 5.3)
+  simple_form (~> 5.4)
   solid_queue
   sprockets-rails
   strong_migrations
