@@ -3,25 +3,26 @@
 module StyleHelper
   # When appending to the primary and secondary button classes, you MUST override the default
   #   padding classes (px-# py-#) to ensure consistent padding within the buttons.
-  def primary_btn_classes(append_classes = 'px-5 py-3 me-2')
+  def primary_btn_classes(append_classes = 'px-5 py-3 me-2', with_classes: '')
     # Branded
     # focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800
     # Unbranded
-    "btn #{append_classes} text-white bg-gradient-to-br from-green-400 to-blue-600 " \
+    "btn #{append_classes} #{with_classes} text-white bg-gradient-to-br from-green-400 to-blue-600 " \
       'hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-green-200 dark:focus:ring-green-800 ' \
       'text-base font-medium rounded-lg text-center mb-2'
   end
 
   # When appending to the primary and secondary button classes, you MUST override the default
   #   padding classes (px-# py-#) to ensure consistent padding within the buttons.
-  def secondary_btn_classes(append_classes = 'px-5 py-3 me-2', style: :default)
+  def secondary_btn_classes(append_classes = 'px-5 py-3 me-2', with_classes: '', style: :default)
     # Branded
     # text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700
     # Unbranded
     append_classes = append_classes.split.append(
       'hover:text-white border focus:ring-4 focus:outline-none',
       'font-medium rounded-lg text-center mb-2',
-      'dark:hover:text-white text-base'
+      'dark:hover:text-white text-base',
+      with_classes
     )
     case style
     when :danger
