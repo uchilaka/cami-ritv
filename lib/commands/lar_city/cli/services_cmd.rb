@@ -187,6 +187,13 @@ module LarCity
             'logs --follow --since 5m'
       end
 
+      desc 'list', 'List the services'
+      def list
+        run 'docker compose',
+            profile_clause,
+            'ps'
+      end
+
       desc 'logs', 'Show the logs of the services'
       def logs
         run 'docker compose',
