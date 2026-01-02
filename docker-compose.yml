@@ -72,7 +72,7 @@ services:
       - essential
       - all
 
-  # TODO: make the crm-store use the same database as app-store to reduce resource usage
+  # TODO: deprecate this service in favor of just app-store
   crm-store:
     image: postgres:17
     container_name: db.twenty.larcity
@@ -90,8 +90,6 @@ services:
       retries: 10
     restart: always
     profiles:
-      - batteries-included
-      - essential
       - all
 
   server:
@@ -103,7 +101,7 @@ services:
       - "${CRM_SERVICE_PORT:-16016}:3000"
     environment:
       NODE_PORT: 3000
-      PG_DATABASE_URL: postgres://${APP_DATABASE_USER:-postgres}:${APP_DATABASE_PASSWORD:-postgres}@${PG_DATABASE_HOST:-crm-store}:${PG_DATABASE_PORT:-5432}/${CRM_DATABASE_NAME:-default}
+      PG_DATABASE_URL: postgres://${APP_DATABASE_USER:-postgres}:${APP_DATABASE_PASSWORD:-postgres}@${CRM_DATABASE_HOST:-app-store}:${CRM_DATABASE_PORT:-5432}/${CRM_DATABASE_NAME:-default}
       SERVER_URL: ${SERVER_URL}
       REDIS_URL: ${CRM_REDIS_URL:-redis://redis:6379}
       DISABLE_DB_MIGRATIONS: ${DISABLE_DB_MIGRATIONS}
@@ -141,7 +139,7 @@ services:
 
     restart: unless-stopped
     depends_on:
-      crm-store:
+      app-store:
         condition: service_healthy
       redis:
         condition: service_healthy
@@ -162,7 +160,7 @@ services:
       - server_local_data:/app/packages/twenty-server/.local-storage
     command: ["yarn", "worker:prod"]
     environment:
-      PG_DATABASE_URL: postgres://${APP_DATABASE_USER:-postgres}:${APP_DATABASE_PASSWORD:-postgres}@${PG_DATABASE_HOST:-crm-store}:${PG_DATABASE_PORT:-5432}/${CRM_DATABASE_NAME:-default}
+      PG_DATABASE_URL: postgres://${APP_DATABASE_USER:-postgres}:${APP_DATABASE_PASSWORD:-postgres}@${CRM_DATABASE_HOST:-app-store}:${CRM_DATABASE_PORT:-5432}/${CRM_DATABASE_NAME:-default}
       SERVER_URL: ${SERVER_URL}
       REDIS_URL: ${CRM_REDIS_URL:-redis://redis:6379}
       DISABLE_DB_MIGRATIONS: "true" # it already runs on the server
@@ -200,7 +198,7 @@ services:
 
     restart: unless-stopped
     depends_on:
-      crm-store:
+      app-store:
         condition: service_healthy
       server:
         condition: service_healthy

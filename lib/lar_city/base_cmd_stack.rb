@@ -50,6 +50,8 @@ module LarCity
           return
         end
 
+        say_highlight 'Waiting for database service to become available...'
+
         attempts = 0
         begin
           result = ActiveRecord::Base.connection.execute("SELECT version();")[0]
@@ -57,7 +59,7 @@ module LarCity
             engine: ActiveRecord::Base.connection.adapter_name,
             version: result['version']
           }
-        rescue PG::ConnectionBad, ActiveRecord::NoDatabaseError => e
+        rescue ActiveRecord::DatabaseConnectionError, ActiveRecord::NoDatabaseError => e
           attempts += 1
           raise e if attempts >= max_attempts
 
