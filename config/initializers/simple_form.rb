@@ -13,9 +13,7 @@ SimpleForm.setup do |config|
   # wrapper, change the order or even add your own to the
   # stack. The options given below are used to wrap the
   # whole input.
-  config.wrappers :default,
-                  class: 'mx-auto',
-                  hint_class: 'mt-2 text-sm text-gray-500 dark:text-gray-300' do |b|
+  config.wrappers :default, class: 'mx-auto' do |b|
     ## Extensions enabled by default
     # Any of these extensions can be disabled for a
     # given input by passing: `f.input EXTENSION_NAME => false`.
