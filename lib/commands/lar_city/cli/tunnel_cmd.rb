@@ -124,16 +124,34 @@ module LarCity
         protected
 
         def for_each_app_proxy_config(force: false, &)
-          app_proxy_config_files.each do |file_name|
-            config_file_template = "#{file_name}.erb"
-            next if config_file_exists?(name: file_name) && !force
+          # app_proxy_config_files.each do |file_name|
+          #   config_file_template = "#{file_name}.erb"
+          #   next if config_file_exists?(name: file_name) && !force
+          #
+          #   yield config_file_template, file_name
+          # end
 
-            yield config_file_template, file_name
+          app_proxy_configs.each do |template_path, file_path|
+            next if config_file_exists?(name: file_path) && !force
+
+            yield template_path, file_path
           end
         end
 
+        # @deprecated Use app_proxy_configs instead
         def app_proxy_config_files
           @app_proxy_config_files ||= Dir[Rails.root.join('config', 'ngrok*.yml')]
+        end
+
+        def app_proxy_configs
+          @app_proxy_configs ||= app_proxy_config_templates.map do |template_path|
+            file_path = template_path.sub(/\.erb\z/, '')
+            [template_path, file_path]
+          end
+        end
+
+        def app_proxy_config_templates
+          @app_proxy_config_templates ||= Dir[Rails.root.join('config', 'ngrok*.yml.erb')]
         end
 
         def proxy_config_files

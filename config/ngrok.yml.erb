@@ -10,3 +10,7 @@ tunnels:
     proto: http
     addr: <%= ENV.fetch('PORT', 16006) %>
     domain: accounts.larcity.ngrok.dev
+  larcity-crm:
+    proto: http
+    addr: <%= ENV.fetch('CRM_SERVICE_PORT', 16026) %>
+    domain: larcity-crm.ngrok.dev

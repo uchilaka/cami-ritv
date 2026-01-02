@@ -109,9 +109,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_12_145949) do
     t.index ["user_id"], name: "index_allowlisted_jwts_on_user_id"
   end
 
-  create_table "data_migrations", primary_key: "version", id: :string, force: :cascade do |t|
-  end
-
   create_table "flipper_features", force: :cascade do |t|
     t.string "key", null: false
     t.datetime "created_at", null: false
