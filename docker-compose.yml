@@ -11,6 +11,20 @@ services:
       - batteries-included
       - all
 
+  redis:
+    image: redis
+    restart: always
+    command: ["--maxmemory-policy", "noeviction"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    profiles:
+      - all
+      - batteries-included
+      - essential
+
   # Doc: https://ngrok.com/docs/using-ngrok-with/docker/#:~:text=Using%20ngrok%20with%20Docker%20Compose
   tunnel:
     container_name: ngrok.cami.larcity
@@ -46,6 +60,11 @@ services:
       - postgres_data:/var/lib/postgresql/data
       - ./db/${RAILS_ENV:-development}/postgres/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
       - ./db/${RAILS_ENV:-development}/postgres/downloads:/usr/local/downloads
+    healthcheck:
+      test: pg_isready -U ${APP_DATABASE_USER} -h localhost -d ${APP_DATABASE_NAME}
+      interval: 5s
+      timeout: 5s
+      retries: 10
     profiles:
       - batteries-included
       - essential

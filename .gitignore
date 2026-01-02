@@ -71,6 +71,8 @@
 !/.env.development
 !/.envrc
 !/.env.example
+/.node-version
+/.ruby-version
 
 # General
 .DS_Store
