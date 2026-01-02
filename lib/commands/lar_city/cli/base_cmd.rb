@@ -65,30 +65,31 @@ module LarCity
           Rails.root.join('config', name).to_s
         end
 
-        def things(count, name: 'item')
-          name.pluralize(count)
-        end
-
-        def tally(collection, name)
-          return unless is_enumerable?(collection)
-
-          count = collection.count
-          "#{count} #{things(count, name:)}"
-        end
-
-        def range(collection)
-          return unless is_enumerable?(collection)
-          return unless collection.any?
-
-          count = collection.count
-          return '[1]' if count == 1
-
-          "[1-#{count}]"
-        end
-
-        def is_enumerable?(collection)
-          collection.class.ancestors.include?(Enumerable)
-        end
+        # WIP: Refactoring to use OutputHelpers::FormatHelperMethods instead
+        # def things(count, name: 'item')
+        #   name.pluralize(count)
+        # end
+        #
+        # def tally(collection, name)
+        #   return unless is_enumerable?(collection)
+        #
+        #   count = collection.count
+        #   "#{count} #{things(count, name:)}"
+        # end
+        #
+        # def range(collection)
+        #   return unless is_enumerable?(collection)
+        #   return unless collection.any?
+        #
+        #   count = collection.count
+        #   return '[1]' if count == 1
+        #
+        #   "[1-#{count}]"
+        # end
+        #
+        # def is_enumerable?(collection)
+        #   collection.class.ancestors.include?(Enumerable)
+        # end
       end
     end
   end

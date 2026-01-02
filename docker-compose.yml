@@ -5,8 +5,8 @@ services:
     platform: linux/amd64
     restart: unless-stopped
     ports:
-      - "1025:1025"
-      - "8025:8025"
+      - "16545:1025"
+      - "16585:8025"
     profiles:
       - batteries-included
       - all
