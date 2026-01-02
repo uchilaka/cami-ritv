@@ -20,6 +20,7 @@ require 'lar_city/cli/runnable'
 # - All text verbose output should be in Thor::Shell::Color::MAGENTA.
 module LarCity
   module CLI
+    # TODO: Refactor to LarCity::BaseCmd and move to lib/lar_city/base_cmd.rb
     class BaseCmd < Thor
       def self.exit_on_failure?
         true

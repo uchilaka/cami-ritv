@@ -12,6 +12,7 @@ services:
       - all
 
   redis:
+    container_name: redis.cami.larcity
     image: redis
     restart: always
     command: ["--maxmemory-policy", "noeviction"]
