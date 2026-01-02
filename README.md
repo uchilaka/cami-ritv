@@ -67,9 +67,13 @@ Direnv should be installed as a dependency when you run `mise install`. You may 
 
 ## Running the app
 
-### 1. Start the database service
+To start the application (for development) after ensuring all essential services are up and available, run:
 
-#### Running the database on metal (via mise)
+```shell
+bin/thor init_app
+```
+
+### Running the database on metal (via mise)
 
 ```shell
 .mise/services/postgresql/bin/start

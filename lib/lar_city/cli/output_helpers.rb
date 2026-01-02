@@ -50,16 +50,13 @@ module LarCity
         end
 
         # Shows a calculated number of visible characters (i.e. visible_length)
-        # at both the start and end, where visible_length is the maximum
-        # of 2 or 1/4 of the secret length.
+        # at both the start and end.
         def partially_masked_secret(secret, visible_length: nil)
           return '' if secret.nil? || secret.empty?
 
           visible_length ||= [1, ([secret.length, 12].min / 4).ceil].max
           calc_masked_length = secret.length - (visible_length * 2)
-          # masked_length = secret.length - (visible_length * 2)
           masked_length = [12, calc_masked_length].min
-          # visible_length ||= [2, ([secret.length, 12].min / 4).ceil].max
           if masked_length.positive?
             "#{secret[0, visible_length]}#{'*' * masked_length}#{secret[-visible_length, visible_length]}"
           else
