@@ -72,6 +72,7 @@ services:
       - essential
       - all
 
+  # TODO: make the crm-store use the same database as app-store to reduce resource usage
   crm-store:
     image: postgres:17
     container_name: db.twenty.larcity
@@ -159,10 +160,8 @@ services:
     image: twentycrm/twenty:${TAG:-latest}
     volumes:
       - server_local_data:/app/packages/twenty-server/.local-storage
-    ports:
-      - "${CRM_SERVICE_PORT:-16016}:3000"
+    command: ["yarn", "worker:prod"]
     environment:
-      NODE_PORT: 3000
       PG_DATABASE_URL: postgres://${APP_DATABASE_USER:-postgres}:${APP_DATABASE_PASSWORD:-postgres}@${PG_DATABASE_HOST:-crm-store}:${PG_DATABASE_PORT:-5432}/${CRM_DATABASE_NAME:-default}
       SERVER_URL: ${SERVER_URL}
       REDIS_URL: ${CRM_REDIS_URL:-redis://redis:6379}
@@ -205,6 +204,10 @@ services:
         condition: service_healthy
       server:
         condition: service_healthy
+    profiles:
+      - all
+      - batteries-included
+      - essential
 
 volumes:
   postgres_data:
