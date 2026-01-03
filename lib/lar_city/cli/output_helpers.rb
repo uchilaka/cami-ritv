@@ -108,14 +108,14 @@ module LarCity
         end
 
         def tally(collection, name)
-          return unless is_enumerable?(collection)
+          return unless enumerable?(collection)
 
           count = collection.count
           "#{count} #{things(count, name:)}"
         end
 
         def range(collection)
-          return unless is_enumerable?(collection)
+          return unless enumerable?(collection)
           return unless collection.any?
 
           count = collection.count
@@ -124,8 +124,8 @@ module LarCity
           "[1-#{count}]"
         end
 
-        def is_enumerable?(collection)
-          collection.class.ancestors.include?(Enumerable)
+        def enumerable?(collection)
+          collection.is_a?(Enumerable)
         end
       end
     end
