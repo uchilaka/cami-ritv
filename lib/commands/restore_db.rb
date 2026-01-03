@@ -109,12 +109,24 @@ class RestoreDb < Thor::Group
     end
 
     def prioritized_recent_backup_files
-      recent_files = available_backup_files.last(3)
+      sorted_files =
+        available_backup_files.sort_by do |filename|
+          file_timestamp = extract_timestamp(filename)
+          timestamp =
+            if file_timestamp.present?
+              file_timestamp
+            else
+              backup_file = File.join(backup_path, filename)
+              File.mtime(backup_file)
+            end
+          timestamp.to_i
+        end
+      recent_files = sorted_files.last(3)
       recent_files.reverse
     end
 
     def available_backup_files
-      Dir.glob(File.join(backup_path, "#{options[:target]}*.dump")).map { |f| File.basename(f) }.sort
+      Dir.glob(File.join(backup_path, "#{options[:target]}*.dump")).map { |f| File.basename(f) }
     end
 
     def app_store_volume_path
