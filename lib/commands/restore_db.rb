@@ -15,6 +15,11 @@ class RestoreDb < Thor::Group
                enum: %w[primary crm],
                default: 'primary'
 
+  class_option :latest_backup,
+                type: :boolean,
+                desc: 'Automatically select the latest backup file without prompting',
+                default: false
+
   desc 'Command to restore a database from a backup file'
 
   def check_for_available_backups
@@ -53,6 +58,10 @@ class RestoreDb < Thor::Group
   end
 
   no_commands do
+    def use_latest_backup?
+      options[:latest_backup] == true
+    end
+
     def restore_database
       case options[:target]
       when 'crm'
@@ -68,7 +77,7 @@ class RestoreDb < Thor::Group
     end
 
     def selected_data_source_file
-      file_pos = prompt_for_data_source_file
+      file_pos = use_latest_backup? ? "1" : prompt_for_data_source_file
       prioritized_recent_files = available_backup_files.last(3).reverse
       if prioritized_recent_files.empty?
         resource = 'Database backup files'
@@ -83,7 +92,7 @@ class RestoreDb < Thor::Group
       data_source_prompt =
         I18n.t('prompts.select_db_backup_source_file', additional_info:)
       cli.ask data_source_prompt do |q|
-        q.validate = /\A\[1-3]\Z/
+        q.validate = %r{\A[1-3]\Z}
       end
     end
 

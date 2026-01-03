@@ -2,6 +2,7 @@
 
 require 'lar_city/base_cmd_stack'
 require 'lar_city/cli/services_cmd'
+require_relative 'restore_db'
 
 class InitApp < Thor::Group
   include LarCity::BaseCmdStack
@@ -33,17 +34,37 @@ class InitApp < Thor::Group
     wait_for_db
   end
 
-  # Create the CRM database
-  def create_crm_database
-    host, port, user =
-      database_config[:app].values_at(:host, :port, :user)
-    db_name = database_config.dig(:crm, :name)
+  # def load_tasks
+  #   Rails.application.load_tasks
+  # end
 
-    run 'createdb',
-        "--host #{host}",
-        "--port #{port}",
-        "--username #{user}",
-        db_name
+  def create_data_stores_if_not_exists
+    Rails::Command.invoke("db:create:primary")
+    Rails::Command.invoke("db:create:crm")
+  end
+
+  def apply_migrations
+    Rails::Command.invoke("db:migrate:primary")
+    Rails::Command.invoke("db:migrate:crm")
+  end
+
+  # Create the CRM database
+  # def create_crm_database
+  #   host, port, user =
+  #     database_config[:app].values_at(:host, :port, :user)
+  #   db_name = database_config.dig(:crm, :name)
+  #
+  #   run 'createdb',
+  #       "--host #{host}",
+  #       "--port #{port}",
+  #       "--username #{user}",
+  #       db_name
+  # end
+
+  def restore_crm_database_from_backup
+    restore_cmd = RestoreDb.new
+    restore_cmd.options = { target: 'crm', latest_backup: true }
+    restore_cmd.invoke_all
   end
 
   def start_all_services
