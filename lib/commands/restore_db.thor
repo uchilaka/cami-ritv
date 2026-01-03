@@ -83,7 +83,7 @@ class RestoreDb < Thor::Group
       data_source_prompt =
         I18n.t('prompts.select_db_backup_source_file', additional_info:)
       cli.ask data_source_prompt do |q|
-        q.validate = /\A\w+\Z/
+        q.validate = /\A\[1-3]\Z/
       end
     end
 
