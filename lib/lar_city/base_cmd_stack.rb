@@ -44,6 +44,8 @@ module LarCity
     end
 
     module InstanceMethods
+      protected
+
       def wait_for_db(max_attempts: 30, delay: 2)
         if pretend?
           say_warning 'Pretend mode enabled - skipping database connection check.'
@@ -54,10 +56,11 @@ module LarCity
 
         attempts = 0
         begin
+          healthy = db_health_check?(target: :app)
           result = ActiveRecord::Base.connection.execute("SELECT version();")[0]
           {
             engine: ActiveRecord::Base.connection.adapter_name,
-            version: result['version']
+            healthy:, version: result['version']
           }
         rescue ActiveRecord::DatabaseConnectionError, ActiveRecord::NoDatabaseError => e
           attempts += 1
@@ -66,6 +69,37 @@ module LarCity
           sleep delay
           retry
         end
+      end
+
+      def db_health_check?(target: :app)
+        user, host, port, db_name =
+          database_config[target].values_at(:user, :host, :port, :name)
+        result =
+          run "pg_isready --port #{port}",
+            "-U #{user}",  "-h #{host}", "-d #{db_name}",
+            inline: true, eval: true
+        %{accepting connections}.match?(result)
+      end
+
+      def database_config
+        {
+          app: {
+            host: ENV.fetch('APP_DATABASE_HOST'),
+            port: ENV.fetch('APP_DATABASE_PORT'),
+            user: ENV.fetch('APP_DATABASE_USER'),
+            name: ENV.fetch('APP_DATABASE_NAME'),
+          },
+          crm: crm_database_config,
+        }
+      end
+
+      def crm_database_config
+        {
+          host: ENV.fetch('PG_DATABASE_HOST', 'crm-store'),
+          port: ENV.fetch('PG_DATABASE_PORT', '5432'),
+          user: ENV.fetch('APP_DATABASE_USER', 'postgres'),
+          name: ENV.fetch('CRM_DATABASE_NAME', 'lar_city_crm_db'),
+        }
       end
     end
   end

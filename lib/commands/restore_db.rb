@@ -78,13 +78,12 @@ class RestoreDb < Thor::Group
 
     def selected_data_source_file
       file_pos = use_latest_backup? ? "1" : prompt_for_data_source_file
-      prioritized_recent_files = available_backup_files.last(3).reverse
-      if prioritized_recent_files.empty?
+      if prioritized_recent_backup_files.empty?
         resource = 'Database backup files'
         raise StandardError, I18n.t('exceptions.not_found_short', resource:)
       end
 
-      prioritized_recent_files[file_pos.to_i - 1]
+      prioritized_recent_backup_files[file_pos.to_i - 1]
     end
 
     def prompt_for_data_source_file(cli: HighLine.new)
@@ -97,20 +96,25 @@ class RestoreDb < Thor::Group
     end
 
     def list_available_backups
-      files = available_backup_files
+      files = prioritized_recent_backup_files
       if files.empty?
         say_warning 'No backup files found.'
       else
         say_info "Last 3 available backup files for target (latest first) '#{options[:target]}':"
-        files.last(3).reverse.each_with_index do |file, pos|
+        prioritized_recent_backup_files.each_with_index do |file, pos|
           natural_pos = pos + 1
           say " (#{natural_pos}) #{file}"
         end
       end
     end
 
+    def prioritized_recent_backup_files
+      recent_files = available_backup_files.last(3)
+      recent_files.reverse
+    end
+
     def available_backup_files
-      Dir.glob(File.join(backup_path, "#{options[:target]}*.dump")).map { |f| File.basename(f) }
+      Dir.glob(File.join(backup_path, "#{options[:target]}*.dump")).map { |f| File.basename(f) }.sort
     end
 
     def app_store_volume_path

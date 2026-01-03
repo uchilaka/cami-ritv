@@ -101,12 +101,16 @@ module LarCity
       end
 
       module FormatHelperMethods
-        protected
+        def extract_timestamp(filename)
+          return nil if filename.blank?
 
-        def things(count, name: 'item')
-          name.pluralize(count)
+          if filename =~ /\((\d{4})(\d{2})(\d{2})\.(\d{2})(\d{2})(\d{2})([+-]\d{4})\)/
+            year, month, day, hour, min, sec, tz = $1, $2, $3, $4, $5, $6, $7
+            Time.new(year.to_i, month.to_i, day.to_i, hour.to_i, min.to_i, sec.to_i, tz)
+          end
         end
 
+        # Show a human-readable tally of items in the collection
         def tally(collection, name)
           return unless enumerable?(collection)
 
@@ -114,6 +118,7 @@ module LarCity
           "#{count} #{things(count, name:)}"
         end
 
+        # Show a range based on the number of items in the collection
         def range(collection)
           return unless enumerable?(collection)
           return unless collection.any?
@@ -122,6 +127,12 @@ module LarCity
           return '[1]' if count == 1
 
           "[1-#{count}]"
+        end
+
+        protected
+
+        def things(count, name: 'item')
+          name.pluralize(count)
         end
 
         def enumerable?(collection)

@@ -4,7 +4,7 @@ require 'rails_helper'
 require 'lar_city/cli/output_helpers'
 require 'thor'
 
-RSpec.describe 'OutputHelpers' do
+RSpec.describe 'OutputHelpers', :time_sensitive do
   # TODO: Define inline Thor class for testing
   class TestThorClass < Thor
     include ::LarCity::CLI::OutputHelpers
@@ -40,5 +40,35 @@ RSpec.describe 'OutputHelpers' do
     it_should_behave_like 'expected secret masking', 'my-secret-value', 'my-*********lue'
     it_should_behave_like 'expected secret masking', 'my#Longer#secret#value', 'my#************lue'
     it_should_behave_like 'expected secret masking', 'my#V3ryMuchLongerThatWillBeCutOff#secret#value', 'my#************lue'
+  end
+
+  describe '#extract_timestamp' do
+    subject(:result) { cmd.extract_timestamp(filename) }
+
+    let(:expected_time) do
+      Time.new(2024, 6, 15, 12, 30, 45, "-0400")
+    end
+
+    around do |example|
+      travel_to(expected_time) { example.run }
+    end
+
+    context 'with valid filename format' do
+      let(:filename) { 'backup_(20240615.123045-0400).sql' }
+
+      it { is_expected.to eq(expected_time) }
+    end
+
+    context 'with unsupported format' do
+      let(:filename) { 'backup_15-06-2024_12-30-45.sql' }
+
+      it { is_expected.to be_nil }
+    end
+
+    context 'with invalid filename' do
+      let(:filename) { 'random_file_name.txt' }
+
+      it { is_expected.to be_nil }
+    end
   end
 end

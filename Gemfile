@@ -121,6 +121,7 @@ group :development, :test do
   gem 'rubocop', require: false
   gem 'rubocop-rails-omakase', require: false
   gem 'strong_migrations'
+  gem 'pry'
 end
 
 group :development do

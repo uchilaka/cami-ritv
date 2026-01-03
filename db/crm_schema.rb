@@ -12,6 +12,7 @@
 
 ActiveRecord::Schema[8.0].define(version: 2025_09_12_145949) do
   create_schema "core"
+  create_schema "workspace_6d7c6todfjckqpgb050gueyxy"
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
