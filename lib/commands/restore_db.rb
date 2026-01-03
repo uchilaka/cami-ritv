@@ -49,7 +49,7 @@ class RestoreDb < Thor::Group
     database_config = Rails.application.config_for(:database)[:primary]
     username, port, host, password, database =
       database_config.values_at(:username, :port, :host, :password, :database)
-    cmd_parts = %w[pg_restore --jobs 8 --verbose --clean]
+    cmd_parts = %w[pg_restore --jobs 8 --clean]
     cmd_parts << "--verbose" if verbose?
     cmd_parts += %W[--username='#{username}' --host='#{host}' --port='#{port}' --dbname='#{restore_database}']
     cmd_parts << (password.blank? ? '--no-password' : '--password')
