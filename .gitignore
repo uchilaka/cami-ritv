@@ -11,6 +11,9 @@
 /db/*.sqlite3
 /db/*.sqlite3-*
 
+# Ignore postgres database.
+/db/*/postgres/downloads
+
 # Ignore mise databases
 /.mise/services/postgresql/data
 
@@ -71,6 +74,8 @@
 !/.env.development
 !/.envrc
 !/.env.example
+/.node-version
+/.ruby-version
 
 # General
 .DS_Store

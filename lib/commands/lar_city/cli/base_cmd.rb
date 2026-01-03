@@ -20,6 +20,7 @@ require 'lar_city/cli/runnable'
 # - All text verbose output should be in Thor::Shell::Color::MAGENTA.
 module LarCity
   module CLI
+    # TODO: Refactor to LarCity::BaseCmd and move to lib/lar_city/base_cmd.rb
     class BaseCmd < Thor
       def self.exit_on_failure?
         true
@@ -65,30 +66,31 @@ module LarCity
           Rails.root.join('config', name).to_s
         end
 
-        def things(count, name: 'item')
-          name.pluralize(count)
-        end
-
-        def tally(collection, name)
-          return unless is_enumerable?(collection)
-
-          count = collection.count
-          "#{count} #{things(count, name:)}"
-        end
-
-        def range(collection)
-          return unless is_enumerable?(collection)
-          return unless collection.any?
-
-          count = collection.count
-          return '[1]' if count == 1
-
-          "[1-#{count}]"
-        end
-
-        def is_enumerable?(collection)
-          collection.class.ancestors.include?(Enumerable)
-        end
+        # WIP: Refactoring to use OutputHelpers::FormatHelperMethods instead
+        # def things(count, name: 'item')
+        #   name.pluralize(count)
+        # end
+        #
+        # def tally(collection, name)
+        #   return unless is_enumerable?(collection)
+        #
+        #   count = collection.count
+        #   "#{count} #{things(count, name:)}"
+        # end
+        #
+        # def range(collection)
+        #   return unless is_enumerable?(collection)
+        #   return unless collection.any?
+        #
+        #   count = collection.count
+        #   return '[1]' if count == 1
+        #
+        #   "[1-#{count}]"
+        # end
+        #
+        # def is_enumerable?(collection)
+        #   collection.class.ancestors.include?(Enumerable)
+        # end
       end
     end
   end
