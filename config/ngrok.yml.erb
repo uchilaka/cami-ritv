@@ -1,4 +1,7 @@
+# Last generated <%= Time.current.in_time_zone('US/Eastern').to_datetime %>
+#
 # For a complete example, review https://ngrok.com/docs/secure-tunnels/ngrok-agent/reference/config/#full-example
+---
 version: 2
 
 region: us
@@ -12,5 +15,5 @@ tunnels:
     domain: accounts.larcity.ngrok.dev
   larcity-crm:
     proto: http
-    addr: <%= ENV.fetch('CRM_SERVICE_PORT', 16026) %>
+    addr: <%= ENV.fetch('CRM_SERVICE_PORT') %>
     domain: larcity-crm.ngrok.dev
