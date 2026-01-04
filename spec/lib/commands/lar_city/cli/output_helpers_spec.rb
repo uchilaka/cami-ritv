@@ -6,10 +6,10 @@ require 'thor'
 
 RSpec.describe LarCity::CLI::OutputHelpers do
   # Inline Thor class used for testing OutputHelpers behavior
-  class TestThorClass < Thor
-    include ::LarCity::CLI::OutputHelpers
+  TestThorClass = Class.new(Thor) do
+    include LarCity::CLI::OutputHelpers
 
-    ::LarCity::CLI::OutputHelpers.define_class_options(self)
+    LarCity::CLI::OutputHelpers.define_class_options(self)
 
     desc 'show_secret', 'Displays the partially masked application secret'
     def show_secret
