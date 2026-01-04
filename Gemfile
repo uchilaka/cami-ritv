@@ -57,7 +57,7 @@ gem 'omniauth-apple', '~> 1.3'
 gem 'omniauth-google-oauth2', '~> 1.2'
 gem 'omniauth-rails_csrf_protection'
 gem 'rack-cors', '~> 2.0'
-gem 'simple_form', '~> 5.3'
+gem 'simple_form', '~> 5.4'
 
 # Not supported yet on Rails 8.0
 # gem 'active_record_extended'
