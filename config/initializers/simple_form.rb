@@ -64,7 +64,6 @@ SimpleForm.setup do |config|
             'text-red-900 dark:text-red-500',
             'placeholder-red-700 dark:placeholder-red-500',
           ].join(' '),
-          # hint_class: 'mt-2 text-sm text-gray-500 dark:text-gray-300',
           valid_class: [
             'is-valid bg-green-50 dark:bg-gray-700',
             'text-green-900 dark:text-green-400',
