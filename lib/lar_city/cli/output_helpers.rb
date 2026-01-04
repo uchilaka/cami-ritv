@@ -101,12 +101,6 @@ module LarCity
       end
 
       module FormatHelperMethods
-        protected
-
-        def things(count, name: 'item')
-          name.pluralize(count)
-        end
-
         def tally(collection, name)
           return unless enumerable?(collection)
 
@@ -122,6 +116,12 @@ module LarCity
           return '[1]' if count == 1
 
           "[1-#{count}]"
+        end
+
+        protected
+
+        def things(count, name: 'item')
+          name.pluralize(count)
         end
 
         def enumerable?(collection)
