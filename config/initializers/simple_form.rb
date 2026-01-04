@@ -210,7 +210,7 @@ SimpleForm.setup do |config|
   # config.input_class = 'rounded-md block w-full p-2.5 border dark:text-white dark:bg-gray-700'
 
   # Define the default class of the input wrapper of the boolean input.
-  config.boolean_label_class = 'checkbox'
+  # config.boolean_label_class = 'checkbox'
 
   # Defines if the default input wrapper class should be included in radio
   # collection wrappers.
