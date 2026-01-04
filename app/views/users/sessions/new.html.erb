@@ -7,19 +7,16 @@
         html: { class: "space-y-6" }
       ) do |f| %>
     <div class="field">
-      <%= f.label :email %>
-      <%= f.email_field :email, autofocus: true, autocomplete: "email", class: "input" %>
+      <%= f.input :email, as: :email, autofocus: true, input_html: { autocomplete: "email" } %>
     </div>
 
     <div class="field">
-      <%= f.label :password %>
-      <%= f.password_field :password, autocomplete: "current-password", class: "input" %>
+      <%= f.input :password, as: :password, input_html: { autocomplete: "current-password" } %>
     </div>
 
     <% if devise_mapping.rememberable? %>
       <div class="field">
-        <%= f.check_box :remember_me %>
-        <%= f.label :remember_me %>
+        <%= f.input :remember_me, as: :boolean, wrapper: :inline_checkbox %>
       </div>
     <% end %>
 

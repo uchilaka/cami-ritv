@@ -13,31 +13,27 @@
     <%= render "users/shared/error_messages", resource: resource %>
 
     <div class="field">
-      <%= f.label :name, class: "label" %>
-      <%= f.text_field :first_name, placeholder: 'John', class: "input" %>
+      <%= f.input :first_name, placeholder: 'John' %>
     </div>
 
     <div class="field">
-      <%= f.label :last_name, class: "label" %>
-      <%= f.text_field :last_name, class: "input", placeholder: 'Smith' %>
+      <%= f.input :last_name, placeholder: 'Smith' %>
     </div>
 
     <div class="field">
-      <%= f.label :email, class: "label" %>
-      <%= f.email_field :email, autofocus: true, autocomplete: "email", class: "input" %>
+      <%= f.input :email, as: :email,
+                  autofocus: true,
+                  input_html: { autocomplete: "email" } %>
     </div>
 
     <div class="field">
-      <%= f.label :password, class: "label" %>
-      <%= f.password_field :password, autocomplete: "new-password", class: "input" %>
-      <% if @minimum_password_length %>
-        <em>(<%= @minimum_password_length %> characters minimum)</em>
-      <% end %>
+      <%= f.input :password,
+                  as: :password, hint: @minimum_password_length_hint.presence,
+                  autocomplete: "new-password" %>
     </div>
 
     <div class="field">
-      <%= f.label :password_confirmation, class: "label" %>
-      <%= f.password_field :password_confirmation, autocomplete: "new-password", class: "input" %>
+      <%= f.input :password_confirmation, as: :password, autocomplete: "new-password" %>
     </div>
 
     <div class="field">

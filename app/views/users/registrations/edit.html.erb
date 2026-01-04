@@ -10,7 +10,7 @@
     </section>
   </div>
 
-  <%= form_for(resource, as: resource_name, url: user_registration_path(resource), html: { method: :put }) do |f| %>
+  <%= simple_form_for(resource, as: resource_name, url: user_registration_path(resource), html: { method: :put }) do |f| %>
     <%= render "users/shared/error_messages", resource: resource %>
 
     <div class="field">
