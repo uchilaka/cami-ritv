@@ -20,6 +20,18 @@
 #
 module Notion
   class BaseEvent < ::GenericEvent
+    # @serializer_klass = nil
+    #
+    # class << self
+    #   def set_serializer_klass(klass)
+    #     @serializer_klass = klass
+    #   end
+    #
+    #   def serializer_klass
+    #     @serializer_klass ||= "#{name}Serializer".constantize
+    #   end
+    # end
+
     include AASM
 
     delegate :variant,

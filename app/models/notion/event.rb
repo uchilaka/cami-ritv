@@ -2,6 +2,8 @@
 
 module Notion
   class Event < Entity
+    set_serializer_klass Notion::RemoteEventSerializer
+
     attribute :timestamp, :datetime
     attribute :workspace_id, :string
     attribute :workspace_name, :string

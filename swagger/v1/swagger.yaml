@@ -26,6 +26,37 @@ paths:
               oneOf:
               - "$ref": "#/components/schemas/invoice_search_params"
               - "$ref": "#/components/schemas/invoice_search_params_with_array_mode"
+  "/api/v2/webhooks/notion/events":
+    post:
+      summary: Notion vendor database event
+      tags:
+      - Webhooks
+      parameters:
+      - name: X-Notion-Signature
+        in: header
+        required: true
+        description: Signature header for Notion webhook verification
+        schema:
+          type: string
+      responses:
+        '200':
+          description: update event is processed
+        '422':
+          description: invalid event data
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                verification_token:
+                  type: string
+                  description: Verification token for the webhook, sent once during
+                    Notion webhook setup
+                  nullable: true
+                event:
+                  "$ref": "#/components/schemas/notion_event"
+                  nullable: true
   "/invoices/search.json":
     post:
       summary: Retrieves all invoices
@@ -62,6 +93,64 @@ components:
       type: http
       scheme: basic
   schemas:
+    notion_entity:
+      type: object
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+          pattern: "^(page|database|person|block)$"
+      required:
+      - id
+      - type
+    notion_block:
+      "$ref": "#/components/schemas/notion_entity"
+    notion_event:
+      type: object
+      properties:
+        id:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+        workspace_id:
+          type: string
+        workspace_name:
+          type: string
+        subscription_id:
+          type: string
+        integration_id:
+          type: string
+        attempt_number:
+          type: integer
+        authors:
+          type: array
+          items:
+            "$ref": "#/components/schemas/notion_entity"
+        data:
+          type: object
+          properties:
+            parent:
+              ref: "#/components/schemas/notion_entity"
+            updated_blocks:
+              type: array
+              nullable: true
+              items:
+                "$ref": "#/components/schemas/notion_block"
+          required:
+          - parent
+        type:
+          type: string
+          pattern: "^(page.created|page.content_updated|page.deleted|page.moved|page.properties_updated|database.content_updated|database.schema_updated|database.deleted)$"
+        entity:
+          "$ref": "#/components/schemas/notion_entity"
+      required:
+      - id
+      - data
+      - type
+      - integration_id
+      - attempt_number
     account:
       type: object
       properties:

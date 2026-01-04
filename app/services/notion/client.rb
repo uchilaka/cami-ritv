@@ -3,7 +3,7 @@
 module Notion
   module API
     class Error < StandardError
-      attr_reader :status, :body
+      attr_reader :status, :body, :response
 
       def initialize(message, status: nil, body: nil)
         super(message)
@@ -32,18 +32,18 @@ module Notion
     # @param query_params [Hash] The query parameters to send to the Notion API
     # @return [Hash] The parsed JSON response from the Notion API
     def database_query(database_id:, query_params:)
-      response = http_client.post(
+      @response = http_client.post(
         "#{BASE_URL}/databases/#{database_id}/query",
         query_params
       )
 
-      handle_response(response)
+      handle_response
     end
 
     def get_entity(id:, type: 'page')
-      response = http_client.get("#{BASE_URL}/#{type.pluralize}/#{id}")
+      @response = http_client.get("#{BASE_URL}/#{type.pluralize}/#{id}")
 
-      handle_response(response)
+      handle_response
     end
 
     private
@@ -52,15 +52,17 @@ module Notion
       ENV.fetch('NOTION_API_TOKEN', Rails.application.credentials.notion.secret_key)
     end
 
-    def handle_response(response)
-      if response.success?
-        response.body
+    def handle_response(resp = @response)
+      raise API::Error, I18n.t('integrations.errors.missing_response', service: 'Notion API') if resp.blank?
+
+      if resp.success?
+        resp.body
       else
-        error_message = extract_error_message(response)
+        error_message = extract_error_message(resp)
         raise API::Error.new(
           "Notion API Error: #{error_message}",
-          status: response.status,
-          body: response.body
+          status: resp.status,
+          body: resp.body
         )
       end
     end

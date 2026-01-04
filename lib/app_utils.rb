@@ -20,6 +20,14 @@ class AppUtils
   end
 
   class << self
+    def thor_mode?
+      yes?(ENV.fetch('MJOLNIR_IS_UP', 'no'))
+    end
+
+    def asset_pipeline_disabled?
+      thor_mode?
+    end
+
     def crm_org_id
       override_value = ENV.fetch('CRM_ORG_ID', nil)
       return override_value if override_value.present?
