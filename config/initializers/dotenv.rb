@@ -14,9 +14,11 @@ required_env_vars =
     APP_DATABASE_USER
     APP_DATABASE_PASSWORD
   ]
+
+# Will require the resolved variables within this guard when Rails.env != test
 unless Rails.env.test?
   case Rails.env
-  when 'production'
+  when 'production', 'staging'
     required_env_vars += production_env_vars
   else
     # Assumes development
