@@ -27,7 +27,7 @@ unless Rails.env.test?
       'CRM_REDIS_URL',
       'CRM_DATABASE_NAME',
       # The internal service URL for accessing the Twenty CRM app/admin
-      'SERVICE_URL',
+      'SERVER_URL',
       # The public-accessible proxy URL for accessing the Twenty CRM app/admin
       'PUBLIC_DOMAIN_URL'
     ]
