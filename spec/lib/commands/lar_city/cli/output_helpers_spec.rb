@@ -87,32 +87,39 @@ RSpec.describe LarCity::CLI::OutputHelpers, :time_sensitive do
   end
 
   describe '#extract_timestamp' do
-    subject(:result) { cmd.extract_timestamp(filename) }
+    shared_examples 'supported timestamp extraction' do |fname|
+      let(:expected_time) do
+        Time.new(2024, 6, 15, 12, 30, 45, "-0400")
+      end
 
-    let(:expected_time) do
-      Time.new(2024, 6, 15, 12, 30, 45, "-0400")
-    end
+      around do |example|
+        travel_to(expected_time) { example.run }
+      end
 
-    around do |example|
-      travel_to(expected_time) { example.run }
-    end
-
-    context 'with valid filename format' do
-      let(:filename) { 'backup_(20240615.123045-0400).sql' }
+      subject(:result) { cmd.extract_timestamp(fname) }
 
       it { is_expected.to eq(expected_time) }
     end
 
-    context 'with unsupported format' do
-      let(:filename) { 'backup_15-06-2024_12-30-45.sql' }
+    shared_examples 'unsupported timestamp extraction' do |fname|
+      subject(:result) { cmd.extract_timestamp(fname) }
 
       it { is_expected.to be_nil }
     end
 
-    context 'with invalid filename' do
-      let(:filename) { 'random_file_name.txt' }
+    context 'with supported formats' do
+      it_should_behave_like 'supported timestamp extraction', 'backup_20240615.123045-0400.sql'
+      it_should_behave_like 'supported timestamp extraction', 'data_export_20240615.123045-0400.csv'
+      it_should_behave_like 'supported timestamp extraction', 'backup_(20240615.123045-0400).sql'
+      it_should_behave_like 'supported timestamp extraction', 'data_export_(20240615.123045-0400).csv'
+    end
 
-      it { is_expected.to be_nil }
+    context 'with unsupported format' do
+      it_should_behave_like 'unsupported timestamp extraction', 'backup_15-06-2024_12-30-45.sql'
+    end
+
+    context 'with invalid filename' do
+      it_should_behave_like 'unsupported timestamp extraction', 'random_file_name.txt'
     end
   end
 
