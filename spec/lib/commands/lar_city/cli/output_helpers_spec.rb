@@ -4,8 +4,8 @@ require 'rails_helper'
 require 'lar_city/cli/output_helpers'
 require 'thor'
 
-RSpec.describe 'OutputHelpers' do
-  # TODO: Define inline Thor class for testing
+RSpec.describe LarCity::CLI::OutputHelpers do
+  # Inline Thor class used for testing OutputHelpers behavior
   class TestThorClass < Thor
     include ::LarCity::CLI::OutputHelpers
 
