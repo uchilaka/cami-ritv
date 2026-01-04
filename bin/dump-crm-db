@@ -3,7 +3,7 @@
 # database of the CAMI Rails application.
 BACKUP_PATH="db/${RAILS_ENV}/postgres/backups"
 mkdir -p "$BACKUP_PATH"
-BACKUP_FILE="${BACKUP_PATH}/crm_($(date +'%Y%m%d.%H%M%S%z')).dump"
+BACKUP_FILE="${BACKUP_PATH}/crm_$(date +'%Y%m%d.%H%M%S%z').dump"
 
 # Dump CRM database
 pg_dump --format=c --no-owner --no-privileges --verbose --encoding=UTF-8 \
