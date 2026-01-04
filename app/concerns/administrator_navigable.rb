@@ -11,8 +11,15 @@ module AdministratorNavigable
     end
 
     def native_objects_crm_base_url
-      base_url = ENV['PUBLIC_DOMAIN_URL']
-      base_url ||= ENV['SERVER_URL']
+      @native_objects_crm_base_url ||=
+        begin
+          public_url = ENV['PUBLIC_DOMAIN_URL']
+          if AppUtils.resource_is_okayish?(public_url)
+            public_url
+          else
+            ENV['SERVER_URL']
+          end
+        end
     end
 
     def show_native_objects_admin_link?

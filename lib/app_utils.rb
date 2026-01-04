@@ -77,6 +77,15 @@ class AppUtils
       result.nil? ? false : result
     end
 
+    def resource_is_okayish?(host)
+      result = resource_status_code(host)
+      result.to_i >= 200 && result.to_i < 400
+    end
+
+    def resource_status_code(resource_url)
+      `curl -s -o /dev/null -w "%{http_code}" #{resource_url}`.strip
+    end
+
     def healthy?(resource_url)
       response = Faraday.get(resource_url) do |options|
         options.headers = {
