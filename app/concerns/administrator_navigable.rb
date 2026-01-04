@@ -10,9 +10,26 @@ module AdministratorNavigable
       (user_signed_in? && current_user.has_role?(:admin)) || Rails.env.development?
     end
 
+    def native_objects_crm_base_url
+      base_url = ENV['PUBLIC_DOMAIN_URL']
+      base_url ||= ENV['SERVER_URL']
+    end
+
+    def show_native_objects_admin_link?
+      base_url = ENV['PUBLIC_DOMAIN_URL']
+      unless Rails.env.development?
+        return false if base_url.blank?
+      end
+
+      base_url ||= ENV['SERVER_URL']
+      return false if base_url.blank?
+
+      true
+    end
+
     def admin_menu
       @admin_menu ||= [
-        { label: 'Products', path: '/products', admin: true },
+        { label: I18n.t("globals.shared.navbar.products"), path: '/products', admin: true },
         # TODO: Decide on whether services will be needed to bundle products
         #   together - or if this is redundant with invoices and the invoice
         #   template feature of PayPal (the flagship payment gateway). An argument
@@ -28,57 +45,62 @@ module AdministratorNavigable
         #   with InertiaJs driving the primary design for how data gets delivered to
         #   frontend components/SPAs
         {
-          label: 'Work in progress',
+          label: I18n.t("globals.labels.navbar.wip"),
           url: 'https://bit.ly/larcity-cami-wip',
           new_tab: true,
           admin: true,
           enabled: true,
         },
-        { label: 'System Logs', url: system_log_url, admin: true, enabled: true },
+        { label: I18n.t("globals.labels.navbar.sys_logs"), url: system_log_url, admin: true, enabled: true },
         {
-          label: 'Managed Links',
+          label: I18n.t("globals.labels.navbar.managed_links"),
           url: 'https://app.bitly.com/BicibKENyrf/links',
           new_tab: true, admin: true, enabled: true,
         },
         {
-          label: 'Secrets Vault',
+          label: I18n.t("globals.labels.navbar.vault"),
           url: 'https://bitwarden.com/download/',
           new_tab: true, admin: true,
         },
         {
-          label: 'Storybook',
+          label: I18n.t("globals.labels.navbar.storybook"),
           url: storybook_url,
           new_tab: true, admin: true,
         },
         # TODO: Update AppUtils to compose the application's URL based on whether
         #   the NGINX tunnel is running or not.
         {
-          label: 'Test email inbox',
+          label: I18n.t("globals.labels.navbar.test_inbox"),
           url: test_inbox_url,
           admin: true,
           enabled: true,
         },
         {
-          label: 'Analytics Dashboard',
+          label: I18n.t("globals.labels.navbar.analytics_dashboard"),
           url: 'https://analytics.google.com/analytics/web/#/p256599245/reports/intelligenthome',
           admin: true,
           enabled: true,
         },
         {
-          label: 'Analytics Admin',
+          label: I18n.t("globals.labels.navbar.analytics_admin"),
           url: 'https://analytics.google.com/analytics/web/#/a47459054p256599245/admin',
           admin: true,
           enabled: true,
         },
         {
-          label: 'PayPal Dashboard',
+          label: I18n.t("globals.labels.navbar.paypal_dashboard"),
           url: paypal_developer_dashboard_url,
           admin: true,
           enabled: true,
         },
+        show_native_objects_admin_link? && {
+          label: 'Native Objects CRM Dashboard',
+          url: native_objects_crm_base_url,
+          admin: true,
+        },
         {
           label: 'CRM Dashboard',
-          url: "https://crm.zoho.com/crm/org#{crm_org_id}/tab/Home/begin",
+          url: zoho_crm_dashboard_url,
           admin: true,
           enabled: true,
         },
