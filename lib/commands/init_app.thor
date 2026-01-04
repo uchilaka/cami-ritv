@@ -55,26 +55,5 @@ class InitApp < Thor::Group
     def app_store_resource_path
       Rails.root.join('db', Rails.env, 'postgres', 'downloads')
     end
-
-    # def database_config
-    #   {
-    #     app: {
-    #       host: ENV.fetch('APP_DATABASE_HOST'),
-    #       port: ENV.fetch('APP_DATABASE_PORT'),
-    #       user: ENV.fetch('APP_DATABASE_USER'),
-    #       name: ENV.fetch('APP_DATABASE_NAME'),
-    #     },
-    #     crm: crm_database_config,
-    #   }
-    # end
-    #
-    # def crm_database_config
-    #   {
-    #     host: ENV.fetch('PG_DATABASE_HOST', 'crm-store'),
-    #     port: ENV.fetch('PG_DATABASE_PORT', '5432'),
-    #     user: ENV.fetch('APP_DATABASE_USER', 'postgres'),
-    #     name: ENV.fetch('CRM_DATABASE_NAME', 'lar_city_crm_db'),
-    #   }
-    # end
   end
 end

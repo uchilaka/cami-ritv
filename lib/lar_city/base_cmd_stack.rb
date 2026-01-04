@@ -78,7 +78,7 @@ module LarCity
           run "pg_isready --port #{port}",
             "-U #{user}",  "-h #{host}", "-d #{db_name}",
             inline: true, eval: true
-        %{accepting connections}.match?(result)
+        %r{accepting connections}.match?(result)
       end
 
       def database_config
