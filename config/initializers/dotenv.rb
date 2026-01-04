@@ -18,11 +18,11 @@ required_env_vars =
 # Will require the resolved variables within this guard when Rails.env != test
 unless Rails.env.test?
   case Rails.env
-  when 'production', 'staging'
-    required_env_vars += production_env_vars
-  else
-    # Assumes development
+  when 'development'
     required_env_vars += %w[CRM_SERVICE_PORT]
+  else
+    # Assumes production-like environment
+    required_env_vars += production_env_vars
   end
 
   # These apply for all non-test environments
