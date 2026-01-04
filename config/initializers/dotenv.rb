@@ -15,7 +15,15 @@ required_env_vars =
     APP_DATABASE_PASSWORD
   ]
 unless Rails.env.test?
-  required_env_vars += production_env_vars if Rails.env.production?
+  case Rails.env
+  when 'production'
+    required_env_vars += production_env_vars
+  else
+    # Assumes development
+    required_env_vars += %w[CRM_SERVICE_PORT]
+  end
+
+  # These apply for all non-test environments
   required_env_vars += %w[
     HOSTNAME
     PAYPAL_BASE_URL
