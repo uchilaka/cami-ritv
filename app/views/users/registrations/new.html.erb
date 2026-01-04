@@ -21,7 +21,9 @@
     </div>
 
     <div class="field">
-      <%= f.input :email, as: :email, autofocus: true %>
+      <%= f.input :email, as: :email,
+                  autofocus: true,
+                  input_html: { autocomplete: "email" } %>
     </div>
 
     <div class="field">
