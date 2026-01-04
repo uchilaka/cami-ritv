@@ -55,8 +55,8 @@ module LarCity
           return '' if secret.nil? || secret.empty?
 
           visible_length ||= [1, ([secret.length, 12].min / 4).ceil].max
-          raw_masked_length = secret.length - (visible_length * 2)
-          masked_length = [12, raw_masked_length].min
+          calc_masked_length = secret.length - (visible_length * 2)
+          masked_length = [12, calc_masked_length].min
           if masked_length.positive?
             "#{secret[0, visible_length]}#{'*' * masked_length}#{secret[-visible_length, visible_length]}"
           else
@@ -136,7 +136,7 @@ module LarCity
         end
 
         def enumerable?(collection)
-          collection.class.ancestors.include?(Enumerable)
+          collection.is_a?(Enumerable)
         end
       end
     end
