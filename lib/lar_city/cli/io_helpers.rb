@@ -9,18 +9,7 @@ module LarCity
       extend Utils::ClassHelpers
 
       def self.included(base)
-        # Throw an error unless included in a Thor class
-        missing_ancestor_msg = <<~MSG
-          #{base.name} is not a descendant of Thor or Thor::Group.
-          #{name} can only be included in Thor or Thor::Group descendants.
-        MSG
-        raise missing_ancestor_msg unless has_thor_ancestor?(base)
-
-        missing_options_method_msg = <<~MSG
-          #{base.name} does not support options.
-          #{name} can only be included in Thor classes that support options.
-        MSG
-        raise missing_options_method_msg unless supports_options?(base)
+        require_thor_options_support!(base)
 
         base.include OutputHelpers
         base.include InstanceMethods

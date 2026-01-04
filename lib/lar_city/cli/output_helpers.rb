@@ -55,8 +55,8 @@ module LarCity
           return '' if secret.nil? || secret.empty?
 
           visible_length ||= [1, ([secret.length, 12].min / 4).ceil].max
-          raw_masked_length = secret.length - (visible_length * 2)
-          masked_length = [12, raw_masked_length].min
+          calc_masked_length = secret.length - (visible_length * 2)
+          masked_length = [12, calc_masked_length].min
           if masked_length.positive?
             "#{secret[0, visible_length]}#{'*' * masked_length}#{secret[-visible_length, visible_length]}"
           else
@@ -101,6 +101,16 @@ module LarCity
       end
 
       module FormatHelperMethods
+        def extract_timestamp(filename)
+          return nil if filename.blank?
+
+          if filename =~ /\((\d{4})(\d{2})(\d{2})\.(\d{2})(\d{2})(\d{2})([+-]\d{4})\)/
+            year, month, day, hour, min, sec, tz = $1, $2, $3, $4, $5, $6, $7
+            Time.new(year.to_i, month.to_i, day.to_i, hour.to_i, min.to_i, sec.to_i, tz)
+          end
+        end
+
+        # Show a human-readable tally of items in the collection
         def tally(collection, name)
           return unless enumerable?(collection)
 
@@ -108,6 +118,7 @@ module LarCity
           "#{count} #{things(count, name:)}"
         end
 
+        # Show a range based on the number of items in the collection
         def range(collection)
           return unless enumerable?(collection)
           return unless collection.any?
@@ -125,7 +136,7 @@ module LarCity
         end
 
         def enumerable?(collection)
-          collection.class.ancestors.include?(Enumerable)
+          collection.is_a?(Enumerable)
         end
       end
     end
