@@ -13,9 +13,7 @@ SimpleForm.setup do |config|
   # wrapper, change the order or even add your own to the
   # stack. The options given below are used to wrap the
   # whole input.
-  config.wrappers :default,
-                  class: 'mx-auto',
-                  hint_class: 'mt-2 text-sm text-gray-500 dark:text-gray-400' do |b|
+  config.wrappers :default, class: 'mx-auto' do |b|
     ## Extensions enabled by default
     # Any of these extensions can be disabled for a
     # given input by passing: `f.input EXTENSION_NAME => false`.
@@ -54,10 +52,11 @@ SimpleForm.setup do |config|
 
     ## Inputs
     b.use :label,
-          # class: 'block mb-2 text-sm font-medium',
+          class: 'block mb-2 label dark:text-white',
           error_class: 'text-red-700 dark:text-red-500'
     b.use :input,
-          class: 'dark:text-white',
+          class: 'rounded-md block w-full p-2.5 border dark:text-white dark:bg-gray-700',
+          label_class: 'block mb-2 label dark:text-white',
           error_class: [
             'is-invalid bg-red-50 dark:bg-gray-700',
             'border-red-500 focus:ring-red-500',
@@ -65,6 +64,7 @@ SimpleForm.setup do |config|
             'text-red-900 dark:text-red-500',
             'placeholder-red-700 dark:placeholder-red-500',
           ].join(' '),
+          # hint_class: 'mt-2 text-sm text-gray-500 dark:text-gray-300',
           valid_class: [
             'is-valid bg-green-50 dark:bg-gray-700',
             'text-green-900 dark:text-green-400',
@@ -72,15 +72,39 @@ SimpleForm.setup do |config|
             'focus:ring-green-500 focus:border-green-500',
             'border-green-500 dark:border-green-500',
           ].join(' ')
-    # b.use :label_input
-    b.use :hint,  wrap_with: { tag: :span, class: :hint }
-    b.use :error, wrap_with: { tag: :span, class: :error }
+    b.use :hint, wrap_with: { tag: :em, class: 'hint mt-2 text-sm text-gray-500 dark:text-gray-300' }
+    b.use :error, wrap_with: { tag: :span, class: 'error mt-2 text-sm text-red-900 dark:text-red-500' }
 
     ## full_messages_for
     # If you want to display the full error message for the attribute, you can
     # use the component :full_error, like:
     #
     # b.use :full_error, wrap_with: { tag: :span, class: :error }
+  end
+
+  config.wrappers :inline_checkbox, tag: 'div', class: 'flex items-center space-x-2' do |b|
+    b.use :input,
+          class: 'w-4 h-4 border border-default-medium rounded-xs bg-neutral-secondary-medium focus:ring-2 focus:ring-brand-soft',
+          error_class: [
+            'is-invalid bg-red-50 dark:bg-gray-700',
+            'border-red-500 focus:ring-red-500',
+            'focus:border-red-500 dark:border-red-500',
+            'text-red-900 dark:text-red-500',
+            'placeholder-red-700 dark:placeholder-red-500',
+          ].join(' '),
+          hint_class: 'mt-2 text-sm text-gray-500 dark:text-gray-300',
+          valid_class: [
+            'is-valid bg-green-50 dark:bg-gray-700',
+            'text-green-900 dark:text-green-400',
+            'placeholder-green-700 dark:placeholder-green-500',
+            'focus:ring-green-500 focus:border-green-500',
+            'border-green-500 dark:border-green-500',
+          ].join(' ')
+    b.use :label,
+          class: 'label select-none font-medium',
+          error_class: 'text-red-700 dark:text-red-500'
+    b.use :error, wrap_with: { tag: :span, class: 'error mt-2 text-sm text-red-900 dark:text-red-500' }
+    b.use :hint, wrap_with: { tag: :em, class: 'hint mt-2 text-sm text-gray-500 dark:text-gray-300' }
   end
 
   # The default wrapper to be used by the FormBuilder.
@@ -90,7 +114,7 @@ SimpleForm.setup do |config|
   # Defaults to :nested for bootstrap config.
   #   inline: input + label
   #   nested: label > input
-  config.boolean_style = :nested
+  #config.boolean_style = :nested
 
   # Default class for buttons
   config.button_class = [
@@ -135,7 +159,7 @@ SimpleForm.setup do |config|
   # config.label_text = lambda { |label, required, explicit_label| "#{required} #{label}" }
 
   # You can define the class to use on all labels. Default is nil.
-  config.label_class = 'block mb-2 text-sm font-medium'
+  # config.label_class = 'block mb-2 label dark:text-white'
 
   # You can define the default class to be used on forms. Can be overridden
   # with `html: { :class }`. Defaulting to none.
@@ -183,10 +207,10 @@ SimpleForm.setup do |config|
   # config.cache_discovery = !Rails.env.development?
 
   # Default class for inputs
-  config.input_class = 'rounded-md block w-full p-2.5 border dark:bg-gray-700'
+  # config.input_class = 'rounded-md block w-full p-2.5 border dark:text-white dark:bg-gray-700'
 
   # Define the default class of the input wrapper of the boolean input.
-  config.boolean_label_class = 'checkbox'
+  # config.boolean_label_class = 'checkbox'
 
   # Defines if the default input wrapper class should be included in radio
   # collection wrappers.
