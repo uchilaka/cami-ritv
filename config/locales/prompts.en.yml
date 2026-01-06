@@ -1,0 +1,5 @@
+en:
+  prompts:
+    select_db_backup_source_file: >
+      Enter a selection for the data source backup file
+      to restore%{additional_info}:

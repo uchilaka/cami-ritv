@@ -1,0 +1,13 @@
+#!/usr/bin/env zsh
+# Working script for creating a PostgreSQL database dump for the primary
+# database of the CAMI Rails application.
+BACKUP_PATH="db/${RAILS_ENV}/postgres/backups"
+mkdir -p "$BACKUP_PATH"
+BACKUP_FILE="${BACKUP_PATH}/crm_$(date +'%Y%m%d.%H%M%S%z').dump"
+
+# Dump CRM database
+pg_dump --format=c --no-owner --no-privileges --verbose --encoding=UTF-8 \
+  --username "$APP_DATABASE_USER" --host localhost \
+  --port 16032 --file "$BACKUP_FILE" ${CRM_DATABASE_NAME:-default}
+
+#echo "Database dumped to $BACKUP_FILE"

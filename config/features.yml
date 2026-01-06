@@ -44,6 +44,8 @@ development: &development
     enabled: true
   feat__notion_integration_dashboard:
     enabled: true
+  feat__native_objects_crm_dashboard:
+    enabled: true
 test:
   <<: *default
 staging:

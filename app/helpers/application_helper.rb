@@ -29,7 +29,7 @@ module ApplicationHelper
   end
 
   def page_title
-    I18n.t('app.short_name') || Rails.application.class.module_parent_name
+    I18n.t('globals.app.short_name') || Rails.application.class.module_parent_name
   end
 
   def crm_org_id

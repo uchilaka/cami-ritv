@@ -45,6 +45,16 @@ en:
         notes: "Notes"
         create: "New account"
         search: "Search for accounts"
+      navbar:
+        wip: "Work In Progress"
+        sys_logs: "System Logs"
+        managed_links: "Managed Links"
+        vault: "Secrets Vault"
+        storybook: "Storybook"
+        test_inbox: "Test Email Inbox"
+        analytics_dashboard: "Analytics Dashboard"
+        analytics_admin: "Analytics Admin"
+        paypal_dashboard: "PayPal Dashboard"
 
     prompts:
       auth:
