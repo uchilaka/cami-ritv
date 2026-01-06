@@ -46,7 +46,7 @@ module LarCity
     module InstanceMethods
       protected
 
-      def wait_for_db(max_attempts: 30, delay: 2)
+      def wait_for_db(target: :primary, max_attempts: 30, delay: 2)
         if pretend?
           say_warning 'Pretend mode enabled - skipping database connection check.'
           return
@@ -56,7 +56,7 @@ module LarCity
 
         attempts = 0
         begin
-          healthy = db_health_check?(target: :app)
+          healthy = db_health_check?(target:)
           result = ActiveRecord::Base.connection.execute("SELECT version();")[0]
           {
             engine: ActiveRecord::Base.connection.adapter_name,
@@ -71,7 +71,7 @@ module LarCity
         end
       end
 
-      def db_health_check?(target: :app)
+      def db_health_check?(target: :primary)
         user, host, port, db_name =
           database_config[target].values_at(:user, :host, :port, :name)
         result =
@@ -83,7 +83,7 @@ module LarCity
 
       def database_config
         {
-          app: {
+          primary: {
             host: ENV.fetch('APP_DATABASE_HOST'),
             port: ENV.fetch('APP_DATABASE_PORT'),
             user: ENV.fetch('APP_DATABASE_USER'),
