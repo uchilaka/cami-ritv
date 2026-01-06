@@ -31,7 +31,6 @@ class InitApp < Thor::Group
   end
 
   def wait_for_primary_database_service_health_check
-    # TODO: Make this a primary-specific health check
     wait_for_db(target: :primary)
   end
 
@@ -48,7 +47,6 @@ class InitApp < Thor::Group
   end
 
   def wait_for_crm_database_service_health_check
-    # TODO: Make this a CRM-specific health check
     wait_for_db(target: :crm)
   end
 
@@ -71,11 +69,6 @@ class InitApp < Thor::Group
   end
 
   no_commands do
-    # @deprecated Use restore_database_from_backup instead
-    def restore_crm_database_from_backup
-      restore_database_from_backup(target: 'crm')
-    end
-
     # @TODO Explore refactoring to use `rails db:seed:primary` and `rails db:seed:crm` instead
     def restore_database_from_backup(target: 'primary')
       restore_cmd = RestoreDb.new([], target:, latest_backup: true, verbose: verbose?, dry_run: pretend?)

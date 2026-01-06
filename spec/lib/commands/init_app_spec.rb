@@ -83,7 +83,7 @@ RSpec.describe InitApp, type: :command_stack do
     end
   end
 
-  describe '#restore_crm_database_from_backup' do
+  describe '#maybe_restore_primary_database_from_backup' do
     let(:mock_restore_cmd) { instance_double(RestoreDb, invoke_all: true) }
 
     before do
@@ -91,10 +91,31 @@ RSpec.describe InitApp, type: :command_stack do
     end
 
     it 'invokes RestoreDb for crm' do
-      # restore_cmd = double(invoke_all: true)
-      expect(RestoreDb).to receive(:new).with([], target: 'crm', latest_backup: true, verbose: false, dry_run: false)
+      expect(RestoreDb).to receive(:new).with([], target: 'primary', latest_backup: true, verbose: false, dry_run: false)
       expect(mock_restore_cmd).to receive(:invoke_all)
-      instance.restore_crm_database_from_backup
+      instance.restore_database_from_backup(target: 'primary')
+    end
+  end
+
+  describe '#restore_database_from_backup' do
+    shared_examples 'supported database target' do |target|
+      let(:mock_restore_cmd) { instance_double(RestoreDb, invoke_all: true) }
+
+      before { allow(RestoreDb).to receive(:new).and_return(mock_restore_cmd) }
+
+      it "invokes RestoreDb for #{target}" do
+        expect(RestoreDb).to receive(:new).with([], target:, latest_backup: true, verbose: false, dry_run: false)
+        expect(mock_restore_cmd).to receive(:invoke_all)
+        instance.restore_database_from_backup(target:)
+      end
+    end
+
+    context 'for primary database' do
+      it_should_behave_like 'supported database target', 'primary'
+    end
+
+    context 'for crm database' do
+      it_should_behave_like 'supported database target', 'crm'
     end
   end
 
