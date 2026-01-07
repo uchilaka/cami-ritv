@@ -19,6 +19,7 @@ module LarCity
       )
 
       desc 'init', 'Initialize ngrok config for the project'
+      # @deprecated Use Tailscale funnel instead
       def init
         if Rails.env.test?
           say 'Skipping initialization of ngrok config in test environment.', Color::RED
@@ -54,13 +55,17 @@ module LarCity
         end
       end
 
-      desc 'open_all', 'Open ngrok tunnels for the project'
+      desc 'open_all', 'Open proxy tunnels for the project'
       def open_all
         case detected_environment
         when 'staging'
           run 'tailscale', 'funnel', '--bg', '--https=443', 80
         when 'development'
-          open_via_ngrok
+          if Flipper.enabled?(:feat__use_ngrok_tunnel)
+            open_via_ngrok
+          else
+            open_via_tailscale
+          end
         else
           error_msg = <<~ERROR
             Unsupported environment: #{detected_environment}. A proxy tunnel \
@@ -71,6 +76,12 @@ module LarCity
       end
 
       no_commands do
+        def open_via_tailscale
+          run 'goreman',
+              "-f #{Rails.root.join('Procfile.tailscale')}"
+        end
+
+        # @deprecated Use Tailscale funnel instead
         def open_via_ngrok
           if auth_token_nil?
             say_info <<~ERROR
