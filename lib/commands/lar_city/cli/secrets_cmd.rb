@@ -151,7 +151,7 @@ module LarCity
           if rubymine?
             'rubymine'
           else
-            vscode? ? 'code' : nil
+            vscode? ? 'code' : 'nano'
           end
       end
 
