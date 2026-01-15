@@ -353,6 +353,7 @@ GEM
       omniauth (~> 2.0)
     open3 (0.2.1)
     orm_adapter (0.5.0)
+    os (1.1.4)
     ostruct (0.6.1)
     paper_trail (16.0.0)
       activerecord (>= 6.1)
@@ -685,6 +686,7 @@ DEPENDENCIES
   omniauth-google-oauth2 (~> 1.2)
   omniauth-rails_csrf_protection
   open3
+  os
   ostruct
   paper_trail (~> 16)
   pg (~> 1.5)

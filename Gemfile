@@ -98,6 +98,9 @@ gem 'rswag-ui'
 # See https://youtrack.jetbrains.com/issue/RUBY-32741/Ruby-Debugger-uninitialized-constant-ClassDebaseValueStringBuilder...#focus=Comments-27-9677540.0-0
 gem 'ostruct'
 
+# See http://github.com/rdp/os
+gem 'os'
+
 # TODO: Replace with table_print for better ActiveRecord support
 # Simple, feature rich ascii table generation library https://github.com/tj/terminal-table
 gem 'terminal-table'

@@ -1,0 +1,18 @@
+<%
+require 'os'
+
+tailscale_cmd=
+  if OS.mac?
+    # Check if tailscale is installed via Homebrew on macOS
+    brew_service_cmd = `brew --prefix tailscale`.strip
+    if system("which #{brew_service_cmd} > /dev/null 2>&1")
+      brew_service_cmd
+    else
+      # Default path if not installed via Homebrew
+      '/Applications/Tailscale.app/Contents/MacOS/Tailscale'
+    end
+  else
+    # Get the path to the tailscale binary on Linux
+    `which tailscale`.strip
+  end
+%>app: <%= tailscale_cmd %> funnel <%= ENV.fetch('PORT') %>

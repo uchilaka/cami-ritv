@@ -1,1 +1,1 @@
-app: tailscale funnel ${PORT}
+app: /Applications/Tailscale.app/Contents/MacOS/Tailscale funnel 16006
