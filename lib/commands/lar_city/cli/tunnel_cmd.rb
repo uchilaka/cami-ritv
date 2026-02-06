@@ -18,49 +18,28 @@ module LarCity
         long_desc: I18n.t('commands.tunnel.init.options.force.long_desc')
       )
 
-      desc 'init', 'Initialize ngrok config for the project'
+      option :tailscale, type: :boolean, default: true, desc: 'Use Tailscale for tunnel management'
+
+      desc 'init', 'Initialize tunnel proxy config for the project'
       def init
-        if Rails.env.test?
-          say 'Skipping initialization of ngrok config in test environment.', Color::RED
-          return
-        end
-
-        if force?
-          force_msg = <<~WARNING
-            ************************************************************************
-            *  WARNING: Any existing NGROK configuration files will be overwritten *
-            ************************************************************************
-          WARNING
-          say force_msg, Color::YELLOW
-        end
-
-        # Process each NGROK config file template found in the config directory
-        for_each_app_proxy_config(force: force?) do |template_file, config_file_name|
-          unless File.exist?(template_file)
-            say "No ngrok config template found at #{template_file}. Skipping.", Color::RED
-            next
-          end
-
-          # Process an ERB config file if one is found
-          if !force? && config_file_exists?(name: config_file_name)
-            say "ngrok config already exists at #{config_file(name: config_file_name)}.", Color::YELLOW
-            next
-          end
-
-          puts 'Processing ngrok config ERB...'
-          yaml_config = ERB.new(File.read(template_file)).result
-          puts "Writing ngrok config to #{config_file(name: config_file_name)}"
-          File.write config_file(name: config_file_name), yaml_config unless dry_run?
+        if options[:tailscale]
+          init_tailscale
+        else
+          init_ngrok
         end
       end
 
-      desc 'open_all', 'Open ngrok tunnels for the project'
+      desc 'open_all', 'Open proxy tunnels for the project'
       def open_all
         case detected_environment
         when 'staging'
           run 'tailscale', 'funnel', '--bg', '--https=443', 80
         when 'development'
-          open_via_ngrok
+          if Flipper.enabled?(:feat__use_ngrok_tunnel)
+            open_via_ngrok
+          else
+            open_via_tailscale
+          end
         else
           error_msg = <<~ERROR
             Unsupported environment: #{detected_environment}. A proxy tunnel \
@@ -71,6 +50,81 @@ module LarCity
       end
 
       no_commands do
+        def init_tailscale
+          if Rails.env.test?
+            say 'Skipping initialization of Tailscale procfile in test environment.', Color::RED
+            return
+          end
+
+          if force?
+            force_msg = <<~WARNING
+              ***********************************************************************
+              ****  WARNING: The existing Tailscale Procfile will be overwritten ****
+              ***********************************************************************
+            WARNING
+            say force_msg, Color::YELLOW
+          end
+
+          template_file = config_file(name: 'Procfile.tailscale.erb')
+          raise "Missing Tailscale Procfile template at #{template_file}" unless File.exist?(template_file)
+
+          procfile_config = Rails.root.join('Procfile.tailscale').to_s
+          if !force? && File.exist?(procfile_config)
+            say "Tailscale Procfile already exists at #{procfile_config}. Skipping.", Color::YELLOW
+            return
+          end
+
+          puts 'Processing Tailscale Procfile ERB...'
+          procfile_content = ERB.new(File.read(template_file)).result
+          puts "Writing Tailscale Procfile to #{procfile_config}"
+          File.write procfile_config, procfile_content unless dry_run?
+        end
+
+        # @deprecated Use Tailscale funnel instead
+        def init_ngrok
+          if Rails.env.test?
+            say 'Skipping initialization of ngrok config in test environment.', Color::RED
+            return
+          end
+
+          if force?
+            force_msg = <<~WARNING
+              ************************************************************************
+              *  WARNING: Any existing NGROK configuration files will be overwritten *
+              ************************************************************************
+            WARNING
+            say force_msg, Color::YELLOW
+          end
+
+          # Process each NGROK config file template found in the config directory
+          for_each_app_proxy_config(force: force?) do |template_file, config_file_name|
+            unless File.exist?(template_file)
+              say "No ngrok config template found at #{template_file}. Skipping.", Color::RED
+              next
+            end
+
+            # Process an ERB config file if one is found
+            if !force? && config_file_exists?(name: config_file_name)
+              say "ngrok config already exists at #{config_file(name: config_file_name)}.", Color::YELLOW
+              next
+            end
+
+            puts 'Processing ngrok config ERB...'
+            yaml_config = ERB.new(File.read(template_file)).result
+            puts "Writing ngrok config to #{config_file(name: config_file_name)}"
+            File.write config_file(name: config_file_name), yaml_config unless dry_run?
+          end
+        end
+
+        def open_via_tailscale
+          procfile_config = Rails.root.join('Procfile.tailscale').to_s
+          say_highlight "Starting Tailscale dev proxy tunnels with config from #{procfile_config}..."
+          run 'goreman',
+              "-f \"#{procfile_config}\"",
+              'start'
+        end
+
+        # @deprecated Use Tailscale funnel instead
         def open_via_ngrok
           if auth_token_nil?
             say_info <<~ERROR

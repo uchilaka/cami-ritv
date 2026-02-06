@@ -18,7 +18,7 @@
     "test:rspec": "RAILS_ENV=test bundle exec rspec",
     "test": "vitest",
     "test:watch": "vitest --watch",
-    "keys:gpg-list": "gpg --list-secret-keys --keyid-format LONG",
+    "gpg:keys:list": "gpg --list-secret-keys --keyid-format LONG",
     "keys:status": "git-crypt status -e",
     "keys:lock": "git-crypt lock",
     "keys:unlock": "git-crypt unlock $GITCRYPT_KEY_FILE"
