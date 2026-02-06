@@ -22,6 +22,7 @@ module LarCity
           desc: 'Force operation without confirmation prompt',
           class_option: false,
           default: false,
+          long_desc: nil,
           required: false
         )
           option_method = class_option ? :class_option : :option
@@ -29,7 +30,8 @@ module LarCity
             .public_send(
               option_method, :force,
               type: :boolean,
-              desc:, default:, required:
+              desc:, default:,
+              long_desc:, required:
             )
         end
       end

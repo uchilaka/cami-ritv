@@ -1,12 +1,16 @@
 <% content_for :centered_form_layout do %>
   <h3 class="mb-5">Resend confirmation instructions</h3>
 
-  <%= form_for(resource, as: resource_name, url: user_confirmation_path, html: { method: :post }) do |f| %>
+  <%= simple_form_for(resource, as: resource_name, url: user_confirmation_path, html: { method: :post }) do |f| %>
     <%= render "users/shared/error_messages", resource: resource %>
 
     <div class="field">
-      <%= f.label :email, class: "label" %>
-      <%= f.email_field :email, autofocus: true, autocomplete: "email", class: "input", value: (resource.pending_reconfirmation? ? resource.unconfirmed_email : resource.email) %>
+      <%= f.input :email, as: :email,
+                  autofocus: true,
+                  input_html: {
+                    autocomplete: "email",
+                    value: (resource.pending_reconfirmation? ? resource.unconfirmed_email : resource.email)
+                  } %>
     </div>
 
     <div class="field">
