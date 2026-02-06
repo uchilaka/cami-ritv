@@ -1,5 +1,6 @@
 development:
   - accounts.larcity.ngrok.dev
+  - uches-macbook-pro-16.tail83bfcb.ts.net
 test:
   - accounts.larcity.ngrok.test
   - accounts.larcity.test
