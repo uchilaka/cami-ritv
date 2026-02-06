@@ -17,7 +17,7 @@ module Notion
 
     class << self
       # The default dataset is :deal for backward compatibility.
-      def supported?(dataset: :deal, vendor_slug:)
+      def supported?(vendor_slug:, dataset: :deal)
         dataset_supported?(dataset) && vendor_supported?(vendor_slug)
       end
 
@@ -46,7 +46,7 @@ module Notion
       {
         deal: deal_actions_map,
         # Ensure vendor dataset actions are defined when supported in the future
-        vendor: {}
+        vendor: {},
       }
     end
 
@@ -104,11 +104,10 @@ module Notion
             else
               '⚡ Webhook has been updated successfully.'
             end
-          Rails.logger.info(message, vendor:, dataset:)
         else
           context.message = '💅🏾 Webhook is already up to date.'
-          Rails.logger.info(message, vendor:, dataset:)
         end
+        Rails.logger.info(message, vendor:, dataset:)
       end
     ensure
       if webhook&.persisted? && webhook.errors.none?
