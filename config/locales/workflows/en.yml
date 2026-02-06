@@ -16,6 +16,14 @@ en:
       errors:
         generic: "An error occurred while creating the user"
         token_conflict: "The %{provider} access token does not match the expected value %{context}"
+    upsert_webhook_workflow:
+      errors:
+        unsupported_dataset: The %{dataset} dataset is not supported for vendor "%{name}"
+        unsupported_vendor: The vendor "%{name}" is not supported
+        missing_integration: The vendor "%{name}" integration is missing for %{dataset}
+        missing_verification_token: The verification token for "%{name}" is missing for %{dataset} dataset
+        invalid_integration: The "%{vendor}" integration is invalid
+        webhook_creation_failed: Failed to create vendor "%{vendor}" %{dataset} webhook
     upsert_deal_workflow:
       errors:
         generic: "An error occurred while processing the deal workflow"

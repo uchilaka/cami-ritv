@@ -67,6 +67,19 @@ module Notion
                 )
                 500
               end
+            when webhook.data['vendor_database_id']
+              # Proceed
+              workflow = ::Notion::Vendors::UpsertEventWorkflow.call(event:, webhook:, database:)
+              if workflow.success?
+                :ok
+              else
+                Rails.logger.error(
+                  "Failed to process Notion event: #{event.type}",
+                  error: workflow.error,
+                  event: event.serializable_hash
+                )
+                500
+              end
             else
               Rails.logger.warn(
                 "Unhandled notion #{event.type} event for parent type #{event.parent.type}",

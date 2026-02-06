@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
 module Notion
-  module Deals
-    # @TODO: Refactor to Notion::Deals::UpsertWorkflow to handle both event upsert
-    #   as well as enqueue the deal upsert as a side effect of processing the event
-    #
+  module Vendors
     # @deprecated This class is deprecated in favor of Notion::PersistEventWorkflow
     #   which requires enabling the :feat__notion_use_persist_event_workflow feature flag
-    #   and should be used to persist the event and its metadata.
+    #   and should be used to persist the event and its metadata. The processing
+    #   of the event (e.g. creating/updating a vendor) should be a side effect of
+    #   processing the persisted event, rather than being coupled with the persistence
+    #   of the event itself.
     class UpsertEventWorkflow
       include Interactor
 
@@ -19,9 +19,9 @@ module Notion
         klass_type =
           case context.event.type
           when 'page.created'
-            'Notion::DealCreatedEvent'
+            'Notion::VendorCreatedEvent'
           when 'page.properties_updated'
-            'Notion::DealUpdatedEvent'
+            'Notion::VendorUpdatedEvent'
           else
             message =
               I18n.t(
@@ -50,7 +50,7 @@ module Notion
           attempt_number:,
         }
         metadatum = ::Notion::WebhookEventMetadatum.create!(key: "notion.#{context.event.type}", value: event_data)
-        # TODO: Creating the (deal) system event should enqueue the job to process the deal as a side effect
+        # @TODO: Creating the (vendor) system event should enqueue the job to process the vendor as a side effect
         system_event = klass_type.constantize.create!(metadatum:)
         system_event.eventable = context.webhook
         if system_event.valid?
@@ -68,10 +68,8 @@ module Notion
         remote_event_id = context.event.id
         status = context.success? ? 'success' : 'failure'
         log_method = context.success? ? :info : :error
-        # TODO: What's up with fake-deal-slug? This seems like
-        #   it's missing the actual deal slug that should be logged here.
         log_message =
-          I18n.t('workflows.upsert_notion_deal_workflow.completed.log', status:, slug: system_event&.slug)
+          I18n.t('workflows.notion.upsert_event_workflow.completed.log', status:, slug: system_event&.slug)
         Rails.logger.send(log_method, log_message, remote_event_id:, system_event: system_event&.serializable_hash)
       end
     end

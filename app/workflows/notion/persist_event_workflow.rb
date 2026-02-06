@@ -52,12 +52,13 @@ module Notion
       context.result = system_event
       remote_event_id = event.id
       status = context.success? ? 'success' : 'failure'
+      log_method = context.success? ? :info : :error
       log_message =
         I18n.t(
           'workflows.notion.upsert_event_workflow.completed.log',
           status:, id: event.id, event_type: event.type, workspace: event.workspace_name
         )
-      Rails.logger.info(log_message, remote_event_id:, system_event: system_event.serializable_hash)
+      Rails.logger.send(log_method, log_message, remote_event_id:, system_event: system_event.serializable_hash)
     end
   end
 end
