@@ -11,8 +11,8 @@ module LarCity
         include Runnable
       end
 
-      EnvHelpers.define_class_options self
-      OutputHelpers.define_class_options self
+      define_env_options self, class_options: true
+      define_output_options self, class_options: true
 
       class_option :user,
                    aliases: '-u',
