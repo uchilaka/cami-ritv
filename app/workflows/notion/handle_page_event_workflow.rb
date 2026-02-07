@@ -33,7 +33,7 @@ module Notion
       # Set database based on event parent before any further processing
       context.database = event.parent.type == 'database' ? event.parent : nil
 
-      if Flipper.enabled?(:feat__notion_use_persist_event_workflow)
+      if Utils.use_persist_event_workflow?
         context.response_http_status =
           begin
             workflow = PersistEventWorkflow.call(event:, webhook:, database:, database_type:, klass_type:)

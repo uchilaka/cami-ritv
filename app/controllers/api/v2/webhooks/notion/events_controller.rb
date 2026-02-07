@@ -92,14 +92,13 @@ module API
           end
 
           def verified_request?
-            super || begin
-              return true if request_verification_token.present?
+            return false unless super
+            return true if request_verification_token.blank?
 
-              result =
-                ::Notion::VerifyRequestWorkflow
-                  .call(webhook:, signature_header: request_signature_header)
-              result.success?
-            end
+            result =
+              ::Notion::VerifyRequestWorkflow
+                .call(webhook:, signature_header: request_signature_header)
+            result.success?
           end
 
           def validate_request_signature
