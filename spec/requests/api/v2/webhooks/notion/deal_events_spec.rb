@@ -32,7 +32,6 @@ RSpec.describe 'API::V2::Webhooks::Notion::Events', type: :request do
   path '/api/v2/webhooks/{slug}/events' do
     parameter name: :'X-Notion-Signature', in: :header, type: :string, required: true,
               description: 'Signature header for Notion webhook verification'
-
     parameter name: :event_params, in: :body, schema: {
       type: :object,
       properties: {
@@ -47,7 +46,6 @@ RSpec.describe 'API::V2::Webhooks::Notion::Events', type: :request do
         },
       },
     }
-
     parameter name: :slug, in: :path, type: :string, required: true, description: 'Webhook slug (e.g., notion)'
 
     let(:'X-Notion-Signature') { 'valid-notion-request-signature' }
@@ -59,11 +57,6 @@ RSpec.describe 'API::V2::Webhooks::Notion::Events', type: :request do
         receive(:secure_compare).and_return(true)
       allow(Notion::Utils).to receive(:skip_signature_validation?).and_return(true)
     end
-
-    # around do |example|
-    #   Flipper.enable(:feat__notion_webhook_skip_signature_validation)
-    #   example.run
-    # end
 
     after do
       allow(ActiveSupport::SecurityUtils).to \
