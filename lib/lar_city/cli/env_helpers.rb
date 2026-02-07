@@ -8,6 +8,7 @@ module LarCity
     module EnvHelpers
       extend Utils::ClassHelpers
 
+      # @deprecated Use ClassMethods#define_env_options instead
       def self.define_class_options(thor_class)
         thor_class.class_option :environment,
                                 type: :string,
@@ -16,6 +17,7 @@ module LarCity
                                 required: false
       end
 
+      # @deprecated Use ClassMethods#define_sudo_option instead
       def self.define_sudo_option(thor_class, type: nil, default: false, required: false)
         option_method = type.to_s == 'class' ? :class_option : :option
         thor_class
@@ -28,6 +30,7 @@ module LarCity
       end
 
       def self.included(base)
+        base.extend ClassMethods
         base.include OperatingSystemDetectable
 
         # Throw an error unless included in a Thor class
@@ -44,6 +47,33 @@ module LarCity
         raise missing_options_method_msg unless supports_options?(base)
 
         base.include InstanceMethods
+      end
+
+      module ClassMethods
+        def define_env_options(thor_class, class_options: true)
+          option_method = class_options ? :class_option : :option
+          # Define Environment option
+          thor_class
+            .public_send(
+              option_method,
+              :environment,
+              desc: 'Environment',
+              type: :string,
+              aliases: '--env',
+              required: false
+            )
+        end
+
+        def define_sudo_option(
+          thor_class,
+          desc: 'Run command with sudo (only applies to Unix-based systems)',
+          class_option: false,
+          default: false,
+          required: false
+        )
+          option_method = class_option ? :class_option : :option
+          thor_class.public_send(option_method, :sudo, type: :boolean, desc:, default:, required:)
+        end
       end
 
       module InstanceMethods

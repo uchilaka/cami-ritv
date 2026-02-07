@@ -7,6 +7,7 @@ module LarCity
     module OutputHelpers
       extend Utils::ClassHelpers
 
+      # @deprecated Use ClassMethods#define_output_options instead
       def self.define_class_options(thor_class)
         thor_class.class_option :help,
                                 type: :boolean,
@@ -25,23 +26,36 @@ module LarCity
 
       def self.included(base)
         require_thor_options_support!(base)
-
-        # # Throw an error unless included in a Thor class
-        # missing_ancestor_msg = <<~MSG
-        #   #{base.name} is not a descendant of Thor or Thor::Group.
-        #   #{name} can only be included in Thor or Thor::Group descendants.
-        # MSG
-        # raise missing_ancestor_msg unless has_thor_ancestor?(base)
-        #
-        # missing_options_method_msg = <<~MSG
-        #   #{base.name} does not support options.
-        #   #{name} can only be included in Thor classes that support options.
-        # MSG
-        # raise missing_options_method_msg unless supports_options?(base)
-
+        # Make class methods available in base context
+        base.extend ClassMethods
         # Check if thor option exists in base context
         base.include SayHelperMethods
         base.include FormatHelperMethods
+      end
+
+      module ClassMethods
+        def define_output_options(thor_class, class_options: true)
+          option_method = class_options ? :class_option : :option
+          thor_class.public_send option_method, :help, type: :boolean, default: false
+          # Define pretend option
+          thor_class
+            .public_send(
+              option_method, :dry_run,
+              type: :boolean,
+              aliases: %w[-d --pretend --preview],
+              desc: 'Dry run',
+              default: false
+            )
+          # Define verbose option
+          thor_class
+            .public_send(
+              option_method, :verbose,
+              type: :boolean,
+              aliases: %w[-v --debug],
+              desc: 'Verbose output',
+              default: false
+            )
+        end
       end
 
       module SayHelperMethods
