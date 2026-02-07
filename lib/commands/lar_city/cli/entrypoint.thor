@@ -39,7 +39,7 @@ module LarCity
         subcommand 'tunnel', TunnelCmd
       end
 
-      EnvHelpers.define_sudo_option(self)
+      define_sudo_option self, class_option: false
       desc 'setup', 'Install LarCity CLI on your system'
       def setup
         FileUtils.rm(system_bin_path, verbose: verbose?) if File.symlink?(self.class.system_bin_path) && !dry_run?
@@ -57,7 +57,7 @@ module LarCity
         README
       end
 
-      EnvHelpers.define_sudo_option(self)
+      define_sudo_option self, class_option: false
       desc 'uninstall', 'Uninstall LarCity CLI from your system'
       def uninstall
         if !File.symlink?(self.class.system_bin_path) && !dry_run?
