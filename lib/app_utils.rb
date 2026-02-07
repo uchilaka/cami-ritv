@@ -20,6 +20,14 @@ class AppUtils
   end
 
   class << self
+    def thor_mode?
+      yes?(ENV.fetch('MJOLNIR_IS_UP', 'no'))
+    end
+
+    def asset_pipeline_disabled?
+      thor_mode?
+    end
+
     def crm_org_id
       override_value = ENV.fetch('CRM_ORG_ID', nil)
       return override_value if override_value.present?
@@ -160,6 +168,10 @@ class AppUtils
         keys = Rails.application.credentials&.jbuilder&.pre_keys || %i[predicate]
         keys.is_a?(Array) ? keys : [keys]
       end
+    end
+
+    def use_persist_event_workflow?
+      Flipper.enabled?(:feat__notion_use_persist_event_workflow)
     end
   end
 end

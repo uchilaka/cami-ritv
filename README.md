@@ -88,12 +88,17 @@ When running the database in Docker, you will need to ensure you have the right 
 docker compose up -d app-store && docker compose logs -f app-store --since 5m
 ```
 
+# Contributing
+
+Please refer to the [CONTRIBUTING.md](./docs/CONTRIBUTING.md) file for contribution guidelines.
+
 ## Known issues
 
 - [ ] SSL certificate verification fails on macOS (OpenSSL 3.6 + Ruby 3.4) due to CRL check <https://github.com/rails/rails/issues/55886>
 
 ## Future work
 
+- [ ] Review legacy notes on performance testing Rails apps: <https://guides.rubyonrails.org/v3.1.1/performance_testing.html>
 - [ ] Google Workspace IAM Identity Provider for AWS: <https://docs.aws.amazon.com/singlesignon/latest/userguide/gs-gwp.html>
 - [ ] Implement dark mode switcher: <https://flowbite.com/docs/customize/dark-mode/#dark-mode-switcher>
 - [ ] Implement a Simple Form config (with Flowbite): <https://github.com/heartcombo/simple_form?tab=readme-ov-file#installation>

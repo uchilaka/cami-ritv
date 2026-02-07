@@ -38,6 +38,33 @@ module LogUtils
       end
     end
 
+    def verbose_query_logs?
+      log_output_level(log_level) > log_output_level(:info)
+    end
+
+    def log_level
+      Rails.application.config.log_level || :info
+    end
+
+    # Log output level where :error is the lowest (1)
+    # and :debug is the highest (4)
+    def log_output_level(log_level)
+      case log_level.to_s
+      when 'debug'
+        4
+      when 'info'
+        3
+      when 'warn'
+        2
+      when 'error'
+        1
+      else
+        3
+      end
+    end
+
+    protected
+
     def log_path
       log_path = Rails.root.join('log', Time.now.strftime('%Y-%m-%d')).to_s
       FileUtils.mkdir_p(log_path)
