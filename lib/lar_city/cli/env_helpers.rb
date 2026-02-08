@@ -82,6 +82,10 @@ module LarCity
         def detected_environment
           options[:environment] || Rails.env
         end
+
+        def sudo?
+          options[:sudo] || false
+        end
       end
     end
   end

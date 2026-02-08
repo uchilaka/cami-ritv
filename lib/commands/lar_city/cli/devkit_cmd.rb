@@ -9,7 +9,11 @@ module LarCity
 
       namespace 'devkit'
 
-      define_force_option(self, desc: 'Force an upsert operation on any matching webhook (by vendor)')
+      define_force_option(
+        self,
+        class_option: false,
+        desc: 'Force an upsert operation on any matching webhook (by vendor)'
+      )
       option :vendor,
              desc: 'The vendor to use for the devkit',
              type: :string,
