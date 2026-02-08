@@ -20,7 +20,7 @@ module LarCity
 
       desc 'init', 'Initialize ngrok config for the project'
       def init
-        if Rails.env.test?
+        if Rails.env.test? && !force?
           say 'Skipping initialization of ngrok config in test environment.', Color::RED
           return
         end
@@ -204,9 +204,9 @@ module LarCity
         @has_python_3 ||= system('command -v python3')
       end
 
-      def force?
-        options[:force] == true
-      end
+      # def force?
+      #   options[:force] == true
+      # end
     end
   end
 end
