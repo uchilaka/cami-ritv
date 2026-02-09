@@ -2,20 +2,8 @@
 # Exit on error
 set -o errexit
 
-# Setup package dependencies
-yarn install --frozen-lockfile
-
 # Install gems
 bundle install
-
-# Build css
-yarn build:css
-
-# Pre-build app assets
-yarn build:assets
-
-# Build frontend
-yarn build
 
 ## Run asset precompilation and cleanup
 #bundle exec rails tailwindcss:build

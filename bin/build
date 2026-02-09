@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+# Exit on error
+set -o errexit
+
+# Setup package dependencies
+yarn install --frozen-lockfile
+
+# Install gems
+bundle install
+
+# Build css
+yarn build:css
+
+# Pre-build app assets
+yarn build:assets
+
+# Build frontend
+yarn build
