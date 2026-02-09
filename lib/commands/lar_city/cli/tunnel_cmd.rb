@@ -20,7 +20,7 @@ module LarCity
 
       desc 'init', 'Initialize ngrok config for the project'
       def init
-        if Rails.env.test? && !force?
+        if (Rails.env.staging? || Rails.env.test?) && !force?
           say 'Skipping initialization of ngrok config in test environment.', Color::RED
           return
         end
