@@ -32,8 +32,8 @@ module LarCity
         include OutputHelpers
       end
 
-      EnvHelpers.define_class_options(self)
-      OutputHelpers.define_class_options(self)
+      define_env_options(self, class_options: true)
+      define_output_options(self, class_options: true)
 
       no_commands do
         include Interruptible

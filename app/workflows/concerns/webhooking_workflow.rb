@@ -59,7 +59,7 @@ module WebhookingWorkflow
     end
 
     def force?
-      context.force || false
+      context.force == true
     end
 
     def slug

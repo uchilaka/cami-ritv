@@ -1,5 +1,6 @@
 development:
   - accounts.larcity.ngrok.dev
+  - accounts.larcity
 test:
   - accounts.larcity.ngrok.test
   - accounts.larcity.test
@@ -8,6 +9,7 @@ lab:
   - accounts.lab.larcity.dev
   - accounts.lab.larcity.hopto.org
 staging:
+  - accounts.staging.lar.city
   - accounts.staging.larcity.org
   - accounts.staging.larcity.tech
   - accounts.staging.larcity.business
@@ -18,13 +20,14 @@ staging:
   #- accounts.staging.madebylar.city
   #- accounts.staging.larcity.com
 production:
+  - cami-production.onrender.com
   - accounts.larcity.hopto.org
   #- accounts.ho.lar.city
-  #- accounts.ho.madebylar.city
-  - accounts.ho.larcity.business
-  #- accounts.larcity.com
+  - accounts.madebylar.city
+#  - accounts.ho.larcity.business
+  - accounts.larcity.com
   - accounts.larcity.tech
-  #- accounts.lar.city
+  - accounts.lar.city
   #- www.larcity.com
   #- www.lar.city
   #- larcity.com
