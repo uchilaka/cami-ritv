@@ -32,6 +32,29 @@ module LarCity
           end
         end
       end
+
+      describe '#daemonize', skip: "TODO: regex matching for outputs not working out yet" do
+        subject(:command) { described_class.new(cmd_args, **options) }
+
+        let(:cmd_args) { [] }
+        let(:options) { { dry_run: true, force: true } }
+        let(:expected_plist_config_path) { Rails.root.join('config', 'com.larcity.cami.plist').to_s }
+        let(:expected_plist_filename) { File.basename(expected_plist_config_path) }
+        let(:expected_symlink_cmd) do
+          "ln -svf #{expected_plist_config_path} /Library/LaunchDaemons/#{expected_plist_filename}"
+        end
+        let(:expected_load_cmd) { "launchctl load -w /Library/LaunchDaemons/#{expected_plist_filename}" }
+        let(:expected_symlink_output) { "Executing (dry-run): sudo #{expected_symlink_cmd}" }
+        let(:expected_load_output) { "Executing (dry-run): sudo #{expected_load_cmd}" }
+        let(:expected_output) do
+          <<~OUTPUT
+            #{expected_symlink_output}
+            #{expected_load_output}
+          OUTPUT
+        end
+
+        it { expect { command.daemonize }.to output(%r{#{expected_output}}).to_stdout }
+      end
     end
   end
 end

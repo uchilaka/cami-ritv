@@ -10,6 +10,7 @@ module Users
                   :set_available_roles, only: %i[edit update]
     # before_action :configure_sign_up_params, only: [:create]
     # before_action :configure_account_update_params, only: [:update]
+    before_action :set_minimum_password_length_hint
 
     # # GET /resource/sign_up
     # def new
@@ -44,6 +45,13 @@ module Users
     # end
 
     protected
+
+    def set_minimum_password_length_hint
+      @minimum_password_length_hint ||=
+        if @minimum_password_length.present?
+          I18n.t("devise.registrations.password_length_minimum_hint", count: @minimum_password_length)
+        end
+    end
 
     def role_params
       params.permit(system_role: { user: [] })[:system_role]

@@ -2,6 +2,6 @@
   <%- resource_class.omniauth_providers.each do |provider| %>
     <%= link_to render("users/shared/omniauth/button", provider:),
                 omniauth_authorize_path(resource_name, provider),
-                class: "btn", method: :post %><br>
+                class: primary_btn_classes, method: :post %><br>
   <% end %>
 <% end %>

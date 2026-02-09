@@ -19,5 +19,5 @@
 #  index_generic_events_on_slug       (slug) UNIQUE
 #
 module Notion
-  class DealUpdatedEventSerializer < DealCreatedEventSerializer; end
+  class DealUpdatedEventSerializer < DealEventSerializer; end
 end

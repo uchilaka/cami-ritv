@@ -18,10 +18,9 @@ class HtpasswdGenerator < Rails::Generators::Base
   # This sets the description shown when running `bin/rails generate --help`
   desc 'This generator creates a placeholder .htpasswd file for basic HTTP authentication.'
 
-  # LarCity::CLI::BaseCmd.define_class_options
-  ::LarCity::CLI::EnvHelpers.define_class_options(self)
-  ::LarCity::CLI::OutputHelpers.define_class_options(self)
-  ::LarCity::CLI::IoHelpers.define_auth_config_path_option(self, class_option: true)
+  define_env_options self, class_options: true
+  define_output_options self, class_options: true
+  define_auth_config_path_option self, class_option: true
 
   # --- Sequential steps ---
 

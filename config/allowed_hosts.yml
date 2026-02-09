@@ -1,5 +1,6 @@
 development:
   - accounts.larcity.ngrok.dev
+  - accounts.larcity
 test:
   - accounts.larcity.ngrok.test
   - accounts.larcity.test

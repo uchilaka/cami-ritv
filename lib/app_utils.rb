@@ -20,6 +20,14 @@ class AppUtils
   end
 
   class << self
+    def thor_mode?
+      yes?(ENV.fetch('MJOLNIR_IS_UP', 'no'))
+    end
+
+    def asset_pipeline_disabled?
+      thor_mode?
+    end
+
     def smtp_settings
       smtp_config_to_env_mapping.to_h do |(rails_key, brevo_key), env_var|
         value = ENV.fetch(env_var, nil)
@@ -185,6 +193,10 @@ class AppUtils
         %i[user_name smtp_user] => 'SMTP_USERNAME',
         %i[password smtp_password] => 'SMTP_PASSWORD',
       }
+    end
+
+    def use_persist_event_workflow?
+      Flipper.enabled?(:feat__notion_use_persist_event_workflow)
     end
   end
 end

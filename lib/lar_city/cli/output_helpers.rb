@@ -7,6 +7,7 @@ module LarCity
     module OutputHelpers
       extend Utils::ClassHelpers
 
+      # @deprecated Use ClassMethods#define_output_options instead
       def self.define_class_options(thor_class)
         thor_class.class_option :help,
                                 type: :boolean,
@@ -24,21 +25,37 @@ module LarCity
       end
 
       def self.included(base)
-        # Throw an error unless included in a Thor class
-        missing_ancestor_msg = <<~MSG
-          #{base.name} is not a descendant of Thor or Thor::Group.
-          #{name} can only be included in Thor or Thor::Group descendants.
-        MSG
-        raise missing_ancestor_msg unless has_thor_ancestor?(base)
-
-        missing_options_method_msg = <<~MSG
-          #{base.name} does not support options.
-          #{name} can only be included in Thor classes that support options.
-        MSG
-        raise missing_options_method_msg unless supports_options?(base)
-
+        require_thor_options_support!(base)
+        # Make class methods available in base context
+        base.extend ClassMethods
         # Check if thor option exists in base context
         base.include SayHelperMethods
+        base.include FormatHelperMethods
+      end
+
+      module ClassMethods
+        def define_output_options(thor_class, class_options: true)
+          option_method = class_options ? :class_option : :option
+          thor_class.public_send option_method, :help, type: :boolean, default: false
+          # Define pretend option
+          thor_class
+            .public_send(
+              option_method, :dry_run,
+              type: :boolean,
+              aliases: %w[-d --pretend --preview],
+              desc: 'Dry run',
+              default: false
+            )
+          # Define verbose option
+          thor_class
+            .public_send(
+              option_method, :verbose,
+              type: :boolean,
+              aliases: %w[-v --debug],
+              desc: 'Verbose output',
+              default: false
+            )
+        end
       end
 
       module SayHelperMethods
@@ -49,13 +66,13 @@ module LarCity
         end
 
         # Shows a calculated number of visible characters (i.e. visible_length)
-        # at both the start and end, where visible_length is the maximum
-        # of 2 or 1/4 of the secret length.
-        def partially_masked_secret(secret)
+        # at both the start and end.
+        def partially_masked_secret(secret, visible_length: nil)
           return '' if secret.nil? || secret.empty?
 
-          visible_length = [2, (secret.length / 4).ceil].max
-          masked_length = secret.length - (visible_length * 2)
+          visible_length ||= [1, ([secret.length, 12].min / 4).ceil].max
+          calc_masked_length = secret.length - (visible_length * 2)
+          masked_length = [12, calc_masked_length].min
           if masked_length.positive?
             "#{secret[0, visible_length]}#{'*' * masked_length}#{secret[-visible_length, visible_length]}"
           else
@@ -97,6 +114,46 @@ module LarCity
 
         alias pretend? dry_run?
         alias debug? verbose?
+      end
+
+      module FormatHelperMethods
+        def extract_timestamp(filename)
+          return nil if filename.blank?
+
+          if filename =~ /\((\d{4})(\d{2})(\d{2})\.(\d{2})(\d{2})(\d{2})([+-]\d{4})\)/
+            year, month, day, hour, min, sec, tz = $1, $2, $3, $4, $5, $6, $7
+            Time.new(year.to_i, month.to_i, day.to_i, hour.to_i, min.to_i, sec.to_i, tz)
+          end
+        end
+
+        # Show a human-readable tally of items in the collection
+        def tally(collection, name)
+          return unless enumerable?(collection)
+
+          count = collection.count
+          "#{count} #{things(count, name:)}"
+        end
+
+        # Show a range based on the number of items in the collection
+        def range(collection)
+          return unless enumerable?(collection)
+          return unless collection.any?
+
+          count = collection.count
+          return '[1]' if count == 1
+
+          "[1-#{count}]"
+        end
+
+        protected
+
+        def things(count, name: 'item')
+          name.pluralize(count)
+        end
+
+        def enumerable?(collection)
+          collection.is_a?(Enumerable)
+        end
       end
     end
   end

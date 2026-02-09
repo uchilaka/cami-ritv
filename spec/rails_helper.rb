@@ -123,6 +123,9 @@ RSpec.configure do |config|
   # arbitrary gems may also be filtered via:
   # config.filter_gems_from_backtrace("gem name")
 
+  # Time testing helpers
+  config.include ActiveSupport::Testing::TimeHelpers, time_sensitive: true
+
   # Devise integration helpers https://github.com/heartcombo/devise?tab=readme-ov-file#integration-tests
   config.include Devise::Test::IntegrationHelpers, type: :feature
   config.include Devise::Test::IntegrationHelpers, type: :request

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # 20250523075739
-class AddLastSentToCrmAtToAccounts < ActiveRecord::Migration[8.0]
+class AddLastSentToCRMAtToAccounts < ActiveRecord::Migration[8.0]
   disable_ddl_transaction!
 
   def change
