@@ -203,10 +203,6 @@ module LarCity
       def has_python_3?
         @has_python_3 ||= system('command -v python3')
       end
-
-      # def force?
-      #   options[:force] == true
-      # end
     end
   end
 end
