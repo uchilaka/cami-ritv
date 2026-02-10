@@ -44,6 +44,8 @@ module LarCity
             )
         end
 
+        # @deprecated This method is deprecated and will be removed in a future release.
+        #   Use `define_sudo_option` from `ControlFlowHelpers` instead.
         def define_sudo_option(
           thor_class,
           desc: 'Run command with sudo (only applies to Unix-based systems)',
@@ -63,6 +65,8 @@ module LarCity
           options[:environment] || Rails.env
         end
 
+        # @deprecated This method is deprecated and will be removed in a future release.
+        #   Use `sudo?` from `ControlFlowHelpers` instead.
         def sudo?
           options[:sudo] || false
         end
