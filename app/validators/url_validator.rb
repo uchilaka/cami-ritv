@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class UrlValidator < ActiveModel::EachValidator
+class URLValidator < ActiveModel::EachValidator
   def validate_each(record, attribute, value)
     return if value.blank?
 
