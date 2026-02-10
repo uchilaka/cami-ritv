@@ -9,12 +9,11 @@ module LarCity
 
       namespace 'devkit'
 
-      define_force_option(self, desc: 'Force an upsert operation on any matching webhook (by vendor)')
-
-      # option :force,
-      #        desc: 'Force an upsert operation on any matching webhook (by vendor)',
-      #        type: :boolean,
-      #        default: false
+      define_force_option(
+        self,
+        class_option: false,
+        desc: 'Force an upsert operation on any matching webhook (by vendor)'
+      )
       option :vendor,
              desc: 'The vendor to use for the devkit',
              type: :string,
@@ -95,6 +94,83 @@ module LarCity
           else
             raise ArgumentError, "Unsupported vendor: #{options[:vendor]}"
           end
+        end
+      end
+
+      desc 'yeet_deploy', 'Shove the current code to production'
+      long_desc <<-LONGDESC
+        🚨 WARNING: This command forcefully deploys the current code to production
+        without any checks or confirmations.
+
+        This deployment pipeline operates via the releases/production branch and a deploy
+        hook configured in the repository settings on the hosting platform.
+
+        This deployment method is highly discouraged for regular use and should only
+        be used in emergency situations where immediate action is required to resolve
+        critical issues.
+      LONGDESC
+      def yeet_deploy
+        # Check to make sure current branch is clean (no dangling changes)
+        with_interruption_rescue do
+          # status_output = `git status --porcelain`.strip
+          # unless status_output.blank?
+          #   raise 'Current branch has uncommitted changes. Please commit or stash them before deploying.'
+          # end
+          block_deployment_on_uncommitted_changes!
+
+          run 'git pull --ff', inline: true
+          run 'git push', inline: true
+
+          @selected_branch = "releases/#{detected_environment}"
+          # if current_branch == selected_branch
+          #   raise 'You are already on the releases/production branch. Please switch to another branch before deploying.'
+          # end
+          block_deployment_on_same_branch!
+          block_deployment_on_release_branches!
+
+          # Merge the current branch into the target releases/* branch
+          checkout_cmd = "git checkout #{selected_branch}"
+
+          success = system(checkout_cmd)
+          raise "Failed to checkout #{selected_branch} branch." unless success
+
+          run 'git pull --ff', inline: true
+          commit_msg = <<~COMMIT_MSG
+            Merging #{current_branch} into #{selected_branch} for emergency deploy
+          COMMIT_MSG
+          merge_cmd = "git merge --no-ff #{current_branch} -m \"#{commit_msg.strip}\""
+          run merge_cmd, inline: true
+
+          deploy_cmd = ['git push origin', "HEAD:#{selected_branch}"]
+          success = run(*deploy_cmd, inline: true)
+          raise 'Deployment failed. Please check the output above for details.' unless success || pretend?
+
+          # Use curl to trigger the deploy hook if one is configured
+          env_name = ['app_deploy', detected_environment, 'hook_url'].join('_').upcase
+          deploy_hook_url = ENV.fetch(env_name, nil)
+          result =
+            if deploy_hook_url.present?
+              curl_cmd = "curl -X POST #{deploy_hook_url}"
+              # Extract domain name from deploy hook URL for logging
+              uri = URI.parse(deploy_hook_url)
+              if pretend?
+                say_highlight "Pretending to execute deployment via #{uri.host}..."
+                true
+              else
+                say_info "Triggering deployment via #{uri.host}..."
+                system(curl_cmd)
+              end
+            else
+              say_warning <<~MSG
+                ⚠️ No deploy hook URL configured. Please ensure that the deployment \
+                process is triggered manually if required.
+              MSG
+              true if pretend?
+            end
+          say_success "🚀 Code has been forcefully deployed to #{selected_branch}." if result
+        ensure
+          # Switch back to the original working branch
+          system("git switch #{current_branch}")
         end
       end
 
@@ -266,9 +342,9 @@ module LarCity
       end
 
       no_commands do
-        def force?
-          options[:force] || false
-        end
+        # def force?
+        #   options[:force] || false
+        # end
 
         def check_or_prompt_for_branch_to_review
           say "Checking branch status for #{selected_branch}...", :yellow
@@ -364,6 +440,34 @@ module LarCity
       end
 
       private
+
+      def block_deployment_on_release_branches!
+        return unless current_branch.start_with?('releases/')
+
+        raise Errors::Forbidden, <<~MSG
+          🙅🏾‍♂️ Deployment operations are blocked on release branches (current branch: #{current_branch}).
+          Please switch to a non-release branch to proceed.
+        MSG
+      end
+
+      def block_deployment_on_same_branch!
+        return if selected_branch != current_branch
+
+        raise Errors::Forbidden, <<~MSG
+          🙅🏾‍♂️ Deployment operations are blocked on the current branch (#{current_branch}).
+          Please switch to a different branch to proceed.
+        MSG
+      end
+
+      def block_deployment_on_uncommitted_changes!
+        status_output = `git status --porcelain`.strip
+        return if status_output.blank?
+
+        raise Errors::Forbidden, <<~MSG
+          🙅🏾‍♂️ Deployment operations are blocked due to uncommitted changes in the current branch (#{current_branch}).
+          Please commit or stash your changes before proceeding.
+        MSG
+      end
 
       def interactive?
         options[:interactive]

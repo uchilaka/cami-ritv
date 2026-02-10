@@ -11,22 +11,22 @@ module LarCity
       def self.included(base)
         require_thor_options_support!(base)
 
+        base.extend ClassMethods
         base.include OutputHelpers
         base.include InstanceMethods
       end
 
-      def self.define_auth_config_path_option(thor_class, class_option: false)
-        option_params = [
-          :auth_config_path,
-          type: :string,
-          aliases: '-o',
-          desc: 'The directory to store the htpasswd file',
-          default: 'config/httpd',
-        ]
-        if class_option
-          thor_class.class_option(*option_params)
-        else
-          thor_class.option(*option_params)
+      module ClassMethods
+        def define_auth_config_path_option(thor_class, class_option: false)
+          option_method = class_option ? :class_option : :option
+          thor_class
+            .public_send(
+              option_method, :auth_config_path,
+              type: :string,
+              aliases: '-o',
+              desc: 'The directory to store the htpasswd file',
+              default: 'config/httpd',
+            )
         end
       end
 

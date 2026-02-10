@@ -44,6 +44,10 @@ module LarCity
 
           yes?(message)
         end
+
+        def force?
+          options[:force] == true
+        end
       end
     end
   end
