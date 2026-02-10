@@ -21,7 +21,7 @@ module LarCity
       module InstanceMethods
         protected
 
-        def run(*args, inline: false, eval: false, &block)
+        def run(*args, inline: false, mock_return: nil, eval: false, &block)
           with_interruption_rescue do
             cmd = args.compact.join(' ')
             if verbose? || dry_run?
@@ -34,7 +34,7 @@ module LarCity
                 say_info msg
               end
             end
-            return if dry_run?
+            return mock_return if dry_run?
 
             if eval
               if block_given?
