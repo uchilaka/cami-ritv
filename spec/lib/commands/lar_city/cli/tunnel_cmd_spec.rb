@@ -25,8 +25,6 @@ RSpec.describe LarCity::CLI::TunnelCmd, type: :thor, devtool: true, skip_in_ci: 
     context 'when not in test environment' do
       context 'when ngrok config does not exist' do
         before do
-          # allow(Rails.env).to receive(:test?).and_return(false)
-          # allow(tunnel_cmd).to receive(:force?).and_return(true)
           allow(tunnel_cmd).to receive(:config_file_exists?).with(name: 'ngrok') { false }
           allow(File).to receive(:exist?).with(%r{/config/ngrok-via-docker.yml.erb$}).and_return(true)
           allow(File).to receive(:exist?).with(%r{/config/ngrok.yml.erb$}).and_return(true)
@@ -59,7 +57,6 @@ RSpec.describe LarCity::CLI::TunnelCmd, type: :thor, devtool: true, skip_in_ci: 
           let(:cmd_options) { { force: true } }
 
           before do
-            # allow(Rails.env).to receive(:test?).and_return(false)
             allow(tunnel_cmd).to receive(:options).and_return(force: true)
             allow(tunnel_cmd).to receive(:config_file_exists?).with(name: %r{/ngrok(-via-docker)?.yml$}) { true }
             allow(File).to receive(:exist?).with(%r{/config/ngrok.yml.erb$}).and_return(true)
@@ -77,14 +74,9 @@ RSpec.describe LarCity::CLI::TunnelCmd, type: :thor, devtool: true, skip_in_ci: 
         context 'with force option set to false' do
           let(:cmd_options) { { force: false } }
 
-          # around do |example|
-          #   with_modified_env(RAILS_ENV: 'development') { example.run }
-          # end
-
           before do
             allow(Rails.env).to receive(:test?).and_return(false)
             allow(Rails.env).to receive(:development?).and_return(true)
-            # allow(tunnel_cmd).to receive(:options).and_return(force: false)
             allow(tunnel_cmd).to receive(:config_file_exists?).with(name: %r{/ngrok(-via-docker)?.yml$}) { true }
             allow(File).to receive(:exist?).with(%r{/config/ngrok.yml.erb$}).and_return(true)
           end
@@ -98,12 +90,8 @@ RSpec.describe LarCity::CLI::TunnelCmd, type: :thor, devtool: true, skip_in_ci: 
       end
 
       context 'when template file does not exist' do
-        # let(:cmd_options) { { force: false } }
-
         before do
           allow(Rails.env).to receive(:development?).and_return(true)
-          # allow(Rails.env).to receive(:test?).and_return(false)
-          # allow(tunnel_cmd).to receive(:options).and_return(force: false)
           allow(File).to receive(:exist?).with(%r{/config/ngrok(-with-docker)?.yml$}).and_return(false)
           allow(File).to receive(:exist?).with(%r{/config/ngrok(-with-docker)?.yml.erb$}).and_return(false)
         end
@@ -116,7 +104,6 @@ RSpec.describe LarCity::CLI::TunnelCmd, type: :thor, devtool: true, skip_in_ci: 
 
       context 'when dry_run? is true' do
         before do
-          # allow(Rails.env).to receive(:test?).and_return(false)
           allow(tunnel_cmd).to receive(:config_file_exists?).with(name: %r{/ngrok(-with-docker)?.yml$}) { false }
           allow(ERB).to receive_message_chain(:new, :result).and_return('processed yaml content')
         end
