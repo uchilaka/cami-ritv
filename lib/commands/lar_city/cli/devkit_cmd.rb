@@ -131,7 +131,7 @@ module LarCity
           # Merge the current branch into the target releases/* branch
           checkout_cmd = "git checkout #{selected_branch}"
 
-          success = run checkout_cmd, inline: true
+          success = run checkout_cmd, inline: true, mock_return: true
           raise "Failed to checkout #{selected_branch} branch." unless success
 
           run 'git pull --ff', inline: true
@@ -142,7 +142,7 @@ module LarCity
           run merge_cmd, inline: true
 
           deploy_cmd = ['git push origin', "HEAD:#{selected_branch}"]
-          success = run(*deploy_cmd, inline: true)
+          success = run(*deploy_cmd, inline: true, mock_return: true)
           raise 'Deployment failed. Please check the output above for details.' unless success || pretend?
 
           # Use curl to trigger the deploy hook if one is configured
