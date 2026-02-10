@@ -21,7 +21,7 @@ module LarCity
       desc 'init', I18n.t('commands.tunnel.init.short_desc', service: :ngrok)
       def init
         unless Rails.env.development? || force?
-          say_error I18n.t('commands.tunnel.init.skip_message', env: Rails.env)
+          say_highlight I18n.t('commands.tunnel.init.skip_message', env: Rails.env)
           return
         end
 
@@ -203,10 +203,6 @@ module LarCity
       def has_python_3?
         @has_python_3 ||= system('command -v python3')
       end
-
-      # def force?
-      #   options[:force] == true
-      # end
     end
   end
 end

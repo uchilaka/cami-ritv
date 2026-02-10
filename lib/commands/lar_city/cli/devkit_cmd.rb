@@ -342,10 +342,6 @@ module LarCity
       end
 
       no_commands do
-        # def force?
-        #   options[:force] || false
-        # end
-
         def check_or_prompt_for_branch_to_review
           say "Checking branch status for #{selected_branch}...", :yellow
           check_pr_cmd = "gh pr list --head #{selected_branch} --json number -q '.[].number'"
