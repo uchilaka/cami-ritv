@@ -18,10 +18,10 @@ module LarCity
         long_desc: I18n.t('commands.tunnel.init.options.force.long_desc')
       )
 
-      desc 'init', 'Initialize ngrok config for the project'
+      desc 'init', I18n.t('commands.tunnel.init.short_desc', service: :ngrok)
       def init
         unless Rails.env.development? || force?
-          say 'Skipping initialization of ngrok config in test environment.', Color::RED
+          say_highlight I18n.t('commands.tunnel.init.skip_message', env: Rails.env)
           return
         end
 
@@ -31,7 +31,7 @@ module LarCity
             *  WARNING: Any existing NGROK configuration files will be overwritten *
             ************************************************************************
           WARNING
-          say force_msg, Color::YELLOW
+          say_warning force_msg
         end
 
         # Process each NGROK config file template found in the config directory
