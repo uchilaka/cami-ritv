@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative 'base_cmd'
+require 'uri'
 
 module LarCity
   module CLI
@@ -154,9 +155,9 @@ module LarCity
             begin
               uri = URI.parse(deploy_hook_url)
               unless uri.is_a?(URI::HTTP) || uri.is_a?(URI::HTTPS)
-                raise Errors::MisconfigurationError, "Invalid URL scheme: #{uri.scheme}"
+                raise URI::InvalidURIError, "Invalid URL scheme: #{uri.scheme}"
               end
-            rescue Errors::MisconfigurationError => e
+            rescue URI::InvalidURIError => e
               say_warning <<~MSG
                 ⚠️ The deploy hook URL configured in #{env_name} is invalid: #{e.message}.
                 Please ensure that the URL is correct and try again.
