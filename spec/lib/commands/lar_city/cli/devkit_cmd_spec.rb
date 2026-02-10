@@ -2,9 +2,32 @@ require 'rails_helper'
 require 'commands/lar_city/cli/devkit_cmd'
 
 RSpec.describe LarCity::CLI::DevkitCmd, type: :command do
-  let(:command) { described_class.new }
+  let(:command) { described_class.new([], **command_opts) }
+  let(:command_opts) { {} }
   let(:stdout) { StringIO.new }
   let(:stderr) { StringIO.new }
+
+  describe "#force?" do
+    subject(:force?) { command.send(:force?) }
+
+    context "when --force option is true" do
+      let(:command_opts) { { force: true } }
+
+      it { expect(force?).to be true }
+    end
+
+    context "when --force option is false" do
+      let(:command_opts) { { force: false } }
+
+      it { expect(force?).to be false }
+    end
+
+    context "when --force option is not provided" do
+      let(:command_opts) { {} }
+
+      it { expect(force?).to be false }
+    end
+  end
 
   describe '#setup_webhooks' do
     subject(:run_command) { command.invoke(:setup_webhooks, [], **command_opts) }
