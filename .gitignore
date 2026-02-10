@@ -72,6 +72,7 @@
 # Environment variable files
 /.env.*
 !/.env.development
+!/.env.lab
 !/.envrc
 !/.env.example
 /.node-version
