@@ -8,27 +8,6 @@ module LarCity
     module EnvHelpers
       extend Utils::ClassHelpers
 
-      # @deprecated Use ClassMethods#define_env_options instead
-      def self.define_class_options(thor_class)
-        thor_class.class_option :environment,
-                                type: :string,
-                                aliases: '--env',
-                                desc: 'Environment',
-                                required: false
-      end
-
-      # @deprecated Use ClassMethods#define_sudo_option instead
-      def self.define_sudo_option(thor_class, type: nil, default: false, required: false)
-        option_method = type.to_s == 'class' ? :class_option : :option
-        thor_class
-          .public_send(
-            option_method, :sudo,
-            type: :boolean,
-            desc: 'Run command with sudo (only applies to Unix-based systems)',
-            default:, required:
-          )
-      end
-
       def self.included(base)
         base.extend ClassMethods
         base.include OperatingSystemDetectable
@@ -60,6 +39,7 @@ module LarCity
               desc: 'Environment',
               type: :string,
               aliases: '--env',
+              enum: %w[development test lab staging production],
               required: false
             )
         end
