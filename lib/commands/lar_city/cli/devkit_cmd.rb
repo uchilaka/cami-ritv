@@ -148,6 +148,23 @@ module LarCity
           # Use curl to trigger the deploy hook if one is configured
           env_name = ['app_deploy', detected_environment, 'hook_url'].join('_').upcase
           deploy_hook_url = ENV.fetch(env_name, nil)
+
+          # Validate deploy_hook_url is a valid URL using Rails URI parsing
+          if deploy_hook_url.present?
+            begin
+              uri = URI.parse(deploy_hook_url)
+              unless uri.is_a?(URI::HTTP) || uri.is_a?(URI::HTTPS)
+                raise Errors::MisconfigurationError, "Invalid URL scheme: #{uri.scheme}"
+              end
+            rescue Errors::MisconfigurationError => e
+              say_warning <<~MSG
+                ⚠️ The deploy hook URL configured in #{env_name} is invalid: #{e.message}.
+                Please ensure that the URL is correct and try again.
+              MSG
+              deploy_hook_url = nil
+            end
+          end
+
           result =
             if deploy_hook_url.present?
               curl_cmd = "curl -X POST #{deploy_hook_url}"
