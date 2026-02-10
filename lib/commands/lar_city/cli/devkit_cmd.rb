@@ -131,7 +131,7 @@ module LarCity
           # Merge the current branch into the target releases/* branch
           checkout_cmd = "git checkout #{selected_branch}"
 
-          success = system(checkout_cmd)
+          success = run checkout_cmd, inline: true
           raise "Failed to checkout #{selected_branch} branch." unless success
 
           run 'git pull --ff', inline: true
@@ -158,7 +158,7 @@ module LarCity
                 true
               else
                 say_info "Triggering deployment via #{uri.host}..."
-                system(curl_cmd)
+                run curl_cmd, inline: true
               end
             else
               say_warning <<~MSG
@@ -170,7 +170,7 @@ module LarCity
           say_success "🚀 Code has been forcefully deployed to #{selected_branch}." if result
         ensure
           # Switch back to the original working branch
-          system("git switch #{current_branch}")
+          run "git switch #{current_branch}", inline: true
         end
       end
 
@@ -230,7 +230,7 @@ module LarCity
         return if dry_run?
 
         ClimateControl.modify RAILS_ENV: 'test' do
-          system(cmd)
+          run cmd, inline: true
         end
       end
 
@@ -244,7 +244,7 @@ module LarCity
             Executing#{dry_run? ? ' (dry-run)' : ''}: #{cmd}
           CMD
         end
-        system(cmd) unless dry_run?
+        run cmd unless dry_run?
       end
 
       no_commands do
