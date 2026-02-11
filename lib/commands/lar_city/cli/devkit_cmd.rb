@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative 'base_cmd'
+require 'uri'
 
 module LarCity
   module CLI
@@ -131,7 +132,7 @@ module LarCity
           # Merge the current branch into the target releases/* branch
           checkout_cmd = "git checkout #{selected_branch}"
 
-          success = system(checkout_cmd)
+          success = run checkout_cmd, inline: true, mock_return: true
           raise "Failed to checkout #{selected_branch} branch." unless success
 
           run 'git pull --ff', inline: true
@@ -142,12 +143,29 @@ module LarCity
           run merge_cmd, inline: true
 
           deploy_cmd = ['git push origin', "HEAD:#{selected_branch}"]
-          success = run(*deploy_cmd, inline: true)
+          success = run(*deploy_cmd, inline: true, mock_return: true)
           raise 'Deployment failed. Please check the output above for details.' unless success || pretend?
 
           # Use curl to trigger the deploy hook if one is configured
           env_name = ['app_deploy', detected_environment, 'hook_url'].join('_').upcase
           deploy_hook_url = ENV.fetch(env_name, nil)
+
+          # Validate deploy_hook_url is a valid URL using Rails URI parsing
+          if deploy_hook_url.present?
+            begin
+              uri = URI.parse(deploy_hook_url)
+              unless uri.is_a?(URI::HTTP) || uri.is_a?(URI::HTTPS)
+                raise URI::InvalidURIError, "Invalid URL scheme: #{uri.scheme}"
+              end
+            rescue URI::InvalidURIError => e
+              say_warning <<~MSG
+                ⚠️ The deploy hook URL configured in #{env_name} is invalid: #{e.message}.
+                Please ensure that the URL is correct and try again.
+              MSG
+              deploy_hook_url = nil
+            end
+          end
+
           result =
             if deploy_hook_url.present?
               curl_cmd = "curl -X POST #{deploy_hook_url}"
@@ -158,7 +176,7 @@ module LarCity
                 true
               else
                 say_info "Triggering deployment via #{uri.host}..."
-                system(curl_cmd)
+                run curl_cmd, inline: true
               end
             else
               say_warning <<~MSG
@@ -170,7 +188,7 @@ module LarCity
           say_success "🚀 Code has been forcefully deployed to #{selected_branch}." if result
         ensure
           # Switch back to the original working branch
-          system("git switch #{current_branch}")
+          run "git switch #{current_branch}", inline: true
         end
       end
 
@@ -230,7 +248,7 @@ module LarCity
         return if dry_run?
 
         ClimateControl.modify RAILS_ENV: 'test' do
-          system(cmd)
+          run cmd, inline: true
         end
       end
 
@@ -244,7 +262,7 @@ module LarCity
             Executing#{dry_run? ? ' (dry-run)' : ''}: #{cmd}
           CMD
         end
-        system(cmd) unless dry_run?
+        run cmd unless dry_run?
       end
 
       no_commands do

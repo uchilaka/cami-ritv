@@ -39,6 +39,10 @@ module LarCity
         subcommand 'tunnel', TunnelCmd
       end
 
+      no_commands do
+        include ControlFlowHelpers
+      end
+
       define_sudo_option self, class_option: false
       desc 'setup', 'Install LarCity CLI on your system'
       def setup

@@ -1,0 +1,8 @@
+en:
+  modules:
+    control_flow_helpers:
+      sudo_option:
+        short_desc: Run command with superuser privileges (only applies to Unix-based systems)
+        long_desc: >
+          This option allows you to run the command with superuser privileges using `sudo`.
+          It is useful for commands that require elevated permissions to execute successfully.

@@ -34,6 +34,17 @@ module LarCity
               long_desc:, required:
             )
         end
+
+        def define_sudo_option(
+          thor_class,
+          desc: I18n.t("modules.control_flow_helpers.sudo_option.short_desc"),
+          class_option: false,
+          default: false,
+          required: false
+        )
+          option_method = class_option ? :class_option : :option
+          thor_class.public_send(option_method, :sudo, type: :boolean, desc:, default:, required:)
+        end
       end
 
       module InstanceMethods
@@ -47,6 +58,10 @@ module LarCity
 
         def force?
           options[:force] == true
+        end
+
+        def sudo?
+          options[:sudo] == true
         end
       end
     end
