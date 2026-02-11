@@ -3,7 +3,7 @@
 set -o errexit
 
 # Setup package dependencies
-yarn install --frozen-lockfile
+yarn install --immutable
 
 # Install gems
 bundle install
