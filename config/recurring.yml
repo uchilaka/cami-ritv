@@ -48,6 +48,9 @@ development:
   <<: *common
 
 staging:
+  <<: *common
+
+lab:
   <<: *home_office
 
 production:
