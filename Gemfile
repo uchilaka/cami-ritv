@@ -34,7 +34,6 @@ gem 'jbuilder'
 gem 'tzinfo-data', platforms: %i[mingw mswin x64_mingw jruby]
 
 gem 'dartsass-rails', '~> 0.5'
-# gem 'sassc-rails', '~> 2.1'
 
 gem 'cssbundling-rails'
 gem 'inertia_rails'
