@@ -17,7 +17,6 @@ module LarCity
         desc: I18n.t('commands.tunnel.init.options.force.short_desc'),
         long_desc: I18n.t('commands.tunnel.init.options.force.long_desc')
       )
-
       desc 'init', I18n.t('commands.tunnel.init.short_desc', service: :ngrok)
       def init
         unless Rails.env.development? || force?
