@@ -270,24 +270,28 @@ module LarCity
       long_desc I18n.t('commands.devkit.check_blueprint.long_desc')
       def check_blueprint
         blueprint_config = Rails.root.join('render.yaml')
-        result = run 'which render', inline: true
-        say_debug <<~RESULT
-          Command result: #{result.inspect}
-        RESULT
-        unless result == true
-          # Return HEREDOC without newlines and with proper indentation
+        require_render_cli!
+
+        run(
+          'render blueprints validate',
+          "--workspace #{ENV.fetch('RENDER_WORKSPACE_ID')}",
+          blueprint_config
+        ) { |line| say_info line }
+      end
+
+      no_commands do
+        def require_render_cli!
+          return if run('which render > /dev/null 2>&1', inline: true)
+
           say_warning <<~MSG.squish
             ⚠️ The 'render' CLI tool is not installed or not found in the system PATH.
             Please install the Render CLI to use this command. You can install it via
             Brew by running 'brew install render' or by following the instructions at
             https://render.com/docs/cli#setup.
           MSG
-          return
+          raise Thor::Error, 'Render CLI is required but not found in PATH.'
         end
-        run 'render blueprints validate', blueprint_config, inline: true
-      end
 
-      no_commands do
         def check_or_prompt_for_branch_to_review
           say "Checking branch status for #{selected_branch}...", :yellow
           check_pr_cmd = "gh pr list --head #{selected_branch} --json number -q '.[].number'"

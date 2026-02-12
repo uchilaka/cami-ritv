@@ -109,17 +109,17 @@ module LarCity
               erb_template_array = [file_header, database_header]
 
               # Provision database ENV variables from Proton Vault
-              database_env_sets.each do |env_key, vault_field, group|
+              database_env_sets.each do |env_key, vault_field|
                 erb_template_array <<
-                  "export #{env_key}=\"{{ pass://#{value_path(vault_share_id, source_item_id, group, vault_field)} }}\""
+                  "export #{env_key}=\"{{ pass://#{value_path(vault_share_id, source_item_id, vault_field)} }}\""
               end
 
               erb_template_array << ''
 
               # Provision secrets from ENV variable item in Proton Vault
-              item_env_sets.each do |env_key, vault_field, group|
+              item_env_sets.each do |env_key, vault_field|
                 erb_template_array <<
-                  "export #{env_key}=\"{{ pass://#{value_path(vault_share_id, source_item_id, group, vault_field)} }}\""
+                  "export #{env_key}=\"{{ pass://#{value_path(vault_share_id, source_item_id, vault_field)} }}\""
               end
 
               erb_template_array << file_footer
