@@ -98,21 +98,21 @@ projects:
                 sync: false
               - key: WEB_CONCURRENCY
                 sync: false
-              - key: APP_DATABASE_HOST
-                fromDatabase:
-                  name: cami-staging-db
-                  property: host
-              - key: APP_DATABASE_USER
-                fromDatabase:
-                  name: cami-staging-db
-                  property: user
-              - key: APP_DATABASE_PASSWORD
-                fromDatabase:
-                  name: cami-staging-db
-                  property: password
+#              - key: APP_DATABASE_HOST
+#                fromDatabase:
+#                  name: cami-staging-db
+#                  property: host
+#              - key: APP_DATABASE_USER
+#                fromDatabase:
+#                  name: cami-staging-db
+#                  property: user
+#              - key: APP_DATABASE_PASSWORD
+#                fromDatabase:
+#                  name: cami-staging-db
+#                  property: password
               - fromGroup: CRM Staging
               - fromGroup: Logtail Staging
-#              - fromGroup: Database Staging
+              - fromGroup: Database Staging
               - fromGroup: PayPal Staging
               - fromGroup: SMTP Live
             region: virginia
