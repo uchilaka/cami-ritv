@@ -80,6 +80,10 @@ module LarCity
           end
         end
 
+        def say_debug(message)
+          say_highlight(message) if verbose?
+        end
+
         def say_info(message)
           say(message, :cyan)
         end
