@@ -92,8 +92,8 @@ RSpec.describe LarCity::CLI::TunnelCmd, type: :thor, devtool: true, skip_in_ci: 
       context 'when template file does not exist' do
         before do
           allow(Rails.env).to receive(:development?).and_return(true)
-          allow(File).to receive(:exist?).with(%r{/config/ngrok(-with-docker)?.yml$}).and_return(false)
-          allow(File).to receive(:exist?).with(%r{/config/ngrok(-with-docker)?.yml.erb$}).and_return(false)
+          allow(File).to receive(:exist?).with(%r{/config/ngrok(-via-docker)?.yml$}).and_return(false)
+          allow(File).to receive(:exist?).with(%r{/config/ngrok(-via-docker)?.yml.erb$}).and_return(false)
         end
 
         it 'warns and skips processing' do
