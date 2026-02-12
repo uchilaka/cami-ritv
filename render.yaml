@@ -90,3 +90,20 @@ projects:
             - source: 0.0.0.0/0
               description: everywhere
           postgresMajorVersion: "17"
+      # See documentation on referencing values from other services:
+      # https://render.com/docs/blueprint-spec#referencing-values-from-other-services
+      envVarGroups:
+        - name: Database Staging
+          envVars:
+            - key: APP_DATABASE_HOST
+              fromDatabase:
+                name: cami-staging-db
+                property: host
+            - key: APP_DATABASE_USER
+              fromDatabase:
+                name: cami-staging-db
+                property: user
+            - key: APP_DATABASE_PASSWORD
+              fromDatabase:
+                name: cami-staging-db
+                property: password
