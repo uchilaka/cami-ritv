@@ -37,7 +37,7 @@ bin/thor entrypoint:setup
 brew bundle
 
 # To validate your blueprint, run the following command in your console from the project root:
-lx-cli check-blueprint
+lx-cli devkit:check-blueprint
 ```
 
 ## Managing application secrets

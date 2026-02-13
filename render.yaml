@@ -42,8 +42,8 @@ projects:
             autoDeployTrigger: checksPass
             previews:
               generation: manual
-            maintenanceMode:
-              enabled: true
+            #maintenanceMode:
+            #  enabled: true
         databases:
           - name: cami-production-db
             databaseName: sails_production
@@ -69,21 +69,21 @@ projects:
             postgresMajorVersion: "17"
         # See documentation on referencing values from other services:
         # https://render.com/docs/blueprint-spec#referencing-values-from-other-services
-        envVarGroups:
-          - name: Database Staging
-            envVars:
-              - key: APP_DATABASE_HOST
-                fromDatabase:
-                  name: cami-staging-db
-                  property: host
-              - key: APP_DATABASE_USER
-                fromDatabase:
-                  name: cami-staging-db
-                  property: user
-              - key: APP_DATABASE_PASSWORD
-                fromDatabase:
-                  name: cami-staging-db
-                  property: password
+#        envVarGroups:
+#          - name: Database Staging
+#            envVars:
+#              - key: APP_DATABASE_HOST
+#                fromDatabase:
+#                  name: cami-staging-db
+#                  property: host
+#              - key: APP_DATABASE_USER
+#                fromDatabase:
+#                  name: cami-staging-db
+#                  property: user
+#              - key: APP_DATABASE_PASSWORD
+#                fromDatabase:
+#                  name: cami-staging-db
+#                  property: password
         services:
           - type: web
             name: cami-staging-app
@@ -98,21 +98,21 @@ projects:
                 sync: false
               - key: WEB_CONCURRENCY
                 sync: false
-#              - key: APP_DATABASE_HOST
-#                fromDatabase:
-#                  name: cami-staging-db
-#                  property: host
-#              - key: APP_DATABASE_USER
-#                fromDatabase:
-#                  name: cami-staging-db
-#                  property: user
-#              - key: APP_DATABASE_PASSWORD
-#                fromDatabase:
-#                  name: cami-staging-db
-#                  property: password
+              - key: APP_DATABASE_HOST
+                fromDatabase:
+                  name: cami-staging-db
+                  property: host
+              - key: APP_DATABASE_USER
+                fromDatabase:
+                  name: cami-staging-db
+                  property: user
+              - key: APP_DATABASE_PASSWORD
+                fromDatabase:
+                  name: cami-staging-db
+                  property: password
               - fromGroup: CRM Staging
               - fromGroup: Logtail Staging
-              - fromGroup: Database Staging
+              #- fromGroup: Database Staging
               - fromGroup: PayPal Staging
               - fromGroup: SMTP Live
             region: virginia
