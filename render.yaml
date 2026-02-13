@@ -69,21 +69,6 @@ projects:
             postgresMajorVersion: "17"
         # See documentation on referencing values from other services:
         # https://render.com/docs/blueprint-spec#referencing-values-from-other-services
-#        envVarGroups:
-#          - name: Database Staging
-#            envVars:
-#              - key: APP_DATABASE_HOST
-#                fromDatabase:
-#                  name: cami-staging-db
-#                  property: host
-#              - key: APP_DATABASE_USER
-#                fromDatabase:
-#                  name: cami-staging-db
-#                  property: user
-#              - key: APP_DATABASE_PASSWORD
-#                fromDatabase:
-#                  name: cami-staging-db
-#                  property: password
         services:
           - type: web
             name: cami-staging-app
@@ -98,6 +83,10 @@ projects:
                 sync: false
               - key: WEB_CONCURRENCY
                 sync: false
+              - fromGroup: CRM Staging
+              - fromGroup: Logtail Staging
+              - fromGroup: PayPal Staging
+              - fromGroup: SMTP Live
               - key: APP_DATABASE_HOST
                 fromDatabase:
                   name: cami-staging-db
@@ -110,11 +99,6 @@ projects:
                 fromDatabase:
                   name: cami-staging-db
                   property: password
-              - fromGroup: CRM Staging
-              - fromGroup: Logtail Staging
-              #- fromGroup: Database Staging
-              - fromGroup: PayPal Staging
-              - fromGroup: SMTP Live
             region: virginia
             buildCommand: ./bin/pre-deploy
             startCommand: bundle exec rails server

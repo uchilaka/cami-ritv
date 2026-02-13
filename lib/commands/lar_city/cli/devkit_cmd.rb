@@ -281,7 +281,7 @@ module LarCity
 
       no_commands do
         def require_render_cli!
-          return if run('which render > /dev/null 2>&1', inline: true)
+          return if run('which render > /dev/null 2>&1', mock_return: true, inline: true)
 
           say_warning <<~MSG.squish
             ⚠️ The 'render' CLI tool is not installed or not found in the system PATH.
