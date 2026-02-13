@@ -1,0 +1,24 @@
+current directory: /home/runner/workspace/vendor/bundle/ruby/3.2.0/gems/json-2.10.2/ext/json/ext/parser
+/nix/store/2bpi29al123830q6p1z86rrf5j25pxdw-ruby-3.2.2/bin/ruby extconf.rb
+checking for rb_enc_interned_str() in ruby.h... yes
+checking for rb_hash_new_capa() in ruby.h... yes
+checking for rb_hash_bulk_insert() in ruby.h... yes
+checking for rb_category_warn() in ruby.h... yes
+checking for strnlen() in string.h... yes
+checking for whether -std=c99 is accepted as CFLAGS... yes
+creating Makefile
+
+current directory: /home/runner/workspace/vendor/bundle/ruby/3.2.0/gems/json-2.10.2/ext/json/ext/parser
+make DESTDIR\= sitearchdir\=./.gem.20260213-1140-1m5q4s sitelibdir\=./.gem.20260213-1140-1m5q4s clean
+
+current directory: /home/runner/workspace/vendor/bundle/ruby/3.2.0/gems/json-2.10.2/ext/json/ext/parser
+make DESTDIR\= sitearchdir\=./.gem.20260213-1140-1m5q4s sitelibdir\=./.gem.20260213-1140-1m5q4s
+compiling parser.c
+linking shared-object json/ext/parser.so
+
+current directory: /home/runner/workspace/vendor/bundle/ruby/3.2.0/gems/json-2.10.2/ext/json/ext/parser
+make DESTDIR\= sitearchdir\=./.gem.20260213-1140-1m5q4s sitelibdir\=./.gem.20260213-1140-1m5q4s install
+install -c -p -m 755 parser.so ./.gem.20260213-1140-1m5q4s/json/ext
+
+current directory: /home/runner/workspace/vendor/bundle/ruby/3.2.0/gems/json-2.10.2/ext/json/ext/parser
+make DESTDIR\= sitearchdir\=./.gem.20260213-1140-1m5q4s sitelibdir\=./.gem.20260213-1140-1m5q4s clean

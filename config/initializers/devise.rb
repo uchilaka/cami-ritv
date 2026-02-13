@@ -25,7 +25,7 @@ Devise.setup do |config|
   # Configure the e-mail address which will be shown in Devise::Mailer,
   # note that it will be overwritten if you use your own mailer class
   # with default "from" parameter.
-  config.mailer_sender = ENV.fetch('SMTP_USER', Rails.application.credentials.brevo.smtp_user)
+  config.mailer_sender = ENV.fetch('SMTP_USER', Rails.application.credentials.dig(:brevo, :smtp_user) || 'noreply@example.com')
 
   # Configure the class responsible to send e-mails.
   # config.mailer = 'Devise::Mailer'
@@ -341,7 +341,7 @@ Devise.setup do |config|
   # Configure the expiration time of the JWT token
   # https://github.com/waiting-for-dev/devise-jwt?tab=readme-ov-file#configuration-reference
   config.jwt do |jwt|
-    jwt.secret = Rails.application.credentials.devise_jwt_secret_key!
+    jwt.secret = ENV.fetch('DEVISE_JWT_SECRET_KEY', Rails.application.credentials.devise_jwt_secret_key rescue 'dev_jwt_secret_key_placeholder_for_local_development_only')
     # TODO: Test that the configuration of dispatches for JWT tokens
     #   is working as expected. This could be done quickly with Insomnia.
     jwt.dispatch_requests = [

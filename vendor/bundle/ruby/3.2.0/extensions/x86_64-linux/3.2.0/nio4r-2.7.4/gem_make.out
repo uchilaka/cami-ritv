@@ -1,0 +1,35 @@
+current directory: /home/runner/workspace/vendor/bundle/ruby/3.2.0/gems/nio4r-2.7.4/ext/nio4r
+/nix/store/2bpi29al123830q6p1z86rrf5j25pxdw-ruby-3.2.2/bin/ruby extconf.rb
+checking for unistd.h... yes
+checking for rb_io_descriptor()... yes
+checking for linux/aio_abi.h... yes
+checking for linux/io_uring.h... yes
+checking for sys/select.h... yes
+checking for port_event_t in poll.h... no
+checking for sys/epoll.h... yes
+checking for sys/event.h... no
+checking for port_event_t in port.h... no
+checking for sys/resource.h... yes
+creating Makefile
+
+current directory: /home/runner/workspace/vendor/bundle/ruby/3.2.0/gems/nio4r-2.7.4/ext/nio4r
+make DESTDIR\= sitearchdir\=./.gem.20260213-1140-94l9vz sitelibdir\=./.gem.20260213-1140-94l9vz clean
+
+current directory: /home/runner/workspace/vendor/bundle/ruby/3.2.0/gems/nio4r-2.7.4/ext/nio4r
+make DESTDIR\= sitearchdir\=./.gem.20260213-1140-94l9vz sitelibdir\=./.gem.20260213-1140-94l9vz
+compiling bytebuffer.c
+compiling monitor.c
+compiling nio4r_ext.c
+In file included from nio4r_ext.c:6:
+../libev/ev.c:2136:31: warning: ‘ev_default_loop_ptr’ initialized and declared ‘extern’
+ 2136 |   EV_API_DECL struct ev_loop *ev_default_loop_ptr = 0; /* needs to be initialised to make it a definition despite extern */
+      |                               ^~~~~~~~~~~~~~~~~~~
+compiling selector.c
+linking shared-object nio4r_ext.so
+
+current directory: /home/runner/workspace/vendor/bundle/ruby/3.2.0/gems/nio4r-2.7.4/ext/nio4r
+make DESTDIR\= sitearchdir\=./.gem.20260213-1140-94l9vz sitelibdir\=./.gem.20260213-1140-94l9vz install
+install -c -p -m 755 nio4r_ext.so ./.gem.20260213-1140-94l9vz
+
+current directory: /home/runner/workspace/vendor/bundle/ruby/3.2.0/gems/nio4r-2.7.4/ext/nio4r
+make DESTDIR\= sitearchdir\=./.gem.20260213-1140-94l9vz sitelibdir\=./.gem.20260213-1140-94l9vz clean

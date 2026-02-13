@@ -1,0 +1,36 @@
+modules = ["ruby-3.2", "web", "bash", "nodejs-22"]
+[agent]
+expertMode = true
+
+[nix]
+channel = "stable-25_05"
+packages = ["postgresql", "vips", "pkg-config", "libyaml", "libsass"]
+
+[userenv]
+
+[userenv.development]
+APP_DATABASE_HOST = "helium"
+APP_DATABASE_PORT = "5432"
+APP_DATABASE_USER = "postgres"
+APP_DATABASE_PASSWORD = "password"
+APP_DATABASE_NAME = "heliumdb"
+RAILS_ENV = "development"
+PORT = "5000"
+RAILS_MASTER_KEY = "dummy_key_for_dev"
+HOSTNAME = "0.0.0.0"
+LETTER_OPENER_ENABLED = "no"
+MAILHOG_ENABLED = "no"
+SEND_EMAILS_ENABLED = "no"
+SEMANTIC_LOGGER_STREAMING_ENABLED = "no"
+SECRET_KEY_BASE = "a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2"
+SOLID_QUEUE_IN_PUMA = "false"
+RAILS_LOG_LEVEL = "info"
+PAYPAL_API_BASE_URL = "https://api-m.sandbox.paypal.com"
+PAYPAL_BASE_URL = "https://www.sandbox.paypal.com"
+PAYPAL_CLIENT_ID = "placeholder"
+PAYPAL_CLIENT_SECRET = "placeholder"
+ZOHO_CLIENT_ID = "placeholder"
+ZOHO_CLIENT_SECRET = "placeholder"
+CRM_ORG_ID = "placeholder"
+SMTP_USER = "noreply@example.com"
+BETTERSTACK_SOURCE_TOKEN = "placeholder"

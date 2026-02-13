@@ -24,4 +24,7 @@ export default defineConfig({
   resolve: {
     alias: viteAliasConfigFromFactory(),
   },
+  server: {
+    allowedHosts: true,
+  },
 });

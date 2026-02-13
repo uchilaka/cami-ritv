@@ -89,4 +89,6 @@ Rails.application.configure do
 
   # Basic auth for mission_control
   config.mission_control.jobs.http_basic_auth_enabled = false
+
+  config.hosts.clear
 end
