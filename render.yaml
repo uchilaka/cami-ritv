@@ -4,6 +4,7 @@ projects:
   - name: CAMI(S) - Customer Account Management & Invoicing System
     environments:
       - name: Production
+        # The Rails application database
         databases:
           - name: cami-production-db
             databaseName: sails_production
@@ -16,7 +17,7 @@ projects:
             postgresMajorVersion: "17"
             diskSizeGB: 1
         services:
-          # The Rails web app
+          # The Rails web application
           - type: web
             name: cami-production-app
             runtime: ruby
@@ -67,9 +68,13 @@ projects:
             domains:
               - accounts.lar.city
               - accounts.larcity.tech
+            # Trigger initially set to checksPass to ensure that the application only auto-deploys
+            # when all health checks are passing. This is especially important for the production
+            # environment to prevent deploying potentially broken code.
             autoDeployTrigger: checksPass
             previews:
               generation: manual
+              numInstances: 1
           # The background worker for processing async jobs
           - type: worker
             name: cami-production-solid-queue
@@ -119,10 +124,9 @@ projects:
             buildCommand: ./bin/worker-pre-deploy
             startCommand: bundle exec rails solid_queue:start
             autoDeployTrigger: checksPass
-            previews:
-              generation: manual
 
       - name: Staging
+        # The Rails (staging) application database
         databases:
           - name: cami-staging-db
             databaseName: sails_staging
@@ -136,6 +140,7 @@ projects:
         # See documentation on referencing values from other services:
         # https://render.com/docs/blueprint-spec#referencing-values-from-other-services
         services:
+          # The Rails (staging) application
           - type: web
             name: cami-staging-app
             runtime: ruby
@@ -172,4 +177,42 @@ projects:
             region: virginia
             buildCommand: ./bin/pre-deploy
             startCommand: bundle exec rails server
+            autoDeployTrigger: commit
+          # The Rails (staging) background worker for processing async jobs
+          - type: worker
+            name: cami-staging-solid-queue
+            runtime: ruby
+            repo: https://github.com/uchilaka/cami-ritv
+            branch: releases/staging
+            plan: free
+            envVars:
+              - key: HOSTNAME
+                sync: false
+              - key: RAILS_ENV
+                sync: false
+              - key: WEB_CONCURRENCY
+                sync: false
+              - fromGroup: CRM Staging
+              - fromGroup: Logtail Staging
+              - fromGroup: PayPal Staging
+              - fromGroup: SMTP Live
+              - key: APP_DATABASE_HOST
+                fromDatabase:
+                  name: cami-staging-db
+                  property: host
+              - key: APP_PRIMARY_DATABASE_NAME
+                fromDatabase:
+                  name: cami-staging-db
+                  property: database
+              - key: APP_DATABASE_USER
+                fromDatabase:
+                  name: cami-staging-db
+                  property: user
+              - key: APP_DATABASE_PASSWORD
+                fromDatabase:
+                  name: cami-staging-db
+                  property: password
+            region: virginia
+            buildCommand: ./bin/worker-pre-deploy
+            startCommand: bundle exec rails solid_queue:start
             autoDeployTrigger: commit
