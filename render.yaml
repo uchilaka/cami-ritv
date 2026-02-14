@@ -42,8 +42,6 @@ projects:
             autoDeployTrigger: checksPass
             previews:
               generation: manual
-            #maintenanceMode:
-            #  enabled: true
         databases:
           - name: cami-production-db
             databaseName: sails_production
@@ -91,6 +89,10 @@ projects:
                 fromDatabase:
                   name: cami-staging-db
                   property: host
+              - key: APP_PRIMARY_DATABASE_NAME
+                fromDatabase:
+                  name: cami-staging-db
+                  property: databaseName
               - key: APP_DATABASE_USER
                 fromDatabase:
                   name: cami-staging-db
