@@ -16,6 +16,7 @@ projects:
             postgresMajorVersion: "17"
             diskSizeGB: 1
         services:
+          # The Rails web app
           - type: web
             name: cami-production-app
             runtime: ruby
@@ -66,6 +67,57 @@ projects:
             domains:
               - accounts.lar.city
               - accounts.larcity.tech
+            autoDeployTrigger: checksPass
+            previews:
+              generation: manual
+          # The background worker for processing async jobs
+          - type: worker
+            name: cami-production-solid-queue
+            runtime: ruby
+            repo: https://github.com/uchilaka/cami-ritv
+            branch: releases/production
+            plan: starter
+            envVars:
+              - key: RAILS_MASTER_KEY
+                sync: false
+              - key: PORT
+                sync: false
+              - key: HOSTNAME
+                sync: false
+              - key: RAILS_MAX_THREADS
+                sync: false
+              - key: RAILS_MIN_THREADS
+                sync: false
+              - key: RAILS_QUEUE_THREADS
+                sync: false
+              - key: NODE_ENV
+                sync: false
+              - key: WEB_CONCURRENCY
+                sync: false
+              - key: APP_DATABASE_HOST
+                fromDatabase:
+                  name: cami-production-db
+                  property: host
+              - key: APP_PRIMARY_DATABASE_NAME
+                fromDatabase:
+                  name: cami-production-db
+                  property: databaseName
+              - key: APP_DATABASE_USER
+                fromDatabase:
+                  name: cami-production-db
+                  property: user
+              - key: APP_DATABASE_PASSWORD
+                fromDatabase:
+                  name: cami-production-db
+                  property: password
+              - fromGroup: Logtail Production
+              - fromGroup: CRM Production
+              # - fromGroup: Database Production
+              - fromGroup: PayPal Production
+              - fromGroup: SMTP Live
+            region: virginia
+            buildCommand: ./bin/worker-pre-deploy
+            startCommand: bundle exec rails solid_queue:start
             autoDeployTrigger: checksPass
             previews:
               generation: manual
