@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+# Exit on error
+set -o errexit
+
+# Ensure the temporary directory exists
+mkdir -pv ./tmp
+
+# Decode the key from the environment variable into a temporary file
+echo "$GIT_CRYPT_KEY_BASE64" | base64 -d > ./tmp/git-crypt-key.key
+
+# Unlock the repository - NOTE: Ensure git-crypt is installed in your environment
+git crypt unlock ./tmp/git-crypt-key.key
+
+# Discard the crypt file
+rm -v ./tmp/git-crypt-key.key

@@ -5,6 +5,9 @@ set -o errexit
 # Calculate script directory
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
+# Decrypt secrets
+"$SCRIPT_DIR/unlock-repo"
+
 # Run build script
 "$SCRIPT_DIR/build"
 
