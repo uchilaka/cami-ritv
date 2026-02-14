@@ -5,6 +5,8 @@ require_relative 'base_cmd'
 module LarCity
   module CLI
     class ServicesCmd < BaseCmd
+      include ControlFlowHelpers
+
       namespace 'services'
 
       class_option :profile,
@@ -23,13 +25,10 @@ module LarCity
                long_desc:, desc:, required:
       end
 
-      option :force,
-             desc: 'Force overwrite of existing daemon config',
-             type: :boolean,
-             default: false
+      define_force_option self, class_option: false, desc: 'Force overwrite of existing daemon config'
       desc 'daemonize', 'Run a command to setup the app service as a background daemon process'
       def daemonize
-        if Rails.env.test?
+        if Rails.env.test? && !force?
           say 'Skipping daemonize in test environment.', :red
           return
         end
@@ -185,6 +184,13 @@ module LarCity
             'docker compose',
             profile_clause,
             'logs --follow --since 5m'
+      end
+
+      desc 'list', 'List the services'
+      def list
+        run 'docker compose',
+            profile_clause,
+            'ps'
       end
 
       desc 'logs', 'Show the logs of the services'

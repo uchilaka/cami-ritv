@@ -62,6 +62,16 @@ Rails.application.configure do
   config.solid_queue.connects_to = { database: { writing: :queue } }
   config.active_job.connects_to = { database: { writing: :queue } }
 
+  # Action Mailer Config
+  config.action_mailer.perform_deliveries = AppUtils.send_emails?
+  config.action_mailer.delivery_method = :smtp
+  # Configure the mailer to use the SMTP server
+  config.action_mailer.smtp_settings = AppUtils.smtp_settings
+  # Configure logging for the app's mail service.
+  config.action_mailer.logger = Rails.logger
+
+  config.action_mailer.default_url_options = { host: ENV.fetch('HOSTNAME', 'accounts.lar.city') }
+
   # Enable DNS rebinding protection and other `Host` header attacks.
   # config.hosts = [
   #   "example.com",     # Allow requests from example.com

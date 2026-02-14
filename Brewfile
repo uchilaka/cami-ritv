@@ -15,7 +15,7 @@ else
   # Dev & anonymous environments
   brew 'gh'
   # Direnv will be managed as a mise dependency instead
-  #brew 'direnv'
+  # brew 'direnv'
   brew 'goreman'
 
   # Skip these specifically in test environments
@@ -65,6 +65,7 @@ cask 'notion'
 cask '1password'
 
 unless %w[ci test production].include?(ENV['RAILS_ENV'])
+  brew 'render'
   cask 'insomnia'
   cask 'discord'
   cask 'slack'
@@ -73,9 +74,7 @@ unless %w[ci test production].include?(ENV['RAILS_ENV'])
   begin
     # TODO: Turned off require_sha to get Messenger installed... too risky?
     cask 'messenger'
-  rescue => _e
-    if File.exist?('/Applications/Messenger.app')
-      puts 'Found Messenger installed 🎊 - skipping Messenger installation'
-    end
+  rescue StandardError => _e
+    puts 'Found Messenger installed 🎊 - skipping Messenger installation' if File.exist?('/Applications/Messenger.app')
   end
 end

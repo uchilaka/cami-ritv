@@ -1,17 +1,17 @@
 <%- if devise_mapping.magic_link_authenticatable? && controller_name != 'passwordless' %>
-  <%= link_to "Log in with an access link", new_session_path(resource_name), class: "btn" %><br>
+  <%= link_to "Log in with an access link", new_session_path(resource_name), class: secondary_btn_classes(append_classes: "block w-full mb-4") %>
 <% end %>
 
 <%- if controller_name != 'sessions' %>
-  <%= link_to "Log in with password", new_user_fallback_session_path, class: "btn" %><br>
+  <%= link_to "Log in with password", new_user_fallback_session_path, class: secondary_btn_classes(append_classes: "block w-full mb-4") %>
 <% end %>
 
 <%- if devise_mapping.registerable? && controller_name != 'registrations' %>
-  <%= link_to "Sign up", new_registration_path(resource_name), class: "btn" %><br>
+  <%= link_to "Sign up", new_registration_path(resource_name), class: secondary_btn_classes(append_classes: "block w-full mb-4") %>
 <% end %>
 
 <%- if devise_mapping.recoverable? && controller_name != 'passwords' && controller_name != 'registrations' %>
-  <%= link_to "Forgot your password?", new_password_path(resource_name), class: "btn" %><br>
+  <%= link_to "Forgot your password?", new_password_path(resource_name), class: secondary_btn_classes(append_classes: "block w-full mb-4") %>
 <% end %>
 
 <%- if devise_mapping.confirmable? && controller_name != 'confirmations' %>

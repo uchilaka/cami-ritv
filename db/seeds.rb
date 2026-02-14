@@ -20,5 +20,9 @@ Dir[Rails.root.join('db', 'seeds', '**', '*.rb')].each { |seed| load seed }
 FeaturesCmd.new.invoke(:init, [], verbose: true)
 
 # Setup webhooks for Notion integration
-LarCity::CLI::DevkitCmd
-  .new.invoke(:setup_webhooks, [], vendor: 'notion', verbose: true)
+if %w[staging production].include?(Rails.env)
+  LarCity::CLI::DevkitCmd
+    .new.invoke(:setup_webhooks, [], vendor: 'notion', verbose: true)
+else
+  puts "⚠️ Skipping Notion webhook setup in #{Rails.env} environment."
+end

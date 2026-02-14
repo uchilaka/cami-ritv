@@ -71,12 +71,13 @@ en:
 
     tunnel:
       init:
-        short_desc: Initialize proxy tunnel configuration for the CAMI app
+        short_desc: Initialize %{service} proxy tunnel configuration for the CAMI app
         long_desc: >
           This command initializes the proxy tunnel configuration for the CAMI app.
           It sets up the necessary files and directories to enable secure tunneling
           for the application in non-production environments. This feature is currently
           implemented with NGROK.
+        skip_message: 🚫 Skipping initialization of ngrok config in %{env} environment.
         options:
           force:
             short_desc: Force re-initialization of the tunnel configuration

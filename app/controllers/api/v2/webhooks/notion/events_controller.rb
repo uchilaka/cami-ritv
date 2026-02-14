@@ -9,6 +9,7 @@ module API
           skip_before_action :authenticate_user!
           # TODO: Implement a request verification strategy that's compatible with Rails'
           #   CSRF protection and leverages verified_request? instead of skipping it entirely.
+          #
           # CSRF protection is enabled by default. Custom request verification is integrated with `verified_request?`.
           # before_action :validate_request_signature, only: %i[create]
 
@@ -24,7 +25,7 @@ module API
                 event.validate!
                 ::Notion::HandlePageEventWorkflow.call(webhook:, event:)
               end
-            http_status = result.response_http_status || :server_error
+            http_status = result.response_http_status || 500
             head http_status
           rescue ActiveModel::ValidationError => e
             Rails.logger.error('Failed to process Notion event', webhook_event_params:, message: e.message)
@@ -91,14 +92,13 @@ module API
           end
 
           def verified_request?
-            super || begin
-              return true if request_verification_token.present?
+            return false unless super
+            return true if request_verification_token.blank?
 
-              result =
-                ::Notion::VerifyRequestWorkflow
-                  .call(webhook:, signature_header: request_signature_header)
-              result.success?
-            end
+            result =
+              ::Notion::VerifyRequestWorkflow
+                .call(webhook:, signature_header: request_signature_header)
+            result.success?
           end
 
           def validate_request_signature

@@ -1,47 +1,60 @@
 # frozen_string_literal: true
 
 require_relative 'base_cmd'
+require 'uri'
 
 module LarCity
   module CLI
     class DevkitCmd < BaseCmd
+      include ControlFlowHelpers
+
       namespace 'devkit'
 
-      option :force,
-             desc: 'Force an upsert operation on any matching webhook (by vendor)',
-             type: :boolean,
-             default: false
+      define_force_option(
+        self,
+        class_option: false,
+        desc: 'Force an upsert operation on any matching webhook (by vendor)'
+      )
       option :vendor,
              desc: 'The vendor to use for the devkit',
              type: :string,
              aliases: '-s',
              enum: %w[zoho notion],
              required: true
+      option :dataset,
+             desc: 'The vendor dataset serviced by the webhook (if applicable)',
+             type: :string,
+             enum: %w[deal vendor product]
       desc 'setup_webhooks', 'Setup webhooks for the project'
       def setup_webhooks
-        if Rails.env.test?
+        if Rails.env.test? && !debug?
           say_highlight('🚫 Skipping webhook setup in test environment')
           return
         end
 
-        with_interruption_rescue do
+        with_optional_pretend_safety do
           case options[:vendor]
           when 'notion'
-            integration_id, verification_token, deal_database_id =
-              Rails.application.credentials.notion&.values_at :integration_id, :verification_token, :deal_database_id
+            integration_id, verification_token, deal_database_id, vendor_database_id =
+              Rails.application.credentials.notion&.values_at :integration_id,
+                                                              :verification_token,
+                                                              :deal_database_id,
+                                                              :vendor_database_id
             dashboard_url = "https://www.notion.so/profile/integrations/internal/#{integration_id}"
-            records_index_workflow_name = 'Notion::DownloadLatestDealsWorkflow'
-            record_download_workflow_name = 'Notion::DownloadDealWorkflow'
+            records_index_workflow_name = Notion::Deals::DownloadLatestWorkflow.name
+            record_download_workflow_name = Notion::Deals::DownloadWorkflow.name
             ::Webhook.transaction do
               webhook =
                 ::Webhook
                   .find_or_initialize_by(
                     slug: options[:vendor],
+                    dataset: options[:dataset],
                     verification_token:
                   )
-              updates = {
+              upserts = {
                 integration_id:,
                 deal_database_id:,
+                vendor_database_id:,
                 dashboard_url:,
                 records_index_workflow_name:,
                 record_download_workflow_name:,
@@ -54,11 +67,11 @@ module LarCity
                 else
                   say "⏳️ Setting up webhook '#{options[:vendor]}'", :yellow
                 end
-                ap updates, options: { indent: 2 }
+                ap upserts, options: { indent: 2 }
               end
 
-              if webhook.new_record? || options[:force]
-                webhook.data = { integration_id:, deal_database_id:, dashboard_url: }.compact
+              if webhook.new_record? || force?
+                webhook.data = upserts.compact
                 if webhook.changed?
                   webhook.save!
                   say "⚡ Webhook for #{options[:vendor]} has been set up successfully.", :green
@@ -66,7 +79,8 @@ module LarCity
                   say "💅🏾 Webhook for #{options[:vendor]} is already set up and no changes were made.", :cyan
                 end
               else
-                updates.each { |k, v| webhook.send(:"#{k}=", v) if webhook.respond_to?("#{k}=") }
+                webhook.set_on_data(**upserts)
+                # updates.each { |k, v| webhook.send(:"#{k}=", v) if webhook.respond_to?("#{k}=") }
                 if webhook.changed?
                   webhook.save!
                   say "⚡ Webhook for #{options[:vendor]} has been updated successfully.", :green
@@ -99,40 +113,59 @@ module LarCity
       def yeet_deploy
         # Check to make sure current branch is clean (no dangling changes)
         with_interruption_rescue do
-          status_output = `git status --porcelain`.strip
-          unless status_output.blank?
-            raise 'Current branch has uncommitted changes. Please commit or stash them before deploying.'
-          end
+          # status_output = `git status --porcelain`.strip
+          # unless status_output.blank?
+          #   raise 'Current branch has uncommitted changes. Please commit or stash them before deploying.'
+          # end
+          block_deployment_on_uncommitted_changes!
 
           run 'git pull --ff', inline: true
           run 'git push', inline: true
 
-          # Save current branch
-          working_branch = `git rev-parse --abbrev-ref HEAD`.strip
-          target_branch = 'releases/production'
-          if working_branch == target_branch
-            raise 'You are already on the releases/production branch. Please switch to another branch before deploying.'
-          end
+          @selected_branch = "releases/#{detected_environment}"
+          # if current_branch == selected_branch
+          #   raise 'You are already on the releases/production branch. Please switch to another branch before deploying.'
+          # end
+          block_deployment_on_same_branch!
+          block_deployment_on_release_branches!
 
           # Merge the current branch into the target releases/* branch
-          checkout_cmd = "git checkout #{target_branch}"
+          checkout_cmd = "git checkout #{selected_branch}"
 
-          success = system(checkout_cmd)
-          raise "Failed to checkout #{target_branch} branch." unless success
+          success = run checkout_cmd, inline: true, mock_return: true
+          raise "Failed to checkout #{selected_branch} branch." unless success
 
           run 'git pull --ff', inline: true
           commit_msg = <<~COMMIT_MSG
-            Merging #{working_branch} into #{target_branch} for emergency deploy
+            Merging #{current_branch} into #{selected_branch} for emergency deploy
           COMMIT_MSG
-          merge_cmd = "git merge --no-ff #{working_branch} -m '#{commit_msg.strip}'"
+          merge_cmd = "git merge --no-ff #{current_branch} -m \"#{commit_msg.strip}\""
           run merge_cmd, inline: true
 
-          deploy_cmd = ['git push origin', "HEAD:#{target_branch}"]
-          success = run(*deploy_cmd, inline: true)
+          deploy_cmd = ['git push origin', "HEAD:#{selected_branch}"]
+          success = run(*deploy_cmd, inline: true, mock_return: true)
           raise 'Deployment failed. Please check the output above for details.' unless success || pretend?
 
           # Use curl to trigger the deploy hook if one is configured
-          deploy_hook_url = ENV.fetch('APP_DEPLOY_HOOK_URL', nil)
+          env_name = ['app_deploy', detected_environment, 'hook_url'].join('_').upcase
+          deploy_hook_url = ENV.fetch(env_name, nil)
+
+          # Validate deploy_hook_url is a valid URL using Rails URI parsing
+          if deploy_hook_url.present?
+            begin
+              uri = URI.parse(deploy_hook_url)
+              unless uri.is_a?(URI::HTTP) || uri.is_a?(URI::HTTPS)
+                raise URI::InvalidURIError, "Invalid URL scheme: #{uri.scheme}"
+              end
+            rescue URI::InvalidURIError => e
+              say_warning <<~MSG
+                ⚠️ The deploy hook URL configured in #{env_name} is invalid: #{e.message}.
+                Please ensure that the URL is correct and try again.
+              MSG
+              deploy_hook_url = nil
+            end
+          end
+
           result =
             if deploy_hook_url.present?
               curl_cmd = "curl -X POST #{deploy_hook_url}"
@@ -143,7 +176,7 @@ module LarCity
                 true
               else
                 say_info "Triggering deployment via #{uri.host}..."
-                system(curl_cmd)
+                run curl_cmd, inline: true
               end
             else
               say_warning <<~MSG
@@ -152,10 +185,10 @@ module LarCity
               MSG
               true if pretend?
             end
-          say_success "🚀 Code has been forcefully deployed to #{target_branch}." if result
+          say_success "🚀 Code has been forcefully deployed to #{selected_branch}." if result
         ensure
           # Switch back to the original working branch
-          system("git switch #{working_branch}")
+          run "git switch #{current_branch}", inline: true
         end
       end
 
@@ -215,7 +248,7 @@ module LarCity
         return if dry_run?
 
         ClimateControl.modify RAILS_ENV: 'test' do
-          system(cmd)
+          run cmd, inline: true
         end
       end
 
@@ -229,7 +262,7 @@ module LarCity
             Executing#{dry_run? ? ' (dry-run)' : ''}: #{cmd}
           CMD
         end
-        system(cmd) unless dry_run?
+        run cmd unless dry_run?
       end
 
       no_commands do
@@ -421,6 +454,34 @@ module LarCity
       end
 
       private
+
+      def block_deployment_on_release_branches!
+        return unless current_branch.start_with?('releases/')
+
+        raise Errors::Forbidden, <<~MSG
+          🙅🏾‍♂️ Deployment operations are blocked on release branches (current branch: #{current_branch}).
+          Please switch to a non-release branch to proceed.
+        MSG
+      end
+
+      def block_deployment_on_same_branch!
+        return if selected_branch != current_branch
+
+        raise Errors::Forbidden, <<~MSG
+          🙅🏾‍♂️ Deployment operations are blocked on the current branch (#{current_branch}).
+          Please switch to a different branch to proceed.
+        MSG
+      end
+
+      def block_deployment_on_uncommitted_changes!
+        status_output = `git status --porcelain`.strip
+        return if status_output.blank?
+
+        raise Errors::Forbidden, <<~MSG
+          🙅🏾‍♂️ Deployment operations are blocked due to uncommitted changes in the current branch (#{current_branch}).
+          Please commit or stash your changes before proceeding.
+        MSG
+      end
 
       def interactive?
         options[:interactive]

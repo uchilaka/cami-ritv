@@ -35,8 +35,6 @@ module Notion
         send("#{k}=", attr_value)
       end
 
-      # define_model_callbacks :initialize, :validation
-
       @errors = ActiveModel::Errors.new(self)
     end
 

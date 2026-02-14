@@ -3,7 +3,7 @@ en:
     help_prefix: "If you believe this is an error or you are the application owner, please contact "
     unauthorized_short: "Unauthorized"
     unauthorized: "You are not authorized to perform this action. You will need elevated privileges before you can proceed. "
-    not_found_short: "%{resource} Not Found"
+    not_found_short: "%{resource} not found"
     not_found: "Sorry, the %{resource} you are looking for could not be found. If you are the application owner check the logs for more information."
     internal_server_error_short: "We're sorry, but something went wrong"
     internal_server_error: "Something went wrong. If you are the application owner check the logs for more information."

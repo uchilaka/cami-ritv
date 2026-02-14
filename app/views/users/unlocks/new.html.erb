@@ -1,16 +1,15 @@
 <% content_for :centered_form_layout do %>
-  <h3>Resend unlock instructions</h3>
+  <h3 class="mb-5 dark:text-white">Resend unlock instructions</h3>
 
-  <%= form_for(resource, as: resource_name, url: user_unlock_path(resource_name), html: { method: :post }) do |f| %>
+  <%= simple_form_for(resource, as: resource_name, url: user_unlock_path(resource_name), html: { method: :post }) do |f| %>
     <%= render "users/shared/error_messages", resource: resource %>
 
     <div class="field">
-      <%= f.label :email %><br>
-      <%= f.email_field :email, autofocus: true, autocomplete: "email", class: "input" %>
+      <%= f.input :email, as: :email, autofocus: true, input_html: { autocomplete: "email" } %>
     </div>
 
     <div class="actions">
-      <%= f.submit "Resend unlock instructions", class: "btn btn-primary block w-full mb-5" %>
+      <%= f.submit "Resend unlock instructions", class: primary_btn_classes("block w-full mb-5") %>
     </div>
   <% end %>
 
