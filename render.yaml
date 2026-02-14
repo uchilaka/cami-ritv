@@ -3,90 +3,121 @@ version: "1"
 projects:
   - name: CAMI(S) - Customer Account Management & Invoicing System
     environments:
-    - name: Production
-      services:
-        - type: web
-          name: cami-production-app
-          runtime: ruby
-          repo: https://github.com/uchilaka/cami-ritv
-          branch: releases/production
-          plan: starter
-          envVars:
-            - key: RAILS_MASTER_KEY
-              sync: false
-            - key: PORT
-              sync: false
-            - key: HOSTNAME
-              sync: false
-            - key: RAILS_MAX_THREADS
-              sync: false
-            - key: RAILS_MIN_THREADS
-              sync: false
-            - key: RAILS_QUEUE_THREADS
-              sync: false
-            - key: NODE_ENV
-              sync: false
-            - key: WEB_CONCURRENCY
-              sync: false
-            - fromGroup: Logtail Production
-            - fromGroup: CRM Production
-            - fromGroup: Database Production
-            - fromGroup: PayPal Production
-            - fromGroup: SMTP Live
-          region: virginia
-          buildCommand: ./bin/pre-deploy
-          startCommand: bundle exec rails server
-          domains:
-            - accounts.lar.city
-            - accounts.larcity.tech
-          autoDeployTrigger: checksPass
-          previews:
-            generation: manual
-          maintenanceMode:
-            enabled: true
-      databases:
-        - name: cami-production-db
-          databaseName: sails_production
-          user: sails_production_user
-          plan: basic-256mb
-          region: virginia
-          ipAllowList:
-            - source: 0.0.0.0/0
-              description: everywhere
-          postgresMajorVersion: "17"
-          diskSizeGB: 1
+      - name: Production
+        databases:
+          - name: cami-production-db
+            databaseName: sails_production
+            user: sails_production_user
+            plan: basic-256mb
+            region: virginia
+            ipAllowList:
+              - source: 0.0.0.0/0
+                description: everywhere
+            postgresMajorVersion: "17"
+            diskSizeGB: 1
+        services:
+          - type: web
+            name: cami-production-app
+            runtime: ruby
+            repo: https://github.com/uchilaka/cami-ritv
+            branch: releases/production
+            plan: starter
+            envVars:
+              - key: RAILS_MASTER_KEY
+                sync: false
+              - key: PORT
+                sync: false
+              - key: HOSTNAME
+                sync: false
+              - key: RAILS_MAX_THREADS
+                sync: false
+              - key: RAILS_MIN_THREADS
+                sync: false
+              - key: RAILS_QUEUE_THREADS
+                sync: false
+              - key: NODE_ENV
+                sync: false
+              - key: WEB_CONCURRENCY
+                sync: false
+              - key: APP_DATABASE_HOST
+                fromDatabase:
+                  name: cami-production-db
+                  property: host
+              - key: APP_PRIMARY_DATABASE_NAME
+                fromDatabase:
+                  name: cami-production-db
+                  property: databaseName
+              - key: APP_DATABASE_USER
+                fromDatabase:
+                  name: cami-production-db
+                  property: user
+              - key: APP_DATABASE_PASSWORD
+                fromDatabase:
+                  name: cami-production-db
+                  property: password
+              - fromGroup: Logtail Production
+              - fromGroup: CRM Production
+              # - fromGroup: Database Production
+              - fromGroup: PayPal Production
+              - fromGroup: SMTP Live
+            region: virginia
+            buildCommand: ./bin/pre-deploy
+            startCommand: bundle exec rails server
+            domains:
+              - accounts.lar.city
+              - accounts.larcity.tech
+            autoDeployTrigger: checksPass
+            previews:
+              generation: manual
 
-    - name: Staging
-      services:
-        - type: web
-          name: cami-staging-app
-          runtime: ruby
-          repo: https://github.com/uchilaka/cami-ritv
-          branch: releases/staging
-          plan: free
-          envVars:
-            - key: HOSTNAME
-              sync: false
-            - key: RAILS_ENV
-              sync: false
-            - key: WEB_CONCURRENCY
-              sync: false
-            - fromGroup: CRM Staging
-            - fromGroup: Logtail Staging
-            - fromGroup: Database Staging
-            - fromGroup: PayPal Staging
-            - fromGroup: SMTP Live
-          region: virginia
-          buildCommand: ./bin/pre-deploy
-          startCommand: bundle exec rails server
-          autoDeployTrigger: commit
-      databases:
-        - name: cami-staging-db
-          databaseName: sails_staging
-          user: sails_staging_user
-          plan: free
-          region: virginia
-          ipAllowList:
-            - source: 0.0.0.0/0
-              description: everywhere
-          postgresMajorVersion: "17"
+      - name: Staging
+        databases:
+          - name: cami-staging-db
+            databaseName: sails_staging
+            user: sails_staging_user
+            plan: free
+            region: virginia
+            ipAllowList:
+              - source: 0.0.0.0/0
+                description: everywhere
+            postgresMajorVersion: "17"
+        # See documentation on referencing values from other services:
+        # https://render.com/docs/blueprint-spec#referencing-values-from-other-services
+        services:
+          - type: web
+            name: cami-staging-app
+            runtime: ruby
+            repo: https://github.com/uchilaka/cami-ritv
+            branch: releases/staging
+            plan: free
+            envVars:
+              - key: HOSTNAME
+                sync: false
+              - key: RAILS_ENV
+                sync: false
+              - key: WEB_CONCURRENCY
+                sync: false
+              - fromGroup: CRM Staging
+              - fromGroup: Logtail Staging
+              - fromGroup: PayPal Staging
+              - fromGroup: SMTP Live
+              - key: APP_DATABASE_HOST
+                fromDatabase:
+                  name: cami-staging-db
+                  property: host
+              - key: APP_PRIMARY_DATABASE_NAME
+                fromDatabase:
+                  name: cami-staging-db
+                  property: databaseName
+              - key: APP_DATABASE_USER
+                fromDatabase:
+                  name: cami-staging-db
+                  property: user
+              - key: APP_DATABASE_PASSWORD
+                fromDatabase:
+                  name: cami-staging-db
+                  property: password
+            region: virginia
+            buildCommand: ./bin/pre-deploy
+            startCommand: bundle exec rails server
+            autoDeployTrigger: commit
