@@ -21,6 +21,8 @@ module LarCity
       module InstanceMethods
         protected
 
+        # Runs a system command with support for dry-run mode, verbose output, and
+        # optional inline output processing when a block is given.
         def run(*args, inline: false, mock_return: nil, eval: false, &block)
           with_interruption_rescue do
             cmd = args.compact.join(' ')
@@ -36,7 +38,7 @@ module LarCity
             end
             return mock_return if dry_run?
 
-            if eval
+            result =
               if block_given?
                 # Example: doing this with Open3
                 Open3.popen2e(cmd) do |_stdin, stdout_stderr, wait_thread|
@@ -45,14 +47,14 @@ module LarCity
                   end
                   wait_thread.value
                 end
+              elsif eval
+                `#{cmd}`
               else
-                result = `#{cmd}`
-                return result
+                system(cmd, out: $stdout, err: :out)
               end
-            else
-              result = system(cmd, out: $stdout, err: :out)
-              return result if inline
-            end
+            # Return the result if inline, otherwise return nil. This avoids
+            # unintended consequences of returning command output in non-inline contexts
+            result if inline
           end
         end
       end

@@ -1,5 +1,20 @@
 en:
   commands:
+    devkit:
+      check_blueprint:
+        short_desc: Check the app's YAML blueprint configuration for errors
+        long_desc: >
+          This command checks the app's YAML blueprint configuration for errors.
+          For documentation on validating the YAML blueprint configuration, see:
+          https://render.com/docs/blueprint-spec#validating-blueprints
+      swaggerize:
+        short_desc: Generate Swagger JSON specification for the app's API
+        long_desc: >
+          This command generates a Swagger JSON specification for the app's API.
+          The generated specification can be used to create interactive API documentation
+          and client libraries. For documentation on Swagger configuration and
+          customization in Rails apps, see:
+          https://github.com/rswag/rswag?tab=readme-ov-file#configuration--customization
     services:
       daemonize:
         short_desc: Configure the app service as a background daemon process

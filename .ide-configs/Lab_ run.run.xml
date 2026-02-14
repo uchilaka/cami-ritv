@@ -1,0 +1,10 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Lab: run" type="CompoundRunConfigurationType">
+    <toRun name="Lab: jobs" type="CommandRunConfigurationType" />
+    <toRun name="Lab: vite" type="CommandRunConfigurationType" />
+    <toRun name="rails assets:precompile" type="CommandRunConfigurationType" />
+    <toRun name="rails tailwindcss:watch" type="CommandRunConfigurationType" />
+    <toRun name="Lab: CAMI" type="RailsRunConfigurationType" />
+    <method v="2" />
+  </configuration>
+</component>

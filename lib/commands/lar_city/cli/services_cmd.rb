@@ -29,7 +29,7 @@ module LarCity
       desc 'daemonize', 'Run a command to setup the app service as a background daemon process'
       def daemonize
         if Rails.env.test? && !force?
-          say 'Skipping daemonize in test environment.', :red
+          say_error 'Skipping daemonize in test environment.'
           return
         end
 

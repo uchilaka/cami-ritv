@@ -236,7 +236,8 @@ module LarCity
         raise e
       end
 
-      desc 'swaggerize', 'Generate Swagger JSON file(s)'
+      desc 'swaggerize', I18n.t('commands.devkit.swaggerize.short_desc')
+      long_desc I18n.t('commands.devkit.swaggerize.long_desc')
       def swaggerize
         cmd = 'bundle exec rails rswag'
         if verbose?
@@ -265,7 +266,32 @@ module LarCity
         run cmd unless dry_run?
       end
 
+      desc 'check-blueprint', I18n.t('commands.devkit.check_blueprint.short_desc')
+      long_desc I18n.t('commands.devkit.check_blueprint.long_desc')
+      def check_blueprint
+        blueprint_config = Rails.root.join('render.yaml')
+        require_render_cli!
+
+        run(
+          'render blueprints validate',
+          "--workspace #{ENV.fetch('RENDER_WORKSPACE_ID')}",
+          blueprint_config
+        ) { |line| say_info line }
+      end
+
       no_commands do
+        def require_render_cli!
+          return if run('which render > /dev/null 2>&1', mock_return: true, inline: true)
+
+          say_warning <<~MSG.squish
+            ⚠️ The 'render' CLI tool is not installed or not found in the system PATH.
+            Please install the Render CLI to use this command. You can install it via
+            Brew by running 'brew install render' or by following the instructions at
+            https://render.com/docs/cli#setup.
+          MSG
+          raise Thor::Error, 'Render CLI is required but not found in PATH.'
+        end
+
         def check_or_prompt_for_branch_to_review
           say "Checking branch status for #{selected_branch}...", :yellow
           check_pr_cmd = "gh pr list --head #{selected_branch} --json number -q '.[].number'"

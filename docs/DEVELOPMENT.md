@@ -18,6 +18,28 @@
 
 Notes on working with the application in a (local) dev environment.
 
+## Install the CLI
+
+Run the following code from the project root:
+
+```shell
+bin/thor entrypoint:setup
+```
+
+## Working with Render deployments 
+
+### Validating blueprints
+
+> See the documentation on validating blurprints: <https://render.com/docs/blueprint-spec#validating-blueprints>
+
+```shell
+# Ensure that you've installed render via brew 
+brew bundle
+
+# To validate your blueprint, run the following command in your console from the project root:
+lx-cli devkit:check-blueprint
+```
+
 ## Managing application secrets
 
 This application encrypts some sensitive information transparently using a combination of [Rails custom credentials](https://guides.rubyonrails.org/security.html#custom-credentials), `git-crypt` and `GPG`.

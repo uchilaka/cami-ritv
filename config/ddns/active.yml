@@ -67,6 +67,11 @@ shared:
     type: A
     ttl: 3600
 
+  - domain: larcity.dev
+    content: accounts.lab
+    type: A
+    ttl: 3600
+
 ##############################################
 ########## ho.larcity.tech (Cert) ############
 ##############################################
@@ -92,12 +97,26 @@ shared:
     ttl: 3600
 
   - domain: larcity.tech
+    content: vo
+    type: A
+    ttl: 3600
+
+  - domain: larcity.tech
     content: ftps
     type: A
     ttl: 3600
 
-# TODO: Uncomment this record once registry.larcity.tech is set up
-#  - domain: larcity.tech
-#    content: registry
-#    type: A
-#    ttl: 3600
+  # @TODO: Testing LetsEncrypt cert setup on larcity-nas-ii for
+  #   registry.larcity.tech and hub.ho.larcity.tech - both these domains are
+  #   intended for the same purpose i.e. to resolve to a home-office hosted
+  #   container image hub. If we can get registry.larcity.tech working with
+  #   the cert, then we can retire hub.ho.larcity.tech and retire it.
+  - domain: larcity.tech
+    content: registry
+    type: A
+    ttl: 3600
+
+  - domain: larcity.tech
+    content: hub.ho
+    type: A
+    ttl: 3600
