@@ -13,7 +13,10 @@ Rails.application.config.middleware.insert_before 0, Rack::Cors do
     origins "localhost:#{ENV.fetch('PORT')}",
             "127.0.0.1:#{ENV.fetch('PORT')}",
             'https://accounts.larcity.ngrok.dev',
-            %r{\Ahttps?://(?:[a-zA-Z0-9-]+\.)?lar\.city\z}
+            %r{\Ahttps?://(?:[a-zA-Z0-9-]+\.)?lar\.city\z},
+            %r{\Ahttps?://.*\.replit\.dev\z},
+            %r{\Ahttps?://.*\.repl\.co\z},
+            %r{\Ahttps?://.*\.replit\.app\z}
     resource '/api/*',
              headers: %w[Authorization],
              methods: :any,

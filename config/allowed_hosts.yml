@@ -1,6 +1,10 @@
 development:
   - accounts.larcity.ngrok.dev
   - accounts.larcity
+  - .replit.dev
+  - .repl.co
+  - .replit.app
+  - .kirk.replit.dev
 test:
   - accounts.larcity.ngrok.test
   - accounts.larcity.test

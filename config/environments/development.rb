@@ -53,10 +53,10 @@ Rails.application.configure do
   config.action_mailer.smtp_settings =
     if AppUtils.configure_real_smtp?
       {
-        address: ENV.fetch('SMTP_SERVER', Rails.application.credentials.brevo.smtp_server),
-        port: ENV.fetch('SMTP_PORT', Rails.application.credentials.brevo.smtp_port),
-        user_name: ENV.fetch('SMTP_USERNAME', Rails.application.credentials.brevo.smtp_user),
-        password: ENV.fetch('SMTP_PASSWORD', Rails.application.credentials.brevo.smtp_password),
+        address: ENV.fetch('SMTP_SERVER') { (Rails.application.credentials.brevo.smtp_server rescue 'localhost') },
+        port: ENV.fetch('SMTP_PORT') { (Rails.application.credentials.brevo.smtp_port rescue 1025) },
+        user_name: ENV.fetch('SMTP_USERNAME') { (Rails.application.credentials.brevo.smtp_user rescue '') },
+        password: ENV.fetch('SMTP_PASSWORD') { (Rails.application.credentials.brevo.smtp_password rescue '') },
         enable_starttls_auto: true,
       }
     else
@@ -89,4 +89,6 @@ Rails.application.configure do
 
   # Basic auth for mission_control
   config.mission_control.jobs.http_basic_auth_enabled = false
+
+  config.hosts.clear
 end
