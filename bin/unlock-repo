@@ -2,6 +2,11 @@
 # Exit on error
 set -o errexit
 
+if ! command -v git-crypt &> /dev/null; then
+  echo "ERROR: git-crypt is not installed in this environment!"
+  exit 1
+fi
+
 # Ensure the temporary directory exists
 mkdir -pv ./tmp
 
