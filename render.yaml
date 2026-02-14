@@ -80,10 +80,10 @@ projects:
             envVars:
               - key: RAILS_MASTER_KEY
                 sync: false
-              - key: PORT
-                sync: false
-              - key: HOSTNAME
-                sync: false
+              #- key: PORT
+              #  sync: false
+              #- key: HOSTNAME
+              #  sync: false
               - key: RAILS_MAX_THREADS
                 sync: false
               - key: RAILS_MIN_THREADS
