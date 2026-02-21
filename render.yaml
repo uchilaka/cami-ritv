@@ -64,6 +64,7 @@ projects:
               - fromGroup: SMTP Live
               - fromGroup: Vault Shared
             region: virginia
+            preDeployCommand: ./bin/worker-pre-deploy
             dockerContext: .
             dockerfilePath: ./Dockerfile.web
             domains:
@@ -123,6 +124,7 @@ projects:
               - fromGroup: SMTP Live
               - fromGroup: Vault Shared
             region: virginia
+            preDeployCommand: ./bin/worker-pre-deploy
             dockerContext: .
             dockerfilePath: ./Dockerfile.web
             autoDeployTrigger: checksPass
@@ -178,6 +180,7 @@ projects:
                   name: cami-staging-db
                   property: password
             region: virginia
+            preDeployCommand: ./bin/worker-pre-deploy
             dockerContext: .
             dockerfilePath: ./Dockerfile.web
             autoDeployTrigger: commit
@@ -217,6 +220,7 @@ projects:
 #                  name: cami-staging-db
 #                  property: password
 #            region: virginia
+#            preDeployCommand: ./bin/worker-pre-deploy
 #            dockerContext: .
 #            dockerfilePath: ./Dockerfile.worker
 #            autoDeployTrigger: commit
