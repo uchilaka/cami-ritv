@@ -8,11 +8,8 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # Decrypt secrets
 "$SCRIPT_DIR/unlock-repo"
 
-# Run build script
-"$SCRIPT_DIR/build"
-
-# Install gems
-bundle install
+# Link credential key file
+"$SCRIPT_DIR/link-key-file"
 
 # Run database migrations (only on free tier)
 bundle exec rake db:migrate

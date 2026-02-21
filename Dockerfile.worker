@@ -18,6 +18,8 @@ WORKDIR $WORKDIR
 COPY . .
 
 FROM src AS worker
+# Add your application user to group 1000
+RUN usermod -a -G 1000 $USER
 # Run your build script (the one we made in the previous step)
 RUN ./bin/worker-build
 
