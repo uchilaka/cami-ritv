@@ -184,7 +184,7 @@ class AppUtils
     end
 
     def host_queue_name
-      `hostname`.strip.split('.').reverse.parameterize
+      `hostname`.strip.split('.').reverse.join('-')
     end
 
     def check_env_vars?
