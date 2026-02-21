@@ -60,6 +60,7 @@ services:
     restart: unless-stopped
     environment:
       RAILS_ENV: ${RAILS_ENV:-development}
+      APP_CONFIG_CHECK_ENV_VARS: yes
       APP_DATABASE_HOST: db.cami.larcity
       APP_PRIMARY_DATABASE_NAME: ${APP_DATABASE_NAME}
       APP_DATABASE_USER: ${APP_DATABASE_USER}
@@ -85,6 +86,7 @@ services:
     restart: unless-stopped
     environment:
       RAILS_ENV: ${RAILS_ENV:-development}
+      APP_CONFIG_CHECK_ENV_VARS: yes
       APP_DATABASE_HOST: db.cami.larcity
       APP_PRIMARY_DATABASE_NAME: ${APP_DATABASE_NAME}
       APP_DATABASE_USER: ${APP_DATABASE_USER}

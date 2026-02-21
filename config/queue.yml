@@ -1,3 +1,4 @@
+<% require 'lib/app_utils' %>
 default: &default
   dispatchers:
     - polling_interval: 1
@@ -5,7 +6,7 @@ default: &default
   workers:
     - queues:
         - critical
-        - <%= `hostname`.strip %>
+        - <%= AppUtils.host_queue_name %>
         - default
         - yeet
       threads: <%= ENV.fetch("RAILS_QUEUE_THREADS") { 2 } %>

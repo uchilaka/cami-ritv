@@ -25,6 +25,18 @@ module LarCity
                long_desc:, desc:, required:
       end
 
+      def self.add_service_option(
+        desc:,
+        long_desc: nil,
+        required: false
+      )
+        option :service,
+               aliases: 's',
+               type: :array,
+               enum: %w[web app-store worker mailhog tunnel].sort,
+               desc:, long_desc:, required:
+      end
+
       define_force_option self, class_option: false, desc: 'Force overwrite of existing daemon config'
       desc 'daemonize', 'Run a command to setup the app service as a background daemon process'
       def daemonize
@@ -207,11 +219,24 @@ module LarCity
             'stop'
       end
 
-      desc 'teardown', 'Stop and remove the services'
+      add_service_option(
+        desc: I18n.t('commands.services.teardown.options.service.short_desc'),
+        long_desc: I18n.t('commands.services.teardown.options.service.long_desc'),
+        required: true
+      )
+      desc 'teardown', I18n.t('commands.services.teardown.short_desc')
+      long_desc I18n.t('commands.services.teardown.long_desc')
       def teardown
-        run 'docker compose',
-            profile_clause,
-            'down --remove-orphans --volumes'
+        if options[:service].blank?
+          run 'docker compose',
+              profile_clause,
+              'down --remove-orphans --volumes'
+        else
+          options[:service].each do |service|
+            run 'docker compose stop', service, inline: true
+            run 'docker compose rm', '--force', '--volumes', service, inline: true
+          end
+        end
       end
 
       no_commands do

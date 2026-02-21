@@ -183,6 +183,10 @@ class AppUtils
       end
     end
 
+    def host_queue_name
+      `hostname`.strip.split('.').reverse.parameterize
+    end
+
     def check_env_vars?
       return false if Rails.env.test?
 
