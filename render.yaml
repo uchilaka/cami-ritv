@@ -180,7 +180,6 @@ projects:
                   name: cami-staging-db
                   property: password
             region: virginia
-            preDeployCommand: ./bin/worker-pre-deploy
             dockerContext: .
             dockerfilePath: ./Dockerfile.web
             autoDeployTrigger: commit
