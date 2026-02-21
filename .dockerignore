@@ -1,0 +1,6 @@
+.envrc
+.env.*
+.replit
+Brewfile
+cami.*.code-workspace
+Procfile.*

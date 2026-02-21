@@ -1,19 +1,23 @@
 FROM ruby:3.4.4 AS base
 # Install git-crypt and other dependencies
-RUN apt-get update -qq && apt-get install -y \
+RUN apt-get update -qq && \
+  apt-get install -y --no-install-recommends \
   build-essential \
   git-crypt \
-  libpq-dev
+  pkg-config \
+  libvips \
+  libpq-dev \
+  && rm -rf /var/lib/apt/lists/*
 
-FROM base AS web
+FROM base AS src
 ENV WORKDIR="/opt/project/src"
 RUN mkdir -p $WORKDIR
 # Set up your app directory
 WORKDIR $WORKDIR
-
 # Copy the source code into the container
 COPY . .
 
+FROM src AS web
 # Run your build script (the one we made in the previous step)
 RUN ./bin/build
 

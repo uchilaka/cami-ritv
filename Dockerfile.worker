@@ -1,11 +1,15 @@
 FROM ruby:3.4.4 AS base
 # Install git-crypt and other dependencies
-RUN apt-get update -qq && apt-get install -y \
+RUN apt-get update -qq && \
+  apt-get install -y --no-install-recommends \
   build-essential \
   git-crypt \
-  libpq-dev
+  pkg-config \
+  libvips \
+  libpq-dev \
+  && rm -rf /var/lib/apt/lists/*
 
-FROM base AS web
+FROM base AS src
 ENV WORKDIR="/opt/project/src"
 RUN mkdir -p $WORKDIR
 # Set up your app directory
@@ -13,8 +17,9 @@ WORKDIR $WORKDIR
 # Copy the source code into the container
 COPY . .
 
+FROM src AS worker
 # Run your build script (the one we made in the previous step)
-RUN ./bin/worker-pre-deploy
+RUN ./bin/worker-build
 
 # Specify the entrypoint command to run your Rails worker
 CMD ["bundle", "exec", "rails", "solid_queue:start"]

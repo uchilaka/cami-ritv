@@ -64,8 +64,34 @@ services:
       APP_PRIMARY_DATABASE_NAME: ${APP_DATABASE_NAME}
       APP_DATABASE_USER: ${APP_DATABASE_USER}
       APP_DATABASE_PASSWORD: ${APP_DATABASE_PASSWORD}
+      GITCRYPT_KEY_BASE64: ${GITCRYPT_KEY_BASE64}
+    volumes:
+      - ./config/credentials/git-crypt.key:/opt/project/src/.git/git-crypt/keys/default:ro
     ports:
       - "16006:3000"
+    depends_on:
+      - app-store
+    profiles:
+      - batteries-included
+      - essential
+      - all
+
+  worker:
+    container_name: worker.cami.larcity
+    image: larcity/accounts-worker
+    build:
+      context: .
+      dockerfile: Dockerfile.worker
+    restart: unless-stopped
+    environment:
+      RAILS_ENV: ${RAILS_ENV:-development}
+      APP_DATABASE_HOST: db.cami.larcity
+      APP_PRIMARY_DATABASE_NAME: ${APP_DATABASE_NAME}
+      APP_DATABASE_USER: ${APP_DATABASE_USER}
+      APP_DATABASE_PASSWORD: ${APP_DATABASE_PASSWORD}
+      GITCRYPT_KEY_BASE64: ${GITCRYPT_KEY_BASE64}
+    volumes:
+      - ./config/credentials/git-crypt.key:/opt/project/src/.git/git-crypt/keys/default:ro
     depends_on:
       - app-store
     profiles:
