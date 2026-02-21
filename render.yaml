@@ -25,7 +25,10 @@ projects:
             branch: releases/production
             plan: starter
             envVars:
-              - key: RAILS_MASTER_KEY
+              #- key: RAILS_MASTER_KEY
+              #  sync: false
+              - key: RAILS_ENV
+                value: production
                 sync: false
               - key: PORT
                 sync: false
@@ -86,8 +89,11 @@ projects:
             branch: releases/production
             plan: starter
             envVars:
-              - key: RAILS_MASTER_KEY
+              - key: RAILS_ENV
+                value: production
                 sync: false
+              #- key: RAILS_MASTER_KEY
+              #  sync: false
               #- key: PORT
               #  sync: false
               #- key: HOSTNAME
@@ -157,6 +163,7 @@ projects:
               - key: HOSTNAME
                 sync: false
               - key: RAILS_ENV
+                value: staging
                 sync: false
               - key: WEB_CONCURRENCY
                 sync: false
@@ -197,6 +204,7 @@ projects:
 #              - key: HOSTNAME
 #                sync: false
 #              - key: RAILS_ENV
+#                value: staging
 #                sync: false
 #              - key: WEB_CONCURRENCY
 #                sync: false
