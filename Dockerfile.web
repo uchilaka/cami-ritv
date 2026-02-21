@@ -38,7 +38,7 @@ RUN corepack enable && corepack prepare yarn@stable --activate
 ENV APP_CONFIG_CHECK_ENV_VARS=no
 
 # Symlink secret files to the expected locations in the app directory
-RUN ./build/link-key-file
+RUN ./bin/link-key-file
 
 # Run your build script (the one we made in the previous step)
 RUN ./bin/build
