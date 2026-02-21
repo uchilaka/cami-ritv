@@ -1,3 +1,4 @@
+# syntax = docker/dockerfile:1.2
 FROM ruby:3.4.4 AS base
 # Install git-crypt and other dependencies
 RUN apt-get update -qq && \
@@ -20,9 +21,16 @@ COPY . .
 # See documentation on accessing secret files at runtime on Render:
 # https://render.com/docs/docker-secrets#accessing-secret-files-at-runtime
 
+RUN --mount="type=secret,id=${RAILS_ENV}.key,dst=${WORKDIR}/config/credentials/${RAILS_ENV}.key" \
+   echo "🔑 Secrets mounted successfully"
+
+# Temporarily disable environment variable checks during build, as some may not be set until runtime on Render
+ENV APP_CONFIG_CHECK_REQUIRED_VARS=no
+
 FROM src AS worker
 # Run your build script (the one we made in the previous step)
-RUN ./bin/worker-build
+RUN --mount="type=secret,id=${RAILS_ENV}.key,dst=${WORKDIR}/config/credentials/${RAILS_ENV}.key" \
+  ./bin/worker-build
 
 # Specify the entrypoint command to run your Rails worker
 CMD ["bundle", "exec", "rails", "solid_queue:start"]

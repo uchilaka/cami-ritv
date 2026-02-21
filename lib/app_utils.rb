@@ -187,10 +187,26 @@ class AppUtils
       `hostname`.strip.split('.').reverse.join('-')
     end
 
+    # @deprecated This method is deprecated and will be removed
+    #   in a future release. Use `check_required_vars?` instead.
     def check_env_vars?
       return false if Rails.env.test?
 
       yes?(ENV.fetch('APP_CONFIG_CHECK_ENV_VARS', 'yes'))
+    end
+
+    def check_required_vars?
+      return false if Rails.env.test?
+
+      yes?(ENV.fetch('APP_CONFIG_CHECK_REQUIRED_VARS', 'yes'))
+    end
+
+    def devise_jwt_secret_key!
+      if check_required_vars?
+        return ENV.fetch('APP_CONFIG_JWT_SECRET_KEY', Rails.application.credentials.devise_jwt_secret_key!)
+      end
+
+      ENV.fetch('APP_CONFIG_JWT_SECRET_KEY', Rails.application.credentials.devise_jwt_secret_key)
     end
 
     private
