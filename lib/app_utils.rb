@@ -183,6 +183,12 @@ class AppUtils
       end
     end
 
+    def check_env_vars?
+      return false if Rails.env.test?
+
+      yes?(ENV.fetch('APP_CONFIG_CHECK_ENV_VARS', 'yes'))
+    end
+
     private
 
     def smtp_config_to_env_mapping
@@ -193,10 +199,6 @@ class AppUtils
         %i[user_name smtp_user] => 'SMTP_USERNAME',
         %i[password smtp_password] => 'SMTP_PASSWORD',
       }
-    end
-
-    def use_persist_event_workflow?
-      Flipper.enabled?(:feat__notion_use_persist_event_workflow)
     end
   end
 end
