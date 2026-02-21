@@ -74,6 +74,12 @@ projects:
             branch: releases/production
             plan: starter
             envVars:
+              - fromGroup: Logtail Production
+              - fromGroup: CRM Production
+              - fromGroup: PayPal Production
+              - fromGroup: SMTP Live
+              - fromGroup: Vault Shared
+              - fromGroup: Vault Production
               - key: NODE_ENV
                 value: production
               - key: RAILS_ENV
@@ -94,13 +100,6 @@ projects:
                 fromDatabase:
                   name: cami-production-db
                   property: password
-              - fromGroup: Logtail Production
-              - fromGroup: CRM Production
-              # - fromGroup: Database Production
-              - fromGroup: PayPal Production
-              - fromGroup: SMTP Live
-              - fromGroup: Vault Shared
-              - fromGroup: Vault Production
             region: virginia
             preDeployCommand: ./bin/worker-pre-deploy
             dockerContext: .

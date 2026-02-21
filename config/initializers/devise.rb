@@ -341,7 +341,7 @@ Devise.setup do |config|
   # Configure the expiration time of the JWT token
   # https://github.com/waiting-for-dev/devise-jwt?tab=readme-ov-file#configuration-reference
   config.jwt do |jwt|
-    jwt.secret = Rails.application.credentials.devise_jwt_secret_key!
+    jwt.secret = ENV.fetch('APP_CONFIG_JWT_SECRET_KEY', Rails.application.credentials.devise_jwt_secret_key!)
     # TODO: Test that the configuration of dispatches for JWT tokens
     #   is working as expected. This could be done quickly with Insomnia.
     jwt.dispatch_requests = [
