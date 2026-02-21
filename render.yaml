@@ -25,25 +25,10 @@ projects:
             branch: releases/production
             plan: starter
             envVars:
-              #- key: RAILS_MASTER_KEY
-              #  sync: false
+              - key: NODE_ENV
+                value: production
               - key: RAILS_ENV
                 value: production
-                sync: false
-              - key: PORT
-                sync: false
-              - key: HOSTNAME
-                sync: false
-              - key: RAILS_MAX_THREADS
-                sync: false
-              - key: RAILS_MIN_THREADS
-                sync: false
-              - key: RAILS_QUEUE_THREADS
-                sync: false
-              - key: NODE_ENV
-                sync: false
-              - key: WEB_CONCURRENCY
-                sync: false
               - key: APP_DATABASE_HOST
                 fromDatabase:
                   name: cami-production-db
@@ -89,25 +74,10 @@ projects:
             branch: releases/production
             plan: starter
             envVars:
+              - key: NODE_ENV
+                value: production
               - key: RAILS_ENV
                 value: production
-                sync: false
-              #- key: RAILS_MASTER_KEY
-              #  sync: false
-              #- key: PORT
-              #  sync: false
-              #- key: HOSTNAME
-              #  sync: false
-              - key: RAILS_MAX_THREADS
-                sync: false
-              - key: RAILS_MIN_THREADS
-                sync: false
-              - key: RAILS_QUEUE_THREADS
-                sync: false
-              - key: NODE_ENV
-                sync: false
-              - key: WEB_CONCURRENCY
-                sync: false
               - key: APP_DATABASE_HOST
                 fromDatabase:
                   name: cami-production-db
@@ -160,13 +130,10 @@ projects:
             branch: releases/staging
             plan: free
             envVars:
-              - key: HOSTNAME
-                sync: false
+              - key: NODE_ENV
+                value: staging
               - key: RAILS_ENV
                 value: staging
-                sync: false
-              - key: WEB_CONCURRENCY
-                sync: false
               - fromGroup: CRM Staging
               - fromGroup: Logtail Staging
               - fromGroup: PayPal Staging
@@ -201,13 +168,10 @@ projects:
 #            branch: releases/staging
 #            plan: starter
 #            envVars:
-#              - key: HOSTNAME
-#                sync: false
 #              - key: RAILS_ENV
 #                value: staging
-#                sync: false
-#              - key: WEB_CONCURRENCY
-#                sync: false
+#              - key: NODE_ENV
+#                value: staging
 #              - fromGroup: CRM Staging
 #              - fromGroup: Logtail Staging
 #              - fromGroup: PayPal Staging
