@@ -79,7 +79,7 @@ projects:
           # The background worker for processing async jobs
           - type: worker
             name: cami-production-solid-queue
-            runtime: ruby
+            runtime: docker
             repo: https://github.com/uchilaka/cami-ritv
             branch: releases/production
             plan: starter
