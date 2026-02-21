@@ -63,6 +63,7 @@ projects:
               - fromGroup: PayPal Production
               - fromGroup: SMTP Live
               - fromGroup: Vault Shared
+              - fromGroup: Vault Production
             region: virginia
             preDeployCommand: ./bin/worker-pre-deploy
             dockerContext: .
@@ -123,6 +124,7 @@ projects:
               - fromGroup: PayPal Production
               - fromGroup: SMTP Live
               - fromGroup: Vault Shared
+              - fromGroup: Vault Production
             region: virginia
             preDeployCommand: ./bin/worker-pre-deploy
             dockerContext: .
@@ -163,6 +165,7 @@ projects:
               - fromGroup: PayPal Staging
               - fromGroup: SMTP Live
               - fromGroup: Vault Shared
+              - fromGroup: Vault Staging
               - key: APP_DATABASE_HOST
                 fromDatabase:
                   name: cami-staging-db
@@ -202,6 +205,7 @@ projects:
 #              - fromGroup: PayPal Staging
 #              - fromGroup: SMTP Live
 #              - fromGroup: Vault Shared
+#              - fromGroup: Vault Staging
 #              - key: APP_DATABASE_HOST
 #                fromDatabase:
 #                  name: cami-staging-db
