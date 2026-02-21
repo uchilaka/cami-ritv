@@ -23,7 +23,7 @@ projects:
             runtime: docker
             repo: https://github.com/uchilaka/cami-ritv
             branch: releases/production
-            plan: starter
+            plan: free
             envVars:
               - key: RAILS_MASTER_KEY
                 sync: false
@@ -127,96 +127,96 @@ projects:
             dockerfilePath: ./Dockerfile.web
             autoDeployTrigger: checksPass
 
-      - name: Staging
-        # The Rails (staging) application database
-        databases:
-          - name: cami-staging-db
-            databaseName: sails_staging
-            user: sails_staging_user
-            plan: free
-            region: virginia
-            ipAllowList:
-              - source: 0.0.0.0/0
-                description: everywhere
-            postgresMajorVersion: "17"
-        # See documentation on referencing values from other services:
-        # https://render.com/docs/blueprint-spec#referencing-values-from-other-services
-        services:
-          # The Rails (staging) application
-          - type: web
-            name: cami-staging-app
-            runtime: docker
-            repo: https://github.com/uchilaka/cami-ritv
-            branch: releases/staging
-            plan: free
-            envVars:
-              - key: HOSTNAME
-                sync: false
-              - key: RAILS_ENV
-                sync: false
-              - key: WEB_CONCURRENCY
-                sync: false
-              - fromGroup: CRM Staging
-              - fromGroup: Logtail Staging
-              - fromGroup: PayPal Staging
-              - fromGroup: SMTP Live
-              - fromGroup: Vault Shared
-              - key: APP_DATABASE_HOST
-                fromDatabase:
-                  name: cami-staging-db
-                  property: host
-              - key: APP_PRIMARY_DATABASE_NAME
-                fromDatabase:
-                  name: cami-staging-db
-                  property: database
-              - key: APP_DATABASE_USER
-                fromDatabase:
-                  name: cami-staging-db
-                  property: user
-              - key: APP_DATABASE_PASSWORD
-                fromDatabase:
-                  name: cami-staging-db
-                  property: password
-            region: virginia
-            dockerContext: .
-            dockerfilePath: ./Dockerfile.web
-            autoDeployTrigger: commit
-          # The Rails (staging) background worker for processing async jobs
-          - type: worker
-            name: cami-staging-solid-queue
-            runtime: docker
-            repo: https://github.com/uchilaka/cami-ritv
-            branch: releases/staging
-            plan: free
-            envVars:
-              - key: HOSTNAME
-                sync: false
-              - key: RAILS_ENV
-                sync: false
-              - key: WEB_CONCURRENCY
-                sync: false
-              - fromGroup: CRM Staging
-              - fromGroup: Logtail Staging
-              - fromGroup: PayPal Staging
-              - fromGroup: SMTP Live
-              - fromGroup: Vault Shared
-              - key: APP_DATABASE_HOST
-                fromDatabase:
-                  name: cami-staging-db
-                  property: host
-              - key: APP_PRIMARY_DATABASE_NAME
-                fromDatabase:
-                  name: cami-staging-db
-                  property: database
-              - key: APP_DATABASE_USER
-                fromDatabase:
-                  name: cami-staging-db
-                  property: user
-              - key: APP_DATABASE_PASSWORD
-                fromDatabase:
-                  name: cami-staging-db
-                  property: password
-            region: virginia
-            dockerContext: .
-            dockerfilePath: ./Dockerfile.worker
-            autoDeployTrigger: commit
+#      - name: Staging
+#        # The Rails (staging) application database
+#        databases:
+#          - name: cami-staging-db
+#            databaseName: sails_staging
+#            user: sails_staging_user
+#            plan: free
+#            region: virginia
+#            ipAllowList:
+#              - source: 0.0.0.0/0
+#                description: everywhere
+#            postgresMajorVersion: "17"
+#        # See documentation on referencing values from other services:
+#        # https://render.com/docs/blueprint-spec#referencing-values-from-other-services
+#        services:
+#          # The Rails (staging) application
+#          - type: web
+#            name: cami-staging-app
+#            runtime: docker
+#            repo: https://github.com/uchilaka/cami-ritv
+#            branch: releases/staging
+#            plan: free
+#            envVars:
+#              - key: HOSTNAME
+#                sync: false
+#              - key: RAILS_ENV
+#                sync: false
+#              - key: WEB_CONCURRENCY
+#                sync: false
+#              - fromGroup: CRM Staging
+#              - fromGroup: Logtail Staging
+#              - fromGroup: PayPal Staging
+#              - fromGroup: SMTP Live
+#              - fromGroup: Vault Shared
+#              - key: APP_DATABASE_HOST
+#                fromDatabase:
+#                  name: cami-staging-db
+#                  property: host
+#              - key: APP_PRIMARY_DATABASE_NAME
+#                fromDatabase:
+#                  name: cami-staging-db
+#                  property: database
+#              - key: APP_DATABASE_USER
+#                fromDatabase:
+#                  name: cami-staging-db
+#                  property: user
+#              - key: APP_DATABASE_PASSWORD
+#                fromDatabase:
+#                  name: cami-staging-db
+#                  property: password
+#            region: virginia
+#            dockerContext: .
+#            dockerfilePath: ./Dockerfile.web
+#            autoDeployTrigger: commit
+#          # The Rails (staging) background worker for processing async jobs
+#          - type: worker
+#            name: cami-staging-solid-queue
+#            runtime: docker
+#            repo: https://github.com/uchilaka/cami-ritv
+#            branch: releases/staging
+#            plan: free
+#            envVars:
+#              - key: HOSTNAME
+#                sync: false
+#              - key: RAILS_ENV
+#                sync: false
+#              - key: WEB_CONCURRENCY
+#                sync: false
+#              - fromGroup: CRM Staging
+#              - fromGroup: Logtail Staging
+#              - fromGroup: PayPal Staging
+#              - fromGroup: SMTP Live
+#              - fromGroup: Vault Shared
+#              - key: APP_DATABASE_HOST
+#                fromDatabase:
+#                  name: cami-staging-db
+#                  property: host
+#              - key: APP_PRIMARY_DATABASE_NAME
+#                fromDatabase:
+#                  name: cami-staging-db
+#                  property: database
+#              - key: APP_DATABASE_USER
+#                fromDatabase:
+#                  name: cami-staging-db
+#                  property: user
+#              - key: APP_DATABASE_PASSWORD
+#                fromDatabase:
+#                  name: cami-staging-db
+#                  property: password
+#            region: virginia
+#            dockerContext: .
+#            dockerfilePath: ./Dockerfile.worker
+#            autoDeployTrigger: commit
