@@ -176,6 +176,12 @@ class AppUtils
       end
     end
 
+    def web_console_enabled?
+      default_value = Rails.env.development? ? 'yes' : 'no'
+
+      yes?(ENV.fetch('WEB_CONSOLE_ENABLED', default_value))
+    end
+
     def jbuilder_pre_keys
       @jbuilder_pre_keys ||= begin
         keys = Rails.application.credentials&.jbuilder&.pre_keys || %i[predicate]

@@ -2,8 +2,14 @@
 
 require 'app_utils'
 
-# TODO: Enable web console in Staging for admins
-return unless Rails.env.development? || (Rails.env.staging? && AppUtils.yes?(ENV.fetch('WEB_CONSOLE_ENABLED', 'no')))
+return unless AppUtils.web_console_enabled?
+
+puts <<~MSG
+  ******************************************************************
+  * ⚠️ Web console is enabled in #{Rails.env} environment.
+  * To disable, set WEB_CONSOLE_ENABLED to 'yes' in your environment.
+  ******************************************************************
+MSG
 
 # Be sure to restart your server when you modify this file.
 

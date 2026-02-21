@@ -23,6 +23,7 @@ COPY . .
 # https://render.com/docs/docker-secrets#accessing-secret-files-at-runtime
 
 FROM src AS web
+ARG RAILS_ENV
 # Setup Node.js LTS and install it
 RUN curl -fsSL https://deb.nodesource.com/setup_lts.x | bash - \
   && apt update -qq \
@@ -38,8 +39,13 @@ RUN corepack enable && corepack prepare yarn@stable --activate
 # Temporarily disable environment variable checks during build, as some may not be set until runtime on Render
 ENV APP_CONFIG_CHECK_REQUIRED_VARS=no
 
-# Default to production environment, but allow override at runtime on Render
+# Default to production environment, but allow override at runtime
 ENV RAILS_ENV="${RAILS_ENV:-production}"
+
+# Set other ENV defaults to prevent build-time errors, but allow override at runtime
+ENV SEMANTIC_LOGGER_STREAMING_ENABLED="${SEMANTIC_LOGGER_STREAMING_ENABLED:-no}"
+ENV SEND_EMAILS_ENABLED="${SEND_EMAILS_ENABLED:-no}"
+ENV WEB_CONSOLE_ENABLED="${WEB_CONSOLE_ENABLED:-no}"
 
 RUN --mount=type=secret,id=${RAILS_ENV}.key,dst=${WORKDIR}/config/credentials/${RAILS_ENV}.key \
    echo "🔑 Secrets mounted successfully"

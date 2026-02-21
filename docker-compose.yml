@@ -57,14 +57,19 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.web
+      args:
+        - RAILS_ENV=${RAILS_ENV:-development}
       secrets:
         - source: gitcrypt-key
           target: gitcrypt.key
+        - source: development-key
+          target: development.key
         - source: production-key
           target: production.key
     restart: unless-stopped
     environment:
       RAILS_ENV: ${RAILS_ENV:-development}
+      RAILS_MASTER_KEY: ${RAILS_MASTER_KEY}
       APP_CONFIG_CHECK_ENV_VARS: yes
       APP_DATABASE_HOST: db.cami.larcity
       APP_PRIMARY_DATABASE_NAME: ${APP_DATABASE_NAME}
@@ -80,6 +85,7 @@ services:
     volumes:
       - ./config/credentials/git-crypt.key:/opt/project/src/.git/git-crypt/keys/default:ro
       - ./config/credentials/development.key:/opt/project/src/config/credentials/development.key:ro
+      - ./config/credentials/development.yml.enc:/opt/project/src/config/credentials.yml.enc:ro
       #- ./config/credentials/staging.key:/opt/project/src/config/credentials/staging.key:ro
       #- ./config/credentials/production.key:/opt/project/src/config/credentials/production.key:ro
     ports:
@@ -97,9 +103,13 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.worker
+      args:
+        - RAILS_ENV=${RAILS_ENV:-development}
       secrets:
         - source: gitcrypt-key
           target: gitcrypt.key
+        - source: development-key
+          target: development.key
         - source: production-key
           target: production.key
     restart: unless-stopped
@@ -120,6 +130,7 @@ services:
     volumes:
       - ./config/credentials/git-crypt.key:/opt/project/src/.git/git-crypt/keys/default:ro
       - ./config/credentials/development.key:/opt/project/src/config/credentials/development.key:ro
+      - ./config/credentials/development.yml.enc:/opt/project/src/config/credentials.yml.enc:ro
       #- ./config/credentials/staging.key:/opt/project/src/config/credentials/staging.key:ro
       #- ./config/credentials/production.key:/opt/project/src/config/credentials/production.key:ro
     depends_on:
