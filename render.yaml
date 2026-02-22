@@ -53,7 +53,7 @@ projects:
               - fromGroup: Vault Shared
               - fromGroup: Vault Production
             region: virginia
-            preDeployCommand: ./bin/worker-pre-deploy
+            preDeployCommand: ./bin/pre-deploy
             dockerContext: .
             dockerfilePath: ./Dockerfile.web
             domains:
@@ -101,7 +101,7 @@ projects:
                   name: cami-production-db
                   property: password
             region: virginia
-            preDeployCommand: ./bin/worker-pre-deploy
+            preDeployCommand: ./bin/pre-deploy
             dockerContext: .
             dockerfilePath: ./Dockerfile.web
             autoDeployTrigger: checksPass
@@ -194,7 +194,7 @@ projects:
 #                  name: cami-staging-db
 #                  property: password
 #            region: virginia
-#            preDeployCommand: ./bin/worker-pre-deploy
+#            preDeployCommand: ./bin/pre-deploy
 #            dockerContext: .
 #            dockerfilePath: ./Dockerfile.worker
 #            autoDeployTrigger: commit
