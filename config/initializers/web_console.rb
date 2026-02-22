@@ -7,8 +7,7 @@ return unless AppUtils.web_console_enabled?
 puts <<~MSG
   ******************************************************************
   * ⚠️ Web console is enabled in #{Rails.env} environment.
-  * To disable, set WEB_CONSOLE_ENABLED to 'yes' in your environment.
-  ******************************************************************
+  * To disable, set WEB_CONSOLE_ENABLED to 'no' in your environment.
 MSG
 
 # Be sure to restart your server when you modify this file.
