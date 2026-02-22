@@ -6,14 +6,6 @@ common: &common
     # args: [ 1000, { batch_size: 500 } ]
     schedule: '0 5 * * 0' # every Sunday at 5am
 
-  cleanup_retired_ddns_records_job:
-    class: DDNS::CleanupRetiredRecordsJob
-    queue: yeet
-    # At every 3rd minute past every hour from 7 through 10
-    # and every hour from 18 through 22 on every day-of-week
-    # from Monday through Saturday.
-    schedule: '*/3 7-10,18-22 * * 1-6 America/New_York'
-
   fetch_paypal_invoices_job:
     class: PayPal::FetchInvoicesJob
     queue: default
@@ -37,6 +29,14 @@ home_office: &home_office
     queue: yeet
     # args: [ 1000, { batch_size: 500 } ]
     schedule: 'every 15 minutes America/New_York' # every 15 minutes
+
+  cleanup_retired_ddns_records_job:
+    class: DDNS::CleanupRetiredRecordsJob
+    queue: yeet
+    # At every 3rd minute past every hour from 7 through 10
+    # and every hour from 18 through 22 on every day-of-week
+    # from Monday through Saturday.
+    schedule: '*/3 7-10,18-22 * * 1-6 America/New_York'
 
   update_default_url_options_job:
     class: UpdateDefaultURLOptionsJob
