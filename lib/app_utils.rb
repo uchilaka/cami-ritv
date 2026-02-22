@@ -182,6 +182,12 @@ class AppUtils
       yes?(ENV.fetch('WEB_CONSOLE_ENABLED', default_value))
     end
 
+    def omniauth_enabled?
+      default_value = Rails.env.test? ? 'no' : 'yes'
+
+      yes?(ENV.fetch('APP_CONFIG_OMNIAUTH_ENABLED', default_value))
+    end
+
     def jbuilder_pre_keys
       @jbuilder_pre_keys ||= begin
         keys = Rails.application.credentials&.jbuilder&.pre_keys || %i[predicate]
