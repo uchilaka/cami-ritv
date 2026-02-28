@@ -34,8 +34,7 @@ class AppUtils
         if value.present?
           [rails_key, value]
         else
-          credential_value =
-            Rails.application.credentials.dig(:brevo, brevo_key)
+          credential_value = brevo_credentials!(brevo_key)
           [rails_key, credential_value]
         end
       end.merge(enable_starttls_auto: yes?(ENV.fetch('SMTP_ENABLE_STARTTLS_AUTO', 'yes')))
@@ -184,6 +183,10 @@ class AppUtils
     end
 
     private
+
+    def brevo_credentials!
+      @brevo_credentials ||= Rails.application.credentials.brevo!
+    end
 
     def smtp_config_to_env_mapping
       {
