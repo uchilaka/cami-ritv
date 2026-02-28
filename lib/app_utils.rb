@@ -34,8 +34,7 @@ class AppUtils
         if value.present?
           [rails_key, value]
         else
-          credential_value =
-            Rails.application.credentials.dig(:brevo, brevo_key)
+          credential_value = brevo_credentials!(brevo_key)
           [rails_key, credential_value]
         end
       end.merge(enable_starttls_auto: yes?(ENV.fetch('SMTP_ENABLE_STARTTLS_AUTO', 'yes')))
@@ -66,16 +65,10 @@ class AppUtils
 
     # LetterOpener should be enabled by default in the development environment
     def letter_opener_enabled?
-      configured_value = Rails.application.credentials.letter_opener_enabled
-      return configured_value unless configured_value.nil?
-
       yes?(ENV.fetch('LETTER_OPENER_ENABLED', 'yes'))
     end
 
     def mailhog_enabled?
-      configured_value = Rails.application.credentials.mailhog_enabled
-      return configured_value unless configured_value.nil?
-
       yes?(ENV.fetch('MAILHOG_ENABLED', 'no'))
     end
 
@@ -222,6 +215,10 @@ class AppUtils
     end
 
     private
+
+    def brevo_credentials!
+      @brevo_credentials ||= Rails.application.credentials.brevo!
+    end
 
     def smtp_config_to_env_mapping
       {
