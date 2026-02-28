@@ -59,7 +59,6 @@ if OS.mac?
   brew 'pinentry-mac'
   cask 'ngrok'
   cask 'pgadmin4'
-  cask 'rancher'
 end
 
 cask 'keepassxc'
