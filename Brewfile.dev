@@ -2,8 +2,7 @@
 
 require 'fileutils'
 
-current_env = `echo $RAILS_ENV`.strip
-rails_env = ENV.fetch('RAILS_ENV', current_env)
+rails_env = ENV.fetch('RAILS_ENV', 'development')
 
 # set arguments for all 'brew install --cask' commands
 cask_args appdir: '~/Applications', require_sha: false
