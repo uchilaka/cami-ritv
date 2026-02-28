@@ -31,7 +31,7 @@ gem 'puma', '~> 6'
 gem 'jbuilder'
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
-gem 'tzinfo-data', platforms: %i[mingw mswin x64_mingw jruby]
+gem 'tzinfo-data', platforms: %i[windows jruby]
 
 gem 'dartsass-rails', '~> 0.5'
 gem 'sassc-rails', '~> 2.1'
@@ -102,14 +102,14 @@ gem 'ostruct'
 # Simple, feature rich ascii table generation library https://github.com/tj/terminal-table
 gem 'terminal-table'
 
+gem 'dry-types', '~> 1.8'
+gem 'highline', '~> 3.1'
 gem 'nokogiri'
 gem 'reverse_markdown'
-gem 'highline', '~> 3.1'
-gem 'dry-types', '~> 1.8'
 
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
-  gem 'debug', platforms: %i[mri mingw x64_mingw]
+  gem 'debug', platforms: %i[mri windows]
 
   gem 'brakeman', require: false
   gem 'climate_control'
