@@ -198,12 +198,14 @@ module LarCity
             'logs --follow --since 5m'
       end
 
-      desc 'list', 'List the services'
-      def list
+      desc 'info', 'List the services'
+      def info
         run 'docker compose',
             profile_clause,
             'ps'
       end
+
+      map 'list' => :info
 
       desc 'logs', 'Show the logs of the services'
       def logs
