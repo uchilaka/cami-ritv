@@ -65,16 +65,10 @@ class AppUtils
 
     # LetterOpener should be enabled by default in the development environment
     def letter_opener_enabled?
-      configured_value = Rails.application.credentials.letter_opener_enabled
-      return configured_value unless configured_value.nil?
-
       yes?(ENV.fetch('LETTER_OPENER_ENABLED', 'yes'))
     end
 
     def mailhog_enabled?
-      configured_value = Rails.application.credentials.mailhog_enabled
-      return configured_value unless configured_value.nil?
-
       yes?(ENV.fetch('MAILHOG_ENABLED', 'no'))
     end
 
