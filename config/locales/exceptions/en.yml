@@ -22,3 +22,6 @@ en:
     conflict: "The request could not be completed due to a conflict with the current state of the resource"
     precondition_failed: "The request could not be completed due to a conflict with the current state of the resource"
     precondition_required: "The request could not be completed due to a conflict with the current state of the resource"
+    missing_smtp_credentials: >
+      SMTP credentials [%{config_key}] not found - SMTP settings will be empty unless \
+      overridden by environment variables
