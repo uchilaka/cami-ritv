@@ -5,7 +5,7 @@
 # It is processed by ERB before being used, allowing you to include
 # dynamic content.
 # -------------------------------------------------------------------------
-# Automatically generated at 2026-03-01T12:19:00-05:00
+# Automatically generated at 2026-03-01T16:49:20-05:00
 # -------------------------------------------------------------------------
 alerts:
 - rule: DEPLOYMENT_FAILED
@@ -14,6 +14,22 @@ databases:
 - engine: PG
   name: cami-staging-db
   version: "17"
+envs:
+- key: RAILS_MASTER_KEY
+  scope: RUN_AND_BUILD_TIME
+  type: SECRET
+  value: EV[1:lxCP5d33qvPwb5+JwbWzfUdwS85SwL2S:W2jO81C3MJ0LAww4v9VtaReFodRdWkDTeBb370RcqQ43Ove1aNQA9fakN5Dasq5y]
+- key: GITCRYPT_KEY_BASE64
+  scope: RUN_AND_BUILD_TIME
+  type: SECRET
+  value: EV[1:UGOxnbwLiKph2PgzYCHiS4CxI7qnioW4:FgdaFdSFzrqbnRXoaef/77aI7Tr2GAUp9oJlVvX4J8w+Trq6aGwKPvUHFB/Q0gHlVDiez/Sysajxd6vTT5QbJf6hGmrlj2JBRp9+8xMuKk2kYNryWm4Bq6GyqjVdoR7Niid3m7YFpvoaGsD0BtBjQ4tmMmlfXMnB1fyPwQgIByx44sxP+Py0iNz3zDW8ah2Pd5FYvgaGHfyMn81q7w8Cjt22/GVEIy2HjOq/R1P11RNo75zv/DSB1ghtdrHdUcsyjUnhx2WGWkqY0nHkS1Nr9Tw5tl8cACXo]
+- key: DATABASE_URL
+  scope: RUN_AND_BUILD_TIME
+  type: SECRET
+  value: EV[1:IET3QidM7HSebZy5wqEeuAxXtcpAQ9/g:s8LX3JhLJsYZrj15I8vowY7IaVRQtK0eeG9qOpdxBb0dzpazmq040NOUFBXd4G7uNeQXV4CYyRM+Wyet6RDEKj8ZiDuaX7GReivR/y9MUgdD55J6SZHsPGQDyejyIaJvPfrSoH9C/I8KKa6cB4sHtA1ktwqCZ/wNdOxnpvAwEtIpL2uwsx0I0UTW/+VRSab4gHMbB+83BAh5y+JUmXL9BGrwDSuIwbpj6FfKBawXzN2A/jJmwzQh1pHzBKbdHA==]
+- key: RAILS_ENV
+  scope: RUN_AND_BUILD_TIME
+  value: production
 features:
 - buildpack-stack=ubuntu-22
 ingress:
@@ -21,25 +37,13 @@ ingress:
   - component:
       name: cami-staging-web
     match:
-      authority: {}
       path:
         prefix: /
 name: cami-staging-app
 region: nyc
 services:
-- environment_slug: ruby-on-rails
-  envs:
-  - key: DATABASE_URL
-    scope: RUN_TIME
-    type: SECRET
-    value: EV[1:HYq7FSELG+kNrIQnkRBCF0qJZd3Fxw+S:Zek3acCWXfYbXz97mKSc+oogfs3lpteGbVO0zoKniJE1pxJIrnYiNVSqlSy/SNg=]
-  - key: RAILS_MASTER_KEY
-    scope: RUN_AND_BUILD_TIME
-    type: SECRET
-    value: EV[1:BNDVDnCw8OhHm3XcbDFuos0WyAv7cKoe:aU0A+ZcnuT7+ZJrNuqbTHdyNoWdqcX9aRmfBKxy8sppxlNm50bNx9TgqGmrvOZ/3]
-  - key: RAILS_ENV
-    scope: RUN_AND_BUILD_TIME
-    value: staging
+- build_command: ./bin/build
+  environment_slug: ruby-on-rails
   github:
     branch: releases/staging
     deploy_on_push: true
@@ -48,8 +52,7 @@ services:
   instance_count: 1
   instance_size_slug: apps-s-1vcpu-0.5gb
   name: cami-staging-web
-  run_command: rails server -p $PORT -e ${RAILS_ENV:-production}
+  run_command: ./bin/pre-deploy && rails server -p $PORT -e ${RAILS_ENV:-production}
   source_dir: /
 vpc:
   id: aab2ac79-06d9-4b24-a0cf-4f3080f05ead
-
