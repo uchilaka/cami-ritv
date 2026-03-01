@@ -12,6 +12,10 @@ gem 'mission_control-jobs'
 # IMPORTANT: This should be loaded as early as possible
 gem 'dotenv', require: 'dotenv/load'
 
+gem 'flipper-active_record', '~> 1.3'
+gem 'flipper-api'
+gem 'flipper-ui'
+
 # Feature rich logging framework that replaces the Rails logger.
 gem 'rails_semantic_logger'
 
@@ -34,7 +38,6 @@ gem 'jbuilder'
 gem 'tzinfo-data', platforms: %i[mingw mswin x64_mingw jruby]
 
 gem 'dartsass-rails', '~> 0.5'
-gem 'sassc-rails', '~> 2.1'
 
 gem 'cssbundling-rails'
 gem 'inertia_rails'
@@ -86,10 +89,6 @@ gem 'rolify', '~> 6.0'
 
 # Rationale: setup "staging" environments to be identical to production, distinguished by their domain name.
 gem 'sib-api-v3-sdk', groups: %i[production]
-
-gem 'flipper-active_record', '~> 1.3'
-gem 'flipper-api'
-gem 'flipper-ui'
 
 # OpenAPI (formerly named Swagger) tooling for Rails APIs https://github.com/rswag/rswag
 gem 'rswag-api'

@@ -31,12 +31,11 @@ class AppUtils
     def smtp_settings
       smtp_config_to_env_mapping.to_h do |(rails_key, brevo_key), env_var|
         value = ENV.fetch(env_var, nil)
-        if value.present?
-          [rails_key, value]
-        else
-          credential_value =
-            Rails.application.credentials.dig(:brevo, brevo_key)
+        if value.blank? && check_credentials?
+          credential_value = brevo_credentials(brevo_key)
           [rails_key, credential_value]
+        else
+          [rails_key, value]
         end
       end.merge(enable_starttls_auto: yes?(ENV.fetch('SMTP_ENABLE_STARTTLS_AUTO', 'yes')))
     end
@@ -66,16 +65,10 @@ class AppUtils
 
     # LetterOpener should be enabled by default in the development environment
     def letter_opener_enabled?
-      configured_value = Rails.application.credentials.letter_opener_enabled
-      return configured_value unless configured_value.nil?
-
       yes?(ENV.fetch('LETTER_OPENER_ENABLED', 'yes'))
     end
 
     def mailhog_enabled?
-      configured_value = Rails.application.credentials.mailhog_enabled
-      return configured_value unless configured_value.nil?
-
       yes?(ENV.fetch('MAILHOG_ENABLED', 'no'))
     end
 
@@ -127,7 +120,13 @@ class AppUtils
     def hostname
       # TODO: Check if tunnel is available and use the NGROK hostname if so
       #   otherwise, fallback to the configured hostname 👇🏾
-      ENV.fetch('HOSTNAME', Rails.application.credentials.hostname)
+      @hostname ||= ENV.fetch('HOSTNAME', nil)
+      @hostname ||=
+        if check_credentials?
+          Rails.application.credentials.hostname
+        else
+          `hostname`.strip
+        end
     end
 
     def log_level
@@ -139,7 +138,7 @@ class AppUtils
     end
 
     def daemon_script
-      @daemon_script ||= Rails.root.join("bin/start").to_s
+      @daemon_script ||= Rails.root.join('bin/start').to_s
     end
 
     def log_file
@@ -184,6 +183,25 @@ class AppUtils
     end
 
     private
+
+    def check_credentials?
+      return false if Rails.env.test?
+
+      yes?(ENV.fetch('CHECK_CREDENTIALS_ENABLED', 'no'))
+    end
+
+    def brevo_credentials(config_key)
+      @brevo_credentials ||=
+        begin
+          config = Rails.application.credentials.brevo
+          if config.blank?
+            Rails.logger.warn(I18n.t('exceptions.missing_smtp_credentials', config_key:))
+            nil
+          else
+            config[config_key]
+          end
+        end
+    end
 
     def smtp_config_to_env_mapping
       {

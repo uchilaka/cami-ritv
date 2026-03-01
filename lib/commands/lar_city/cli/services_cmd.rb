@@ -29,7 +29,7 @@ module LarCity
       desc 'daemonize', 'Run a command to setup the app service as a background daemon process'
       def daemonize
         if Rails.env.test? && !force?
-          say 'Skipping daemonize in test environment.', :red
+          say_error 'Skipping daemonize in test environment.'
           return
         end
 
@@ -186,12 +186,14 @@ module LarCity
             'logs --follow --since 5m'
       end
 
-      desc 'list', 'List the services'
-      def list
+      desc 'info', 'List the services'
+      def info
         run 'docker compose',
             profile_clause,
             'ps'
       end
+
+      map 'list' => :info
 
       desc 'logs', 'Show the logs of the services'
       def logs
