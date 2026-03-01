@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Development: end-to-end" type="CompoundRunConfigurationType">
+  <configuration default="false" name="Development: run &amp; proxy" type="CompoundRunConfigurationType">
     <toRun name="Development:  tunnel" type="CommandRunConfigurationType" />
     <toRun name="Development: jobs" type="CommandRunConfigurationType" />
     <toRun name="Development: vite" type="CommandRunConfigurationType" />
