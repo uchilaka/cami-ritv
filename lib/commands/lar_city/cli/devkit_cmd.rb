@@ -279,6 +279,37 @@ module LarCity
         ) { |line| say_info line }
       end
 
+      option :platform,
+             type: :string,
+             desc: 'The platform to get the blueprint for',
+             enum: %w[render fly digitalocean],
+             required: true,
+             default: 'digitalocean'
+      desc 'get-blueprint', 'Get the deployment blueprint for the specified platform'
+      def get_blueprint
+        unless options[:platform] == 'digitalocean'
+          raise NotImplementedError, <<~MSG
+            The get-blueprint command is currently only implemented for the DigitalOcean platform.
+          MSG
+        end
+
+        app_id = ENV.fetch('DO_APP_ID', Rails.application.credentials.digitalocean.app_id!)
+        access_token = ENV.fetch('DO_ACCESS_TOKEN', Rails.application.credentials.digitalocean.access_token!)
+        codegen_cmd = ['doctl apps spec get', app_id, "--access-token #{access_token}", '--format yaml']
+        codegen_cmd << '--verbose' if verbose?
+        yaml_content = run(*codegen_cmd, eval: true)
+        yaml_template = File.read(Rails.root.join('config', 'app.yaml.erb'))
+        yaml_output = ERB.new(yaml_template).result(binding)
+        output_file = Rails.root.join('app.yaml')
+        status = File.write(output_file, yaml_output)
+        if status.positive?
+          say_success "Generated blueprint has been written to #{output_file}"
+        else
+          say_warning "Failed to write generated blueprint to #{output_file}"
+        end
+        say_debug yaml_output
+      end
+
       no_commands do
         def require_render_cli!
           return if run('which render > /dev/null 2>&1', mock_return: true, inline: true)

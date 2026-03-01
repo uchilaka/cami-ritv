@@ -40,13 +40,22 @@ module LarCity
 
             result =
               if block_given?
-                # Example: doing this with Open3
-                Open3.popen2e(cmd) do |_stdin, stdout_stderr, wait_thread|
-                  Thread.new do
-                    stdout_stderr.each(&block)
+                output_buffer = []
+                status =
+                  Open3.popen2e(cmd) do |_stdin, stdout_stderr, wait_thread|
+                    reader_thread =
+                      Thread.new do
+                        stdout_stderr.each do |line|
+                          output_buffer << line
+                          block.call(line)
+                        end
+                      end
+
+                    process_status = wait_thread.value
+                    reader_thread.join # Wait for the reader thread to finish before the stream is closed
+                    process_status
                   end
-                  wait_thread.value
-                end
+                eval ? output_buffer.join : status
               elsif eval
                 `#{cmd}`
               else
@@ -54,7 +63,7 @@ module LarCity
               end
             # Return the result if inline, otherwise return nil. This avoids
             # unintended consequences of returning command output in non-inline contexts
-            result if inline
+            result if eval || inline
           end
         end
       end
