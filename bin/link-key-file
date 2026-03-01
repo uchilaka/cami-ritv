@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+# Exit on error
+set -o errexit
+
+# Calculate script directory
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+# Symlink secrets to the expected location for Rails credentials
+ENV_MASTER_KEY_FILE="/etc/secrets/${RAILS_ENV}.key"
+if [[ -f "$ENV_MASTER_KEY_FILE" ]]; then
+  ln -sfv "$ENV_MASTER_KEY_FILE" "$SCRIPT_DIR/../config/credentials/"
+else
+  echo "WARNING: ⚠️ Master key file for ${RAILS_ENV} environment not found at ${ENV_MASTER_KEY_FILE}. Ensure that the secrets are properly set up."
+fi
