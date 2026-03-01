@@ -70,7 +70,14 @@ RSpec.describe VirtualOfficeManager do
       end
     end
 
-    context "when the hostname health check feature is disabled" do
+    before do
+      # # Reset default URL options before each test
+      # Rails.configuration.action_mailer.default_url_options = {}
+      # Rails.configuration.action_controller.default_url_options = {}
+      AppUtils.instance_variable_set(:@hostname, nil) # Reset cached hostname
+    end
+
+    context 'when the hostname health check feature is disabled' do
       around do |example|
         Flipper.disable(:feat__hostname_health_check)
         example.run
