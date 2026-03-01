@@ -37,8 +37,9 @@ module LarCity
             )
         end
 
-        # @deprecated This method is deprecated and will be removed in a future release.
-        #   Use `define_sudo_option` from `ControlFlowHelpers` instead.
+        # @deprecated 2026-03-01 This can now be removed.
+        #   This method is deprecated - use `define_sudo_option`
+        #   from `ControlFlowHelpers` instead.
         def define_sudo_option(
           thor_class,
           desc: 'Run command with sudo (only applies to Unix-based systems)',
@@ -48,6 +49,23 @@ module LarCity
         )
           option_method = class_option ? :class_option : :option
           thor_class.public_send(option_method, :sudo, type: :boolean, desc:, default:, required:)
+        end
+
+        def define_platform_option(
+          thor_class,
+          desc: 'The target platform for the command',
+          long_desc: nil,
+          class_option: false,
+          default: 'digitalocean',
+          required: true
+        )
+          option :platform,
+                 desc: 'The platform to get the blueprint for',
+                 enum: %w[render fly digitalocean],
+                 required: true,
+                 default: 'digitalocean'
+          option_method = class_option ? :class_option : :option
+          thor_class.public_send(option_method, :platform, type: :string, desc:, long_desc:, default:, required:)
         end
       end
 
