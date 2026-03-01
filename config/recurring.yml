@@ -18,9 +18,8 @@ common: &common
     class: DDNS::PruneDuplicateRecordsJob
     queue: high
     # At every 7th minute past every hour from 7 through 10
-    # and every hour from 18 through 22 on every day-of-week
-    # from Monday through Saturday.
-    schedule: '*/7 7-10,18-22 * * 1-6 America/New_York'
+    # and every hour from 18 through 22 on Sundays.
+    schedule: '*/7 7-10,18-22 * * 0 America/New_York'
 
   fetch_paypal_invoices_job:
     class: PayPal::FetchInvoicesJob
