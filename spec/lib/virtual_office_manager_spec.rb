@@ -71,9 +71,6 @@ RSpec.describe VirtualOfficeManager do
     end
 
     before do
-      # # Reset default URL options before each test
-      # Rails.configuration.action_mailer.default_url_options = {}
-      # Rails.configuration.action_controller.default_url_options = {}
       AppUtils.instance_variable_set(:@hostname, nil) # Reset cached hostname
     end
 
