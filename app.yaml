@@ -35,7 +35,7 @@ features:
 ingress:
   rules:
   - component:
-      name: cami-staging-app
+      name: cami-staging-web
     match:
       path:
         prefix: /
@@ -44,15 +44,6 @@ region: nyc
 services:
 - build_command: ./bin/build
   environment_slug: ruby-on-rails
-  envs:
-  - key: RAILS_MASTER_KEY
-    scope: RUN_AND_BUILD_TIME
-    type: SECRET
-    value: EV[1:1sTwVl09Qtj8C4KqeSzYoPBfZ9ekBXRg:gbMxbU/eY7rvgyCmRsHnGgwquYCjwSQibnkf6KJSSPhLZy6IS3YLLgbFD9BVW6/v]
-  - key: DATABASE_URL
-    scope: RUN_AND_BUILD_TIME
-    type: SECRET
-    value: EV[1:OwzdSS0vJpWrN02c5N6gGpallXgWKidD:keRjHBwBy8U3+6Ia771aDJAG9UoVKBdGNi/d/scWf4DMp0ISYoiZEo5RdBGnymA9SOv34IHjQ6IKw1w1e5y+ne3B/2cl+kJ7Kl4nO5CNrUOh+4Jl0vZatg9CBUlcWbxJiK9LQH/C4jSjSngdscQkd440/aakKEZrcMJ1C4GY4U3F0p+4/LnOwbFSpfMjSleLz5yJXa5m+RrpI3T5X45KrRw9MhkIxniWAGozDSxtLvbIDqaTBF9Fs1EUsJw4ng==]
   github:
     branch: releases/staging
     deploy_on_push: true
@@ -65,4 +56,3 @@ services:
   source_dir: /
 vpc:
   id: aab2ac79-06d9-4b24-a0cf-4f3080f05ead
-
