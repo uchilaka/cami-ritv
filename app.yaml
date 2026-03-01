@@ -5,7 +5,7 @@
 # It is processed by ERB before being used, allowing you to include
 # dynamic content.
 # -------------------------------------------------------------------------
-# Automatically generated at 2026-03-01T12:19:00-05:00
+# Automatically generated at 2026-03-01T16:23:09-05:00
 # -------------------------------------------------------------------------
 alerts:
 - rule: DEPLOYMENT_FAILED
@@ -27,10 +27,11 @@ ingress:
 name: cami-staging-app
 region: nyc
 services:
-- environment_slug: ruby-on-rails
+- build_command: ./bin/build
+  environment_slug: ruby-on-rails
   envs:
   - key: DATABASE_URL
-    scope: RUN_TIME
+    scope: RUN_AND_BUILD_TIME
     type: SECRET
     value: EV[1:HYq7FSELG+kNrIQnkRBCF0qJZd3Fxw+S:Zek3acCWXfYbXz97mKSc+oogfs3lpteGbVO0zoKniJE1pxJIrnYiNVSqlSy/SNg=]
   - key: RAILS_MASTER_KEY
@@ -40,6 +41,10 @@ services:
   - key: RAILS_ENV
     scope: RUN_AND_BUILD_TIME
     value: staging
+  - key: GITCRYPT_KEY_BASE64
+    scope: RUN_AND_BUILD_TIME
+    type: SECRET
+    value: EV[1:S8xL8/w/BzYz8tuT3fK1EWQ4gdLFZrtk:QliJYj9aKNIu3rHYV4H6dkQvGm0nU0SjZpevY+ZA/GvAer4TLkJSXp+GrDYPFPJRXhdodV9w9aBY1RPX4P1+jKZnYXJL0Y1bcFDH8GqHysyRJfYG0EpKUq0tZDpHd50QDrkq0Wjw7vvEgXc826+umJHjQUW1kWMIKcqj40kK2G379zXWNBEbcK9DKomr8LT7uF/am59M1dxCUlZp11birZEtHCmV1fTJa9eXjWbRfvkhYPQuC/lrq9Gf4VBDiK3od6JV0/C8VJHtjwSwUc9V7+Q62oiqn5WI]
   github:
     branch: releases/staging
     deploy_on_push: true
@@ -48,7 +53,7 @@ services:
   instance_count: 1
   instance_size_slug: apps-s-1vcpu-0.5gb
   name: cami-staging-web
-  run_command: rails server -p $PORT -e ${RAILS_ENV:-production}
+  run_command: ./bin/pre-deploy && rails server -p $PORT -e ${RAILS_ENV:-production}
   source_dir: /
 vpc:
   id: aab2ac79-06d9-4b24-a0cf-4f3080f05ead
