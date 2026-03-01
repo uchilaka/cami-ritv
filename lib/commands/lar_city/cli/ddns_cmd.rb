@@ -122,9 +122,9 @@ module LarCity
             end
 
             if records.any?
-              say_info "Found #{records.size} records for #{name} on #{domain}"
+              say_warning "Found #{records.size} records for #{name} on #{domain}"
 
-              records.each_with_index do |record, index|
+              records[1..].each_with_index do |record, index|
                 backoff_seconds = (index + 1) * 5
                 record_details =
                   record_info(id: record['id'], name: record['name'], domain:, type: record['type'], content: record['data'])
