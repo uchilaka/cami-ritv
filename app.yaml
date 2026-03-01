@@ -51,7 +51,7 @@ services:
   http_port: 16006
   instance_count: 1
   instance_size_slug: apps-s-1vcpu-0.5gb
-  name: cami-staging-app
+  name: cami-staging-web
   run_command: ./bin/pre-deploy && rails server -p $PORT -e ${RAILS_ENV:-production}
   source_dir: /
 vpc:
