@@ -87,6 +87,64 @@ module LarCity
         end
       end
 
+      desc 'prune', 'Prune dirty DNS records that have multiple records for the same name and type'
+      set_dns_record_options(required: %i[record type])
+      option :batch_size,
+             desc: 'Number of records to be processed',
+             type: :numeric,
+             default: 25
+      def prune
+        batch_size = options[:batch_size].to_i
+        with_interruption_rescue do
+          raise ArgumentError, 'Batch size must be <= 200' if batch_size > 200
+
+          domain = options[:domain]
+          name = [options[:record], options[:domain]].join('.')
+          record_type = options[:type]
+          with_http_error_rescue do
+            records = []
+            per_page = [batch_size, 100].min
+            page = 1
+            # Iterate over the pages and fetch records as long as a result is returned
+            while (next_records = get_records(domain:, name:, type: record_type, access_token:, page:, per_page:))&.any?
+              # Exit while loop if we exceed the batch size
+              break if records.size >= batch_size
+
+              records += next_records
+              # say_info "Found #{records.size} records for #{name} on #{domain} (page #{page})"
+              page += 1
+            end
+
+            verified_count = 0
+            if records.size == 1
+              say_info "Only 1 record found for #{name} on #{domain}. No pruning needed."
+              return
+            end
+
+            if records.any?
+              say_info "Found #{records.size} records for #{name} on #{domain}"
+
+              records.each_with_index do |record, index|
+                backoff_seconds = (index + 1) * 5
+                record_details =
+                  record_info(id: record['id'], name: record['name'], domain:, type: record['type'], content: record['data'])
+                next unless cleanup_hit?(domain:, **record.symbolize_keys.slice(:name, :type))
+
+                verified_count += 1
+                say "Enqueueing deletion for #{record_details}", :yellow
+                DigitalOcean::DeleteDomainRecordJob
+                  .set(wait: backoff_seconds.seconds)
+                  .perform_later(record['id'], domain:, access_token:, pretend: dry_run?)
+              end
+
+              say_info "Enqueued #{verified_count} of #{records.size} records for #{name} on #{domain}"
+            else
+              say_warning "No records found for #{name} on #{domain}"
+            end
+          end
+        end
+      end
+
       desc 'upsert', 'Update DNS record with current public IP'
       set_dns_record_options
       def upsert
@@ -163,7 +221,23 @@ module LarCity
             end
 
             record_details = record_info(name: record_name, domain:, type: record_type, content: ip_address)
-            if record
+
+            # TODO: Implement Dns::Name and Dns::Record records in the database and cross-reference
+            #   before deleting any records to prevent duplicating records or deleting records that
+            #   are not managed by this tool.
+            # TODO: IF a record is inconsistent with the desired state, we should:
+            #   - FIRST check if the record is managed by this tool (e.g., by checking for a specific tag or metadata)
+            #   - THEN, if the record is managed by this tool, we should update it to match the desired state rather
+            #     than deleting and recreating it, to preserve any record-specific settings such as TTL or priority
+            #     that may be in place.
+            # TODO: Investigate why duplicate DigitalOcean records are being created and implement safeguards
+            #   to prevent this from happening, such as:
+            #    - Implementing a check to see if a record with the same name and type already exists before creating
+            #      a new record, and updating the existing record instead of creating a duplicate.
+            #    - Maintain a local cache or database of managed records to cross-reference before making API calls,
+            #      ensuring that we only modify records that are under our management and avoid creating duplicates.
+            #    - Maintain a cleanup routine that identifies and removes duplicate records that may have been created
+            if record.present?
               # Update existing record
               resource_url = v2_endpoint("domains/#{domain}/records/#{record['id']}")
               payload = { data: ip_address, type: record_type, ttl: }
