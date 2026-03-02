@@ -45,7 +45,7 @@ module DigitalOcean
       end
 
       def default_access_token
-        ENV.fetch('DIGITALOCEAN_ACCESS_TOKEN', Rails.application.credentials.digitalocean&.access_token)
+        Utils.access_token!
       end
     end
   end

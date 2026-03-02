@@ -1,22 +1,14 @@
 # frozen_string_literal: true
 
+# @deprecated Use `DDNS::UpsertJob` instead. This class is retained to mitigate
+#   potential issues with existing scheduled jobs that reference it, but should not
+#   be used for new code.
 class DDNSUpsertJob < ApplicationJob
   queue_as :yeet
 
   def perform(domain: nil, content: nil, type: nil, ttl: 1800)
-    if domain.nil?
-      records.each_with_index do |record, index|
-        domain, content, type, ttl = record.values_at(:domain, :content, :type, :ttl)
-        self.class.set(wait: ((index + 1) * 15).seconds).perform_later(domain:, content:, type:, ttl:)
-      end
-    else
-      ::LarCity::CLI::DDNSCmd.new.invoke(:upsert, [], domain:, record: content, type:, ttl:)
-    end
-  end
+    Rails.logger.warn "#{self.class} is deprecated. Please use DDNS::UpsertJob instead."
 
-  private
-
-  def records
-    Rails.application.config_for('ddns/active') || []
+    DDNS::UpsertJob.perform_now(domain:, content:, type:, ttl:)
   end
 end

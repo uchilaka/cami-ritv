@@ -55,6 +55,6 @@ else
     ⚠️ Skipping environment variable check in #{Rails.env} environment.
     To enable, set the APP_CONFIG_CHECK_ENV_VARS environment variable to "true".
     The following environment variables are required for this environment:
-    #{required_env_vars.join("\n- ")}
+    #{required_env_vars.map { |var| "- #{var}" }.join("\n")}
   MSG
 end

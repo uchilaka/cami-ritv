@@ -247,7 +247,7 @@ module LarCity
               end
 
               say "Updating existing record at #{resource_url}", :yellow if verbose?
-              client.patch(resource_url, payload.to_json)
+              client.put(resource_url, payload.to_json)
               say "Successfully updated #{record_details}", :green
             else
               resource_url = v2_endpoint("domains/#{domain}/records")

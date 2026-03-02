@@ -89,3 +89,12 @@ Struct.new(
   :name,
   keyword_init: true
 )
+
+Struct.new(
+  'DnsRecordConfig',
+  :domain,
+  :content,
+  :type,
+  :ttl,
+  keyword_init: true
+)
