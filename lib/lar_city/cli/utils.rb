@@ -6,6 +6,7 @@ require 'lib/commands/lar_city/cli/utils/types'
 require 'lar_city/cli/io_helpers'
 require 'lar_city/cli/output_helpers'
 require 'lar_city/cli/env_helpers'
+require 'lar_city/cli/vault_helpers'
 
 module LarCity
   module CLI

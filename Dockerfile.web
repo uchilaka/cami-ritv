@@ -1,0 +1,45 @@
+FROM ruby:3.4.4 AS base
+# Install git-crypt and other dependencies
+RUN apt-get update -qq && \
+  apt-get install -y --no-install-recommends \
+  build-essential \
+  curl \
+  git-crypt \
+  pkg-config \
+  libvips \
+  libpq-dev \
+  && rm -rf /var/lib/apt/lists/*
+
+FROM base AS src
+ENV WORKDIR="/opt/project/src"
+RUN mkdir -p $WORKDIR
+# Set up your app directory
+WORKDIR $WORKDIR
+# Copy the source code into the container
+COPY . .
+
+FROM src AS web
+# Setup Node.js LTS and install it
+RUN curl -fsSL https://deb.nodesource.com/setup_lts.x | bash - \
+  && apt update -qq \
+  && apt install -y nodejs \
+  && rm -rf /var/lib/apt/lists/*
+
+# Setup corepack and install it
+RUN npm install -g corepack
+
+# Enable corepack and install yarn
+RUN corepack enable && corepack prepare yarn@stable --activate
+
+# Temporarily disable environment variable checks during build, as some may not be set until runtime on Render
+ENV APP_CONFIG_CHECK_ENV_VARS=no
+
+# Run your build script (the one we made in the previous step)
+RUN ./bin/build
+
+# Review Render docs on building from a Dockerfile:
+# https://render.com/docs/docker#building-from-a-dockerfile
+EXPOSE 3000
+
+# Specify the entrypoint command to run your Rails server
+CMD ["bundle", "exec", "rails", "server", "--binding", "0.0.0.0"]

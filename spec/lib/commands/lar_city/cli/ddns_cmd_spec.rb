@@ -22,11 +22,16 @@ RSpec.describe LarCity::CLI::DDNSCmd do
       builder.adapter :test, stubs
     end
   end
+  let(:mock_credentials) do
+    creds = ActiveSupport::OrderedOptions.new
+    creds.access_token = access_token
+    creds
+  end
 
   before do
     # Stub environment variables
     allow(Rails.application.credentials).to \
-      receive(:digitalocean).and_return(OpenStruct.new(access_token:))
+      receive(:digitalocean).and_return(mock_credentials)
 
     # Stub the HTTP client to use our test adapter
     allow(LarCity::HttpClient).to receive(:client).and_return(test_client)
@@ -182,7 +187,7 @@ RSpec.describe LarCity::CLI::DDNSCmd do
           [200, api_response_headers, { domain_records: [existing_record] }.to_json]
         end
 
-        stubs.patch(%r{/v2/domains/#{domain}/records/\d+}) do |env|
+        stubs.put(%r{/v2/domains/#{domain}/records/\d+}) do |env|
           request_body = JSON.parse(env.body)
           expect(request_body).to include('data' => ip_address, 'ttl' => ttl)
           [200, api_response_headers, { domain_record: existing_record.merge('data' => ip_address) }.to_json]
@@ -207,7 +212,7 @@ RSpec.describe LarCity::CLI::DDNSCmd do
         it 'does not update the record' do
           # Does not send HTTP request
           expect(instance).to receive(:say).with(/No update needed for/, :green)
-          expect(test_client).not_to receive(:patch)
+          expect(test_client).not_to receive(:put)
 
           instance.send(:upsert_dns_record,
                         domain:,
@@ -243,7 +248,7 @@ RSpec.describe LarCity::CLI::DDNSCmd do
         it 'updates the existing record' do
           expect(instance).to receive(:say).with(/Updated record/, :green)
           expect(test_client).to \
-            receive(:patch).once.with(expected_request_url, JSON.generate(expected_patch_payload))
+            receive(:put).once.with(expected_request_url, JSON.generate(expected_patch_payload))
 
           instance.send(:upsert_dns_record,
                         domain:,
@@ -333,7 +338,7 @@ RSpec.describe LarCity::CLI::DDNSCmd do
 
   describe '#access_token' do
     before do
-      # Clear any existing stubs
+      # TODO: Clear any existing stubs
       # stubs.instance_variable_get(:@stack).clear
       # RSpec::Mocks.teardown
 
@@ -394,7 +399,6 @@ RSpec.describe LarCity::CLI::DDNSCmd do
     context 'when no token is available' do
       before do
         allow(instance).to receive(:options).and_return({})
-        # allow(ENV).to receive(:fetch).with('DIGITALOCEAN_ACCESS_TOKEN', nil).and_return(nil)
         allow(Rails.application.credentials).to receive(:digitalocean).and_return(nil)
         allow(instance).to receive(:say_error).with(
           'DigitalOcean API token not provided. Use --token or set DIGITALOCEAN_TOKEN environment variable.'
