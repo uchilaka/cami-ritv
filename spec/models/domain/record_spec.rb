@@ -5,7 +5,7 @@
 #  id               :uuid             not null, primary key
 #  name             :string
 #  priority         :integer
-#  status           :string           default("active")
+#  status           :string           default("pending")
 #  ttl              :integer          default(1800)
 #  type             :string           not null
 #  value            :string           not null
@@ -41,9 +41,9 @@ RSpec.describe Domain::Record, type: :model do
   end
 
   describe 'state machine' do
-    it 'defaults to the "active" state' do
-      expect(domain_record).to be_active
-      expect(domain_record).to have_state(:active)
+    it 'defaults to the "pending" state' do
+      expect(domain_record).to be_pending
+      expect(domain_record).to have_state(:pending)
     end
 
     context 'with :alert event' do

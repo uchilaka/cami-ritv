@@ -113,11 +113,13 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_02_000249) do
   end
 
   create_table "domain_names", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "vendor_id"
     t.string "hostname", null: false
-    t.string "status", default: "active"
+    t.string "status", default: "pending"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["hostname"], name: "index_domains_on_name", unique: true
+    t.index ["vendor_id"], name: "index_domain_names_on_vendor_id"
   end
 
   create_table "domain_records", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -128,7 +130,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_02_000249) do
     t.string "value", null: false
     t.integer "priority"
     t.integer "ttl", default: 1800
-    t.string "status", default: "active"
+    t.string "status", default: "pending"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["domain_name_id", "name", "type"], name: "index_domain_records_on_domain_and_name_and_type"
@@ -432,6 +434,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_02_000249) do
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "allowlisted_jwts", "users", on_delete: :cascade
+  add_foreign_key "domain_names", "accounts", column: "vendor_id"
   add_foreign_key "domain_records", "domain_names"
   add_foreign_key "identity_provider_profiles", "users"
   add_foreign_key "solid_queue_blocked_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade

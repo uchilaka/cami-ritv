@@ -7,7 +7,7 @@
 #  id               :uuid             not null, primary key
 #  name             :string
 #  priority         :integer
-#  status           :string           default("active")
+#  status           :string           default("pending")
 #  ttl              :integer          default(1800)
 #  type             :string           not null
 #  value            :string           not null
@@ -41,10 +41,10 @@ module Domain
     validates :value, presence: true
 
     aasm column: :status, logger: Rails.logger do
-      state :active, initial: true
+      state :active
       state :error
       state :inactive
-      state :pending
+      state :pending, initial: true
       state :suspended
       state :retired
 

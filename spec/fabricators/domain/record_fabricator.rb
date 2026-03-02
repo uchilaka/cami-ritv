@@ -5,7 +5,7 @@
 #  id               :uuid             not null, primary key
 #  name             :string
 #  priority         :integer
-#  status           :string           default("active")
+#  status           :string           default("pending")
 #  ttl              :integer          default(1800)
 #  type             :string           not null
 #  value            :string           not null
@@ -29,8 +29,8 @@ Fabricator(:dns_record, from: 'Domain::Record') do
   name        { '@' }
   value       { SecureRandom.hex }
   ttl         { 1800 }
-  status      { 'active' }
   domain_name fabricator: :domain_name
+  status      { 'pending' }
 end
 
 Fabricator(:dns_a_record, from: :dns_record) do

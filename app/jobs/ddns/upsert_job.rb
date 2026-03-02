@@ -6,7 +6,7 @@ module DDNS
       def upsert_domains!
         Domain::Name.transaction do
           domains.each do |hostname|
-            Domain::Name.find_or_create_by!(hostname:)
+            Domain::Name.find_or_create_by!(hostname:, status: 'active')
           end
         end
       end

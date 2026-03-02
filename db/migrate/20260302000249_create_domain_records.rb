@@ -10,7 +10,7 @@ class CreateDomainRecords < ActiveRecord::Migration[8.0]
       t.string :value, null: false # e.g. the IP address or CNAME target
       t.integer :priority # for MX records
       t.integer :ttl, default: 1800 # default TTL of 30 minutes
-      t.string :status, default: 'active' # e.g. 'active', 'pending', 'error'
+      t.string :status, default: 'pending' # e.g. 'active', 'pending', 'error'
 
       t.index %i[domain_name_id name type],
               name: 'index_domain_records_on_domain_and_name_and_type'

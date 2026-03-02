@@ -4,13 +4,19 @@
 #
 #  id         :uuid             not null, primary key
 #  hostname   :string           not null
-#  status     :string           default("active")
+#  status     :string           default("pending")
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
+#  vendor_id  :uuid
 #
 # Indexes
 #
-#  index_domains_on_name  (hostname) UNIQUE
+#  index_domain_names_on_vendor_id  (vendor_id)
+#  index_domains_on_name            (hostname) UNIQUE
+#
+# Foreign Keys
+#
+#  fk_rails_...  (vendor_id => accounts.id)
 #
 require 'rails_helper'
 
@@ -37,9 +43,9 @@ RSpec.describe Domain::Name, type: :model do
   end
 
   describe 'state machine' do
-    it 'defaults to the "active" state' do
-      expect(domain_name).to be_active
-      expect(domain_name).to have_state(:active)
+    it 'defaults to the "pending" state' do
+      expect(domain_name).to be_pending
+      expect(domain_name).to have_state(:pending)
     end
 
     context 'with :alert event' do

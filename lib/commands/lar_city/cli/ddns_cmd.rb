@@ -208,18 +208,41 @@ module LarCity
             response = client.get(v2_endpoint("domains/#{domain}/records"))
             records = response.body['domain_records']
 
+            domain_name = Domain::Name.find_or_initialize_as_active_by_hostname domain
+            domain_name.vendor ||= Account.find_by_slug 'digital-ocean'
+            domain_name.save! if domain_name.new_record? || domain_name.changed?
+
             # Find the record to update
             record = records&.find do |r|
               r['type'] == record_type &&
                 (record_name == '@' ? r['name'].nil? || r['name'].empty? : r['name'] == record_name)
             end
+            match_attrs =
+              if record_type == 'A'
+                { domain_name:, type: record_type, name: (record_name.blank? ? '@' : record_name) }
+              else
+                {
+                  domain_name:,
+                  name: (record_name.blank? ? '@' : record_name),
+                  type: record_type,
+                  value: record['data'],
+                }
+              end
+            system_record = Domain::Record.find_or_initialize_by(**match_attrs)
 
             if record.present? && record['data'] == ip_address
               record_details = record_info(name: record_name, domain:, type: record_type, content: ip_address)
-              say "No update needed for #{record_details}", :green
+              say_success "No update needed for #{record_details}"
               return
             end
 
+            if system_record.persisted? && system_record.active? && record['data'] == system_record.value
+              record_details = record_info(name: record_name, domain:, type: record_type, content: system_record.data)
+              say_success "No update needed for #{record_details} (matches system record)"
+              return
+            end
+
+            # Lookup record by details
             record_details = record_info(name: record_name, domain:, type: record_type, content: ip_address)
 
             # TODO: Implement Dns::Name and Dns::Record records in the database and cross-reference
@@ -248,6 +271,16 @@ module LarCity
 
               say "Updating existing record at #{resource_url}", :yellow if verbose?
               client.put(resource_url, payload.to_json)
+              # Intentionally not updating the :vendor_record_id on the system record to preserve
+              # the reference to the original record in DigitalOcean, even if the record is updated
+              # with new data. This allows us to maintain a consistent reference to the same record
+              # in DigitalOcean, which can be important for tracking and managing the record over time,
+              # especially if there are multiple updates or changes to the record. By keeping the
+              # :vendor_record_id unchanged, we can ensure that we are always referencing the same
+              # underlying record in DigitalOcean, regardless of any updates made to its content
+              # or other attributes.
+              system_record.vendor_record_id ||= record['id']
+              system_record.save! if system_record.new_record? || system_record.changed?
               say "Successfully updated #{record_details}", :green
             else
               resource_url = v2_endpoint("domains/#{domain}/records")
@@ -262,6 +295,7 @@ module LarCity
               client.post(resource_url, payload.to_json)
               say "Successfully created #{record_type} record #{record_name}.#{domain} with IP #{ip_address}", :green
             end
+            system_record
           end
         end
 
