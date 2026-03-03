@@ -54,5 +54,16 @@ services:
   name: cami-staging-web
   run_command: ./bin/pre-deploy && rails server -p $PORT -e ${RAILS_ENV:-production}
   source_dir: /
+- build_command: ./bin/build
+  environment_slug: ruby-on-rails
+  github:
+    branch: releases/staging
+    deploy_on_push: true
+    repo: uchilaka/cami-ritv
+  instance_count: 1
+  instance_size_slug: apps-s-1vcpu-0.5gb
+  name: cami-staging-worker
+  run_command: ./bin/pre-deploy && rails solid_queue:start -e ${RAILS_ENV:-production}
+  source_dir: /
 vpc:
   id: aab2ac79-06d9-4b24-a0cf-4f3080f05ead
