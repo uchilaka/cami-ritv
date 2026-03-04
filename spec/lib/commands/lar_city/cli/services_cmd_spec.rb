@@ -154,17 +154,31 @@ RSpec.describe LarCity::CLI::ServicesCmd do
       end
     end
 
+    shared_examples 'teardown logic for services' do |*service_keys|
+      let(:mock_options) { { dry_run: true, service: service_keys } }
+
+      service_keys.each do |service|
+        it "tears down the #{service} service" do
+          [
+            ['docker compose stop', service, inline: true],
+            ['docker compose rm', '--force', '--volumes', service, inline: true],
+          ].each do |expected_args|
+            expect(command).to have_received(:run).with(*expected_args)
+          end
+        end
+      end
+    end
+
     context 'when a service is specified' do
       let(:mock_options) { { dry_run: true, service: %w[web] } }
 
-      it 'tears down the specified service' do
-        [
-          ['docker compose stop', 'web', inline: true],
-          ['docker compose rm', '--force', '--volumes', 'web', inline: true],
-        ].each do |expected_args|
-          expect(command).to have_received(:run).with(*expected_args)
-        end
-      end
+      it_behaves_like 'teardown logic for services', 'web'
+    end
+
+    context 'when multiple services are specified' do
+      let(:mock_options) { { dry_run: true, service: %w[web worker] } }
+
+      it_behaves_like 'teardown logic for services', 'web', 'worker'
     end
   end
 end
