@@ -27,10 +27,35 @@
 require 'rails_helper'
 
 RSpec.describe Domain::Record, type: :model do
-  subject(:domain_record) { Fabricate.build(:dns_record) }
+  subject(:domain_record) { Fabricate.build(:dns_record, name:, domain_name:, type: record_type, value:) }
+
+  let!(:domain_name) { Fabricate.create(:domain_name, hostname:) }
+  let(:hostname) { Faker::Internet.domain_name }
+  let(:record_type) { 'A' }
+  let(:name) { 'www' }
+  let(:value) { Faker::Internet.ip_v4_address }
 
   describe 'associations' do
     it { is_expected.to belong_to(:domain_name).class_name('Domain::Name').with_foreign_key('domain_name_id') }
+  end
+
+  describe 'scopes' do
+    describe '.by_type_and_domain' do
+      context 'with existing records' do
+        let!(:a_record) { Fabricate.create(:dns_record, domain_name:, type: 'A', value:) }
+        let!(:cname_record) { Fabricate.create(:dns_record, domain_name:, type: 'CNAME', value:) }
+
+        it { expect(Domain::Record.by_type_and_domain('A', hostname)).to include a_record }
+        it { expect(Domain::Record.by_type_and_domain('CNAME', hostname)).to include cname_record }
+      end
+
+      context 'without existing records' do
+        let(:hostname) { 'non-existent-domain.com' }
+
+        it { expect(Domain::Record.by_type_and_domain('MX', hostname)).to be_empty }
+        it { expect(Domain::Record.by_type_and_domain('A', hostname)).to be_empty }
+      end
+    end
   end
 
   describe 'validations' do
@@ -38,6 +63,52 @@ RSpec.describe Domain::Record, type: :model do
     it { is_expected.to validate_presence_of(:type) }
     it { is_expected.to validate_inclusion_of(:type).in_array(Domain::Record::TYPES) }
     it { is_expected.to validate_presence_of(:value) }
+
+    shared_examples 'a record type with unique value validation' do |record_type|
+      context "with an existing, matching #{record_type} record" do
+        let!(:existing_cname) { Fabricate.create(:dns_record, name:, type: record_type, domain_name:, value:) }
+        let(:value) { 'example.com' }
+
+        # to trigger the validation (on: :create), we need to attempt saving the record under test
+        before { domain_record.save }
+
+        it { expect(domain_record.errors[:value]).to include('has already been taken') }
+
+        it do
+          expect(domain_record.errors[:value]).to \
+            include("must be unique - DNS #{record_type} record \"#{value}\" already exists on #{hostname}")
+        end
+      end
+
+      context "with a valid new #{record_type} record" do
+        let(:value) { 'new-example.com' }
+
+        it { is_expected.to be_valid }
+        it { expect { domain_record.save! }.to change { Domain::Record.count }.by(1) }
+      end
+    end
+
+    context 'when type is A' do
+      let(:record_type) { 'A' }
+
+      it { should validate_uniqueness_of(:name).scoped_to(%i[domain_name_id type]).case_insensitive }
+    end
+
+    context 'when type is CNAME' do
+      let(:record_type) { 'CNAME' }
+      let(:value) { Faker::Internet.domain_name(subdomain: true) }
+
+      it { should validate_uniqueness_of(:value).scoped_to(%i[domain_name_id name type]).on(:create).case_insensitive }
+      it_behaves_like 'a record type with unique value validation', 'CNAME'
+    end
+
+    context 'when type is NS' do
+      let(:record_type) { 'NS' }
+      let(:value) { 'ns1.example.com' }
+
+      it { should validate_uniqueness_of(:value).scoped_to(%i[domain_name_id name type]).on(:create).case_insensitive }
+      it_behaves_like 'a record type with unique value validation', 'NS'
+    end
   end
 
   describe 'state machine' do
