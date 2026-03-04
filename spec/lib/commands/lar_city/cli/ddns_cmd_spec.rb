@@ -78,11 +78,11 @@ RSpec.describe LarCity::CLI::DDNSCmd do
 
       # Stub DigitalOcean API endpoints
       stubs.get(%r{/v2/domains/#{domain}/records}) do |_env|
-        [200, { 'Content-Type' => 'application/json' },  domain_records: [] ]
+        [200, { 'Content-Type' => 'application/json' },  domain_records: []]
       end
 
       stubs.post(%r{/v2/domains/#{domain}/records}) do |_env|
-        [201, { 'Content-Type' => 'application/json' },  domain_record: { id: '12345' } ]
+        [201, { 'Content-Type' => 'application/json' },  domain_record: { id: '12345' }]
       end
     end
 
@@ -130,7 +130,7 @@ RSpec.describe LarCity::CLI::DDNSCmd do
     context 'when only one record is found' do
       before do
         stubs.get(%r{/v2/domains/#{domain}/records}) do |_env|
-          [200, { 'Content-Type' => 'application/json' },  'domain_records' => [records.first] ]
+          [200, { 'Content-Type' => 'application/json' },  'domain_records' => [records.first]]
         end
       end
 
@@ -143,7 +143,10 @@ RSpec.describe LarCity::CLI::DDNSCmd do
     context 'when multiple records are found' do
       before do
         stubs.get(%r{/v2/domains/#{domain}/records}) do |_env|
-          [200, { 'Content-Type' => 'application/json' },  'domain_records' => records ]
+          [200, { 'Content-Type' => 'application/json' },  'domain_records' => records]
+        end
+        stubs.delete(%r{/v2/domains/#{domain}/records/\d+}) do |_env|
+          [200, 'Content-Type' => 'application/json']
         end
       end
 
@@ -156,7 +159,7 @@ RSpec.describe LarCity::CLI::DDNSCmd do
     context 'when no records are found' do
       before do
         stubs.get(%r{/v2/domains/#{domain}/records}) do |_env|
-          [200, { 'Content-Type' => 'application/json' },  'domain_records' => [] ]
+          [200, { 'Content-Type' => 'application/json' },  'domain_records' => []]
         end
       end
 
