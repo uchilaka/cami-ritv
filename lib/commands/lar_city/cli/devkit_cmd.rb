@@ -301,7 +301,12 @@ module LarCity
         yaml_content = run(*codegen_cmd, eval: true)
         yaml_template = File.read(Rails.root.join('config', 'app.yaml.erb'))
         yaml_output = ERB.new(yaml_template).result(binding)
-        output_file = Rails.root.join('app.yaml')
+        output_file =
+          if Rails.env.production?
+            Rails.root.join('app.yaml')
+          else
+            Rails.root.join("app.#{detected_environment}.yaml")
+          end
         status = File.write(output_file, yaml_output)
         if status.positive?
           say_success "Generated blueprint has been written to #{output_file}"
