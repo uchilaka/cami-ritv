@@ -7,22 +7,22 @@ RSpec.describe LarCity::CLI::DevkitCmd, type: :command do
   let(:stdout) { StringIO.new }
   let(:stderr) { StringIO.new }
 
-  describe "#force?" do
+  describe '#force?' do
     subject(:force?) { command.send(:force?) }
 
-    context "when --force option is true" do
+    context 'when --force option is true' do
       let(:command_opts) { { force: true } }
 
       it { expect(force?).to be true }
     end
 
-    context "when --force option is false" do
+    context 'when --force option is false' do
       let(:command_opts) { { force: false } }
 
       it { expect(force?).to be false }
     end
 
-    context "when --force option is not provided" do
+    context 'when --force option is not provided' do
       let(:command_opts) { {} }
 
       it { expect(force?).to be false }
@@ -55,7 +55,7 @@ RSpec.describe LarCity::CLI::DevkitCmd, type: :command do
         with_modified_env(RAILS_ENV: 'development') { example.run }
       end
 
-      context "when vendor is supported" do
+      context 'when vendor is supported' do
         let(:stub_vendor_creds) { ActiveSupport::OrderedOptions.new }
         let(:webhook) { Webhook.find_by(slug: vendor_slug) }
 
@@ -95,11 +95,11 @@ RSpec.describe LarCity::CLI::DevkitCmd, type: :command do
               it { expect(webhook.verification_token).to eq(verification_token) }
 
               it 'sets :records_index_workflow_name to the expected value' do
-                expect(webhook.records_index_workflow_name).to eq(Notion::Deals::DownloadLatestWorkflow.name.to_s)
+                expect(webhook.data['records_index_workflow_name']).to eq(Notion::Deals::DownloadLatestWorkflow.name.to_s)
               end
 
               it 'sets :record_download_workflow_name to the expected value' do
-                expect(webhook.record_download_workflow_name).to eq(Notion::Deals::DownloadWorkflow.name.to_s)
+                expect(webhook.data['record_download_workflow_name']).to eq(Notion::Deals::DownloadWorkflow.name.to_s)
               end
             end
           end
@@ -140,14 +140,14 @@ RSpec.describe LarCity::CLI::DevkitCmd, type: :command do
           end
         end
 
-        context 'with vendor "zoho"', skip: "TODO: validate possibly sloppy codegen" do
+        context 'with vendor "zoho"', skip: 'TODO: validate possibly sloppy codegen' do
           it 'raises NotImplementedError' do
             expect { command.invoke(:setup_webhooks, [], { vendor: 'zoho' }) }.to raise_error(NotImplementedError)
           end
         end
       end
 
-      context 'with an unsupported vendor', skip: "TODO: validate possibly sloppy codegen" do
+      context 'with an unsupported vendor', skip: 'TODO: validate possibly sloppy codegen' do
         let(:vendor_slug) { 'unsupported-vendor' }
         let(:stub_vendor_creds) { nil }
 
@@ -158,104 +158,164 @@ RSpec.describe LarCity::CLI::DevkitCmd, type: :command do
     end
   end
 
-  describe '#peek', skip: "TODO: validate possibly sloppy codegen" do
+  describe '#yeet_deploy' do
+    subject(:run_command) { command.invoke(:yeet_deploy, [], **command_opts) }
+
     before do
-      allow(command).to receive(:`).with('git branch --list').and_return("* main\n  feature-branch")
-      allow(command).to receive(:`).with('git rev-parse --abbrev-ref HEAD').and_return('main')
+      allow(command).to receive(:run)
+      allow(command).to receive(:current_branch).and_return('feature-branch')
+      allow(command).to receive(:detected_environment).and_return('production')
+      allow(command).to receive(:block_deployment_on_uncommitted_changes!)
+      allow(command).to receive(:block_deployment_on_same_branch!)
+      allow(command).to receive(:block_deployment_on_release_branches!)
     end
 
-    context 'when a PR exists' do
-      before do
-        allow(command).to receive(:`).with("gh pr list --head main --json number -q '.[].number'").and_return("123\n")
-      end
-
-      it 'views the PR on the web by default' do
-        expect(command).to receive(:run).with('gh pr view 123 --web', inline: true)
-        command.invoke(:peek, [], { interactive: false, branch_name: 'main' })
-        expect(stdout.string).to include('PR number: 123')
-      end
-
-      it 'views the PR inline with --output=inline' do
-        expect(command).to receive(:run).with('gh pr view 123', inline: true)
-        command.invoke(:peek, [], { interactive: false, branch_name: 'main', output: 'inline' })
-      end
+    it 'runs the deployment commands' do
+      run_command
+      expect(command).to have_received(:run).with('git pull --ff', inline: true)
+      expect(command).to have_received(:run).with('git push', inline: true)
+      expect(command).to have_received(:run).with('git checkout releases/production', inline: true, mock_return: true)
+      expect(command).to have_received(:run).with('git pull --ff', inline: true)
+      expect(command).to have_received(:run).with(/git merge --no-ff feature-branch -m/, inline: true)
+      expect(command).to have_received(:run).with('git push origin', 'HEAD:releases/production', inline: true, mock_return: true)
+      expect(command).to have_received(:run).with('git switch feature-branch', inline: true)
     end
 
-    context 'when no PR exists' do
+    context 'when deploy hook is configured' do
       before do
-        allow(command).to receive(:`).with("gh pr list --head feature-branch --json number -q '.[].number'").and_return("\n")
+        allow(ENV).to receive(:fetch).with('APP_DEPLOY_PRODUCTION_HOOK_URL', nil).and_return('https://example.com/deploy')
       end
 
-      context 'in non-interactive mode' do
-        it 'reports no PR was found' do
-          command.invoke(:peek, [], { interactive: false, branch_name: 'feature-branch' })
-          expect(stdout.string).to include('🙅🏾‍♂️ No PR found for branch feature-branch.')
-        end
-      end
-
-      context 'in interactive mode' do
-        it 'prompts to delete the branch and deletes it on "y"' do
-          allow(command.shell).to receive(:ask).with(/Delete the feature-branch branch/).and_return('y')
-          expect(command).to receive(:run).with('git branch --delete feature-branch', inline: true).and_return(true)
-          # Interrupt the command loop after the first action
-          allow(command).to receive(:prompt_for_branch_selection).and_raise(SystemExit)
-
-          expect { command.invoke(:peek, [], { interactive: true, branch_name: 'feature-branch' }) }.to raise_error(SystemExit)
-          expect(stdout.string).to include('Branch feature-branch deleted.')
-        end
-
-        it 'does not delete the branch on "n"' do
-          allow(command.shell).to receive(:ask).with(/Delete the feature-branch branch/).and_return('n')
-          expect(command).not_to receive(:run).with(/git branch --delete/)
-          allow(command).to receive(:prompt_for_branch_selection).and_raise(SystemExit)
-
-          expect { command.invoke(:peek, [], { interactive: true, branch_name: 'feature-branch' }) }.to raise_error(SystemExit)
+      it 'triggers the deploy hook' do
+        run_command
+        expect(command).to have_received(:run) do |*args|
+          expect(args).to eq(['curl -X POST https://example.com/deploy', { inline: true }])
         end
       end
     end
   end
 
-  describe '#swaggerize', skip: "TODO: validate possibly sloppy codegen" do
-    it 'executes the rswag command' do
-      expect(ClimateControl).to receive(:modify).with(RAILS_ENV: 'test').and_yield
-      expect(command).to receive(:system).with('bundle exec rails rswag')
-      command.invoke(:swaggerize)
+  describe '#peek' do
+    subject(:run_command) { command.invoke(:peek, [], **command_opts) }
+
+    before do
+      allow(command).to receive(:run)
+      allow(command).to receive(:check_or_prompt_for_branch_to_review).and_return('123')
     end
 
-    it 'does not execute on a dry run' do
-      expect(command).not_to receive(:system)
-      command.invoke(:swaggerize, [], { dry_run: true })
-      expect(stdout.string).to include('Executing (dry-run): bundle exec rails rswag')
+    context 'with web output' do
+      let(:command_opts) { { output: 'web' } }
+
+      it 'opens the PR in the browser' do
+        run_command
+        expect(command).to have_received(:run) do |*args|
+          expect(args).to eq(['gh pr view 123 --web', { inline: true }])
+        end
+      end
+    end
+
+    context 'with inline output' do
+      let(:command_opts) { { output: 'inline' } }
+
+      it 'displays the PR in the console' do
+        run_command
+        expect(command).to have_received(:run) do |*args|
+          expect(args).to eq(['gh pr view 123', { inline: true }])
+        end
+      end
     end
   end
 
-  describe '#logs', skip: "TODO: validate possibly sloppy codegen" do
+  describe '#swaggerize' do
+    subject(:run_command) { command.invoke(:swaggerize, [], **command_opts) }
+
     before do
-      credentials = { betterstack: { team_id: 'team-id', source_id: 'source-id' } }
-      allow(Rails.application).to receive(:credentials).and_return(credentials.with_indifferent_access)
+      allow(command).to receive(:run)
     end
 
-    context 'on macOS' do
-      before { allow(command).to receive(:mac?).and_return(true) }
-
-      it 'opens the log stream URL' do
-        expected_url = 'https://logs.betterstack.com/team/team-id/tail?s=source-id'
-        expect(command).to receive(:system).with("open --url #{expected_url}")
-        command.invoke(:logs)
-      end
-
-      it 'does not open the URL on a dry run' do
-        expect(command).not_to receive(:system)
-        command.invoke(:logs, [], { dry_run: true })
-        expect(stdout.string).to include('Executing (dry-run): open --url')
+    it 'runs the rswag command' do
+      run_command
+      expect(command).to have_received(:run) do |*args|
+        expect(args).to eq(['bundle exec rails rswag', { inline: true }])
       end
     end
+  end
 
-    context 'on a non-macOS system' do
-      before { allow(command).to receive(:mac?).and_return(false) }
+  describe '#logs' do
+    subject(:run_command) { command.invoke(:logs, [], **command_opts) }
 
-      it 'raises an UnsupportedOSError' do
-        expect { command.invoke(:logs) }.to raise_error(LarCity::Errors::UnsupportedOSError, 'Unsupported OS')
+    before do
+      allow(command).to receive(:run)
+      allow(command).to receive(:mac?).and_return(true)
+      allow(command).to receive(:log_stream_url).and_return('https://example.com/logs')
+    end
+
+    it 'opens the log stream URL' do
+      run_command
+      expect(command).to have_received(:run) do |*args|
+        expect(args).to eq(['open --url https://example.com/logs'])
+      end
+    end
+  end
+
+  describe '#check_blueprint' do
+    subject(:run_command) { command.invoke(:check_blueprint, [], **command_opts) }
+
+    before do
+      allow(command).to receive(:run)
+      allow(command).to receive(:require_render_cli!)
+      allow(ENV).to receive(:fetch).with('RENDER_WORKSPACE_ID').and_return('ws-123')
+    end
+
+    it 'validates the render blueprint' do
+      run_command
+      expect(command).to have_received(:run) do |*args|
+        expect(args).to eq(['render blueprints validate', '--workspace ws-123', Rails.root.join('render.yaml')])
+      end
+    end
+  end
+
+  describe '#get_blueprint' do
+    subject(:run_command) { command.invoke(:get_blueprint, [], **command_opts) }
+
+    let(:command_opts) { { platform: 'digitalocean' } }
+
+    before do
+      allow(command).to receive(:run).and_return('yaml_content')
+      allow(command).to receive(:require_doctl_cli!)
+      allow(DigitalOcean::Utils).to receive(:app_id!).and_return('app-123')
+      allow(DigitalOcean::Utils).to receive(:access_token!).and_return('do-token')
+      allow(File).to receive(:read).and_return('<%= yaml_content %>')
+      allow(File).to receive(:write).and_return(1)
+    end
+
+    it 'generates the blueprint' do
+      run_command
+      expect(command).to have_received(:run) do |*args|
+        expect(args).to eq(['doctl apps spec get', 'app-123', '--access-token do-token', '--format yaml', { eval: true }])
+      end
+      expect(File).to have_received(:write) do |*args|
+        expect(args).to eq([Rails.root.join('app.yaml'), 'yaml_content'])
+      end
+    end
+  end
+
+  describe '#build' do
+    subject(:run_command) { command.invoke(:build, [], **command_opts) }
+
+    let(:command_opts) { { platform: 'digitalocean' } }
+
+    before do
+      allow(command).to receive(:run)
+      allow(command).to receive(:require_doctl_cli!)
+      allow(DigitalOcean::Utils).to receive(:app_id!).and_return('app-123')
+      allow(DigitalOcean::Utils).to receive(:access_token!).and_return('do-token')
+    end
+
+    it 'builds the project blueprint' do
+      run_command
+      expect(command).to have_received(:run) do |*args|
+        expect(args).to eq(['doctl apps dev build', '--access-token do-token', '--app app-123'])
       end
     end
   end

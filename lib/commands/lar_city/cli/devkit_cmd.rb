@@ -352,7 +352,7 @@ module LarCity
           return if run('which doctl > /dev/null 2>&1', mock_return: true, inline: true)
 
           say_warning <<~MSG.squish
-            ⚠️ The 'doctl' CLI tool is not installed or not found in the system PATH.
+            The 'doctl' CLI tool is not installed or not found in the system PATH.
             Please install the DigitalOcean CLI to use this command. You can install it via
             Brew by running 'brew install doctl' or by following the instructions at
             https://docs.digitalocean.com/reference/doctl/how-to/install/.
