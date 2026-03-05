@@ -56,8 +56,6 @@
 /config/credentials/*--**-*-*T*.yml.enc
 # Ignore Daemon config file
 /config/*.plist
-# Ignore app.yaml config file
-app.yaml
 
 ###################################################################
 
