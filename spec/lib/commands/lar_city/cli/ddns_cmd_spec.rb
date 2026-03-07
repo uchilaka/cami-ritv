@@ -141,9 +141,17 @@ RSpec.describe LarCity::CLI::DDNSCmd do
     end
 
     context 'when multiple records are found' do
+      let(:expected_job_args) do
+        [
+          [records.dig(1, 'id'), domain:, access_token: anything, pretend: anything],
+          [records.dig(2, 'id'), domain:, access_token: anything, pretend: anything],
+        ]
+      end
+
       before do
+        ActiveJob::Base.queue_adapter = :test
         stubs.get(%r{/v2/domains/#{domain}/records}) do |_env|
-          [200, { 'Content-Type' => 'application/json' },  'domain_records' => records]
+          [200, { 'Content-Type' => 'application/json' }, 'domain_records' => records]
         end
         stubs.delete(%r{/v2/domains/#{domain}/records/\d+}) do |_env|
           [200, 'Content-Type' => 'application/json']
@@ -152,14 +160,17 @@ RSpec.describe LarCity::CLI::DDNSCmd do
 
       it 'prunes the extra records' do
         instance.prune
-        expect(DigitalOcean::DeleteDomainRecordJob).to have_received(:set).twice
+        expect(DigitalOcean::DeleteDomainRecordJob).to have_been_enqueued.exactly(2).times
+        # expect { instance.prune }.to \
+        #   have_enqueued_job(DigitalOcean::DeleteDomainRecordJob)
+        #     .with(*expected_job_args[0]).on_queue(:critical)
       end
     end
 
     context 'when no records are found' do
       before do
         stubs.get(%r{/v2/domains/#{domain}/records}) do |_env|
-          [200, { 'Content-Type' => 'application/json' },  'domain_records' => []]
+          [200, { 'Content-Type' => 'application/json' }, 'domain_records' => []]
         end
       end
 

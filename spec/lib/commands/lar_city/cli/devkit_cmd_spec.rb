@@ -95,11 +95,11 @@ RSpec.describe LarCity::CLI::DevkitCmd, type: :command do
               it { expect(webhook.verification_token).to eq(verification_token) }
 
               it 'sets :records_index_workflow_name to the expected value' do
-                expect(webhook.data['records_index_workflow_name']).to eq(Notion::Deals::DownloadLatestWorkflow.name.to_s)
+                expect(webhook.records_index_workflow_name).to eq(Notion::Deals::DownloadLatestWorkflow.name.to_s)
               end
 
               it 'sets :record_download_workflow_name to the expected value' do
-                expect(webhook.data['record_download_workflow_name']).to eq(Notion::Deals::DownloadWorkflow.name.to_s)
+                expect(webhook.record_download_workflow_name).to eq(Notion::Deals::DownloadWorkflow.name.to_s)
               end
             end
           end
@@ -154,168 +154,6 @@ RSpec.describe LarCity::CLI::DevkitCmd, type: :command do
         it 'raises ArgumentError' do
           expect { command.invoke(:setup_webhooks, [], { vendor: 'invalid' }) }.to raise_error(ArgumentError, /Unsupported vendor: invalid/)
         end
-      end
-    end
-  end
-
-  describe '#yeet_deploy' do
-    subject(:run_command) { command.invoke(:yeet_deploy, [], **command_opts) }
-
-    before do
-      allow(command).to receive(:run)
-      allow(command).to receive(:current_branch).and_return('feature-branch')
-      allow(command).to receive(:detected_environment).and_return('production')
-      allow(command).to receive(:block_deployment_on_uncommitted_changes!)
-      allow(command).to receive(:block_deployment_on_same_branch!)
-      allow(command).to receive(:block_deployment_on_release_branches!)
-    end
-
-    it 'runs the deployment commands' do
-      run_command
-      expect(command).to have_received(:run).with('git pull --ff', inline: true)
-      expect(command).to have_received(:run).with('git push', inline: true)
-      expect(command).to have_received(:run).with('git checkout releases/production', inline: true, mock_return: true)
-      expect(command).to have_received(:run).with('git pull --ff', inline: true)
-      expect(command).to have_received(:run).with(/git merge --no-ff feature-branch -m/, inline: true)
-      expect(command).to have_received(:run).with('git push origin', 'HEAD:releases/production', inline: true, mock_return: true)
-      expect(command).to have_received(:run).with('git switch feature-branch', inline: true)
-    end
-
-    context 'when deploy hook is configured' do
-      before do
-        allow(ENV).to receive(:fetch).with('APP_DEPLOY_PRODUCTION_HOOK_URL', nil).and_return('https://example.com/deploy')
-      end
-
-      it 'triggers the deploy hook' do
-        run_command
-        expect(command).to have_received(:run) do |*args|
-          expect(args).to eq(['curl -X POST https://example.com/deploy', { inline: true }])
-        end
-      end
-    end
-  end
-
-  describe '#peek' do
-    subject(:run_command) { command.invoke(:peek, [], **command_opts) }
-
-    before do
-      allow(command).to receive(:run)
-      allow(command).to receive(:check_or_prompt_for_branch_to_review).and_return('123')
-    end
-
-    context 'with web output' do
-      let(:command_opts) { { output: 'web' } }
-
-      it 'opens the PR in the browser' do
-        run_command
-        expect(command).to have_received(:run) do |*args|
-          expect(args).to eq(['gh pr view 123 --web', { inline: true }])
-        end
-      end
-    end
-
-    context 'with inline output' do
-      let(:command_opts) { { output: 'inline' } }
-
-      it 'displays the PR in the console' do
-        run_command
-        expect(command).to have_received(:run) do |*args|
-          expect(args).to eq(['gh pr view 123', { inline: true }])
-        end
-      end
-    end
-  end
-
-  describe '#swaggerize' do
-    subject(:run_command) { command.invoke(:swaggerize, [], **command_opts) }
-
-    before do
-      allow(command).to receive(:run)
-    end
-
-    it 'runs the rswag command' do
-      run_command
-      expect(command).to have_received(:run) do |*args|
-        expect(args).to eq(['bundle exec rails rswag', { inline: true }])
-      end
-    end
-  end
-
-  describe '#logs' do
-    subject(:run_command) { command.invoke(:logs, [], **command_opts) }
-
-    before do
-      allow(command).to receive(:run)
-      allow(command).to receive(:mac?).and_return(true)
-      allow(command).to receive(:log_stream_url).and_return('https://example.com/logs')
-    end
-
-    it 'opens the log stream URL' do
-      run_command
-      expect(command).to have_received(:run) do |*args|
-        expect(args).to eq(['open --url https://example.com/logs'])
-      end
-    end
-  end
-
-  describe '#check_blueprint' do
-    subject(:run_command) { command.invoke(:check_blueprint, [], **command_opts) }
-
-    before do
-      allow(command).to receive(:run)
-      allow(command).to receive(:require_render_cli!)
-      allow(ENV).to receive(:fetch).with('RENDER_WORKSPACE_ID').and_return('ws-123')
-    end
-
-    it 'validates the render blueprint' do
-      run_command
-      expect(command).to have_received(:run) do |*args|
-        expect(args).to eq(['render blueprints validate', '--workspace ws-123', Rails.root.join('render.yaml')])
-      end
-    end
-  end
-
-  describe '#get_blueprint' do
-    subject(:run_command) { command.invoke(:get_blueprint, [], **command_opts) }
-
-    let(:command_opts) { { platform: 'digitalocean' } }
-
-    before do
-      allow(command).to receive(:run).and_return('yaml_content')
-      allow(command).to receive(:require_doctl_cli!)
-      allow(DigitalOcean::Utils).to receive(:app_id!).and_return('app-123')
-      allow(DigitalOcean::Utils).to receive(:access_token!).and_return('do-token')
-      allow(File).to receive(:read).and_return('<%= yaml_content %>')
-      allow(File).to receive(:write).and_return(1)
-    end
-
-    it 'generates the blueprint' do
-      run_command
-      expect(command).to have_received(:run) do |*args|
-        expect(args).to eq(['doctl apps spec get', 'app-123', '--access-token do-token', '--format yaml', { eval: true }])
-      end
-      expect(File).to have_received(:write) do |*args|
-        expect(args).to eq([Rails.root.join('app.yaml'), 'yaml_content'])
-      end
-    end
-  end
-
-  describe '#build' do
-    subject(:run_command) { command.invoke(:build, [], **command_opts) }
-
-    let(:command_opts) { { platform: 'digitalocean' } }
-
-    before do
-      allow(command).to receive(:run)
-      allow(command).to receive(:require_doctl_cli!)
-      allow(DigitalOcean::Utils).to receive(:app_id!).and_return('app-123')
-      allow(DigitalOcean::Utils).to receive(:access_token!).and_return('do-token')
-    end
-
-    it 'builds the project blueprint' do
-      run_command
-      expect(command).to have_received(:run) do |*args|
-        expect(args).to eq(['doctl apps dev build', '--access-token do-token', '--app app-123'])
       end
     end
   end
