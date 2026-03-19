@@ -25,22 +25,10 @@ projects:
             branch: releases/production
             plan: starter
             envVars:
-              - key: RAILS_MASTER_KEY
-                sync: false
-              - key: PORT
-                sync: false
-              - key: HOSTNAME
-                sync: false
-              - key: RAILS_MAX_THREADS
-                sync: false
-              - key: RAILS_MIN_THREADS
-                sync: false
-              - key: RAILS_QUEUE_THREADS
-                sync: false
               - key: NODE_ENV
-                sync: false
-              - key: WEB_CONCURRENCY
-                sync: false
+                value: production
+              - key: RAILS_ENV
+                value: production
               - key: APP_DATABASE_HOST
                 fromDatabase:
                   name: cami-production-db
@@ -63,7 +51,9 @@ projects:
               - fromGroup: PayPal Production
               - fromGroup: SMTP Live
               - fromGroup: Vault Shared
+              - fromGroup: Vault Production
             region: virginia
+            preDeployCommand: ./bin/pre-deploy
             dockerContext: .
             dockerfilePath: ./Dockerfile.web
             domains:
@@ -84,18 +74,16 @@ projects:
             branch: releases/production
             plan: starter
             envVars:
-              - key: RAILS_MASTER_KEY
-                sync: false
-              - key: RAILS_MAX_THREADS
-                sync: false
-              - key: RAILS_MIN_THREADS
-                sync: false
-              - key: RAILS_QUEUE_THREADS
-                sync: false
+              - fromGroup: Logtail Production
+              - fromGroup: CRM Production
+              - fromGroup: PayPal Production
+              - fromGroup: SMTP Live
+              - fromGroup: Vault Shared
+              - fromGroup: Vault Production
               - key: NODE_ENV
-                sync: false
-              - key: WEB_CONCURRENCY
-                sync: false
+                value: production
+              - key: RAILS_ENV
+                value: production
               - key: APP_DATABASE_HOST
                 fromDatabase:
                   name: cami-production-db
@@ -112,15 +100,10 @@ projects:
                 fromDatabase:
                   name: cami-production-db
                   property: password
-              - fromGroup: Logtail Production
-              - fromGroup: CRM Production
-              # - fromGroup: Database Production
-              - fromGroup: PayPal Production
-              - fromGroup: SMTP Live
-              - fromGroup: Vault Shared
             region: virginia
+            preDeployCommand: ./bin/pre-deploy
             dockerContext: .
-            dockerfilePath: ./Dockerfile.web
+            dockerfilePath: ./Dockerfile.worker
             autoDeployTrigger: checksPass
 
       - name: Staging
@@ -146,17 +129,16 @@ projects:
             branch: releases/staging
             plan: free
             envVars:
-              - key: HOSTNAME
-                sync: false
+              - key: NODE_ENV
+                value: staging
               - key: RAILS_ENV
-                sync: false
-              - key: WEB_CONCURRENCY
-                sync: false
+                value: staging
               - fromGroup: CRM Staging
               - fromGroup: Logtail Staging
               - fromGroup: PayPal Staging
               - fromGroup: SMTP Live
               - fromGroup: Vault Shared
+              - fromGroup: Vault Staging
               - key: APP_DATABASE_HOST
                 fromDatabase:
                   name: cami-staging-db
@@ -178,41 +160,41 @@ projects:
             dockerfilePath: ./Dockerfile.web
             autoDeployTrigger: commit
           # The Rails (staging) background worker for processing async jobs
-          - type: worker
-            name: cami-staging-solid-queue
-            runtime: docker
-            repo: https://github.com/uchilaka/cami-ritv
-            branch: releases/staging
-            plan: free
-            envVars:
-              - key: HOSTNAME
-                sync: false
-              - key: RAILS_ENV
-                sync: false
-              - key: WEB_CONCURRENCY
-                sync: false
-              - fromGroup: CRM Staging
-              - fromGroup: Logtail Staging
-              - fromGroup: PayPal Staging
-              - fromGroup: SMTP Live
-              - fromGroup: Vault Shared
-              - key: APP_DATABASE_HOST
-                fromDatabase:
-                  name: cami-staging-db
-                  property: host
-              - key: APP_PRIMARY_DATABASE_NAME
-                fromDatabase:
-                  name: cami-staging-db
-                  property: database
-              - key: APP_DATABASE_USER
-                fromDatabase:
-                  name: cami-staging-db
-                  property: user
-              - key: APP_DATABASE_PASSWORD
-                fromDatabase:
-                  name: cami-staging-db
-                  property: password
-            region: virginia
-            dockerContext: .
-            dockerfilePath: ./Dockerfile.worker
-            autoDeployTrigger: commit
+#          - type: worker
+#            name: cami-staging-solid-queue
+#            runtime: docker
+#            repo: https://github.com/uchilaka/cami-ritv
+#            branch: releases/staging
+#            plan: starter
+#            envVars:
+#              - key: RAILS_ENV
+#                value: staging
+#              - key: NODE_ENV
+#                value: staging
+#              - fromGroup: CRM Staging
+#              - fromGroup: Logtail Staging
+#              - fromGroup: PayPal Staging
+#              - fromGroup: SMTP Live
+#              - fromGroup: Vault Shared
+#              - fromGroup: Vault Staging
+#              - key: APP_DATABASE_HOST
+#                fromDatabase:
+#                  name: cami-staging-db
+#                  property: host
+#              - key: APP_PRIMARY_DATABASE_NAME
+#                fromDatabase:
+#                  name: cami-staging-db
+#                  property: database
+#              - key: APP_DATABASE_USER
+#                fromDatabase:
+#                  name: cami-staging-db
+#                  property: user
+#              - key: APP_DATABASE_PASSWORD
+#                fromDatabase:
+#                  name: cami-staging-db
+#                  property: password
+#            region: virginia
+#            preDeployCommand: ./bin/pre-deploy
+#            dockerContext: .
+#            dockerfilePath: ./Dockerfile.worker
+#            autoDeployTrigger: commit
