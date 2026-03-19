@@ -49,7 +49,7 @@ end
 if AppUtils.check_env_vars?
   puts ['🛠️ Configuring required', Rails.env, 'environment variables'].compact.join(' ')
   # Doc on required keys: https://github.com/bkeepers/dotenv?tab=readme-ov-file#required-keys
-  Dotenv.require_keys(required_env_vars) if AppUtils.check_env_vars?
+  Dotenv.require_keys(required_env_vars)
 else
   puts <<~MSG
     ⚠️ Skipping environment variable check in #{Rails.env} environment.

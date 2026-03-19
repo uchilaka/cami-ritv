@@ -7,9 +7,9 @@ module DDNS
     queue_as :high
 
     def perform
-      Rails.application.config_for('ddns/dirty').each do |record|
+      Rails.application.config_for('ddns/dirty').each do |record_config|
         domain, record, record_type =
-          record.values_at(:domain, :content, :type)
+          record_config.values_at(:domain, :content, :type)
         raise ArgumentError, 'Domain is required' if domain.blank?
         raise ArgumentError, 'Domain record content is required' if record.blank?
         raise ArgumentError, 'Domain record type is required' if record_type.blank?

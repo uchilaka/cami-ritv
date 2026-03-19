@@ -301,7 +301,12 @@ module LarCity
         yaml_content = run(*codegen_cmd, eval: true)
         yaml_template = File.read(Rails.root.join('config', 'app.yaml.erb'))
         yaml_output = ERB.new(yaml_template).result(binding)
-        output_file = Rails.root.join('app.yaml')
+        output_file =
+          if Rails.env.production?
+            Rails.root.join('app.yaml')
+          else
+            Rails.root.join("app.#{detected_environment}.yaml")
+          end
         status = File.write(output_file, yaml_output)
         if status.positive?
           say_success "Generated blueprint has been written to #{output_file}"
@@ -352,7 +357,7 @@ module LarCity
           return if run('which doctl > /dev/null 2>&1', mock_return: true, inline: true)
 
           say_warning <<~MSG.squish
-            ⚠️ The 'doctl' CLI tool is not installed or not found in the system PATH.
+            The 'doctl' CLI tool is not installed or not found in the system PATH.
             Please install the DigitalOcean CLI to use this command. You can install it via
             Brew by running 'brew install doctl' or by following the instructions at
             https://docs.digitalocean.com/reference/doctl/how-to/install/.

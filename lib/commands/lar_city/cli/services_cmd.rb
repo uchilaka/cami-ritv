@@ -155,6 +155,7 @@ module LarCity
       long_desc I18n.t('commands.services.kill.long_desc')
       def kill
         # TODO: pending implementation
+        raise NotImplementedError, 'Kill by port functionality is not yet implemented.'
       end
 
       option :pid,
@@ -224,7 +225,7 @@ module LarCity
       add_service_option(
         desc: I18n.t('commands.services.teardown.options.service.short_desc'),
         long_desc: I18n.t('commands.services.teardown.options.service.long_desc'),
-        required: true
+        required: false
       )
       desc 'teardown', I18n.t('commands.services.teardown.short_desc')
       long_desc I18n.t('commands.services.teardown.long_desc')
