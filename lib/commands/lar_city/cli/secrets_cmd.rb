@@ -7,6 +7,10 @@ module LarCity
     class SecretsCmd < BaseCmd
       namespace 'secrets'
 
+      no_commands do
+        include VaultHelpers
+      end
+
       desc 'gpg-keys', 'List GPG keys in the system'
       def gpg_keys
         run 'gpg --list-secret-keys --keyid-format LONG'
@@ -111,6 +115,14 @@ module LarCity
         puts key_data.dump
       rescue ActiveStorage::FileNotFoundError => error
         puts error
+      end
+
+      desc 'list-vault-items', 'List secrets vault items'
+      def list_vault_items
+        require_authenticated_vault_connection!
+
+        say_debug "Fetching list of vault items from Proton Vault share with ID: #{vault_share_id}"
+        run 'pass-cli item list', "--share-id #{vault_share_id}"
       end
 
       private

@@ -72,6 +72,7 @@ class EnvSetupCmd < Thor::Group
             by verifying that you have the necessary access and permissions in
             Proton Vault. You can sign in by running: `pass-cli login`
 
+            Detected environment: #{detected_environment}
             Source Item ID: #{source_item_id}
             Vault Share ID: #{vault_share_id}
             Template path: #{template_file_path}
@@ -90,6 +91,17 @@ class EnvSetupCmd < Thor::Group
             # -----------------------------------------------------------------
             export GITCRYPT_KEY_FILE="config/credentials/git-crypt.key"
             export PORT=16006
+
+            # Was 1 for local debugging
+            export RAILS_QUEUE_THREADS=3
+            export RAILS_MIN_THREADS=3
+            export RAILS_MAX_THREADS=5
+
+            # TODO: Testing between 0 and 2 while observing +[NSCharacterSet initialize] crashing issues on local
+            export WEB_CONCURRENCY=0
+
+            # TODO: See https://github.com/railsjazz/rails_live_reload/pull/42
+            #export RAILS_LIVE_RELOAD_ENABLED=yes
           HEADER
 
           database_header = '# Dockerized database credentials'
@@ -101,7 +113,15 @@ class EnvSetupCmd < Thor::Group
             export MARKETING_EMAIL_SENDER="info@lar.city"
 
             #export SEMANTIC_LOGGER_STREAMING_ENABLED="yes"
-            export BETTERSTACK_INGESTION_HOST=#{Rails.application.credentials.betterstack.ingestion_host!}
+            export APP_DEBUG_MODE=no
+            export OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES
+            export DISABLE_SPRING=true
+
+            # Email controls
+            #export SEND_EMAILS_ENABLED=yes
+
+            # ETL
+            #export UPSERT_INVOICE_BATCH_LIMIT=1000
           FILE_FOOTER
 
           erb_template_array = [file_header, database_header]
@@ -109,15 +129,43 @@ class EnvSetupCmd < Thor::Group
           # Provision database ENV variables from Proton Vault
           database_env_sets.each do |env_key, vault_field|
             erb_template_array <<
-              "export #{env_key}=\"{{ pass://#{value_path(vault_share_id, source_item_id, vault_field)} }}\""
+              "export #{env_key}=\"{{ pass://#{value_path(vault_share_id, shared_source_item_id, vault_field)} }}\""
           end
 
           erb_template_array << ''
 
           # Provision secrets from ENV variable item in Proton Vault
-          item_env_sets.each do |env_key, vault_field|
+          platform_env_sets.each do |env_key, vault_field|
+            vault_field ||= env_key
             erb_template_array <<
-              "export #{env_key}=\"{{ pass://#{value_path(vault_share_id, source_item_id, vault_field)} }}\""
+              "export #{env_key}=\"{{ pass://#{value_path(vault_share_id, shared_source_item_id, vault_field)} }}\""
+          end
+
+          # Provision secrets in other sections
+          sections = item_env_sets.map do |_env_key, _vault_field, item_section|
+            item_section
+          end.flatten.uniq
+
+          say_debug ''
+          say_debug '|--------- Sections ---------|'
+          say_debug sections.map { |s| "- #{s}" }.join("\n").to_s
+          say_debug '|----------------------------|'
+          say_debug ''
+
+          erb_template_array << ''
+          sections.each do |section|
+            next if %w[database platform].include?(section)
+
+            erb_template_array <<
+              "# #{item_sections[section] || section.capitalize}"
+
+            item_env_sets_by(section:).each do |env_key, vault_field, item_section|
+              vault_field ||= env_key
+              erb_template_array <<
+                "export #{env_key}=\"{{ pass://#{value_path(vault_share_id, source_item_id, vault_field)} }}\""
+            end
+
+            erb_template_array << ''
           end
 
           erb_template_array << file_footer
@@ -149,7 +197,7 @@ class EnvSetupCmd < Thor::Group
       ]
     end
 
-    def item_env_sets
+    def platform_env_sets
       [
         ['RENDER_WORKSPACE_ID', 'Render Workspace ID'],
         ['APP_DEPLOY_PRODUCTION_HOOK_URL', 'Production Deploy Hook URL'],
@@ -157,12 +205,50 @@ class EnvSetupCmd < Thor::Group
       ]
     end
 
-    def vault_share_id
-      proton_credentials.vault_share_id
+    def item_sections
+      {
+        'app' => 'Application',
+        'cache' => 'Cache store(s)',
+        'database' => 'App store configuration',
+        'platform' => 'Deployment platform credentials',
+        'proxy' => 'Proxy configuration (e.g. ngrok, tailscale)',
+        'paypal' => 'PayPal',
+        'crm' => 'Zoho CRM',
+        'logging' => 'Logging and monitoring',
+      }
+    end
+
+    def item_env_sets_by(section:)
+      item_env_sets.filter do |(_env_key, _vault_field, item_section)|
+        item_section == section
+      end
+    end
+
+    def item_env_sets
+      [
+        *database_env_sets.map { |env_key, vault_field| [env_key, vault_field, 'database'] },
+        *platform_env_sets.map { |env_key, vault_field| [env_key, vault_field, 'platform'] },
+        ['HOSTNAME', nil, 'app'],
+        ['REDIS_URL', nil, 'cache'],
+        ['NGROK_AUTH_TOKEN', nil, 'proxy'],
+        ['PAYPAL_BASE_URL', nil, 'paypal'],
+        ['PAYPAL_API_BASE_URL', nil, 'paypal'],
+        ['PAYPAL_CLIENT_ID', nil, 'paypal'],
+        ['PAYPAL_CLIENT_SECRET', nil, 'paypal'],
+        ['ZOHO_CLIENT_ID', nil, 'crm'],
+        ['ZOHO_CLIENT_SECRET', nil, 'crm'],
+        ['CRM_ORG_ID', nil, 'crm'],
+        ['BETTERSTACK_SOURCE_TOKEN', nil, 'logging'],
+        ['BETTERSTACK_INGESTION_HOST', nil, 'logging'],
+      ]
+    end
+
+    def shared_source_item_id
+      vault_source_items[:shared].share_id
     end
 
     def source_item_id
-      proton_credentials.env_vars_item_id
+      vault_source_items[detected_environment].share_id
     end
 
     def proton_credentials
@@ -174,7 +260,7 @@ class EnvSetupCmd < Thor::Group
     end
 
     def output_filename
-      @output_filename ||= ['.env', Rails.env, 'local'].join('.')
+      @output_filename ||= ['.env', detected_environment, 'local'].join('.')
     end
 
     def template_file_path
