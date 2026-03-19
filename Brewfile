@@ -2,13 +2,16 @@
 
 require 'fileutils'
 
+current_env = `echo $RAILS_ENV`.strip
+rails_env = ENV.fetch('RAILS_ENV', current_env)
+
 # set arguments for all 'brew install --cask' commands
 cask_args appdir: '~/Applications', require_sha: false
 
-puts "Environment: #{ENV.fetch('RAILS_ENV', '<N/A>')}"
+puts "Environment: #{rails_env.blank? ? 'NOT SET' : rails_env}"
 
 # Environment specific dependencies
-if %w[staging production].include?(ENV['RAILS_ENV'])
+if %w[staging production].include?(rails_env)
   brew 'mise'
   brew 'certbot'
 else
@@ -19,7 +22,7 @@ else
   brew 'goreman'
 
   # Skip these specifically in test environments
-  unless %w[ci test].include?(ENV['RAILS_ENV'])
+  unless %w[ci test].include?(rails_env)
     brew 'tree' if OS.mac?
     brew 'ruby-build'
     # TODO: what's the overlap between this and gnutls?
@@ -64,7 +67,7 @@ cask 'claude'
 cask 'notion'
 cask '1password'
 
-if %w[development lab].include?(ENV['RAILS_ENV'])
+if %w[development lab].include?(rails_env)
   brew 'render'
   cask 'insomnia'
   cask 'discord'
