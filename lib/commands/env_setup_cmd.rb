@@ -159,7 +159,7 @@ class EnvSetupCmd < Thor::Group
             erb_template_array <<
               "# #{item_sections[section] || section.capitalize}"
 
-            item_env_sets_by(section:).each do |env_key, vault_field, item_section|
+            item_env_sets_by(section:).each do |env_key, vault_field, _item_section|
               vault_field ||= env_key
               erb_template_array <<
                 "export #{env_key}=\"{{ pass://#{value_path(vault_share_id, source_item_id, vault_field)} }}\""
