@@ -192,6 +192,10 @@ class AppUtils
       yes?(ENV.fetch('APP_CONFIG_CHECK_ENV_VARS', 'yes'))
     end
 
+    def database_url_present?
+      ENV['DATABASE_URL'].present?
+    end
+
     private
 
     def check_credentials?
