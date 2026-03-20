@@ -27,12 +27,12 @@ class EnvSetupCmd < Thor::Group
   end
 
   def write_template_file
-    say_info "Writing .env template file to #{template_file_path}..."
+    say_info "Writing dotenv template file to #{template_file_path}..."
     return if pretend?
 
     bytes_written = File.write template_file_path, template_content
     say_debug <<~DEBUG_MSG
-      Result of writing .env template file to #{template_file_path}: #{bytes_written.inspect}
+      Result of writing dotenv template file to #{template_file_path}: #{bytes_written.inspect}
     DEBUG_MSG
     if bytes_written.positive?
       say_success "Successfully wrote .env template file to #{template_file_path}."
@@ -45,7 +45,7 @@ class EnvSetupCmd < Thor::Group
     require_template_exists!
     require_proton_pass_cli!
 
-    say_info "Provisioning .env file from template at #{template_file_path}..."
+    say_info "Provisioning #{output_file_path} file from template at #{template_file_path}..."
     run(
       'pass-cli inject',
       "--in-file #{template_file_path}",
@@ -58,36 +58,33 @@ class EnvSetupCmd < Thor::Group
 
   no_commands do
     def template_content
-      @template_content ||=
-        begin
-          say_debug <<~DEBUG_MSG
-            Fetching environment variable values from Proton Vault to
-            initialize the .env.tpl template and generate the .env file
-            for the app.
+      say_debug <<~DEBUG_MSG
+        Fetching environment variable values from Proton Vault to
+        initialize the .env.tpl template and generate the .env file
+        for the app.
 
-            =======================================================================
-            ======== IMPORTANT: Ensure Proton Vault Access and Permissions ========
-            =======================================================================
-            To successfully fetch the required environment variable values, start
-            by verifying that you have the necessary access and permissions in
-            Proton Vault. You can sign in by running: `pass-cli login`
+        =======================================================================
+        ======== IMPORTANT: Ensure Proton Vault Access and Permissions ========
+        =======================================================================
+        To successfully fetch the required environment variable values, start
+        by verifying that you have the necessary access and permissions in
+        Proton Vault. You can sign in by running: `pass-cli login`
 
-            Detected environment: #{detected_environment}
-            Source Item ID: #{source_item_id}
-            Vault Share ID: #{vault_share_id}
-            Template path: #{template_file_path}
-          DEBUG_MSG
+        Detected environment: #{detected_environment}
+        Source Item ID: #{source_item_id}
+        Vault Share ID: #{vault_share_id}
+        Template path: #{template_file_path}
+      DEBUG_MSG
 
-          if File.exist?(dotenv_template_file_path)
-            # Process the ERB template file bound to current execution context
-            ERB.new(File.read(dotenv_template_file_path)).result(binding)
-          else
-            say_warning "⚠️ No environment-specific .env template found at #{dotenv_template_file_path}. Proceeding with default template content."
-            build_template_body(shared_header, file_header) do |content|
-              [content, file_footer].join("\n")
-            end.join("\n")
-          end
-        end
+      if File.exist?(dotenv_template_file_path)
+        # Process the ERB template file bound to current execution context
+        ERB.new(File.read(dotenv_template_file_path)).result(binding)
+      else
+        say_warning "⚠️ No environment-specific .env template found at #{dotenv_template_file_path}. Proceeding with default template content."
+        build_template_body(shared_header, file_header) do |content|
+          [content, file_footer].join("\n")
+        end.join("\n")
+      end
     end
 
     private
@@ -221,7 +218,11 @@ class EnvSetupCmd < Thor::Group
     end
 
     def source_item_id
-      @source_item_id ||= vault_source_items[detected_environment].share_id
+      @source_item_id ||=
+        ENV.fetch(
+          'ENV_VARS_ITEM_ID',
+          vault_source_items[detected_environment].share_id
+        )
     end
 
     def proton_credentials
