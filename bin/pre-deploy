@@ -8,8 +8,11 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # Decrypt secrets
 "$SCRIPT_DIR/unlock-repo"
 
-# Run database migrations (only on free tier)
-bundle exec rails db:migrate
+# Link credential key file
+"$SCRIPT_DIR/link-key-file"
+
+# Run database migrations
+bundle exec rake db:migrate
 
 # Apply data migrations
-bundle exec rails data:migrate
+bundle exec rake data:migrate
