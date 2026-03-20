@@ -17,8 +17,5 @@ yarn install --immutable
 # Install gems
 bundle install
 
-# Build Tailwind CSS assets
-bundle exec rails tailwindcss:build
-
 # Precompile assets
-bundle exec rails assets:precompile
+bundle exec rake assets:precompile
