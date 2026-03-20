@@ -14,15 +14,6 @@ yarn install --immutable
 # Install gems
 bundle install
 
-## Build css
-#yarn build:css
-#
-## Pre-build app assets
-#yarn build:assets
-#
-## Build frontend
-#yarn build
-
 # Build Tailwind CSS assets
 bundle exec rails tailwindcss:build
 
