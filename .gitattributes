@@ -8,6 +8,7 @@ vendor/* linguist-vendored
 
 # Ensure this file is NOT encrypted
 .gitattributes !filter !diff
+config/dotenvs/*.erb !filter !diff
 
 # Rails credentials
 config/credentials/*.yml.enc diff=rails_credentials
