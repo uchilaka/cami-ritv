@@ -67,8 +67,9 @@ RUN --mount=type=secret,id=${RAILS_ENV}.key,dst=${WORKDIR}/config/credentials/${
 RUN --mount="type=secret,id=${RAILS_ENV}.key,dst=${WORKDIR}/config/credentials/${RAILS_ENV}.key" \
   bundle exec rake assets:precompile
 
-# Review Render docs on building from a Dockerfile:
-# https://render.com/docs/docker#building-from-a-dockerfile
+# Review your deployment provider docs on building from a Dockerfile, for example:
+# Render:       https://render.com/docs/docker#building-from-a-dockerfile
+# DigitalOcean: https://docs.digitalocean.com/products/app-platform/how-to/deploy-from-container-images/
 EXPOSE 3000
 
 # Specify the entrypoint command to run your Rails server
