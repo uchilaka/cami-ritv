@@ -103,7 +103,7 @@ projects:
             region: virginia
             preDeployCommand: ./bin/pre-deploy
             dockerContext: .
-            dockerfilePath: ./Dockerfile.web
+            dockerfilePath: ./Dockerfile.worker
             autoDeployTrigger: checksPass
 
       - name: Staging

@@ -1,13 +1,20 @@
 # frozen_string_literal: true
 
 production_env_vars = []
-{
-  'APP_DATABASE_NAME' => :database,
-  'APP_DATABASE_HOST' => :host,
-  'APP_DATABASE_PORT' => :port,
-}.each do |var, config_key|
-  production_env_vars << var \
-    if Rails.application.credentials.dig(:postgres, config_key).blank?
+if AppUtils.database_url_present?
+  puts <<~MSG
+    ⚠️ DATABASE_URL environment variable detected. Skipping individual
+    database configuration checks.
+  MSG
+else
+  {
+    'APP_DATABASE_NAME' => :database,
+    'APP_DATABASE_HOST' => :host,
+    'APP_DATABASE_PORT' => :port,
+  }.each do |var, config_key|
+    production_env_vars << var \
+      if Rails.application.credentials.dig(:postgres, config_key).blank?
+  end
 end
 
 # Build required environment variables based on available configurations
@@ -16,12 +23,14 @@ end
 #   co-located database instance. Revisit this later.
 required_env_vars = %w[PORT RAILS_ENV]
 
-{
-  'APP_DATABASE_USER' => :user,
-  'APP_DATABASE_PASSWORD' => :password,
-}.each do |var, config_key|
-  required_env_vars << var \
-    if Rails.application.credentials.dig(:postgres, config_key).blank?
+unless AppUtils.database_url_present?
+  {
+    'APP_DATABASE_USER' => :user,
+    'APP_DATABASE_PASSWORD' => :password,
+  }.each do |var, config_key|
+    required_env_vars << var \
+      if Rails.application.credentials.dig(:postgres, config_key).blank?
+  end
 end
 
 unless Rails.env.test?

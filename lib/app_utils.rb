@@ -220,6 +220,10 @@ class AppUtils
       ENV.fetch('APP_CONFIG_JWT_SECRET_KEY', Rails.application.credentials.devise_jwt_secret_key)
     end
 
+    def database_url_present?
+      ENV['DATABASE_URL'].present?
+    end
+
     private
 
     def check_credentials?

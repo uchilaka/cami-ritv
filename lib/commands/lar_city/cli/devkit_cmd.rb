@@ -100,6 +100,9 @@ module LarCity
 
       desc 'yeet_deploy', 'Shove the current code to production'
       long_desc <<-LONGDESC
+        🚧 @TODO: This command should be moved to a separate namespace (e.g. `deploy:yeet`)
+        and should require additional confirmation steps to prevent accidental usage.
+
         🚨 WARNING: This command forcefully deploys the current code to production
         without any checks or confirmations.
 
@@ -279,6 +282,64 @@ module LarCity
         ) { |line| say_info line }
       end
 
+      define_platform_option self,
+                             class_option: false,
+                             desc: 'The platform to get the blueprint for (currently only supported for DigitalOcean)'
+      desc 'get-blueprint', I18n.t('commands.devkit.get_blueprint.short_desc')
+      long_desc I18n.t('commands.devkit.get_blueprint.long_desc')
+      def get_blueprint
+        unless options[:platform] == 'digitalocean'
+          raise NotImplementedError, <<~MSG
+            The get-blueprint command is currently only implemented for the DigitalOcean platform.
+          MSG
+        end
+        require_doctl_cli!
+        app_id = DigitalOcean::Utils.app_id!
+        access_token = DigitalOcean::Utils.access_token!
+        codegen_cmd = ['doctl apps spec get', app_id, "--access-token #{access_token}", '--format yaml']
+        codegen_cmd << '--verbose' if verbose?
+        yaml_content = run(*codegen_cmd, eval: true)
+        yaml_template = File.read(Rails.root.join('config', 'app.yaml.erb'))
+        yaml_output = ERB.new(yaml_template).result(binding)
+        output_file =
+          if Rails.env.production?
+            Rails.root.join('app.yaml')
+          else
+            Rails.root.join("app.#{detected_environment}.yaml")
+          end
+        status = File.write(output_file, yaml_output)
+        if status.positive?
+          say_success "Generated blueprint has been written to #{output_file}"
+        else
+          say_warning "Failed to write generated blueprint to #{output_file}"
+        end
+        say_debug yaml_output
+      end
+
+      define_platform_option self,
+                             class_option: false,
+                             desc: 'The platform to build the blueprint for (currently only supported for DigitalOcean)'
+      desc 'build', 'Build the project blueprint locally'
+      def build
+        unless options[:platform] == 'digitalocean'
+          raise NotImplementedError, <<~MSG
+            The build command is currently only implemented for the DigitalOcean platform.
+          MSG
+        end
+
+        require_doctl_cli!
+
+        app_id = DigitalOcean::Utils.app_id!
+        access_token = DigitalOcean::Utils.access_token!
+        run(
+          'doctl apps dev build',
+          "--access-token #{access_token}",
+          "--app #{app_id}"
+        ) do |line|
+          say_debug line
+        end
+      end
+
       no_commands do
         def require_render_cli!
           return if run('which render > /dev/null 2>&1', mock_return: true, inline: true)
@@ -290,6 +351,18 @@ module LarCity
             https://render.com/docs/cli#setup.
           MSG
           raise Thor::Error, 'Render CLI is required but not found in PATH.'
+        end
+
+        def require_doctl_cli!
+          return if run('which doctl > /dev/null 2>&1', mock_return: true, inline: true)
+
+          say_warning <<~MSG.squish
+            The 'doctl' CLI tool is not installed or not found in the system PATH.
+            Please install the DigitalOcean CLI to use this command. You can install it via
+            Brew by running 'brew install doctl' or by following the instructions at
+            https://docs.digitalocean.com/reference/doctl/how-to/install/.
+          MSG
+          raise Thor::Error, 'DigitalOcean CLI (doctl) is required but not found in PATH.'
         end
 
         def check_or_prompt_for_branch_to_review

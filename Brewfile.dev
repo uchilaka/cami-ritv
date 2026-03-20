@@ -50,6 +50,7 @@ end
 
 brew 'yq'
 brew 'vips'
+brew 'doctl'
 
 # install only on specified OS
 if OS.mac?

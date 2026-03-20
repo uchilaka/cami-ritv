@@ -6,6 +6,7 @@ default: &default
   workers:
     - queues:
         - critical
+        - high
         - <%= AppUtils.host_queue_name %>
         - default
         - yeet

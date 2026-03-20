@@ -31,7 +31,8 @@
 !/tmp/pids/
 !/tmp/pids/.keep
 
-
+# Assets should be precompiled before deployment,
+# and we don't want to include them in source control.
 /public/assets
 
 ###################################################################
@@ -127,3 +128,6 @@ Temporary Items
 # Chromatic
 chromatic-diagnostics.json
 chromatic.log
+
+# DigitalOcean
+.do
