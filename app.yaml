@@ -1,5 +1,5 @@
 # CONSIDER UPDATING THE TEMPLATE INSTEAD OF EDITING THIS FILE DIRECTLY.
-# It is generated from config/apps/production.yaml.erb.
+# It is generated from config/apps/staging.yaml.erb.
 #
 # You can also request the configured blueprint for this application by
 # running the `lx-cli blueprint:get` command.
@@ -8,29 +8,30 @@
 # It is processed by ERB before being used, allowing you to include
 # dynamic content.
 # -------------------------------------------------------------------------
-# Automatically generated at 2026-03-20T20:44:31-04:00
+# Automatically generated at 2026-03-20T20:45:52-04:00
 # -------------------------------------------------------------------------
 
 alerts:
   - rule: DEPLOYMENT_FAILED
   - rule: DOMAIN_FAILED
 databases:
-  - cluster_name: db-postgresql-production-larcity
-    engine: PG
-    name: db-postgresql-production-larcity
-    production: true
+  - engine: PG
+    name: cami-staging-db
+    version: "17"
+domains:
+  - domain: accounts.staging.larcity.tech
+    type: PRIMARY
+    zone: larcity.tech
 features:
   - buildpack-stack=ubuntu-22
 ingress:
   rules:
     - component:
-        name: cami-production-web
+        name: cami-staging-web
       match:
-        authority:
-          exact: ""
         path:
           prefix: /
-name: larcity-production-app
+name: cami-staging-app
 region: nyc
 services:
   - build_command: ./bin/build
@@ -38,31 +39,31 @@ services:
     envs:
       - key: DATABASE_URL
         scope: RUN_AND_BUILD_TIME
-        value: ${db-postgresql-production-larcity.DATABASE_URL}
+        value: ${cami-staging-db.DATABASE_URL}
     github:
-      branch: releases/production
+      branch: releases/staging
       deploy_on_push: true
       repo: uchilaka/cami-ritv
     http_port: 16006
     instance_count: 1
     instance_size_slug: apps-s-1vcpu-0.5gb
-    name: cami-production-web
-    run_command: ./bin/pre-deploy && rails server -p $PORT -e ${RAILS_ENV:-production}
+    name: cami-staging-web
+    run_command: ./bin/pre-deploy && rails server -p $PORT -e ${RAILS_ENV:-staging}
     source_dir: /
 vpc:
-  id: 5793d440-fc51-4800-805d-02be90495f20
+  id: aab2ac79-06d9-4b24-a0cf-4f3080f05ead
 workers:
   - environment_slug: ruby-on-rails
     envs:
       - key: DATABASE_URL
         scope: RUN_AND_BUILD_TIME
-        value: ${production-database.DATABASE_URL}
+        value: ${cami-staging-db.DATABASE_URL}
     github:
-      branch: releases/production
+      branch: releases/staging
       deploy_on_push: true
       repo: uchilaka/cami-ritv
     instance_count: 1
     instance_size_slug: apps-s-1vcpu-0.5gb
-    name: cami-production-worker
+    name: cami-staging-worker
     run_command: rails solid_queue:start
     source_dir: /
