@@ -10,6 +10,25 @@ domains:
   - domain: accounts.staging.larcity.tech
     type: PRIMARY
     zone: larcity.tech
+envs:
+  - key: RAILS_MASTER_KEY
+    scope: RUN_AND_BUILD_TIME
+    type: SECRET
+    value: EV[1:2kpHgrF+G7fSet9Ni3cXTNbSDMH2WECw:GBKMW5vBGT+SERUC4TFAIeFUTiz37yVErAohWUxrJbUjfUZPTtsaIEll9V2+y3cI]
+  - key: GITCRYPT_KEY_BASE64
+    scope: RUN_AND_BUILD_TIME
+    type: SECRET
+    value: EV[1:UGOxnbwLiKph2PgzYCHiS4CxI7qnioW4:FgdaFdSFzrqbnRXoaef/77aI7Tr2GAUp9oJlVvX4J8w+Trq6aGwKPvUHFB/Q0gHlVDiez/Sysajxd6vTT5QbJf6hGmrlj2JBRp9+8xMuKk2kYNryWm4Bq6GyqjVdoR7Niid3m7YFpvoaGsD0BtBjQ4tmMmlfXMnB1fyPwQgIByx44sxP+Py0iNz3zDW8ah2Pd5FYvgaGHfyMn81q7w8Cjt22/GVEIy2HjOq/R1P11RNo75zv/DSB1ghtdrHdUcsyjUnhx2WGWkqY0nHkS1Nr9Tw5tl8cACXo]
+  - key: DATABASE_URL
+    scope: RUN_AND_BUILD_TIME
+    type: SECRET
+    value: EV[1:IET3QidM7HSebZy5wqEeuAxXtcpAQ9/g:s8LX3JhLJsYZrj15I8vowY7IaVRQtK0eeG9qOpdxBb0dzpazmq040NOUFBXd4G7uNeQXV4CYyRM+Wyet6RDEKj8ZiDuaX7GReivR/y9MUgdD55J6SZHsPGQDyejyIaJvPfrSoH9C/I8KKa6cB4sHtA1ktwqCZ/wNdOxnpvAwEtIpL2uwsx0I0UTW/+VRSab4gHMbB+83BAh5y+JUmXL9BGrwDSuIwbpj6FfKBawXzN2A/jJmwzQh1pHzBKbdHA==]
+  - key: RAILS_ENV
+    scope: RUN_AND_BUILD_TIME
+    value: staging
+  - key: NODE_ENV
+    scope: RUN_AND_BUILD_TIME
+    value: staging
 features:
   - buildpack-stack=ubuntu-22
 ingress:
@@ -24,10 +43,6 @@ region: nyc
 services:
   - build_command: ./bin/build
     environment_slug: ruby-on-rails
-    envs:
-      - key: DATABASE_URL
-        scope: RUN_AND_BUILD_TIME
-        value: ${cami-staging-db.DATABASE_URL}
     github:
       branch: releases/staging
       deploy_on_push: true
@@ -42,10 +57,6 @@ vpc:
   id: <%= Rails.application.credentials.digitalocean.vpc_id! %>
 workers:
   - environment_slug: ruby-on-rails
-    envs:
-      - key: DATABASE_URL
-        scope: RUN_AND_BUILD_TIME
-        value: ${cami-staging-db.DATABASE_URL}
     github:
       branch: releases/staging
       deploy_on_push: true
