@@ -131,3 +131,4 @@ chromatic.log
 
 # DigitalOcean
 .do
+app*.yaml

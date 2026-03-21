@@ -1,0 +1,57 @@
+<%= shared_header %>
+alerts:
+  - rule: DEPLOYMENT_FAILED
+  - rule: DOMAIN_FAILED
+databases:
+  - engine: PG
+    name: cami-staging-db
+    version: "17"
+domains:
+  - domain: accounts.staging.larcity.tech
+    type: PRIMARY
+    zone: larcity.tech
+features:
+  - buildpack-stack=ubuntu-22
+ingress:
+  rules:
+    - component:
+        name: cami-staging-web
+      match:
+        path:
+          prefix: /
+name: cami-staging-app
+region: nyc
+services:
+  - build_command: ./bin/build
+    environment_slug: ruby-on-rails
+    envs:
+      - key: DATABASE_URL
+        scope: RUN_AND_BUILD_TIME
+        value: ${cami-staging-db.DATABASE_URL}
+    github:
+      branch: releases/staging
+      deploy_on_push: true
+      repo: uchilaka/cami-ritv
+    http_port: 16006
+    instance_count: 1
+    instance_size_slug: apps-s-1vcpu-0.5gb
+    name: cami-staging-web
+    run_command: ./bin/pre-deploy && rails server -p $PORT -e ${RAILS_ENV:-staging}
+    source_dir: /
+vpc:
+  id: <%= Rails.application.credentials.digitalocean.vpc_id! %>
+workers:
+  - environment_slug: ruby-on-rails
+    envs:
+      - key: DATABASE_URL
+        scope: RUN_AND_BUILD_TIME
+        value: ${cami-staging-db.DATABASE_URL}
+    github:
+      branch: releases/staging
+      deploy_on_push: true
+      repo: uchilaka/cami-ritv
+    instance_count: 1
+    instance_size_slug: apps-s-1vcpu-0.5gb
+    name: cami-staging-worker
+    run_command: rails solid_queue:start
+    source_dir: /

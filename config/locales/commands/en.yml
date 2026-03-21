@@ -1,5 +1,22 @@
 en:
   commands:
+    blueprint:
+      check:
+        short_desc: Check the app's YAML blueprint configuration for errors
+        long_desc: >
+          This command checks the app's YAML blueprint configuration for errors.
+
+          For documentation on validating the YAML blueprint configuration on Render, see:
+          https://render.com/docs/blueprint-spec#validating-blueprints
+
+          For documentation on validating the app.yaml configuration for DigitalOcean, see:
+          https://docs.digitalocean.com/reference/doctl/reference/apps/spec/validate/
+      get:
+        short_desc: Get the app's YAML blueprint configuration (currently only supports DigitalOcean)
+        long_desc: >
+          This command retrieves the app's YAML blueprint configuration. It currently only
+          supports retrieving the blueprint configuration for DigitalOcean, but it could be
+          extended in the future to support retrieving the blueprint configuration for Render as well.
     devkit:
       check_blueprint:
         short_desc: Check the app's YAML blueprint configuration for errors
