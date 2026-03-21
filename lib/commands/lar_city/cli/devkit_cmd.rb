@@ -313,7 +313,7 @@ module LarCity
           else
             Rails.root.join("app.#{detected_environment}.yaml")
           end
-        status = File.write(output_file, yaml_output)
+        status = pretend? ? 1 : File.write(output_file, yaml_output)
         if status.positive?
           say_success "Generated blueprint has been written to #{output_file}"
         else
