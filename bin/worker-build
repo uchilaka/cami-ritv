@@ -8,8 +8,5 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # Decrypt secrets
 "$SCRIPT_DIR/unlock-repo"
 
-# Update bundler
-gem install bundler -v '~> 2.6'
-
 # Install gems
 bundle install
