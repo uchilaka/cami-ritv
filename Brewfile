@@ -68,6 +68,8 @@ cask 'notion'
 cask '1password'
 
 if %w[development lab].include?(rails_env)
+  tap 'protonpass/tap'
+  brew 'pass-cli'
   brew 'render'
   cask 'insomnia'
   cask 'discord'
