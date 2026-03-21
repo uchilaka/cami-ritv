@@ -8,6 +8,7 @@ module LarCity
       namespace 'secrets'
 
       no_commands do
+        include EnvHelpers
         include VaultHelpers
       end
 
@@ -28,7 +29,7 @@ module LarCity
         executable = Rails.root.join('bin', 'rails')
         run "EDITOR=\"#{editor} --wait\"",
             "bundle exec #{executable} credentials:edit",
-            "--environment=#{environment}"
+            "--environment=#{detected_environment}"
       end
 
       # TODO: Add interactive :history command to peek into backup credential files
@@ -81,7 +82,7 @@ module LarCity
             say no_secret_file_msg
           end
         else
-          backup_file = Rails.root.join('config', 'credentials', "#{environment}--#{timestamp}.yml.enc")
+          backup_file = Rails.root.join('config', 'credentials', "#{detected_environment}--#{timestamp}.yml.enc")
           FileUtils.cp(credentials_file, backup_file, verbose: verbose?) unless dry_run?
 
           backup_msg = []
@@ -144,14 +145,8 @@ module LarCity
         system('which code')
       end
 
-      def environment
-        @environment = options[:environment]
-        @environment = Rails.env if @environment.blank?
-        @environment
-      end
-
       def credentials_file
-        Rails.root.join('config', 'credentials', "#{environment}.yml.enc")
+        Rails.root.join('config', 'credentials', "#{detected_environment}.yml.enc")
       end
 
       def editor

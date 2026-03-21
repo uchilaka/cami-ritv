@@ -8,17 +8,17 @@ vendor/* linguist-vendored
 
 # Ensure this file is NOT encrypted
 .gitattributes !filter !diff
+config/dotenvs/*.erb !filter !diff
 
 # Rails credentials
 config/credentials/*.yml.enc diff=rails_credentials
 config/credentials.yml.enc diff=rails_credentials
 
 # Encrypt sensitive files using git-crypt
-.env.* filter=git-crypt diff=git-crypt
+/.env.* filter=git-crypt diff=git-crypt
 spec/fixtures/pii/** filter=git-crypt diff=git-crypt
 db/development/postgres/downloads/**/*.dump filter=git-crypt diff=git-crypt
 db/development/postgres/downloads/**/*.sql filter=git-crypt diff=git-crypt
-app*.yaml filter=git-crypt diff=git-crypt
 
 # Encrypt database backups
 db/development/postgres/**/*.dump filter=git-crypt diff=git-crypt
