@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe 'LarCity::CLI::GitOpsHelpers' do
+RSpec.describe LarCity::CLI::GitOpsHelpers do
   before do
     # Do nothing
   end

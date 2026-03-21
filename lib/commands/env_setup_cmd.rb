@@ -100,17 +100,9 @@ class EnvSetupCmd < Thor::Group
 
     def build_template_body(*parts)
       erb_template_array = [*parts.map(&:to_s)]
-      erb_template_array << '# Dockerized database credentials'
-
-      # Provision database ENV variables from Proton Vault
-      database_env_sets.each do |env_key, vault_field|
-        erb_template_array <<
-          "export #{env_key}=\"{{ pass://#{value_path(vault_share_id, shared_source_item_id, vault_field)} }}\""
-      end
-
-      erb_template_array << ''
 
       # Provision secrets from ENV variable item in Proton Vault
+      erb_template_array << "# #{item_sections['platform']}"
       platform_env_sets.each do |env_key, vault_field|
         vault_field ||= env_key
         erb_template_array <<
@@ -130,7 +122,7 @@ class EnvSetupCmd < Thor::Group
 
       erb_template_array << ''
       sections.each do |section|
-        next if %w[database platform].include?(section)
+        next if section == 'platform'
 
         erb_template_array <<
           "# #{item_sections[section] || section.capitalize}"
@@ -167,8 +159,9 @@ class EnvSetupCmd < Thor::Group
 
     def database_env_sets
       [
-        ['APP_DATABASE_USER', 'Database username'],
-        ['APP_DATABASE_PASSWORD', 'Database password'],
+        ['APP_DATABASE_USER', nil],
+        ['APP_DATABASE_PASSWORD', nil],
+        ['APP_DATABASE_PORT', nil]
       ]
     end
 
@@ -185,7 +178,7 @@ class EnvSetupCmd < Thor::Group
         'app' => 'Application',
         'cache' => 'Cache store(s)',
         'database' => 'App store configuration',
-        'platform' => 'Deployment platform credentials',
+        'platform' => 'Deployment platform configuration',
         'proxy' => 'Proxy configuration (e.g. ngrok, tailscale)',
         'paypal' => 'PayPal',
         'crm' => 'Zoho CRM',
