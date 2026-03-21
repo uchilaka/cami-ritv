@@ -1,16 +1,4 @@
-# CONSIDER UPDATING THE TEMPLATE INSTEAD OF EDITING THIS FILE DIRECTLY.
-# It is generated from config/apps/staging.yaml.erb.
-#
-# You can also request the configured blueprint for this application by
-# running the `lx-cli blueprint:get` command.
-#
-# This file is used to configure the remote DigitalOcean application.
-# It is processed by ERB before being used, allowing you to include
-# dynamic content.
-# -------------------------------------------------------------------------
-# Automatically generated at 2026-03-20T20:27:55-04:00
-# -------------------------------------------------------------------------
-
+<%= shared_header %>
 alerts:
   - rule: DEPLOYMENT_FAILED
   - rule: DOMAIN_FAILED
@@ -51,7 +39,7 @@ services:
     run_command: ./bin/pre-deploy && rails server -p $PORT -e ${RAILS_ENV:-staging}
     source_dir: /
 vpc:
-  id: aab2ac79-06d9-4b24-a0cf-4f3080f05ead
+  id: <%= Rails.application.credentials.digitalocean.vpc_id! %>
 workers:
   - environment_slug: ruby-on-rails
     envs:
