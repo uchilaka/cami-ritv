@@ -41,7 +41,7 @@ module LarCity
           <%= yaml_content %>
         TEMPLATE
         yaml_output = ERB.new(yaml_template).result(binding)
-        status = File.write(output_file_path, yaml_output)
+        status = pretend? ? 1 : File.write(output_file_path, yaml_output)
         if status.positive?
           say_success "Generated blueprint has been written to #{output_file_path}"
         else
