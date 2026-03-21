@@ -7,6 +7,25 @@ databases:
     engine: PG
     name: db-postgresql-production-larcity
     production: true
+envs:
+  - key: RAILS_MASTER_KEY
+    scope: RUN_AND_BUILD_TIME
+    type: SECRET
+    value: EV[1:D7F7V3KuH1dMC/a+QWnQR5egBvmz6C7c:7ebgZEP2COi6VSOcvIaVZXbe0mXtak0iQrnNmm7AY15Qj5p4QjQu7y+Itjdqs2rr]
+  - key: GITCRYPT_KEY_BASE64
+    scope: RUN_AND_BUILD_TIME
+    type: SECRET
+    value: EV[1:xWUYT3/yKS+JO8Ce+U02rkOiCsvK4xDt:vDH2Ta/u+fFfQNbFTHKfS3PIYc7oyshblLPwqzuOixINqJyQAFG57eGEcf+yVFaOzYrkZSqu89zeprjI0tTELCNvX+L3zH6dAS5mBzjjLug9W/DXvo0hhQv/QXAX9UPZLkj6s9k6/NXv1rEi1TOfODagEd1pTFYwBbsw2C0USnvPtt12vnWRAgdiH8N/IOPm4MA16R+BEnx9oftlqHrpNDr3zTaZSqkpAQAIi/PI+lTYrUQ3yDakRMvV5cv0RzeNiUT3YBehwaKkBSDkXqfSiNDS925qOVZi]
+  - key: DATABASE_URL
+    scope: RUN_AND_BUILD_TIME
+    type: SECRET
+    value: EV[1:VdAchQqBe8CuCnui9jg9Whun7cwluzH/:ShG7UgBPqW1zM4ujsOzH2qUyJU02KuKzGlIJxIBE3jVV9V+uaLB0lLXKzyyRAhPsra0Cv6Bt21cVC1ZaUJDEmAifNiXrpPXw78ZozSVUiwxznSGqZ8nl+ybaRSmp1GVTIpVLeK63LMlLPyhz7U6zzWyup/AzsgsAK6BqTD5BvzWqW5l5BrE7N/qTb94BG/M39O+CT2fwoTKUwxbMQH0Pfo6l1Iv3YzOKqnz0GTcsDLA=]
+  - key: RAILS_ENV
+    scope: RUN_AND_BUILD_TIME
+    value: production
+  - key: NODE_ENV
+    scope: RUN_AND_BUILD_TIME
+    value: production
 features:
   - buildpack-stack=ubuntu-22
 ingress:
@@ -23,10 +42,10 @@ region: nyc
 services:
   - build_command: ./bin/build
     environment_slug: ruby-on-rails
-    envs:
-      - key: DATABASE_URL
-        scope: RUN_AND_BUILD_TIME
-        value: ${db-postgresql-production-larcity.DATABASE_URL}
+    #envs:
+    #  - key: DATABASE_URL
+    #    scope: RUN_AND_BUILD_TIME
+    #    value: ${production-database.DATABASE_URL}
     github:
       branch: releases/production
       deploy_on_push: true
@@ -41,10 +60,10 @@ vpc:
   id: <%= Rails.application.credentials.digitalocean.vpc_id! %>
 workers:
   - environment_slug: ruby-on-rails
-    envs:
-      - key: DATABASE_URL
-        scope: RUN_AND_BUILD_TIME
-        value: ${production-database.DATABASE_URL}
+    #envs:
+    #  - key: DATABASE_URL
+    #    scope: RUN_AND_BUILD_TIME
+    #    value: ${production-database.DATABASE_URL}
     github:
       branch: releases/production
       deploy_on_push: true
