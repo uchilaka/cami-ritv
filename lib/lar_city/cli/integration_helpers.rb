@@ -1,7 +1,9 @@
 # frozen_string_literal: true
 
 require_relative 'utils/class_helpers'
+require_relative 'env_helpers'
 require_relative 'output_helpers'
+require_relative 'runnable'
 
 module LarCity
   module CLI
@@ -12,6 +14,7 @@ module LarCity
         require_thor_options_support!(base)
 
         base.include OutputHelpers
+        base.include EnvHelpers
         base.include Runnable
         base.include InstanceMethods
       end
@@ -41,6 +44,18 @@ module LarCity
             https://docs.digitalocean.com/reference/doctl/how-to/install/.
           MSG
           raise Thor::Error, 'DigitalOcean CLI (doctl) is required but not found in PATH.'
+        end
+
+        def not_implemented_error(cmd)
+          I18n.t('exceptions.integration_command_not_implemented', platform: platform_or_default, cmd:)
+        end
+
+        def platform_or_default
+          options[:platform] || default_platform
+        end
+
+        def default_platform(fxn: 'hosting', env: detected_environment)
+          'digitalocean'
         end
       end
     end

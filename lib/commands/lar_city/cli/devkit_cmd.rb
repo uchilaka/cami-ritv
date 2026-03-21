@@ -6,8 +6,11 @@ require 'uri'
 module LarCity
   module CLI
     class DevkitCmd < BaseCmd
-      include ControlFlowHelpers
-      include IntegrationHelpers
+      no_commands do
+        include ControlFlowHelpers
+        include GitOpsHelpers
+        include IntegrationHelpers
+      end
 
       namespace 'devkit'
 

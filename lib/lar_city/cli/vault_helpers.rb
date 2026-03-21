@@ -18,7 +18,7 @@ module LarCity
         protected
 
         def require_vault_cli!
-          return if run('which pass-cli > /dev/null 2>&1', inline: true)
+          return if run('which pass-cli > /dev/null 2>&1', mock_return: true, eval: false, inline: true)
 
           say_error 'Proton CLI (pass-cli) is not installed or not found in PATH. Please install it to fetch secrets from Proton Vault.'
           raise Thor::Error, 'Proton CLI (pass-cli) is required but not found in PATH.'
