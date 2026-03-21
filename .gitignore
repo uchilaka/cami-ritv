@@ -131,4 +131,4 @@ chromatic.log
 
 # DigitalOcean
 .do
-app*.yaml
+/app*.yaml
