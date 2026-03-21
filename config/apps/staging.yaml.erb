@@ -51,12 +51,13 @@ services:
     instance_count: 1
     instance_size_slug: apps-s-1vcpu-0.5gb
     name: cami-staging-web
-    run_command: ./bin/pre-deploy && rails server -p $PORT -e ${RAILS_ENV:-staging}
+    run_command: ./bin/pre-deploy && rails server -p $PORT
     source_dir: /
 vpc:
   id: <%= Rails.application.credentials.digitalocean.vpc_id! %>
 workers:
-  - environment_slug: ruby-on-rails
+  - build_command: ./bin/worker-build
+    environment_slug: ruby-on-rails
     github:
       branch: releases/staging
       deploy_on_push: true
@@ -64,5 +65,5 @@ workers:
     instance_count: 1
     instance_size_slug: apps-s-1vcpu-0.5gb
     name: cami-staging-worker
-    run_command: rails solid_queue:start
+    run_command: ./bin/pre-deploy && rails solid_queue:start
     source_dir: /
