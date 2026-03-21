@@ -12,17 +12,17 @@ en:
           For documentation on validating the app.yaml configuration for DigitalOcean, see:
           https://docs.digitalocean.com/reference/doctl/reference/apps/spec/validate/
       get:
-        short_desc: Get the app's YAML blueprint configuration (currently only supports DigitalOcean)
+        short_desc: Get the app's YAML spec (currently only supports DigitalOcean)
         long_desc: >
-          This command retrieves the app's YAML blueprint configuration. It currently only
-          supports retrieving the blueprint configuration for DigitalOcean, but it could be
-          extended in the future to support retrieving the blueprint configuration for Render as well.
-      deploy:
-        short_desc: Deploy the app using the YAML blueprint configuration
+          This command retrieves the app's YAML spec. It currently only
+          supports retrieving the yaml spec for DigitalOcean, but it could be
+          extended in the future to support retrieving the YAML spec for Render as well.
+      update:
+        short_desc: Update the app's YAML specification on the hosting platform (currently only supports DigitalOcean)
         long_desc: >
-          This command deploys the app using the YAML blueprint configuration. It currently only
-          supports deploying the app using the blueprint configuration for DigitalOcean, but it could be
-          extended in the future to support deploying the app using the blueprint configuration for Render as well.
+          This command updates the app's YAML spec. It currently only
+          supports DigitalOcean, but it could be extended in the future to support
+          updating the app's YAML spec for Render as well.
 
           - Further reading on working with Render:
             - For documentation on the YAML blueprint configuration, see:
