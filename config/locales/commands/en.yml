@@ -17,6 +17,23 @@ en:
           This command retrieves the app's YAML blueprint configuration. It currently only
           supports retrieving the blueprint configuration for DigitalOcean, but it could be
           extended in the future to support retrieving the blueprint configuration for Render as well.
+      deploy:
+        short_desc: Deploy the app using the YAML blueprint configuration
+        long_desc: >
+          This command deploys the app using the YAML blueprint configuration. It currently only
+          supports deploying the app using the blueprint configuration for DigitalOcean, but it could be
+          extended in the future to support deploying the app using the blueprint configuration for Render as well.
+
+          - Further reading on working with Render:
+            - For documentation on the YAML blueprint configuration, see:
+              https://render.com/docs/blueprint-spec
+            - For documentation on triggering deployments, see:
+              https://render.com/docs/deploy-hooks#triggering-a-deploy
+          - Further reading on working with DigitalOcean:
+            - For documentation on updating the app specification, see:
+              https://docs.digitalocean.com/reference/doctl/reference/apps/update/
+            - For documentation on forcing a rebuild of the app, see:
+              https://docs.digitalocean.com/products/app-platform/how-to/restart-rebuild-app/#force-rebuild-your-app-using-the-api-or-cli
     devkit:
       check_blueprint:
         short_desc: Check the app's YAML blueprint configuration for errors

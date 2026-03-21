@@ -14,18 +14,14 @@ module LarCity
       namespace 'blueprint'
 
       define_env_options(self, class_options: true)
-      define_force_option(
-        self,
-        class_option: false,
-        desc: 'Force an operation'
-      )
+      define_force_option(self, class_option: true, desc: 'Force an operation')
+
       class_option :platform,
                    desc: 'The target platform',
                    type: :string,
                    enum: %w[digitalocean render],
                    required: true,
                    default: 'digitalocean'
-
 
       desc 'check', I18n.t('commands.blueprint.check.short_desc')
       long_desc I18n.t('commands.blueprint.check.long_desc')
@@ -84,6 +80,27 @@ module LarCity
           end
           say_debug yaml_output
         end
+      end
+
+      desc 'deploy', I18n.t('commands.blueprint.deploy.short_desc')
+      def deploy
+        unless options[:platform] == 'digitalocean'
+          raise NotImplementedError, <<~MSG
+            The blueprint:setup command is currently only implemented for the DigitalOcean platform.
+          MSG
+        end
+
+        require_doctl_cli!
+        setup if force? || !File.exist?(output_file_path)
+        deploy_cmd = [
+          'doctl apps update',
+          DigitalOcean::Utils.app_id!,
+          "--spec #{output_file_path}",
+          "--access-token #{DigitalOcean::Utils.access_token!}",
+          '--format ID,DefaultIngress,Created'
+        ]
+        deploy_cmd << '--verbose' if verbose?
+        run(*deploy_cmd, eval: false) { |line| say_info line }
       end
 
       no_commands do
