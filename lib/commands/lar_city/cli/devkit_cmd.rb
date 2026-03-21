@@ -422,15 +422,6 @@ module LarCity
           PROMPT_MSG
         end
 
-        def branches
-          @branches ||=
-            if @branches.blank?
-              `git branch --list`.split("\n").map.with_index do |b, i|
-                [i, b.gsub('*', '').strip]
-              end
-            end
-        end
-
         def is_current_branch_phrase(branch)
           if branch == current_branch
             '* '
@@ -516,15 +507,6 @@ module LarCity
           PROMPT_MSG
         end
 
-        def branches
-          @branches ||=
-            if @branches.blank?
-              `git branch --list`.split("\n").map.with_index do |b, i|
-                [i, b.gsub('*', '').strip]
-              end
-            end
-        end
-
         def is_current_branch_phrase(branch)
           if branch == current_branch
             '* '
@@ -579,10 +561,6 @@ module LarCity
 
       def current_branch_tuple
         @current_branch_tuple ||= branches.find { |_, b| b == current_branch }
-      end
-
-      def current_branch
-        @current_branch ||= `git rev-parse --abbrev-ref HEAD`.strip
       end
 
       def log_stream_url

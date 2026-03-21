@@ -32,6 +32,10 @@ module LarCity
           raise Thor::Error, 'GitHub CLI (gh) is required but not found in PATH.'
         end
 
+        def current_branch
+          @current_branch ||= `git rev-parse --abbrev-ref HEAD`.strip
+        end
+
         def branches
           @branches ||=
             if @branches.blank?
