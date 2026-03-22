@@ -1,4 +1,4 @@
-# 🛠 Project Context: Cami
+# 🛠 Project Context: CAMI
 
 > **Status:** Exploration / MVP
 > **Primary AI:** Gemini 3 Pro (Cloud) / Qwen3-Coder (Local Discovery)

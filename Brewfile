@@ -10,6 +10,8 @@ cask_args appdir: '~/Applications', require_sha: false
 
 puts "Environment: #{rails_env.blank? ? 'NOT SET' : rails_env}"
 
+tap 'protonpass/tap'
+
 # Environment specific dependencies
 if %w[staging production].include?(rails_env)
   brew 'mise'
@@ -62,10 +64,13 @@ if OS.mac?
   cask 'pgadmin4'
 end
 
+brew 'pass-cli'
 cask 'keepassxc'
 cask 'claude'
+cask 'claude-code'
 cask 'notion'
 cask '1password'
+cask 'gcloud-cli'
 
 if %w[development lab].include?(rails_env)
   tap 'protonpass/tap'

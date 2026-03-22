@@ -61,15 +61,19 @@ if OS.mac?
   cask 'pgadmin4'
 end
 
-cask 'keepassxc'
-cask 'claude'
 cask 'notion'
-cask '1password'
+tap 'protonpass/tap'
+brew 'pass-cli'
+cask 'gcloud-cli'
+
+if rails_env == 'development'
+  cask 'keepassxc'
+  cask 'claude'
+  cask '1password'
+  brew 'render'
+end
 
 if %w[development lab].include?(rails_env)
-  tap 'protonpass/tap'
-  brew 'pass-cli'
-  brew 'render'
   cask 'insomnia'
   cask 'discord'
   cask 'slack'
@@ -81,4 +85,8 @@ if %w[development lab].include?(rails_env)
   rescue StandardError => _e
     puts 'Found Messenger installed 🎊 - skipping Messenger installation' if File.exist?('/Applications/Messenger.app')
   end
+end
+
+if rails_env == 'lab'
+  brew 'ollama'
 end
