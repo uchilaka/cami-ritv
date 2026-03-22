@@ -48,6 +48,7 @@ services:
       #- ./db/${RAILS_ENV:-development}/postgres/downloads:/usr/local/downloads:ro
     profiles:
       - batteries-included
+      - standalone
       - essential
       - all
 
@@ -74,7 +75,7 @@ services:
       - app-store
     profiles:
       - batteries-included
-      - essential
+      - standalone
       - all
 
   worker:
@@ -98,7 +99,7 @@ services:
       - app-store
     profiles:
       - batteries-included
-      - essential
+      - standalone
       - all
 
 volumes:

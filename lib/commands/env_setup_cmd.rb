@@ -254,6 +254,7 @@ class EnvSetupCmd < Thor::Group
         # -----------------------------------------------------------------
         # Last generated at: #{Time.current.iso8601}
         # -----------------------------------------------------------------
+        export NODE_ENV=#{detected_environment}
       SHARED_HEADER
     end
 
