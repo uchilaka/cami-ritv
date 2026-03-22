@@ -20,6 +20,18 @@ RSpec.describe LarCity::CLI::GitOpsHelpers do
       expect(base_class.ancestors).to include(LarCity::CLI::Runnable)
       expect(base_class.ancestors).to include(LarCity::CLI::GitOpsHelpers::InstanceMethods)
     end
+
+    context 'when included in a non-Thor class' do
+      let(:non_thor_class) { Class.new }
+
+      it 'raises an error' do
+        # We need to un-mock it for this test
+        allow(LarCity::CLI::GitOpsHelpers).to receive(:require_thor_options_support!).and_call_original
+        expect do
+          non_thor_class.include(LarCity::CLI::GitOpsHelpers)
+        end.to raise_error(RuntimeError, /is not a descendant of Thor/)
+      end
+    end
   end
 
   describe 'InstanceMethods' do
@@ -88,6 +100,16 @@ RSpec.describe LarCity::CLI::GitOpsHelpers do
                                                 [1, 'main'],
                                                 [2, 'feature/xyz'],
                                               ])
+      end
+
+      it 'handles empty branch list' do
+        allow(dummy_instance).to receive(:`).with('git branch --list').and_return('')
+        expect(dummy_instance.branches).to eq([])
+      end
+
+      it 'handles a single branch' do
+        allow(dummy_instance).to receive(:`).with('git branch --list').and_return('* main')
+        expect(dummy_instance.branches).to eq([[0, 'main']])
       end
 
       it 'caches the result' do

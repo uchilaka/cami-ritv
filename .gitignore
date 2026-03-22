@@ -70,6 +70,7 @@
 
 # IDE specific files
 /.idea
+/.gemini
 /.vscode/settings.json
 /.gem_rbs_collection
 

@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require_relative 'utils/class_helpers'
-require_relative 'control_flow_helpers'
 require_relative 'runnable'
 
 module LarCity
@@ -37,12 +36,9 @@ module LarCity
         end
 
         def branches
-          @branches ||=
-            if @branches.blank?
-              `git branch --list`.split("\n").map.with_index do |b, i|
-                [i, b.gsub('*', '').strip]
-              end
-            end
+          @branches ||= `git branch --list`.split("\n").map.with_index do |b, i|
+            [i, b.gsub('*', '').strip]
+          end
         end
       end
     end
