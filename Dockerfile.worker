@@ -18,6 +18,12 @@ WORKDIR $WORKDIR
 # Copy the source code into the container
 COPY . .
 
+FROM src AS worker
+ARG RAILS_ENV
+
+# Default to production environment, but allow override at runtime
+ENV RAILS_ENV="${RAILS_ENV:-production}"
+
 # See documentation on accessing secret files at runtime on Render:
 # https://render.com/docs/docker-secrets#accessing-secret-files-at-runtime
 
@@ -27,7 +33,6 @@ RUN --mount="type=secret,id=${RAILS_ENV}.key,dst=${WORKDIR}/config/credentials/$
 # Temporarily disable environment variable checks during build, as some may not be set until runtime on Render
 ENV APP_CONFIG_CHECK_REQUIRED_VARS=no
 
-FROM src AS worker
 # Run your build script (the one we made in the previous step)
 RUN --mount="type=secret,id=${RAILS_ENV}.key,dst=${WORKDIR}/config/credentials/${RAILS_ENV}.key" \
   ./bin/worker-build

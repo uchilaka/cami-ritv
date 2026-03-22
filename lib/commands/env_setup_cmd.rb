@@ -294,5 +294,13 @@ class EnvSetupCmd < Thor::Group
         #export UPSERT_INVOICE_BATCH_LIMIT=1000
       FOOTER
     end
+
+    def master_key_from_file
+      @master_key_from_file ||= (File.read(master_key_path) if File.exist?(master_key_path))
+    end
+
+    def master_key_path
+      @master_key_path ||= Rails.root.join('config', 'credentials', "#{detected_environment}.key").to_s
+    end
   end
 end
