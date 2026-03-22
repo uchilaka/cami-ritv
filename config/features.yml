@@ -48,6 +48,8 @@ development: &development
     enabled: true
 test:
   <<: *default
+lab:
+  <<: *default
 staging:
   <<: *default
 production:

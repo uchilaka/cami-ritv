@@ -31,6 +31,7 @@
 - **Approvals:** Auto-approve all `git`, `bundle`, `npm`, and `rails` read/write commands. Prompt only for `rm` or `deploy`.
 - **Commits:** Follow Semantic Commits (`feat:`, `fix:`, `docs:`, `refactor:`, `chore:`).
 - **Granularity:** "Commit early, commit often." Commit every logical milestone.
+- **Project Management:** Prefer Linear for all project management tasks and issue tracking.
 
 ---
 
