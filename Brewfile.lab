@@ -70,11 +70,14 @@ if rails_env == 'development'
   cask 'keepassxc'
   cask 'claude'
   cask '1password'
-  brew 'render'
+  cask 'insomnia'
 end
 
 if %w[development lab].include?(rails_env)
-  cask 'insomnia'
+  tap 'protonpass/tap'
+  brew 'pass-cli'
+  brew 'render'
+  cask 'gcloud-cli'
   cask 'discord'
   cask 'slack'
   cask 'whatsapp'

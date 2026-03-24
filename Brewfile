@@ -10,46 +10,37 @@ cask_args appdir: '~/Applications', require_sha: false
 
 puts "Environment: #{rails_env.blank? ? 'NOT SET' : rails_env}"
 
-tap 'protonpass/tap'
+# Dev & anonymous environments
+brew 'gh'
+# Direnv will be managed as a mise dependency instead
+# brew 'direnv'
+brew 'goreman'
 
-# Environment specific dependencies
-if %w[staging production].include?(rails_env)
-  brew 'mise'
-  brew 'certbot'
-else
-  # Dev & anonymous environments
-  brew 'gh'
-  # Direnv will be managed as a mise dependency instead
-  # brew 'direnv'
-  brew 'goreman'
+# Skip these specifically in test environments
+unless %w[ci test].include?(rails_env)
+  brew 'tree' if OS.mac?
+  brew 'ruby-build'
+  # TODO: what's the overlap between this and gnutls?
+  brew 'coreutils'
+  brew 'gnupg'
+  brew 'git-crypt'
 
-  # Skip these specifically in test environments
-  unless %w[ci test].include?(rails_env)
-    brew 'tree' if OS.mac?
-    brew 'ruby-build'
-    # TODO: what's the overlap between this and gnutls?
-    brew 'coreutils'
-    brew 'gnupg'
-    brew 'git-crypt'
-
-    if File.exist?('/Applications/RubyMine.app')
-      puts 'Found RubyMine installed 🎊 - skipping RubyMine installation'
-    elsif ENV['VISUAL'] == 'rubymine' || ENV['EDITOR'] == 'rubymine'
-      cask 'rubymine'
-    else
-      cask 'visual-studio-code'
-      # cask 'windsurf'
-    end
-
-    # FYI: Brew cask only works on macOS
-    if File.exist?('/usr/local/bin/docker')
-      puts 'Found Docker installed 🎊 - skipping docker installation'
-    elsif OS.mac?
-      puts 'Setting up Rancher Desktop (an open source Docker Desktop alternative)'
-      cask 'rancher'
-    end
+  if File.exist?('/Applications/RubyMine.app')
+    puts 'Found RubyMine installed 🎊 - skipping RubyMine installation'
+  elsif ENV['VISUAL'] == 'rubymine' || ENV['EDITOR'] == 'rubymine'
+    cask 'rubymine'
+  else
+    cask 'visual-studio-code'
+    # cask 'windsurf'
   end
-end
+
+  # FYI: Brew cask only works on macOS
+  if File.exist?('/usr/local/bin/docker')
+    puts 'Found Docker installed 🎊 - skipping docker installation'
+  elsif OS.mac?
+    puts 'Setting up Rancher Desktop (an open source Docker Desktop alternative)'
+    cask 'rancher'
+  end
 
 brew 'yq'
 brew 'vips'
@@ -64,23 +55,30 @@ if OS.mac?
   cask 'pgadmin4'
 end
 
-brew 'pass-cli'
-cask 'keepassxc'
-cask 'claude'
-cask 'claude-code'
-cask 'notion'
-cask '1password'
-cask 'gcloud-cli'
+if rails_env == 'lab'
+  brew 'certbot'
+end
+
+if rails_env == 'development'
+  cask 'keepassxc'
+  cask 'claude'
+  cask '1password'
+  cask 'insomnia'
+end
 
 if %w[development lab].include?(rails_env)
   tap 'protonpass/tap'
   brew 'pass-cli'
   brew 'render'
-  cask 'insomnia'
+  cask 'gcloud-cli'
+  cask 'notion'
   cask 'discord'
   cask 'slack'
   cask 'whatsapp'
   cask 'signal'
+  cask 'moom'
+  cask 'stats'
+  cask 'iterm2'
   begin
     # TODO: Turned off require_sha to get Messenger installed... too risky?
     cask 'messenger'
