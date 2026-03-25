@@ -49,6 +49,7 @@ services:
     profiles:
       - batteries-included
       - essential
+      - standalone
       - all
 
   web:
@@ -109,7 +110,7 @@ services:
       - app-store
     profiles:
       - batteries-included
-      - essential
+      - standalone
       - all
 
   worker:
@@ -154,7 +155,7 @@ services:
       - app-store
     profiles:
       - batteries-included
-      - essential
+      - standalone
       - all
 
 volumes:
