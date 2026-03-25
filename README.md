@@ -2,8 +2,8 @@
 
 ## System Requirements
 
-- Ruby: 3.4
-- Mise: [mise.dev](https://mise.jdx.dev/)
+- Ruby: `3.4.4`
+- Mise: [mise.dev](https://mise.jdx.dev/getting-started.html)
 - Brew (only for macOS/Linux users): <https://brew.sh/>
 - Yarn v4+: [yarnpkg.com](https://yarnpkg.com/)
 
@@ -17,11 +17,71 @@
 
 Environment variables for the application are utilized as follows:
 
-- `.env.development` is transparently encrypted for development environments
-- Rails credentials (encrypted) stored in the `config/credentials/{environment}.yml.enc` files
+- `.env.<environment>` is transparently encrypted for the relevant environments if commited to source control. You will need to set the local path for the Gitcrypt key file to `GITCRYPT_KEY_FILE` and run `yarn keys:unlock` to decrypt all transparently encrypted files maintained in the source code.
+- Rails credentials (encrypted) stored in the `config/credentials/{environment}.yml.enc` files. You will need to set the `RAILS_MASTER_KEY` for these to be decrypted successfully in non-development environments.
 - Direct environment variables (e.g. `RAILS_ENV`)
 
 ## Setting up the app
+
+> Ensure you've met all the system requirements before proceeding!
+
+### 1. Setup OS dependencies
+
+> Skip this step unless you're in one of these environments: `development`, `lab` or `test`
+
+Make sure `export RAILS_ENV=<environment>` is set for your environment in your `~/.zshrc` file or wherever your ENV setup goes.
+
+```shell
+# Be sure to turn on the tap(s) first!
+brew tap protonpass/tap
+
+# Now you can install OS dependencies
+brew bundle --file="Brewfile.$RAILS_ENV"
+```
+
+### 2. Install project tool dependencies
+
+> Ensure you've followed the setup instructions for your OS to install and activate mise: <https://mise.jdx.dev/getting-started.html>
+
+```shell
+# Use pre-compiled mise dependencies (optional)
+mise settings ruby.compile=false
+
+# Install mise-managed dependencies
+mise install
+```
+
+### 3. Install project gem dependencies
+
+```shell
+# Make sure libpq is in your path
+export PATH="/usr/local/opt/libpq/bin:$PATH"
+
+# Install gem dependencies
+bundle install
+```
+
+### 4. Set `RAILS_MASTER_KEY` for your environment
+
+> Avoid using the encrypted credentials other than in the environments explicitly listed in the table below. In other environments, implement/use `ENV` variables to set secrets instead.
+
+You can get the environment master keys from the Proton Pass vault (search for "Environment variables (<environment>)"). **The master key for `staging` and `lab` environments are identical**.
+
+Alternatively, you can follow the Rails convention for maintaining credentials in the open - if doing so, the credentials will be encrypted in a `./config/credentials/<environment>.yml.enc` file and the master key can be set in a corresponding credentials file. Reference the following table for the corresponding master key value for your environment.
+
+| Environment        | Master key file name                      |
+| ------------------ | ----------------------------------------- |
+| `development`      | `./config/credentials/development.key`    |
+| ------------------ | ----------------------------------------- |
+| `lab`              | `./config/credentials/lab.key`            |
+| ------------------ | ----------------------------------------- |
+| `test`             | `./config/credentials/test.key`           |
+
+### 5. Run the CLI setup command
+
+```shell
+bin/thor -T
+```
 
 ### 1. Set up the `config/credentials/git-crypt.key` file
 
@@ -106,7 +166,7 @@ Please refer to the [CONTRIBUTING.md](./docs/CONTRIBUTING.md) file for contribut
 - [ ] Migrate Dart SASS 3.0 breaking changes
   - [ ] `@import` and global built-in functions: <https://sass-lang.com/documentation/breaking-changes/import/>
   - [ ] `unquote` and other global built-in functions are deprecated and will be removed in Dart Sass 3.0.0.
-    Use `string.unquote` instead.
+        Use `string.unquote` instead.
 - [ ] Review propshaft as an asset pipeline (alt to currently configured `sprocket-rails`) - [recommended by the 37Signals team](https://github.com/rails/mission_control-jobs?tab=readme-ov-file#api-only-apps-or-apps-using-vite_rails-and-other-asset-pipelines-outside-rails) as compatible with mission control for `vite_rails`/API-only apps: <https://github.com/rails/propshaft>
 - [ ] Troubleshooting Ruby LSP (server keeps failing in VSCode/Windsurf): <https://shopify.github.io/ruby-lsp/troubleshooting.html>
 - [ ] Explore [repository custom instructions](https://docs.github.com/en/copilot/how-tos/configure-custom-instructions/add-repository-instructions) for CoPilot

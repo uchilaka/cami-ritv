@@ -1,0 +1,8 @@
+# Brewfile.test
+# frozen_string_literal: true
+
+eval(File.read('Brewfile'))
+
+# Test environments usually only need the base 
+# and perhaps specific headless dependencies.
+# (Note: tree, ruby-build, etc., were explicitly skipped in your original code)
