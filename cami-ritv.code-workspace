@@ -62,6 +62,7 @@
     "window.zoomLevel": 0.125,
     "rubyLsp.rubyVersionManager": {
       "identifier": "mise",
+      "path": "/usr/local/opt/mise/bin/mise",
     },
     // "rubocop.yjitEnabled": true,
     // "rubocop.commandPath": "${userHome}${pathSeparator}.asdf${pathSeparator}shims${pathSeparator}rubocop",

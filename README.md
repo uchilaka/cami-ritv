@@ -39,7 +39,7 @@ brew tap protonpass/tap
 brew bundle --file="Brewfile.$RAILS_ENV"
 ```
 
-### 2. Install project tool dependencies
+### 2. Install project dependencies
 
 > Ensure you've followed the setup instructions for your OS to install and activate mise: <https://mise.jdx.dev/getting-started.html>
 
@@ -47,19 +47,38 @@ brew bundle --file="Brewfile.$RAILS_ENV"
 # Use pre-compiled mise dependencies (optional)
 mise settings ruby.compile=false
 
+# Ensure dependencies required by postgresql are installed for your OS (if running on metal)
+open https://github.com/mise-plugins/mise-postgres
+
 # Install mise-managed dependencies
 mise install
-```
 
-### 3. Install project gem dependencies
+# Ensure you have the right version of bundler available
+gem install bundler:2.6.7
 
-```shell
+# Check to ensure direnv is installed
+which direnv
+
+# Trust the .envrc file (you only need to do this once for the project on your system - until the file is changed)
+direnv allow
+
 # Make sure libpq is in your path
 export PATH="/usr/local/opt/libpq/bin:$PATH"
 
 # Install gem dependencies
 bundle install
+
+# Install frontend dependencies
+yarn install
 ```
+
+### 3. Set up `git-crypt`
+
+Setup `git-crypt.key` for the project at `./config/credentials/`. This file must be available in your local environment. You can find this file in the Proton Pass vault (search: "git-crypt").
+
+Alternatively, you can follow [the new GPG user setup guide](./docs/NEW_GPG_USER.md) to set up your profile in the repository's git-crypt.
+
+Once you have the file setup, run `yarn keys:unlock` to decrypt the repository's encrypted files.
 
 ### 4. Set `RAILS_MASTER_KEY` for your environment
 
@@ -79,47 +98,25 @@ Alternatively, you can follow the Rails convention for maintaining credentials i
 
 ### 5. Run the CLI setup command
 
-```shell
-bin/thor -T
-```
-
-### 1. Set up the `config/credentials/git-crypt.key` file
-
-This file must be available in your local environment. You can acquire this file from a team member or from the secrets vault (KeepassXC/Bitwarden).
-
-Alternatively, you can follow [the new GPG user setup guide](./docs/NEW_GPG_USER.md) to set up your git-crypt for the repository.
-
-### 2. Unlock the encrypted files
-
-Run `git crypt unlock` to unlock the encrypted files.
-
-### 3. Install dependencies
+> To ensure you haven't already completed this step, run `which lx-cli` to see if the LarCity CLI is already installed on your system.
 
 ```shell
-# Install brew system dependencies
-brew bundle
+# Setup the lx-cli command
+bin/thor lx-cli:setup
 
-# Ensure dependencies required by postgresql are installed for your OS (if running on metal)
-open https://github.com/mise-plugins/mise-postgres
-
-# Install NPM dependencies
-yarn install
-
-# Install mise system dependencies
-mise install
+# View the command catalog
+lx-cli -T
 ```
 
-### 4. Setup direnv
+### 6. Provision managed secrets
 
-> Review the direnv setup guide: <https://direnv.net/#basic-installation>
+```shell
+lx-cli env-setup
+```
 
-Ensure you have `direnv` configured in your shell. This will automatically load the environment variables from `.envrc` when you enter the project directory.
+### 6. Set up the database
 
-Direnv should be installed as a dependency when you run `mise install`. You may need to install the `direnv` plugin for mise.
-
-### 5. Set up the database
-
-> Only complete this step if you are running the app database via the mise service.
+> Only complete this step if you are running the app database via the mise PostgreSQL service.
 
 ```shell
 .mise/services/postgresql/bin/initialize

@@ -48,13 +48,29 @@ class EnvSetupCmd < Thor::Group
     require_proton_pass_cli!
 
     say_info "Provisioning #{output_file_path} file from template at #{template_file_path}..."
-    run(
+    result = run(
       'pass-cli inject',
       "--in-file #{template_file_path}",
       "--out-file #{output_file_path}",
-      '--force'
+      '--force',
+      eval: true
     ) do |line|
       say_debug line
+    end
+    say_debug <<~DEBUG_MSG
+      Result of provisioning dotenv file from template: #{result.inspect}
+    DEBUG_MSG
+
+    if %r{injected successfully}.match?(result)
+      say_success "Successfully provisioned dotenv file at #{output_file_path} from template."
+    elsif %r{requires an authenticated client}.match?(result)
+      say_error "Authentication required to access Proton Vault. Please sign in by running: `pass-cli login`"
+    else
+      say_error <<~ERROR_MSG
+        Failed to provision dotenv file from template. \
+        Ensure that you have access to the required secrets in Proton Vault and that your authentication is valid. \
+        You can also try running the setup command with --verbose and check for error messages in the result.
+      ERROR_MSG
     end
   end
 
