@@ -180,5 +180,5 @@ secrets:
 networks:
   default:
     name: larcity_apps
-    enable_ipv6: true
+    enable_ipv6: false
     driver: bridge
