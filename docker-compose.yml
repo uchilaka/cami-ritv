@@ -1,3 +1,7 @@
+# TODO: [LWS-309] Templatize this file and have `lx-cli env-setup` handle generating it for different environments
+#   based on a template and environment-specific .env files that are the source of truth for environment
+#   variables. This would help reduce duplication and make it easier to manage environment variables
+#   across different environments.
 services:
   mailhog:
     container_name: mailhog.cami.larcity
