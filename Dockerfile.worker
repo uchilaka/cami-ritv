@@ -19,8 +19,10 @@ WORKDIR $WORKDIR
 COPY . .
 
 FROM src AS worker
+
 ARG RAILS_ENV
 ARG RAILS_MASTER_KEY
+ARG DATABASE_URL
 
 # Default to production environment, but allow override at runtime
 ENV RAILS_ENV="${RAILS_ENV:-production}"
