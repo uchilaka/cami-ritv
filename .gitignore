@@ -130,3 +130,7 @@ chromatic.log
 # DigitalOcean
 .do/*
 app*.yaml
+
+# Agents
+.claude/*
+.gemini/*
