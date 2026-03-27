@@ -197,6 +197,7 @@ class EnvSetupCmd < Thor::Group
         *database_env_sets.map { |env_key, vault_field| [env_key, vault_field, 'database'] },
         *platform_env_sets.map { |env_key, vault_field| [env_key, vault_field, 'platform'] },
         #['HOSTNAME', nil, 'app'],
+        #['RAILS_MASTER_KEY', nil, 'app'],
         ['REDIS_URL', nil, 'cache'],
         ['NGROK_AUTH_TOKEN', nil, 'proxy'],
         ['PAYPAL_BASE_URL', nil, 'paypal'],
@@ -221,10 +222,6 @@ class EnvSetupCmd < Thor::Group
           'ENV_VARS_ITEM_ID',
           vault_source_items[detected_environment].id
         )
-    end
-
-    def proton_credentials
-      @proton_credentials ||= Rails.application.credentials.proton!
     end
 
     def output_file_path
