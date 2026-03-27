@@ -20,12 +20,25 @@ COPY . .
 
 FROM src AS worker
 ARG RAILS_ENV
+ARG RAILS_MASTER_KEY
 
 # Default to production environment, but allow override at runtime
 ENV RAILS_ENV="${RAILS_ENV:-production}"
 
 # See documentation on accessing secret files at runtime on Render:
 # https://render.com/docs/docker-secrets#accessing-secret-files-at-runtime
+
+# Decrypt credentials and git-crypt files during build ensuring that all sensitive
+# information is available for the build process without being included in the
+# image layers. This allows you to keep your secrets secure while still enabling
+# a successful build.
+RUN ./bin/unlock-repo
+
+# Handle secrets during build by mounting them as files, and ensure they are available
+# for the build steps that need them, such as installing dependencies and precompiling
+# assets. This allows you to keep sensitive information out of the image layers while
+# still enabling a successful build.
+RUN ./bin/link-key-file
 
 RUN --mount="type=secret,id=${RAILS_ENV}.key,dst=${WORKDIR}/config/credentials/${RAILS_ENV}.key" \
    echo "🔑 Secrets mounted successfully"

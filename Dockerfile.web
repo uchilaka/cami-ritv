@@ -25,6 +25,7 @@ COPY . .
 FROM src AS web
 
 ARG RAILS_ENV
+ARG RAILS_MASTER_KEY
 ARG APP_DATABASE_USER
 ARG APP_DATABASE_PASSWORD
 ARG PAYPAL_API_BASE_URL
@@ -45,6 +46,18 @@ ENV APP_CONFIG_OMNIAUTH_ENABLED="${APP_CONFIG_OMNIAUTH_ENABLED:-no}"
 ENV SEMANTIC_LOGGER_STREAMING_ENABLED="${SEMANTIC_LOGGER_STREAMING_ENABLED:-no}"
 ENV SEND_EMAILS_ENABLED="${SEND_EMAILS_ENABLED:-no}"
 ENV WEB_CONSOLE_ENABLED="${WEB_CONSOLE_ENABLED:-no}"
+
+# Decrypt credentials and git-crypt files during build ensuring that all sensitive
+# information is available for the build process without being included in the
+# image layers. This allows you to keep your secrets secure while still enabling
+# a successful build.
+RUN ./bin/unlock-repo
+
+# Handle secrets during build by mounting them as files, and ensure they are available
+# for the build steps that need them, such as installing dependencies and precompiling
+# assets. This allows you to keep sensitive information out of the image layers while
+# still enabling a successful build.
+RUN ./bin/link-key-file
 
 # Setup Node.js LTS and install it
 RUN curl -fsSL https://deb.nodesource.com/setup_lts.x | bash - \
