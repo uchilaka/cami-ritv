@@ -23,7 +23,33 @@ COPY . .
 # https://render.com/docs/docker-secrets#accessing-secret-files-at-runtime
 
 FROM src AS web
+
 ARG RAILS_ENV
+ARG RAILS_MASTER_KEY
+ARG APP_DATABASE_USER
+ARG APP_DATABASE_PASSWORD
+ARG DATABASE_URL
+ARG PAYPAL_API_BASE_URL
+ARG PAYPAL_BASE_URL
+ARG PAYPAL_CLIENT_ID
+ARG PAYPAL_CLIENT_SECRET
+ARG ZOHO_CLIENT_ID
+ARG ZOHO_CLIENT_SECRET
+ARG CRM_ORG_ID
+ARG SMTP_USER
+
+# Decrypt credentials and git-crypt files during build ensuring that all sensitive
+# information is available for the build process without being included in the
+# image layers. This allows you to keep your secrets secure while still enabling
+# a successful build.
+RUN ./bin/unlock-repo
+
+# Handle secrets during build by mounting them as files, and ensure they are available
+# for the build steps that need them, such as installing dependencies and precompiling
+# assets. This allows you to keep sensitive information out of the image layers while
+# still enabling a successful build.
+RUN ./bin/link-key-file
+
 # Setup Node.js LTS and install it
 RUN curl -fsSL https://deb.nodesource.com/setup_lts.x | bash - \
   && apt update -qq \
