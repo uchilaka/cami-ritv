@@ -10,7 +10,7 @@ projects:
             databaseName: sails_production
             user: sails_production_user
             plan: basic-256mb
-            previewPlan: free
+            #previewPlan: basic-256mb
             region: virginia
             ipAllowList:
               - source: 0.0.0.0/0
@@ -66,7 +66,7 @@ projects:
             # environment to prevent deploying potentially broken code.
             autoDeployTrigger: checksPass
             previews:
-              plan: free
+              #plan: starter
               generation: manual
               numInstances: 1
           # The background worker for processing async jobs
@@ -109,7 +109,7 @@ projects:
             dockerfilePath: ./Dockerfile.worker
             autoDeployTrigger: checksPass
             previews:
-              plan: free
+              #plan: starter
               generation: manual
               numInstances: 1
 #      - name: Staging
