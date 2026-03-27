@@ -126,3 +126,7 @@ Temporary Items
 # Chromatic
 chromatic-diagnostics.json
 chromatic.log
+
+# DigitalOcean
+.do/*
+app*.yaml
