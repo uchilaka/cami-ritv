@@ -160,41 +160,41 @@ projects:
             dockerfilePath: ./Dockerfile.web
             autoDeployTrigger: commit
           # The Rails (staging) background worker for processing async jobs
-#          - type: worker
-#            name: cami-staging-solid-queue
-#            runtime: docker
-#            repo: https://github.com/uchilaka/cami-ritv
-#            branch: releases/staging
-#            plan: starter
-#            envVars:
-#              - key: RAILS_ENV
-#                value: staging
-#              - key: NODE_ENV
-#                value: staging
-#              - fromGroup: CRM Staging
-#              - fromGroup: Logtail Staging
-#              - fromGroup: PayPal Staging
-#              - fromGroup: SMTP Live
-#              - fromGroup: Vault Shared
-#              - fromGroup: Vault Staging
-#              - key: APP_DATABASE_HOST
-#                fromDatabase:
-#                  name: cami-staging-db
-#                  property: host
-#              - key: APP_PRIMARY_DATABASE_NAME
-#                fromDatabase:
-#                  name: cami-staging-db
-#                  property: database
-#              - key: APP_DATABASE_USER
-#                fromDatabase:
-#                  name: cami-staging-db
-#                  property: user
-#              - key: APP_DATABASE_PASSWORD
-#                fromDatabase:
-#                  name: cami-staging-db
-#                  property: password
-#            region: virginia
-#            preDeployCommand: ./bin/pre-deploy
-#            dockerContext: .
-#            dockerfilePath: ./Dockerfile.worker
-#            autoDeployTrigger: commit
+          - type: worker
+            name: cami-staging-solid-queue
+            runtime: docker
+            repo: https://github.com/uchilaka/cami-ritv
+            branch: releases/staging
+            plan: starter
+            envVars:
+              - key: RAILS_ENV
+                value: staging
+              - key: NODE_ENV
+                value: staging
+              - fromGroup: CRM Staging
+              - fromGroup: Logtail Staging
+              - fromGroup: PayPal Staging
+              - fromGroup: SMTP Live
+              - fromGroup: Vault Shared
+              - fromGroup: Vault Staging
+              - key: APP_DATABASE_HOST
+                fromDatabase:
+                  name: cami-staging-db
+                  property: host
+              - key: APP_PRIMARY_DATABASE_NAME
+                fromDatabase:
+                  name: cami-staging-db
+                  property: database
+              - key: APP_DATABASE_USER
+                fromDatabase:
+                  name: cami-staging-db
+                  property: user
+              - key: APP_DATABASE_PASSWORD
+                fromDatabase:
+                  name: cami-staging-db
+                  property: password
+            region: virginia
+            preDeployCommand: ./bin/pre-deploy
+            dockerContext: .
+            dockerfilePath: ./Dockerfile.worker
+            autoDeployTrigger: commit
