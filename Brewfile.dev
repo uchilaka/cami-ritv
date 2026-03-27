@@ -66,9 +66,12 @@ cask 'keepassxc'
 cask 'claude'
 cask 'notion'
 cask '1password'
+tap 'protonpass/tap'
+brew 'pass-cli'
+brew 'render'
+cask 'gcloud-cli'
 
 if %w[development lab].include?(rails_env)
-  brew 'render'
   cask 'insomnia'
   cask 'discord'
   cask 'slack'

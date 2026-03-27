@@ -6,8 +6,11 @@ require 'uri'
 module LarCity
   module CLI
     class DevkitCmd < BaseCmd
-      include ControlFlowHelpers
-      include IntegrationHelpers
+      no_commands do
+        include ControlFlowHelpers
+        include GitOpsHelpers
+        include IntegrationHelpers
+      end
 
       namespace 'devkit'
 
@@ -310,7 +313,7 @@ module LarCity
           else
             Rails.root.join("app.#{detected_environment}.yaml")
           end
-        status = File.write(output_file, yaml_output)
+        status = pretend? ? 1 : File.write(output_file, yaml_output)
         if status.positive?
           say_success "Generated blueprint has been written to #{output_file}"
         else
@@ -419,15 +422,6 @@ module LarCity
           PROMPT_MSG
         end
 
-        def branches
-          @branches ||=
-            if @branches.blank?
-              `git branch --list`.split("\n").map.with_index do |b, i|
-                [i, b.gsub('*', '').strip]
-              end
-            end
-        end
-
         def is_current_branch_phrase(branch)
           if branch == current_branch
             '* '
@@ -513,15 +507,6 @@ module LarCity
           PROMPT_MSG
         end
 
-        def branches
-          @branches ||=
-            if @branches.blank?
-              `git branch --list`.split("\n").map.with_index do |b, i|
-                [i, b.gsub('*', '').strip]
-              end
-            end
-        end
-
         def is_current_branch_phrase(branch)
           if branch == current_branch
             '* '
@@ -576,10 +561,6 @@ module LarCity
 
       def current_branch_tuple
         @current_branch_tuple ||= branches.find { |_, b| b == current_branch }
-      end
-
-      def current_branch
-        @current_branch ||= `git rev-parse --abbrev-ref HEAD`.strip
       end
 
       def log_stream_url

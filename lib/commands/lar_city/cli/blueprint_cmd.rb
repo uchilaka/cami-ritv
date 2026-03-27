@@ -32,9 +32,7 @@ module LarCity
       desc 'get', 'Get the active application blueprint'
       def get
         unless options[:platform] == 'digitalocean'
-          raise NotImplementedError, <<~MSG
-            The blueprint:get command is currently only implemented for the DigitalOcean platform.
-          MSG
+          raise NotImplementedError, not_implemented_error('blueprint:get')
         end
         require_doctl_cli!
         # yaml_template = File.read(Rails.root.join('config', 'app.yaml.erb').to_s)
@@ -43,7 +41,7 @@ module LarCity
           <%= yaml_content %>
         TEMPLATE
         yaml_output = ERB.new(yaml_template).result(binding)
-        status = File.write(output_file_path, yaml_output)
+        status = pretend? ? 1 : File.write(output_file_path, yaml_output)
         if status.positive?
           say_success "Generated blueprint has been written to #{output_file_path}"
         else
@@ -56,9 +54,7 @@ module LarCity
       def setup
         with_interruption_rescue do
           unless options[:platform] == 'digitalocean'
-            raise NotImplementedError, <<~MSG
-            The blueprint:setup command is currently only implemented for the DigitalOcean platform.
-          MSG
+            raise NotImplementedError, not_implemented_error('blueprint:setup')
           end
 
           require_doctl_cli!
@@ -82,25 +78,26 @@ module LarCity
         end
       end
 
-      desc 'deploy', I18n.t('commands.blueprint.deploy.short_desc')
-      def deploy
-        unless options[:platform] == 'digitalocean'
-          raise NotImplementedError, <<~MSG
-            The blueprint:setup command is currently only implemented for the DigitalOcean platform.
-          MSG
-        end
+      desc 'update', I18n.t('commands.blueprint.update.short_desc')
+      long_desc I18n.t('commands.blueprint.update.long_desc')
+      def update
+        with_interruption_rescue do
+          unless options[:platform] == 'digitalocean'
+            raise NotImplementedError, not_implemented_error('blueprint:update')
+          end
 
-        require_doctl_cli!
-        setup if force? || !File.exist?(output_file_path)
-        deploy_cmd = [
-          'doctl apps update',
-          DigitalOcean::Utils.app_id!,
-          "--spec #{output_file_path}",
-          "--access-token #{DigitalOcean::Utils.access_token!}",
-          '--format ID,DefaultIngress,Created'
-        ]
-        deploy_cmd << '--verbose' if verbose?
-        run(*deploy_cmd, eval: false) { |line| say_info line }
+          require_doctl_cli!
+          setup if force? || !File.exist?(output_file_path)
+          deploy_cmd = [
+            'doctl apps update',
+            DigitalOcean::Utils.app_id!,
+            "--spec #{output_file_path}",
+            "--access-token #{DigitalOcean::Utils.access_token!}",
+            '--format ID,DefaultIngress,Created'
+          ]
+          deploy_cmd << '--verbose' if verbose?
+          run(*deploy_cmd, eval: false) { |line| say_info line }
+        end
       end
 
       no_commands do
@@ -150,6 +147,10 @@ module LarCity
       end
 
       private
+
+      def not_implemented_error(cmd)
+        I18n.t('exceptions.integration_command_not_implemented', platform: options[:platform], cmd:)
+      end
 
       def shared_header
         <<~HEADER

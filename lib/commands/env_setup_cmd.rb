@@ -27,17 +27,19 @@ class EnvSetupCmd < Thor::Group
   end
 
   def write_template_file
-    say_info "Writing dotenv template file to #{template_file_path}..."
-    return if pretend?
+    with_interruption_rescue do
+      say_info "Writing dotenv template file to #{template_file_path}..."
+      return if pretend?
 
-    bytes_written = File.write template_file_path, template_content
-    say_debug <<~DEBUG_MSG
-      Result of writing dotenv template file to #{template_file_path}: #{bytes_written.inspect}
-    DEBUG_MSG
-    if bytes_written.positive?
-      say_success "Successfully wrote .env template file to #{template_file_path}."
-    else
-      say_error "Failed to write .env template file to #{template_file_path}."
+      bytes_written = File.write template_file_path, template_content
+      say_debug <<~DEBUG_MSG
+        Result of writing dotenv template file to #{template_file_path}: #{bytes_written.inspect}
+      DEBUG_MSG
+      if bytes_written.positive?
+        say_success "Successfully wrote .env template file to #{template_file_path}."
+      else
+        say_error "Failed to write .env template file to #{template_file_path}."
+      end
     end
   end
 
@@ -59,10 +61,13 @@ class EnvSetupCmd < Thor::Group
   no_commands do
     def template_content
       say_debug <<~DEBUG_MSG
-        Fetching environment variable values from Proton Vault to
-        initialize the .env.tpl template and generate the .env file
-        for the app.
-
+        Fetching environment variable values from Proton Vault to initialize \
+        the template and generate the appropriate dotenv file for the current \
+        environment.
+        |=====================================================================|
+        | Detected environment: #{detected_environment}
+        | Template: #{template_file_path}
+        | Output: #{output_file_path}
         =======================================================================
         ======== IMPORTANT: Ensure Proton Vault Access and Permissions ========
         =======================================================================
@@ -95,17 +100,9 @@ class EnvSetupCmd < Thor::Group
 
     def build_template_body(*parts)
       erb_template_array = [*parts.map(&:to_s)]
-      erb_template_array << '# Dockerized database credentials'
-
-      # Provision database ENV variables from Proton Vault
-      database_env_sets.each do |env_key, vault_field|
-        erb_template_array <<
-          "export #{env_key}=\"{{ pass://#{value_path(vault_share_id, shared_source_item_id, vault_field)} }}\""
-      end
-
-      erb_template_array << ''
 
       # Provision secrets from ENV variable item in Proton Vault
+      erb_template_array << "# #{item_sections['platform']}"
       platform_env_sets.each do |env_key, vault_field|
         vault_field ||= env_key
         erb_template_array <<
@@ -125,7 +122,7 @@ class EnvSetupCmd < Thor::Group
 
       erb_template_array << ''
       sections.each do |section|
-        next if %w[database platform].include?(section)
+        next if section == 'platform'
 
         erb_template_array <<
           "# #{item_sections[section] || section.capitalize}"
@@ -162,8 +159,9 @@ class EnvSetupCmd < Thor::Group
 
     def database_env_sets
       [
-        ['APP_DATABASE_USER', 'Database username'],
-        ['APP_DATABASE_PASSWORD', 'Database password'],
+        ['APP_DATABASE_USER', nil],
+        ['APP_DATABASE_PASSWORD', nil],
+        ['APP_DATABASE_PORT', nil]
       ]
     end
 
@@ -180,7 +178,7 @@ class EnvSetupCmd < Thor::Group
         'app' => 'Application',
         'cache' => 'Cache store(s)',
         'database' => 'App store configuration',
-        'platform' => 'Deployment platform credentials',
+        'platform' => 'Deployment platform configuration',
         'proxy' => 'Proxy configuration (e.g. ngrok, tailscale)',
         'paypal' => 'PayPal',
         'crm' => 'Zoho CRM',
@@ -199,6 +197,7 @@ class EnvSetupCmd < Thor::Group
         *database_env_sets.map { |env_key, vault_field| [env_key, vault_field, 'database'] },
         *platform_env_sets.map { |env_key, vault_field| [env_key, vault_field, 'platform'] },
         #['HOSTNAME', nil, 'app'],
+        #['RAILS_MASTER_KEY', nil, 'app'],
         ['REDIS_URL', nil, 'cache'],
         ['NGROK_AUTH_TOKEN', nil, 'proxy'],
         ['PAYPAL_BASE_URL', nil, 'paypal'],
@@ -214,19 +213,15 @@ class EnvSetupCmd < Thor::Group
     end
 
     def shared_source_item_id
-      @shared_source_item_id ||= vault_source_items[:shared].share_id
+      vault_source_items[:shared].id
     end
 
     def source_item_id
       @source_item_id ||=
         ENV.fetch(
           'ENV_VARS_ITEM_ID',
-          vault_source_items[detected_environment].share_id
+          vault_source_items[detected_environment].id
         )
-    end
-
-    def proton_credentials
-      @proton_credentials ||= Rails.application.credentials.proton!
     end
 
     def output_file_path
@@ -243,16 +238,20 @@ class EnvSetupCmd < Thor::Group
 
     def shared_header
       @shared_header ||= <<~SHARED_HEADER
-        # This file is auto-generated from .env.tpl using secrets stored
-        # in Proton Vault.
+        # This file is auto-generated from an ERB template for configuration
+        # of secret mappings. The secrets to be provisioned are managed in a
+        # Proton Pass Vault.
         #
-        # To update the secrets, modify the corresponding item in the
-        # Proton Vault and re-run this command.
+        # ERB template: #{dotenv_template_file_path}
+        #
+        # To update the secrets, modify the corresponding item in the vault and
+        # re-run this command.
         #
         # Do NOT edit this file directly, as changes will be overwritten.
         # -----------------------------------------------------------------
         # Last generated at: #{Time.current.iso8601}
         # -----------------------------------------------------------------
+        export NODE_ENV=#{detected_environment}
       SHARED_HEADER
     end
 
@@ -291,6 +290,14 @@ class EnvSetupCmd < Thor::Group
         # ETL
         #export UPSERT_INVOICE_BATCH_LIMIT=1000
       FOOTER
+    end
+
+    def master_key_from_file
+      @master_key_from_file ||= (File.read(master_key_path) if File.exist?(master_key_path))
+    end
+
+    def master_key_path
+      @master_key_path ||= Rails.root.join('config', 'credentials', "#{detected_environment}.key").to_s
     end
   end
 end

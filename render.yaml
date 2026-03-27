@@ -10,12 +10,14 @@ projects:
             databaseName: sails_production
             user: sails_production_user
             plan: basic-256mb
+            #previewPlan: basic-256mb
             region: virginia
             ipAllowList:
               - source: 0.0.0.0/0
                 description: everywhere
             postgresMajorVersion: "17"
             diskSizeGB: 1
+            previewDiskSizeGB: 1
         services:
           # The Rails web application
           - type: web
@@ -64,6 +66,7 @@ projects:
             # environment to prevent deploying potentially broken code.
             autoDeployTrigger: checksPass
             previews:
+              #plan: starter
               generation: manual
               numInstances: 1
           # The background worker for processing async jobs
@@ -105,61 +108,64 @@ projects:
             dockerContext: .
             dockerfilePath: ./Dockerfile.worker
             autoDeployTrigger: checksPass
-
-      - name: Staging
-        # The Rails (staging) application database
-        databases:
-          - name: cami-staging-db
-            databaseName: sails_staging
-            user: sails_staging_user
-            plan: free
-            region: virginia
-            ipAllowList:
-              - source: 0.0.0.0/0
-                description: everywhere
-            postgresMajorVersion: "17"
-        # See documentation on referencing values from other services:
-        # https://render.com/docs/blueprint-spec#referencing-values-from-other-services
-        services:
-          # The Rails (staging) application
-          - type: web
-            name: cami-staging-app
-            runtime: docker
-            repo: https://github.com/uchilaka/cami-ritv
-            branch: releases/staging
-            plan: free
-            envVars:
-              - key: NODE_ENV
-                value: staging
-              - key: RAILS_ENV
-                value: staging
-              - fromGroup: CRM Staging
-              - fromGroup: Logtail Staging
-              - fromGroup: PayPal Staging
-              - fromGroup: SMTP Live
-              - fromGroup: Vault Shared
-              - fromGroup: Vault Staging
-              - key: APP_DATABASE_HOST
-                fromDatabase:
-                  name: cami-staging-db
-                  property: host
-              - key: APP_PRIMARY_DATABASE_NAME
-                fromDatabase:
-                  name: cami-staging-db
-                  property: database
-              - key: APP_DATABASE_USER
-                fromDatabase:
-                  name: cami-staging-db
-                  property: user
-              - key: APP_DATABASE_PASSWORD
-                fromDatabase:
-                  name: cami-staging-db
-                  property: password
-            region: virginia
-            dockerContext: .
-            dockerfilePath: ./Dockerfile.web
-            autoDeployTrigger: commit
-          # The Rails (staging) background worker for processing async jobs
+            previews:
+              #plan: starter
+              generation: manual
+              numInstances: 1
+#      - name: Staging
+#        # The Rails (staging) application database
+#        databases:
+#          - name: cami-staging-db
+#            databaseName: sails_staging
+#            user: sails_staging_user
+#            plan: free
+#            region: virginia
+#            ipAllowList:
+#              - source: 0.0.0.0/0
+#                description: everywhere
+#            postgresMajorVersion: "17"
+#        # See documentation on referencing values from other services:
+#        # https://render.com/docs/blueprint-spec#referencing-values-from-other-services
+#        services:
+#          # The Rails (staging) application
+#          - type: web
+#            name: cami-staging-app
+#            runtime: docker
+#            repo: https://github.com/uchilaka/cami-ritv
+#            branch: releases/staging
+#            plan: free
+#            envVars:
+#              - key: NODE_ENV
+#                value: staging
+#              - key: RAILS_ENV
+#                value: staging
+#              - fromGroup: CRM Staging
+#              - fromGroup: Logtail Staging
+#              - fromGroup: PayPal Staging
+#              - fromGroup: SMTP Live
+#              - fromGroup: Vault Shared
+#              - fromGroup: Vault Staging
+#              - key: APP_DATABASE_HOST
+#                fromDatabase:
+#                  name: cami-staging-db
+#                  property: host
+#              - key: APP_PRIMARY_DATABASE_NAME
+#                fromDatabase:
+#                  name: cami-staging-db
+#                  property: database
+#              - key: APP_DATABASE_USER
+#                fromDatabase:
+#                  name: cami-staging-db
+#                  property: user
+#              - key: APP_DATABASE_PASSWORD
+#                fromDatabase:
+#                  name: cami-staging-db
+#                  property: password
+#            region: virginia
+#            dockerContext: .
+#            dockerfilePath: ./Dockerfile.web
+#            autoDeployTrigger: commit
+#          # The Rails (staging) background worker for processing async jobs
 #          - type: worker
 #            name: cami-staging-solid-queue
 #            runtime: docker

@@ -23,6 +23,9 @@ db/development/postgres/downloads/**/*.sql filter=git-crypt diff=git-crypt
 # Encrypt database backups
 db/development/postgres/**/*.dump filter=git-crypt diff=git-crypt
 
+# Encrypt DDNS configs
+config/ddclient.d/**/*.conf filter=git-crypt diff=git-crypt
+
 # Identify the Yarn releases and plugin bundles as binary
 .yarn/releases/** binary
 .yarn/plugins/** binary

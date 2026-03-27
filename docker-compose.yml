@@ -59,6 +59,18 @@ services:
       dockerfile: Dockerfile.web
       args:
         - RAILS_ENV=${RAILS_ENV:-development}
+        - APP_DATABASE_USER=${APP_DATABASE_USER}
+        - APP_DATABASE_PASSWORD=${APP_DATABASE_PASSWORD}
+        - APP_DATABASE_NAME=${APP_DATABASE_NAME}
+        - GITCRYPT_KEY_BASE64=${GITCRYPT_KEY_BASE64}
+        - SMTP_USER=${SMTP_USER}
+        - PAYPAL_API_BASE_URL=${PAYPAL_API_BASE_URL}
+        - PAYPAL_BASE_URL=${PAYPAL_BASE_URL}
+        - PAYPAL_CLIENT_ID=${PAYPAL_CLIENT_ID}
+        - PAYPAL_CLIENT_SECRET=${PAYPAL_CLIENT_SECRET}
+        - ZOHO_CLIENT_ID=${ZOHO_CLIENT_ID}
+        - ZOHO_CLIENT_SECRET=${ZOHO_CLIENT_SECRET}
+        - CRM_ORG_ID=${CRM_ORG_ID}
       secrets:
         - source: gitcrypt-key
           target: gitcrypt.key
@@ -66,10 +78,12 @@ services:
           target: development.key
         - source: production-key
           target: production.key
+        - source: lab-key
+          target: lab.key
     restart: unless-stopped
     environment:
       RAILS_ENV: ${RAILS_ENV:-development}
-      #RAILS_MASTER_KEY: ${RAILS_MASTER_KEY}
+      RAILS_MASTER_KEY: ${RAILS_MASTER_KEY}
       APP_CONFIG_CHECK_ENV_VARS: yes
       APP_DATABASE_HOST: db.cami.larcity
       APP_PRIMARY_DATABASE_NAME: ${APP_DATABASE_NAME}
@@ -82,12 +96,13 @@ services:
         target: gitcrypt.key
       - source: development-key
         target: development.key
+      - source: production-key
+        target: production.key
+      - source: lab-key
+        target: lab.key
     volumes:
       - ./config/credentials/git-crypt.key:/opt/project/src/.git/git-crypt/keys/default:ro
-      - ./config/credentials/development.key:/opt/project/src/config/credentials/development.key:ro
-      #- ./config/credentials/development.yml.enc:/opt/project/src/config/credentials.yml.enc:ro
-      #- ./config/credentials/staging.key:/opt/project/src/config/credentials/staging.key:ro
-      #- ./config/credentials/production.key:/opt/project/src/config/credentials/production.key:ro
+      - ./config/credentials/$RAILS_ENV.yml.enc:/opt/project/src/config/credentials.yml.enc:ro
     ports:
       - "16006:3000"
     depends_on:
@@ -112,10 +127,12 @@ services:
           target: development.key
         - source: production-key
           target: production.key
+        - source: lab-key
+          target: lab.key
     restart: unless-stopped
     environment:
       RAILS_ENV: ${RAILS_ENV:-development}
-      #RAILS_MASTER_KEY: ${RAILS_MASTER_KEY}
+      RAILS_MASTER_KEY: ${RAILS_MASTER_KEY}
       APP_CONFIG_CHECK_ENV_VARS: yes
       APP_DATABASE_HOST: db.cami.larcity
       APP_PRIMARY_DATABASE_NAME: ${APP_DATABASE_NAME}
@@ -128,12 +145,13 @@ services:
         target: gitcrypt.key
       - source: development-key
         target: development.key
+      - source: production-key
+        target: production.key
+      - source: lab-key
+        target: lab.key
     volumes:
       - ./config/credentials/git-crypt.key:/opt/project/src/.git/git-crypt/keys/default:ro
-      - ./config/credentials/development.key:/opt/project/src/config/credentials/development.key:ro
-      #- ./config/credentials/development.yml.enc:/opt/project/src/config/credentials.yml.enc:ro
-      #- ./config/credentials/staging.key:/opt/project/src/config/credentials/staging.key:ro
-      #- ./config/credentials/production.key:/opt/project/src/config/credentials/production.key:ro
+      - ./config/credentials/$RAILS_ENV.yml.enc:/opt/project/src/config/credentials.yml.enc:ro
     depends_on:
       - app-store
     profiles:
@@ -153,6 +171,8 @@ secrets:
     file: ./config/credentials/staging.key
   production-key:
     file: ./config/credentials/production.key
+  lab-key:
+    file: ./config/credentials/lab.key
 
 networks:
   default:

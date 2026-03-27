@@ -1,12 +1,21 @@
 # frozen_string_literal: true
 
 require 'lib/digital_ocean'
+require 'lib/commands/lar_city/cli/base_cmd'
+require 'lar_city/cli/control_flow_helpers'
 
 module LarCity
   module CLI
     # Thor command for managing DNS records using DigitalOcean's API
     class DDNSCmd < BaseCmd
-      include Thor::Actions
+      # TODO: What was this included for? Review:
+      #   https://github.com/uchilaka/cami-ritv/commit/ffdebd5898507d6d3c06836dfbd0484cbde79fb1#diff-6e6f348d1586f6d47928f4d11b7cb818e384665d94580db5c6ef24e5b2722a2f
+      # include Thor::Actions
+
+      no_commands do
+        include IntegrationHelpers
+        include ControlFlowHelpers
+      end
 
       namespace :ddns
 
@@ -160,8 +169,83 @@ module LarCity
         )
       end
 
+      desc 'update', 'Update DNS record via ddclient with current public IP'
+      set_dns_record_options
+      def update
+        public_ip = fetch_public_ip
+        say_debug "Current public IP: #{public_ip}"
+        name, domain, record_type =
+          options.values_at :record, :domain, :type
+        require_doctl_cli!
+
+        # Check for record
+        fqdn = [name, domain].join('.')
+        matching_records = filter_records_by(name:, type: record_type)
+        say_debug JSON.pretty_generate(matching_records) unless matching_records.size > 100
+        unless matching_records.size == 1
+          say_warning <<~FIX_ASK
+            ⚠️ Your task returned #{tally(matching_records, 'record')} found for #{fqdn}. \
+            You need to have exactly 1 record for ddclient to work properly. \
+            Please review the records and confirm that you want to proceed \
+            with updating the record(s) for #{fqdn}.
+
+            To cleanup dirty records, run `lx-cli ddns:prune` before \
+            retrying this command.
+          FIX_ASK
+
+          return
+        end
+
+        if matching_records.blank?
+          say_warning <<~FIX_ASK
+            ⚠️ No records found for #{fqdn}. You need to have exactly 1 record for ddclient to work properly. \
+            Please create a record for #{fqdn} with the desired IP address.
+          FIX_ASK
+          return
+        end
+
+        # Continue if exactly 1 record is returned
+        say_success "Found a matching record for #{fqdn}"
+
+        record = matching_records.first
+        update_cmd = [
+          'doctl compute domain records update',
+          domain,
+          "--access-token #{DigitalOcean::Utils.access_token!}",
+          "--record-id #{record['id']}",
+          "--record-name #{record['name']}",
+          "--record-type #{record_type}",
+          "--record-data #{public_ip}"
+        ]
+        update_cmd << '--verbose' if verbose?
+        run(*update_cmd, inline: true)
+      end
+
       no_commands do
         delegate :get_records, :v2_endpoint, to: DigitalOcean::API
+
+        def build_ddclient_config(record_id:)
+          hostname = [options[:record], options[:domain]].join('.')
+          <<~CONF
+            # Configuration file for ddclient.
+            #
+            # Daemon mode for periodic updates
+            daemon=300
+            syslog=yes
+
+            # Method to determine the public IP address
+            use=web, web=checkip.dynu.com/
+
+            # DigitalOcean details
+            protocol=digitalocean
+            server=api.digitalocean.com
+            login=#{options[:domain]}
+            password=#{DigitalOcean::Utils.access_token!}
+
+            # Hostname and record ID to update
+            #{hostname}, record_id=#{record_id}
+          CONF
+        end
 
         # Fetches the current public IP address by trying multiple services
         # @return [String] The public IP address
@@ -265,12 +349,43 @@ module LarCity
           end
         end
 
+        def domain_records
+          @domain_records ||= list_records(domain: options[:domain])
+        end
+
+        def list_records(domain:)
+          require_doctl_cli!
+
+          list_cmd = [
+            'doctl compute domain records list',
+            domain,
+            "--access-token #{DigitalOcean::Utils.access_token!}",
+            '--output json'
+          ]
+          list_cmd << "--verbose" if verbose?
+          JSON.parse(run(*list_cmd, eval: true, mock_return: '[]', inline: true))
+        end
+
         def access_token
           @access_token ||= options[:access_token]
         end
       end
 
       private
+
+      def filter_records_by(name:, type:)
+        (domain_records || []).filter do |r|
+          r['type'] == type &&
+            (name == '@' ? r['name'].nil? || r['name'].empty? : r['name'] == name)
+        end
+      end
+
+      def find_record_by(name:, type:)
+        (domain_records || []).find do |r|
+          r['type'] == type &&
+            (name == '@' ? r['name'].nil? || r['name'].empty? : r['name'] == name)
+        end
+      end
 
       def cleanup_hit?(domain:, name:, type:)
         domain == options[:domain] && name == options[:record] && type == options[:type]
