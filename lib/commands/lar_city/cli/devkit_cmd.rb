@@ -6,7 +6,11 @@ require 'uri'
 module LarCity
   module CLI
     class DevkitCmd < BaseCmd
-      include ControlFlowHelpers
+      no_commands do
+        include ControlFlowHelpers
+        include GitOpsHelpers
+        include IntegrationHelpers
+      end
 
       namespace 'devkit'
 
@@ -271,6 +275,7 @@ module LarCity
 
       desc 'check-blueprint', I18n.t('commands.devkit.check_blueprint.short_desc')
       long_desc I18n.t('commands.devkit.check_blueprint.long_desc')
+      # @deprecated use `lx-cli blueprint:check` command instead
       def check_blueprint
         blueprint_config = Rails.root.join('render.yaml')
         require_render_cli!
@@ -287,6 +292,7 @@ module LarCity
                              desc: 'The platform to get the blueprint for (currently only supported for DigitalOcean)'
       desc 'get-blueprint', I18n.t('commands.devkit.get_blueprint.short_desc')
       long_desc I18n.t('commands.devkit.get_blueprint.long_desc')
+      # @deprecated Use `lx-cli blueprint:get` command instead
       def get_blueprint
         unless options[:platform] == 'digitalocean'
           raise NotImplementedError, <<~MSG
@@ -301,8 +307,13 @@ module LarCity
         yaml_content = run(*codegen_cmd, eval: true)
         yaml_template = File.read(Rails.root.join('config', 'app.yaml.erb'))
         yaml_output = ERB.new(yaml_template).result(binding)
-        output_file = Rails.root.join('app.yaml')
-        status = File.write(output_file, yaml_output)
+        output_file =
+          if Rails.env.production?
+            Rails.root.join('app.yaml')
+          else
+            Rails.root.join("app.#{detected_environment}.yaml")
+          end
+        status = pretend? ? 1 : File.write(output_file, yaml_output)
         if status.positive?
           say_success "Generated blueprint has been written to #{output_file}"
         else
@@ -336,30 +347,6 @@ module LarCity
       end
 
       no_commands do
-        def require_render_cli!
-          return if run('which render > /dev/null 2>&1', mock_return: true, inline: true)
-
-          say_warning <<~MSG.squish
-            ⚠️ The 'render' CLI tool is not installed or not found in the system PATH.
-            Please install the Render CLI to use this command. You can install it via
-            Brew by running 'brew install render' or by following the instructions at
-            https://render.com/docs/cli#setup.
-          MSG
-          raise Thor::Error, 'Render CLI is required but not found in PATH.'
-        end
-
-        def require_doctl_cli!
-          return if run('which doctl > /dev/null 2>&1', mock_return: true, inline: true)
-
-          say_warning <<~MSG.squish
-            ⚠️ The 'doctl' CLI tool is not installed or not found in the system PATH.
-            Please install the DigitalOcean CLI to use this command. You can install it via
-            Brew by running 'brew install doctl' or by following the instructions at
-            https://docs.digitalocean.com/reference/doctl/how-to/install/.
-          MSG
-          raise Thor::Error, 'DigitalOcean CLI (doctl) is required but not found in PATH.'
-        end
-
         def check_or_prompt_for_branch_to_review
           say "Checking branch status for #{selected_branch}...", :yellow
           check_pr_cmd = "gh pr list --head #{selected_branch} --json number -q '.[].number'"
@@ -433,15 +420,6 @@ module LarCity
             #{'=' * branch_list_hr.size}
             #{branches.map { |i, b| "#{i + 1}. #{is_current_branch_phrase(b)}#{b}" }.join("\n")}
           PROMPT_MSG
-        end
-
-        def branches
-          @branches ||=
-            if @branches.blank?
-              `git branch --list`.split("\n").map.with_index do |b, i|
-                [i, b.gsub('*', '').strip]
-              end
-            end
         end
 
         def is_current_branch_phrase(branch)
@@ -529,15 +507,6 @@ module LarCity
           PROMPT_MSG
         end
 
-        def branches
-          @branches ||=
-            if @branches.blank?
-              `git branch --list`.split("\n").map.with_index do |b, i|
-                [i, b.gsub('*', '').strip]
-              end
-            end
-        end
-
         def is_current_branch_phrase(branch)
           if branch == current_branch
             '* '
@@ -592,10 +561,6 @@ module LarCity
 
       def current_branch_tuple
         @current_branch_tuple ||= branches.find { |_, b| b == current_branch }
-      end
-
-      def current_branch
-        @current_branch ||= `git rev-parse --abbrev-ref HEAD`.strip
       end
 
       def log_stream_url

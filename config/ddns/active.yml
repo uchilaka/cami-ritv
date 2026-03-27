@@ -48,10 +48,10 @@ shared:
     type: A
     ttl: 3600
 
-  - domain: larcity.dev
-    content: accounts.lab
-    type: A
-    ttl: 3600
+#  - domain: larcity.dev
+#    content: accounts.lab
+#    type: A
+#    ttl: 3600
 
 ##############################################
 ########## ho.larcity.tech (Cert) ############

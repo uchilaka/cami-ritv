@@ -5,13 +5,13 @@
     "yarn": ">= 4.5.0"
   },
   "type": "module",
-  "packageManager": "yarn@4.9.1",
   "scripts": {
     "caniuse:update": "yarn dlx update-browserslist-db@latest",
     "check": "tsc -p tsconfig.app.json && tsc -p tsconfig.node.json",
     "clobber": "bin/clobber-all",
     "build:css": "bin/rails tailwindcss:build",
     "build:assets": "bin/rails assets:precompile",
+    "build:image": "docker compose --progress plain build",
     "build": "bin/vite build",
     "start": "bin/start",
     "lint": "eslint",

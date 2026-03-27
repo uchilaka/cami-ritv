@@ -175,6 +175,18 @@ class AppUtils
       end
     end
 
+    def web_console_enabled?
+      default_value = Rails.env.development? ? 'yes' : 'no'
+
+      yes?(ENV.fetch('WEB_CONSOLE_ENABLED', default_value))
+    end
+
+    def omniauth_enabled?
+      default_value = Rails.env.test? ? 'no' : 'yes'
+
+      yes?(ENV.fetch('APP_CONFIG_OMNIAUTH_ENABLED', default_value))
+    end
+
     def jbuilder_pre_keys
       @jbuilder_pre_keys ||= begin
         keys = Rails.application.credentials&.jbuilder&.pre_keys || %i[predicate]
@@ -186,10 +198,30 @@ class AppUtils
       `hostname`.strip.split('.').reverse.join('-')
     end
 
+    # @deprecated This method is deprecated and will be removed
+    #   in a future release. Use `check_required_vars?` instead.
     def check_env_vars?
       return false if Rails.env.test?
 
       yes?(ENV.fetch('APP_CONFIG_CHECK_ENV_VARS', 'yes'))
+    end
+
+    def check_required_vars?
+      return false if Rails.env.test?
+
+      yes?(ENV.fetch('APP_CONFIG_CHECK_REQUIRED_VARS', 'yes'))
+    end
+
+    def devise_jwt_secret_key!
+      if check_required_vars?
+        return ENV.fetch('APP_CONFIG_JWT_SECRET_KEY', Rails.application.credentials.devise_jwt_secret_key!)
+      end
+
+      ENV.fetch('APP_CONFIG_JWT_SECRET_KEY', Rails.application.credentials.devise_jwt_secret_key)
+    end
+
+    def database_url_present?
+      ENV['DATABASE_URL'].present?
     end
 
     private

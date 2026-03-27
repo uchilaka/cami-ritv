@@ -1,13 +1,20 @@
 # frozen_string_literal: true
 
 production_env_vars = []
-{
-  'APP_DATABASE_NAME' => :database,
-  'APP_DATABASE_HOST' => :host,
-  'APP_DATABASE_PORT' => :port,
-}.each do |var, config_key|
-  production_env_vars << var \
-    if Rails.application.credentials.dig(:postgres, config_key).blank?
+if AppUtils.database_url_present?
+  puts <<~MSG
+    ⚠️ DATABASE_URL environment variable detected. Skipping individual
+    database configuration checks.
+  MSG
+else
+  {
+    'APP_DATABASE_NAME' => :database,
+    'APP_DATABASE_HOST' => :host,
+    'APP_DATABASE_PORT' => :port,
+  }.each do |var, config_key|
+    production_env_vars << var \
+      if Rails.application.credentials.dig(:postgres, config_key).blank?
+  end
 end
 
 # Build required environment variables based on available configurations
@@ -16,12 +23,14 @@ end
 #   co-located database instance. Revisit this later.
 required_env_vars = %w[PORT RAILS_ENV]
 
-{
-  'APP_DATABASE_USER' => :user,
-  'APP_DATABASE_PASSWORD' => :password,
-}.each do |var, config_key|
-  required_env_vars << var \
-    if Rails.application.credentials.dig(:postgres, config_key).blank?
+unless AppUtils.database_url_present?
+  {
+    'APP_DATABASE_USER' => :user,
+    'APP_DATABASE_PASSWORD' => :password,
+  }.each do |var, config_key|
+    required_env_vars << var \
+      if Rails.application.credentials.dig(:postgres, config_key).blank?
+  end
 end
 
 unless Rails.env.test?
@@ -49,7 +58,7 @@ end
 if AppUtils.check_env_vars?
   puts ['🛠️ Configuring required', Rails.env, 'environment variables'].compact.join(' ')
   # Doc on required keys: https://github.com/bkeepers/dotenv?tab=readme-ov-file#required-keys
-  Dotenv.require_keys(required_env_vars) if AppUtils.check_env_vars?
+  Dotenv.require_keys(required_env_vars)
 else
   puts <<~MSG
     ⚠️ Skipping environment variable check in #{Rails.env} environment.

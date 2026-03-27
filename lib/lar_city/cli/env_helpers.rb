@@ -73,7 +73,7 @@ module LarCity
         protected
 
         def detected_environment
-          options[:environment] || Rails.env
+          @detected_environment ||= (options[:environment] || Rails.env)
         end
 
         # @deprecated This method is deprecated and will be removed in a future release.

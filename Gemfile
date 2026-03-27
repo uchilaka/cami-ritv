@@ -1,5 +1,8 @@
+# frozen_string_literal: true
+
 source 'https://rubygems.org'
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
+ruby "3.4.4"
 
 # Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
 gem 'rails', '~> 8.0'
@@ -101,10 +104,10 @@ gem 'ostruct'
 # Simple, feature rich ascii table generation library https://github.com/tj/terminal-table
 gem 'terminal-table'
 
+gem 'dry-types', '~> 1.8'
+gem 'highline', '~> 3.1'
 gem 'nokogiri'
 gem 'reverse_markdown'
-gem 'highline', '~> 3.1'
-gem 'dry-types', '~> 1.8'
 
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
@@ -114,6 +117,7 @@ group :development, :test do
   gem 'climate_control'
   gem 'fabrication'
   gem 'faker'
+  gem 'knapsack_pro'
   gem 'open3'
   gem 'rspec-rails', '~> 7'
   gem 'rswag-specs'

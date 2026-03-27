@@ -1,5 +1,9 @@
 # frozen_string_literal: true
 
+require_relative 'utils/class_helpers'
+require_relative 'output_helpers'
+require_relative 'interruptible'
+
 module LarCity
   module CLI
     module Reversible

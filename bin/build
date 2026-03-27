@@ -8,6 +8,9 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # Decrypt secrets
 "$SCRIPT_DIR/unlock-repo"
 
+# Link credential key file
+"$SCRIPT_DIR/link-key-file"
+
 # Setup package dependencies
 yarn install --immutable
 
