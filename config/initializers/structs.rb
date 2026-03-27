@@ -85,7 +85,10 @@ Struct.new(
 Struct.new(
   'VaultSourceItem',
   :share_id,
+  :vault_id,
   :id,
   :name,
+  :flags,
+  :create_time,
   keyword_init: true
 )

@@ -212,14 +212,14 @@ class EnvSetupCmd < Thor::Group
     end
 
     def shared_source_item_id
-      @shared_source_item_id ||= vault_source_items[:shared].share_id
+      vault_source_items[:shared].id
     end
 
     def source_item_id
       @source_item_id ||=
         ENV.fetch(
           'ENV_VARS_ITEM_ID',
-          vault_source_items[detected_environment].share_id
+          vault_source_items[detected_environment].id
         )
     end
 
