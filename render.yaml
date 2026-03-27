@@ -11,13 +11,13 @@ projects:
             user: sails_production_user
             plan: basic-256mb
             previewPlan: free
-            previewDiskSizeGB: 1
             region: virginia
             ipAllowList:
               - source: 0.0.0.0/0
                 description: everywhere
             postgresMajorVersion: "17"
             diskSizeGB: 1
+            previewDiskSizeGB: 1
         services:
           # The Rails web application
           - type: web
