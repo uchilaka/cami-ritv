@@ -43,13 +43,13 @@ module LarCity
             shared:
               ::Struct::VaultSourceItem
                 .new(
-                  share_id: vault_credentials.shared_env_vars_item_id,
+                  id: vault_credentials.shared_env_vars_item_id,
                   name: 'Environment variables (shared)'
                 ),
             detected_environment =>
               ::Struct::VaultSourceItem
                 .new(
-                  share_id: vault_credentials.env_vars_item_id,
+                  id: vault_credentials.env_vars_item_id,
                   name: "Environment variables (#{detected_environment})"
                 ),
           }

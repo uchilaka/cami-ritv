@@ -22,11 +22,18 @@ module LarCity
         result =
           run(
             'pass-cli item list',
-            "--share-id #{vault_share_id}",
-            "--output #{options[:format]}", inline: true, eval: true
+            "--share-id=#{vault_share_id}",
+            "--output=json", inline: true, eval: true
           )
+        return if pretend?
+
         items = JSON.parse(result)
-        say_info items.to_yaml
+        case options[:format]
+        when 'yaml'
+          say_info items.to_yaml
+        else
+          say_info JSON.pretty_generate(items)
+        end
       end
     end
   end
