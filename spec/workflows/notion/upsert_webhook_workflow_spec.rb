@@ -49,7 +49,7 @@ RSpec.describe Notion::UpsertWebhookWorkflow do
   end
 
   describe '.call' do
-    shared_examples "updated Notion deals webhook" do
+    shared_examples 'updated Notion deals webhook' do
       subject(:webhook) { workflow.webhook }
 
       let(:expected_data) do
@@ -89,7 +89,7 @@ RSpec.describe Notion::UpsertWebhookWorkflow do
 
         it { expect { workflow }.to change { Webhook.count }.by(1) }
 
-        it_should_behave_like "updated Notion deals webhook"
+        it_should_behave_like 'updated Notion deals webhook'
       end
 
       context 'and webhook already exists' do
@@ -101,7 +101,7 @@ RSpec.describe Notion::UpsertWebhookWorkflow do
 
         it { expect { workflow }.not_to(change { Webhook.count }) }
 
-        it_should_behave_like "updated Notion deals webhook"
+        it_should_behave_like 'updated Notion deals webhook'
       end
     end
 
@@ -145,7 +145,7 @@ RSpec.describe Notion::UpsertWebhookWorkflow do
 
         it { expect { workflow }.to change { Webhook.count }.by(1) }
 
-        it_should_behave_like "updated Notion deals webhook"
+        it_should_behave_like 'updated Notion deals webhook'
       end
 
       context 'when webhook already exists' do
@@ -159,7 +159,7 @@ RSpec.describe Notion::UpsertWebhookWorkflow do
 
         it { expect { workflow }.not_to(change { Webhook.count }) }
 
-        it_should_behave_like "updated Notion deals webhook"
+        it_should_behave_like 'updated Notion deals webhook'
       end
     end
   end

@@ -42,9 +42,9 @@ RSpec.describe 'support/custom_workflow_context_matchers' do
 
   describe '#have_failed_with_message' do
     it 'supports block expectations' do
-      expect {
+      expect do
         expect { result }.not_to have_failed_with_message(mock_error_message)
-      }.not_to raise_error
+      end.not_to raise_error
     end
 
     context 'when the workflow fails with the expected message' do
@@ -59,28 +59,28 @@ RSpec.describe 'support/custom_workflow_context_matchers' do
       let(:mock_failure) { true }
       let(:different_error_message) { 'A different error message' }
       let(:actual_error_regex) do
-        %r{expected workflow to fail with message '#{different_error_message}', but got error '#{mock_error_message}'}
+        /expected workflow to fail with message '#{different_error_message}', but got error '#{mock_error_message}'/
       end
 
       it 'does not match and provides a useful failure message' do
-        expect {
+        expect do
           expect(result).to have_failed_with_message(different_error_message)
-        }.to raise_error(RSpec::Expectations::ExpectationNotMetError, actual_error_regex)
+        end.to raise_error(RSpec::Expectations::ExpectationNotMetError, actual_error_regex)
       end
     end
 
     context 'when the workflow succeeds' do
       let(:mock_failure) { false }
       let(:actual_error_regex) do
-        %r{expected workflow to fail with message '#{mock_error_message}', but it succeeded}
+        /expected workflow to fail with message '#{mock_error_message}', but it succeeded/
       end
 
       subject(:result) { TestWorkflow.call(mock_failure:) }
 
       it 'does not match and provides a useful failure message' do
-        expect {
+        expect do
           expect(result).to have_failed_with_message(mock_error_message)
-        }.to raise_error(RSpec::Expectations::ExpectationNotMetError, actual_error_regex)
+        end.to raise_error(RSpec::Expectations::ExpectationNotMetError, actual_error_regex)
       end
     end
   end

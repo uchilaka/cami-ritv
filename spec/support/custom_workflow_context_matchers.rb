@@ -34,7 +34,7 @@ RSpec::Matchers.define :have_failed_with_message do |expected_message|
     message_buffer <<
       if context.success?
         "expected workflow to fail with message '#{expected_message}', " \
-          "but it succeeded"
+          'but it succeeded'
       else
         "expected workflow to fail with message '#{expected_message}', " \
           "but got error '#{context.error}'"
@@ -46,6 +46,6 @@ RSpec::Matchers.define :have_failed_with_message do |expected_message|
   failure_message_when_negated do |obj|
     _context = workflow_under_test(obj)
     "expected workflow not to fail with message '#{expected_message}', " \
-      "but it did."
+      'but it did.'
   end
 end

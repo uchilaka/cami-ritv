@@ -49,7 +49,7 @@ RSpec.describe LarCity::CLI::DDNSCmd do
 
   after do
     stubs.verify_stubbed_calls
-  rescue => e
+  rescue StandardError => e
     # Don't fail tests for unstubbed calls in after hook
     Rails.logger.warn("Faraday stubs verification failed: #{e.message}")
   end
@@ -74,11 +74,11 @@ RSpec.describe LarCity::CLI::DDNSCmd do
 
       # Stub DigitalOcean API endpoints
       stubs.get(%r{/v2/domains/#{domain}/records}) do |_env|
-        [200, { 'Content-Type' => 'application/json' }, { domain_records: [] }]
+        [200, { 'Content-Type' => 'application/json' },  domain_records: []]
       end
 
       stubs.post(%r{/v2/domains/#{domain}/records}) do |_env|
-        [201, { 'Content-Type' => 'application/json' }, { domain_record: { id: '12345' } }]
+        [201, { 'Content-Type' => 'application/json' },  domain_record: { id: '12345' }]
       end
     end
 
@@ -239,7 +239,6 @@ RSpec.describe LarCity::CLI::DDNSCmd do
           }
         end
 
-
         it 'updates the existing record' do
           expect(instance).to receive(:say).with(/Updated record/, :green)
           expect(test_client).to \
@@ -319,7 +318,6 @@ RSpec.describe LarCity::CLI::DDNSCmd do
           :red
         )
         expect(instance).to receive(:exit).with(1)
-
 
         instance.send(:upsert_dns_record,
                       domain:,

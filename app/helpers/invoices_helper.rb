@@ -18,7 +18,7 @@ module InvoicesHelper
       ['Paid', 'paid'],
       ['Marked as refunded', 'marked_as_refunded'],
       ['Partially refunded', 'partially_refunded'],
-      ['Refunded', 'refunded']
+      ['Refunded', 'refunded'],
     ]
   end
 
@@ -35,7 +35,7 @@ module InvoicesHelper
       ['Due this week', 'due_this_week'],
       ['Due this month', 'due_this_month'],
       ['Due next month', 'due_next_month'],
-      ['Due later', 'due_later_than_next_month']
+      ['Due later', 'due_later_than_next_month'],
     ]
   end
 
@@ -45,7 +45,7 @@ module InvoicesHelper
       %w[Sent SENT],
       %w[Paid PAID],
       ['Partially paid', 'PARTIALLY_PAID'],
-      %w[Canceled CANCELLED]
+      %w[Canceled CANCELLED],
     ]
   end
 end

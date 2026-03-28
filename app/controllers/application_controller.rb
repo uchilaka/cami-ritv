@@ -17,7 +17,7 @@ class ApplicationController < ActionController::Base
   inertia_share do
     {
       current_user: maybe_current_user_hash,
-      footer_resource_links: footer_resource_links,
+      footer_resource_links:,
       footer_company_links: [
         { label: t('accessibility.footer.about'), href: '#' },
         {

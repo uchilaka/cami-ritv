@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # 20250419114933_create_allowlisted_jwts.rb
 class CreateAllowlistedJwts < ActiveRecord::Migration[8.0]
   def change

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 source 'https://rubygems.org'
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
@@ -101,10 +103,10 @@ gem 'ostruct'
 # Simple, feature rich ascii table generation library https://github.com/tj/terminal-table
 gem 'terminal-table'
 
+gem 'dry-types', '~> 1.8'
+gem 'highline', '~> 3.1'
 gem 'nokogiri'
 gem 'reverse_markdown'
-gem 'highline', '~> 3.1'
-gem 'dry-types', '~> 1.8'
 
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem

@@ -52,4 +52,3 @@ Rails.application.config.to_prepare do
   #  actor.respond_to?(:admin?) && actor.admin?
   # end
 end
-

@@ -46,7 +46,8 @@ RSpec.describe 'API::V2::Webhooks::Notion::Events', type: :request do
         },
       },
     }
-    parameter name: :slug, in: :path, schema: { type: :string }, required: true, description: 'Webhook slug (e.g., notion)'
+    parameter name: :slug, in: :path, schema: { type: :string }, required: true,
+              description: 'Webhook slug (e.g., notion)'
 
     let(:'X-Notion-Signature') { 'valid-notion-request-signature' }
     let(:slug) { 'notion' }

@@ -4,17 +4,17 @@ module Swagger
   module Schemas
     def self.all
       {
-        notion_entity: notion_entity,
-        notion_block: notion_block,
-        notion_event: notion_event,
-        account: account,
-        contact: contact,
-        money: money,
-        invoice: invoice,
-        invoice_search_params: invoice_search_params,
-        invoice_search_params_with_array_mode: invoice_search_params_with_array_mode,
-        country: country,
-        country_mapped: country_mapped
+        notion_entity:,
+        notion_block:,
+        notion_event:,
+        account:,
+        contact:,
+        money:,
+        invoice:,
+        invoice_search_params:,
+        invoice_search_params_with_array_mode:,
+        country:,
+        country_mapped:,
       }
     end
 
@@ -25,16 +25,16 @@ module Swagger
           id: { type: :string },
           type: {
             type: :string,
-            pattern: '^(page|database|person|block)$'
-          }
+            pattern: '^(page|database|person|block)$',
+          },
         },
-        required: %w[id type]
+        required: %w[id type],
       }
     end
 
     def self.notion_block
       {
-        '$ref' => '#/components/schemas/notion_entity'
+        '$ref' => '#/components/schemas/notion_entity',
       }
     end
 
@@ -51,33 +51,33 @@ module Swagger
           attempt_number: { type: :integer },
           authors: {
             type: :array,
-            items: { '$ref' => '#/components/schemas/notion_entity' }
+            items: { '$ref' => '#/components/schemas/notion_entity' },
           },
           data: {
             type: :object,
             properties: {
               parent: {
-                '$ref' => '#/components/schemas/notion_entity'
+                '$ref' => '#/components/schemas/notion_entity',
               },
               updated_blocks: {
                 type: :array,
                 nullable: true,
                 items: {
-                  '$ref' => '#/components/schemas/notion_block'
-                }
-              }
+                  '$ref' => '#/components/schemas/notion_block',
+                },
+              },
             },
-            required: %w[parent]
+            required: %w[parent],
           },
           type: {
             type: :string,
-            pattern: '^(page.created|page.content_updated|page.deleted|page.moved|page.properties_updated|database.content_updated|database.schema_updated|database.deleted)$'
+            pattern: '^(page.created|page.content_updated|page.deleted|page.moved|page.properties_updated|database.content_updated|database.schema_updated|database.deleted)$',
           },
           entity: {
-            '$ref' => '#/components/schemas/notion_entity'
-          }
+            '$ref' => '#/components/schemas/notion_entity',
+          },
         },
-        required: %w[id data type integration_id attempt_number]
+        required: %w[id data type integration_id attempt_number],
       }
     end
 
@@ -90,9 +90,9 @@ module Swagger
           email: { type: :string },
           status: { type: :string },
           taxId: { type: :string, nullable: true },
-          type: { type: :string }
+          type: { type: :string },
         },
-        required: %i[id displayName email status]
+        required: %i[id displayName email status],
       }
     end
 
@@ -104,9 +104,9 @@ module Swagger
           familyName: { type: :string },
           givenName: { type: :string },
           email: { type: :string },
-          type: { type: :string }
+          type: { type: :string },
         },
-        required: %i[displayName email]
+        required: %i[displayName email],
       }
     end
 
@@ -117,9 +117,9 @@ module Swagger
           currencyCode: { type: :string },
           formattedValue: { type: :string },
           value: { type: :number },
-          valueInCents: { type: :integer }
+          valueInCents: { type: :integer },
         },
-        required: %i[currencyCode formattedValue value valueInCents]
+        required: %i[currencyCode formattedValue value valueInCents],
       }
     end
 
@@ -130,11 +130,11 @@ module Swagger
           id: { type: :string },
           account: {
             '$ref' => '#/components/schemas/account',
-            nullable: true
+            nullable: true,
           },
           contacts: {
             type: :array,
-            items: { '$ref' => '#/components/schemas/contact' }
+            items: { '$ref' => '#/components/schemas/contact' },
           },
           status: { type: :string },
           invoiceNumber: { type: :string },
@@ -144,9 +144,9 @@ module Swagger
           paidAt: { type: :string, format: 'date-time', nullable: true },
           amount: { '$ref' => '#/components/schemas/money' },
           dueAmount: { '$ref' => '#/components/schemas/money' },
-          paymentVendorURL: { type: :string }
+          paymentVendorURL: { type: :string },
         },
-        required: %i[id account contacts status invoiceNumber currencyCode createdAt dueAt amount dueAmount]
+        required: %i[id account contacts status invoiceNumber currencyCode createdAt dueAt amount dueAmount],
       }
     end
 
@@ -161,18 +161,18 @@ module Swagger
             nullable: true,
             properties: {
               field: { type: :string },
-              value: { type: :string }
-            }
+              value: { type: :string },
+            },
           },
           s: {
             type: :object,
             nullable: true,
             properties: {
               field: { type: :string },
-              direction: { type: :string }
-            }
-          }
-        }
+              direction: { type: :string },
+            },
+          },
+        },
       }
     end
 
@@ -189,9 +189,9 @@ module Swagger
               type: :object,
               properties: {
                 field: { type: :string },
-                value: { type: :string }
-              }
-            }
+                value: { type: :string },
+              },
+            },
           },
           s: {
             type: :array,
@@ -200,13 +200,14 @@ module Swagger
               type: :object,
               properties: {
                 field: { type: :string },
-                direction: { type: :string }
-              }
-            }
-          }
-        }
+                direction: { type: :string },
+              },
+            },
+          },
+        },
       }
     end
+
     def self.country
       {
         type: :object,
@@ -214,9 +215,9 @@ module Swagger
           id: { type: :string },
           name: { type: :string },
           alpha2: { type: :string },
-          dial_code: { type: :string, nullable: true }
+          dial_code: { type: :string, nullable: true },
         },
-        required: %w[id name alpha2 dial_code]
+        required: %w[id name alpha2 dial_code],
       }
     end
 
@@ -227,9 +228,9 @@ module Swagger
           id: { type: :string },
           name: { type: :string },
           alpha2: { type: :string },
-          dialCode: { type: :string, nullable: true }
+          dialCode: { type: :string, nullable: true },
         },
-        required: %w[id name alpha2 dialCode]
+        required: %w[id name alpha2 dialCode],
       }
     end
   end

@@ -25,7 +25,7 @@ module LarCity
               type: :string,
               aliases: '-o',
               desc: 'The directory to store the htpasswd file',
-              default: 'config/httpd',
+              default: 'config/httpd'
             )
         end
       end

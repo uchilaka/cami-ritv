@@ -33,7 +33,7 @@ module LarCity
         end
       end
 
-      describe '#daemonize', skip: "TODO: regex matching for outputs not working out yet" do
+      describe '#daemonize', skip: 'TODO: regex matching for outputs not working out yet' do
         subject(:command) { described_class.new(cmd_args, **options) }
 
         let(:cmd_args) { [] }
@@ -53,7 +53,7 @@ module LarCity
           OUTPUT
         end
 
-        it { expect { command.daemonize }.to output(%r{#{expected_output}}).to_stdout }
+        it { expect { command.daemonize }.to output(/#{expected_output}/).to_stdout }
       end
     end
   end

@@ -124,10 +124,16 @@ module LarCity
         def extract_timestamp(filename)
           return nil if filename.blank?
 
-          if filename =~ /\((\d{4})(\d{2})(\d{2})\.(\d{2})(\d{2})(\d{2})([+-]\d{4})\)/
-            year, month, day, hour, min, sec, tz = $1, $2, $3, $4, $5, $6, $7
-            Time.new(year.to_i, month.to_i, day.to_i, hour.to_i, min.to_i, sec.to_i, tz)
-          end
+          return unless filename =~ /\((\d{4})(\d{2})(\d{2})\.(\d{2})(\d{2})(\d{2})([+-]\d{4})\)/
+
+          year = ::Regexp.last_match(1)
+          month = ::Regexp.last_match(2)
+          day = ::Regexp.last_match(3)
+          hour = ::Regexp.last_match(4)
+          min = ::Regexp.last_match(5)
+          sec = ::Regexp.last_match(6)
+          tz = ::Regexp.last_match(7)
+          Time.new(year.to_i, month.to_i, day.to_i, hour.to_i, min.to_i, sec.to_i, tz)
         end
 
         # Show a human-readable tally of items in the collection

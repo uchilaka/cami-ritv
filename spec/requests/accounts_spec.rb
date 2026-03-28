@@ -88,26 +88,26 @@ RSpec.describe '/accounts', type: :request, real_world_data: true do
                 'domId' => anything,
                 'httpMethod' => 'GET',
                 'label' => 'Back to Accounts',
-                'url' => accounts_url(locale: 'en')
+                'url' => accounts_url(locale: 'en'),
               },
               'edit' => {
                 'domId' => anything,
                 'httpMethod' => 'GET',
                 'label' => 'Edit',
-                'url' => account_url(account, locale: 'en')
+                'url' => account_url(account, locale: 'en'),
               },
               'delete' => {
                 'domId' => anything,
                 'httpMethod' => 'DELETE',
                 'label' => 'Delete',
-                'url' => account_url(account, format: :json, locale: 'en')
+                'url' => account_url(account, format: :json, locale: 'en'),
               },
               'show' => {
                 'domId' => anything,
                 'httpMethod' => 'GET',
                 'label' => 'Account details',
-                'url' => account_url(account, locale: 'en')
-              }
+                'url' => account_url(account, locale: 'en'),
+              },
               # ,'transactionsIndex' => {
               #   'httpMethod' => 'GET',
               #   'label' => 'Transactions',
@@ -264,11 +264,11 @@ RSpec.describe '/accounts', type: :request, real_world_data: true do
               tax_id:,
               metadata:,
               phone: phone_data[:full_e164],
-              status: 'active'
+              status: 'active',
             },
             profile: {
-              'country_alpha2' => phone_data[:country]
-            }
+              'country_alpha2' => phone_data[:country],
+            },
           }
         end
 
@@ -369,7 +369,7 @@ RSpec.describe '/accounts', type: :request, real_world_data: true do
         Fabricate :account,
                   phone: {
                     full_e164: current_phone_data.full_e164,
-                    country: current_phone_data.country
+                    country: current_phone_data.country,
                   },
                   metadata: {
                     marco: 'polo',
@@ -377,9 +377,9 @@ RSpec.describe '/accounts', type: :request, real_world_data: true do
                       street: '123 Main St',
                       city: 'Anytown',
                       state: 'AS',
-                      postal_code: '12345'
+                      postal_code: '12345',
                     },
-                    country_alpha2: current_phone_data.country
+                    country_alpha2: current_phone_data.country,
                   },
                   users: [user],
                   status: 'guest'
@@ -402,11 +402,11 @@ RSpec.describe '/accounts', type: :request, real_world_data: true do
               tax_id:,
               metadata:,
               phone: phone_data[:full_e164],
-              status: 'guest'
+              status: 'guest',
             },
             profile: {
-              'country_alpha2' => phone_data[:country]
-            }
+              'country_alpha2' => phone_data[:country],
+            },
           }
         end
 

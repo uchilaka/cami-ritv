@@ -49,7 +49,7 @@ module Users
     def set_minimum_password_length_hint
       @minimum_password_length_hint ||=
         if @minimum_password_length.present?
-          I18n.t("devise.registrations.password_length_minimum_hint", count: @minimum_password_length)
+          I18n.t('devise.registrations.password_length_minimum_hint', count: @minimum_password_length)
         end
     end
 

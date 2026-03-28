@@ -19,7 +19,10 @@ module LarCity
       desc 'setup', 'Set up the application proxy server'
       def setup
         # Remove existing symlink if it exists and is a symlink, to avoid errors when creating a new one
-        FileUtils.rm(server_config_target_file, verbose: verbose?, noop: pretend?) if File.symlink?(server_config_target_file)
+        if File.symlink?(server_config_target_file)
+          FileUtils.rm(server_config_target_file, verbose: verbose?,
+                                                  noop: pretend?)
+        end
         # Create the symlink from the source config file to the nginx config directory, using sudo if --sudo is specified
         cmd = ['ln -s', server_config_source_file, server_config_target_file]
 
@@ -47,7 +50,7 @@ module LarCity
         message = <<~MSG.squish
           The LarCity CAMI proxy server configuration was installed at #{server_config_target_file}.
 
-          #{Rails.env.development? ? local_dev_clause : ""}
+          #{Rails.env.development? ? local_dev_clause : ''}
         MSG
         say_success message
         kick_nginx_service

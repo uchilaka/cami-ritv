@@ -30,7 +30,7 @@ class UpsertUserFromOmniauthWorkflow
       verified:,
     }
     provider_profile =
-      (user.identity_provider_profiles.find_by(provider: provider) if user.persisted?)
+      (user.identity_provider_profiles.find_by(provider:) if user.persisted?)
     provider_profile ||= IdentityProviderProfile.new(provider_profile_attrs)
 
     # Fail the account setup if an existing profile is found for this provider with a different UID

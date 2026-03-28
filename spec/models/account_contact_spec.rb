@@ -50,4 +50,3 @@ describe AccountContact do
     end
   end
 end
-

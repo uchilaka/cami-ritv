@@ -33,17 +33,17 @@ module AccountsHelper
     when 'active'
       {
         label: 'Active',
-        class: 'bg-green-500'
+        class: 'bg-green-500',
       }
     when 'inactive'
       {
         label: 'Inactive',
-        class: 'bg-red-500'
+        class: 'bg-red-500',
       }
     else
       {
         label: 'Unknown',
-        class: 'bg-gray-500'
+        class: 'bg-gray-500',
       }
     end
   end

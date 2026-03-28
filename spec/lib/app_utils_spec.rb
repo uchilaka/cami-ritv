@@ -354,7 +354,6 @@ RSpec.describe AppUtils, utility: true, skip_in_ci: true do
             it { expect(described_class.live_reload_enabled?).to be(false) }
           end
         end
-
       end
 
       context 'and Rails.env.development? is false' do

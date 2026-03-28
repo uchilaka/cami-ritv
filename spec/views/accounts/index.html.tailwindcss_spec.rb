@@ -23,7 +23,7 @@ RSpec.describe 'accounts/index', type: :view do
         tax_id: '09-87654321',
         readme: 'MyText',
         users: [user]
-      )
+      ),
     ]
   end
 

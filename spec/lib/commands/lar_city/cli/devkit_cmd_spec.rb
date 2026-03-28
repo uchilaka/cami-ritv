@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 require 'commands/lar_city/cli/devkit_cmd'
 
@@ -7,22 +9,22 @@ RSpec.describe LarCity::CLI::DevkitCmd, type: :command do
   let(:stdout) { StringIO.new }
   let(:stderr) { StringIO.new }
 
-  describe "#force?" do
+  describe '#force?' do
     subject(:force?) { command.send(:force?) }
 
-    context "when --force option is true" do
+    context 'when --force option is true' do
       let(:command_opts) { { force: true } }
 
       it { expect(force?).to be true }
     end
 
-    context "when --force option is false" do
+    context 'when --force option is false' do
       let(:command_opts) { { force: false } }
 
       it { expect(force?).to be false }
     end
 
-    context "when --force option is not provided" do
+    context 'when --force option is not provided' do
       let(:command_opts) { {} }
 
       it { expect(force?).to be false }
@@ -43,7 +45,7 @@ RSpec.describe LarCity::CLI::DevkitCmd, type: :command do
         with_modified_env(RAILS_ENV: 'test') { example.run }
       end
 
-      it { expect { run_command }.to output(%r{🚫 Skipping webhook setup in test environment}).to_stdout }
+      it { expect { run_command }.to output(/🚫 Skipping webhook setup in test environment/).to_stdout }
     end
 
     context 'in non-test environment' do
@@ -55,7 +57,7 @@ RSpec.describe LarCity::CLI::DevkitCmd, type: :command do
         with_modified_env(RAILS_ENV: 'development') { example.run }
       end
 
-      context "when vendor is supported" do
+      context 'when vendor is supported' do
         let(:stub_vendor_creds) { ActiveSupport::OrderedOptions.new }
         let(:webhook) { Webhook.find_by(slug: vendor_slug) }
 
@@ -78,7 +80,7 @@ RSpec.describe LarCity::CLI::DevkitCmd, type: :command do
           context 'and the webhook does not exist' do
             it 'creates a new webhook' do
               expect { run_command }.to change(Webhook, :count).by(1).and \
-                output(%r{⚡ Webhook for notion has been set up successfully}).to_stdout
+                output(/⚡ Webhook for notion has been set up successfully/).to_stdout
             end
 
             context 'after creating the webhook' do
@@ -140,25 +142,28 @@ RSpec.describe LarCity::CLI::DevkitCmd, type: :command do
           end
         end
 
-        context 'with vendor "zoho"', skip: "TODO: validate possibly sloppy codegen" do
+        context 'with vendor "zoho"', skip: 'TODO: validate possibly sloppy codegen' do
           it 'raises NotImplementedError' do
             expect { command.invoke(:setup_webhooks, [], { vendor: 'zoho' }) }.to raise_error(NotImplementedError)
           end
         end
       end
 
-      context 'with an unsupported vendor', skip: "TODO: validate possibly sloppy codegen" do
+      context 'with an unsupported vendor', skip: 'TODO: validate possibly sloppy codegen' do
         let(:vendor_slug) { 'unsupported-vendor' }
         let(:stub_vendor_creds) { nil }
 
         it 'raises ArgumentError' do
-          expect { command.invoke(:setup_webhooks, [], { vendor: 'invalid' }) }.to raise_error(ArgumentError, /Unsupported vendor: invalid/)
+          expect do
+            command.invoke(:setup_webhooks, [],
+                           { vendor: 'invalid' })
+          end.to raise_error(ArgumentError, /Unsupported vendor: invalid/)
         end
       end
     end
   end
 
-  describe '#peek', skip: "TODO: validate possibly sloppy codegen" do
+  describe '#peek', skip: 'TODO: validate possibly sloppy codegen' do
     before do
       allow(command).to receive(:`).with('git branch --list').and_return("* main\n  feature-branch")
       allow(command).to receive(:`).with('git rev-parse --abbrev-ref HEAD').and_return('main')
@@ -200,7 +205,9 @@ RSpec.describe LarCity::CLI::DevkitCmd, type: :command do
           # Interrupt the command loop after the first action
           allow(command).to receive(:prompt_for_branch_selection).and_raise(SystemExit)
 
-          expect { command.invoke(:peek, [], { interactive: true, branch_name: 'feature-branch' }) }.to raise_error(SystemExit)
+          expect do
+            command.invoke(:peek, [], { interactive: true, branch_name: 'feature-branch' })
+          end.to raise_error(SystemExit)
           expect(stdout.string).to include('Branch feature-branch deleted.')
         end
 
@@ -209,13 +216,15 @@ RSpec.describe LarCity::CLI::DevkitCmd, type: :command do
           expect(command).not_to receive(:run).with(/git branch --delete/)
           allow(command).to receive(:prompt_for_branch_selection).and_raise(SystemExit)
 
-          expect { command.invoke(:peek, [], { interactive: true, branch_name: 'feature-branch' }) }.to raise_error(SystemExit)
+          expect do
+            command.invoke(:peek, [], { interactive: true, branch_name: 'feature-branch' })
+          end.to raise_error(SystemExit)
         end
       end
     end
   end
 
-  describe '#swaggerize', skip: "TODO: validate possibly sloppy codegen" do
+  describe '#swaggerize', skip: 'TODO: validate possibly sloppy codegen' do
     it 'executes the rswag command' do
       expect(ClimateControl).to receive(:modify).with(RAILS_ENV: 'test').and_yield
       expect(command).to receive(:system).with('bundle exec rails rswag')
@@ -229,7 +238,7 @@ RSpec.describe LarCity::CLI::DevkitCmd, type: :command do
     end
   end
 
-  describe '#logs', skip: "TODO: validate possibly sloppy codegen" do
+  describe '#logs', skip: 'TODO: validate possibly sloppy codegen' do
     before do
       credentials = { betterstack: { team_id: 'team-id', source_id: 'source-id' } }
       allow(Rails.application).to receive(:credentials).and_return(credentials.with_indifferent_access)

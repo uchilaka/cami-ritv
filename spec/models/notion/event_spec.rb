@@ -75,7 +75,7 @@ describe Notion::Event do
             type: 'database',
           },
           updated_properties: ['y_%3D%3C'],
-        }
+        },
       }
     end
 
@@ -154,7 +154,7 @@ describe Notion::Event do
             id: SecureRandom.uuid,
             type: 'person',
           },
-        ]
+        ],
       }
     end
 
