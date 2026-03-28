@@ -32,20 +32,6 @@ RSpec.describe 'API::V2::Webhooks::Notion::Events', type: :request do
   path '/api/v2/webhooks/{slug}/events' do
     parameter name: :'X-Notion-Signature', in: :header, type: :string, required: true,
               description: 'Signature header for Notion webhook verification'
-    parameter name: :event_params, in: :body, schema: {
-      type: :object,
-      properties: {
-        verification_token: {
-          type: :string,
-          description: 'Verification token for the webhook, sent once during Notion webhook setup',
-          nullable: true,
-        },
-        event: {
-          '$ref': '#/components/schemas/notion_event',
-          nullable: true,
-        },
-      },
-    }
     parameter name: :slug, in: :path, type: :string, required: true, description: 'Webhook slug (e.g., notion)'
 
     let(:'X-Notion-Signature') { 'valid-notion-request-signature' }
@@ -66,6 +52,21 @@ RSpec.describe 'API::V2::Webhooks::Notion::Events', type: :request do
     end
 
     post 'Notion vendor database event' do
+
+    parameter name: :event_params, in: :body, schema: {
+      type: :object,
+      properties: {
+        verification_token: {
+          type: :string,
+          description: 'Verification token for the webhook, sent once during Notion webhook setup',
+          nullable: true,
+        },
+        event: {
+          '$ref': '#/components/schemas/notion_event',
+          nullable: true,
+        },
+      },
+    }
       # TODO: Read up on how the tags feature works in rswag
       tags 'Webhooks'
       consumes 'application/json'
@@ -101,6 +102,21 @@ RSpec.describe 'API::V2::Webhooks::Notion::Events', type: :request do
 
       context 'when a verification_token is sent' do
         post 'Notion deal verification token request' do
+
+    parameter name: :event_params, in: :body, schema: {
+      type: :object,
+      properties: {
+        verification_token: {
+          type: :string,
+          description: 'Verification token for the webhook, sent once during Notion webhook setup',
+          nullable: true,
+        },
+        event: {
+          '$ref': '#/components/schemas/notion_event',
+          nullable: true,
+        },
+      },
+    }
           produces 'application/json'
           consumes 'application/json'
 

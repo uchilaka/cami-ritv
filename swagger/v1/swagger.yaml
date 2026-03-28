@@ -34,19 +34,6 @@ paths:
       description: Signature header for Notion webhook verification
       schema:
         type: string
-    - name: event_params
-      in: body
-      schema:
-        type: object
-        properties:
-          verification_token:
-            type: string
-            description: Verification token for the webhook, sent once during Notion
-              webhook setup
-            nullable: true
-          event:
-            "$ref": "#/components/schemas/notion_event"
-            nullable: true
     - name: slug
       in: path
       required: true
@@ -57,6 +44,19 @@ paths:
       summary: Notion deal verification token request
       tags:
       - Webhooks
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                verification_token:
+                  type: string
+                  description: Verification token for the webhook, sent once during Notion webhook setup
+                  nullable: true
+                event:
+                  "$ref": "#/components/schemas/notion_event"
+                  nullable: true
       responses:
         '200':
           description: token is valid
