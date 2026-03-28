@@ -146,3 +146,4 @@ group :test do
   gem 'shoulda-matchers'
   gem 'vcr', '~> 6.2'
 end
+gem 'sassc-rails'

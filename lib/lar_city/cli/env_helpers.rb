@@ -59,11 +59,6 @@ module LarCity
           default: 'digitalocean',
           required: true
         )
-          option :platform,
-                 desc: 'The platform to get the blueprint for',
-                 enum: %w[render fly digitalocean],
-                 required: true,
-                 default: 'digitalocean'
           option_method = class_option ? :class_option : :option
           thor_class.public_send(option_method, :platform, type: :string, desc:, long_desc:, default:, required:)
         end
