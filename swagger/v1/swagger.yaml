@@ -87,6 +87,12 @@ paths:
       responses:
         '200':
           description: countries found
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/country"
   "/api/v1/form_data/countries_map":
     get:
       summary: Retrieves a map of countries
@@ -95,6 +101,12 @@ paths:
       responses:
         '200':
           description: countries map found
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  $ref: "#/components/schemas/country_mapped"
 servers:
 - url: https://{defaultHost}
   variables:
@@ -320,3 +332,36 @@ components:
                 type: string
               direction:
                 type: string
+
+    country:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        alpha2:
+          type: string
+        dial_code:
+          type: string
+      required:
+      - id
+      - name
+      - alpha2
+      - dial_code
+    country_mapped:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        alpha2:
+          type: string
+        dialCode:
+          type: string
+      required:
+      - id
+      - name
+      - alpha2
+      - dialCode

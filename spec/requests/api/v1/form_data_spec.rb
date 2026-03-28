@@ -9,6 +9,9 @@ RSpec.describe 'API::V1::FormData', type: :request do
       produces 'application/json'
 
       response '200', 'countries found' do
+        schema type: :array,
+               items: { '$ref' => '#/components/schemas/country' }
+
         run_test! do |response|
           expect(response).to have_http_status(:success)
           json = JSON.parse(response.body)
@@ -25,6 +28,9 @@ RSpec.describe 'API::V1::FormData', type: :request do
       produces 'application/json'
 
       response '200', 'countries map found' do
+        schema type: :object,
+               additionalProperties: { '$ref' => '#/components/schemas/country_mapped' }
+
         run_test! do |response|
           expect(response).to have_http_status(:success)
           json = JSON.parse(response.body)
