@@ -79,6 +79,22 @@ paths:
               oneOf:
               - "$ref": "#/components/schemas/invoice_search_params"
               - "$ref": "#/components/schemas/invoice_search_params_with_array_mode"
+  "/api/v1/form_data/countries":
+    get:
+      summary: Retrieves a list of countries
+      tags:
+      - Form Data
+      responses:
+        '200':
+          description: countries found
+  "/api/v1/form_data/countries_map":
+    get:
+      summary: Retrieves a map of countries
+      tags:
+      - Form Data
+      responses:
+        '200':
+          description: countries map found
 servers:
 - url: https://{defaultHost}
   variables:
