@@ -9,6 +9,8 @@ class DDNSUpsertJob < ApplicationJob
         domain, content, type, ttl = record.values_at(:domain, :content, :type, :ttl)
         self.class.set(wait: ((index + 1) * 15).seconds).perform_later(domain:, content:, type:, ttl:)
       end
+    elsif Flipper.enabled?(:feat__use_ddclient_for_ddns)
+      # ::LarCity::CLI::DDNSCmd.new.invoke(:update, [], domain:, record: content, type:, ttl:)
     else
       ::LarCity::CLI::DDNSCmd.new.invoke(:upsert, [], domain:, record: content, type:, ttl:)
     end

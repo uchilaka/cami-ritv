@@ -2,16 +2,6 @@ shared:
     # The shared section is used to define variables that are common across all environments.
     # These variables can be overridden in the environment-specific sections if needed.
     # For example, you can define a default domain name here and override it in the production section.
-  - domain: larcity.tech
-    content: accounts.staging
-    type: A
-    ttl: 3600
-
-  - domain: larcity.business
-    content: accounts.staging
-    type: A
-    ttl: 3600
-
   - domain: larcity.org
     content: nas-1.ho
     type: A
@@ -38,19 +28,15 @@ shared:
     ttl: 3600
 
   - domain: larcity.org
+    content: auth.staging
+    type: A
+    ttl: 3600
+
+  - domain: larcity.org
     content: accounts.ho
     type: A
     ttl: 3600
 
-  - domain: larcity.org
-    content: staging.ho
-    type: A
-    ttl: 3600
-
-  - domain: larcity.org
-    content: auth.staging
-    type: A
-    ttl: 3600
 
   - domain: larcity.org
     content: 1.nas.ho
@@ -62,15 +48,10 @@ shared:
     type: A
     ttl: 3600
 
-  - domain: larcity.org
-    content: accounts.staging
-    type: A
-    ttl: 3600
-
-  - domain: larcity.dev
-    content: accounts.lab
-    type: A
-    ttl: 3600
+#  - domain: larcity.dev
+#    content: accounts.lab
+#    type: A
+#    ttl: 3600
 
 ##############################################
 ########## ho.larcity.tech (Cert) ############
@@ -103,20 +84,5 @@ shared:
 
   - domain: larcity.tech
     content: ftps
-    type: A
-    ttl: 3600
-
-  # @TODO: Testing LetsEncrypt cert setup on larcity-nas-ii for
-  #   registry.larcity.tech and hub.ho.larcity.tech - both these domains are
-  #   intended for the same purpose i.e. to resolve to a home-office hosted
-  #   container image hub. If we can get registry.larcity.tech working with
-  #   the cert, then we can retire hub.ho.larcity.tech and retire it.
-  - domain: larcity.tech
-    content: registry
-    type: A
-    ttl: 3600
-
-  - domain: larcity.tech
-    content: hub.ho
     type: A
     ttl: 3600
