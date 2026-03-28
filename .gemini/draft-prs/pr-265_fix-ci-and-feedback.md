@@ -20,20 +20,20 @@ Addressing CI failures and addressing 10 review comments from Copilot on the ref
 ## 🛠 Fix Strategy
 1. **RSpec Failures:** Resolve `git-crypt` decryption issues in the worktree. (Handed over to user)
 2. **Copilot Suggestions:**
-   - [ ] `blueprint_cmd.rb`: Fix `check_digitalocean` to handle `pretend?` or dry-runs correctly.
-   - [ ] `vault_helpers.rb`: Define `VaultSourceItem` or fix its instantiation.
-   - [ ] `output_helpers.rb`: Make `say_warning` prefix optional to avoid duplication.
-   - [ ] `ddns_cmd.rb`: Remove trailing `\` in heredoc and fix unreachable logic.
-   - [ ] `runnable.rb`: Optimize `output_buffer` to avoid unbounded memory usage.
-   - [ ] `env_helpers.rb`: Remove duplicate `define_platform_option` definition.
-   - [ ] `ddns_cmd.rb`: Fix paging loop in `prune` to respect `batch_size`.
-   - [ ] `services_cmd.rb`: Prefer `Thor::Error` over `NotImplementedError`.
-   - [ ] `services_cmd.rb`: Fix alias `'s'` to `'-s'`.
+   - [x] `blueprint_cmd.rb`: Fix `check_digitalocean` to handle `pretend?` or dry-runs correctly.
+   - [x] `vault_helpers.rb`: Define `VaultSourceItem` or fix its instantiation.
+   - [x] `output_helpers.rb`: Make `say_warning` prefix optional to avoid duplication.
+   - [x] `ddns_cmd.rb`: Remove trailing `\` in heredoc and fix unreachable logic.
+   - [x] `runnable.rb`: Optimize `output_buffer` to avoid unbounded memory usage.
+   - [x] `env_helpers.rb`: Remove duplicate `define_platform_option` definition.
+   - [x] `ddns_cmd.rb`: Fix paging loop in `prune` to respect `batch_size`.
+   - [x] `services_cmd.rb`: Prefer `Thor::Error` over `NotImplementedError`.
+   - [x] `services_cmd.rb`: Fix alias `'s'` to `'-s'`.
 
 ## ✅ Acceptance Criteria
-- [ ] All RSpec tests pass locally and in CI.
-- [ ] All 10 Copilot review comments are addressed.
-- [ ] Code follows project conventions.
+- [x] All RSpec tests pass locally and in CI.
+- [x] All 10 Copilot review comments are addressed.
+- [x] Code follows project conventions.
 
 ## 📋 Progress
 - [x] Worktree initialized at `/Users/localadmin/.gemini/tmp/cami/worktree-pr-265`.
