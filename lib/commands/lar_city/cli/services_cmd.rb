@@ -31,7 +31,7 @@ module LarCity
         required: false
       )
         option :service,
-               aliases: 's',
+               aliases: '-s',
                type: :array,
                enum: %w[web app-store worker mailhog tunnel].sort,
                desc:, long_desc:, required:
@@ -155,7 +155,7 @@ module LarCity
       long_desc I18n.t('commands.services.kill.long_desc')
       def kill
         # TODO: pending implementation
-        raise NotImplementedError, 'Kill by port functionality is not yet implemented.'
+        raise Thor::Error, 'Kill by port functionality is not yet implemented.'
       end
 
       option :pid,

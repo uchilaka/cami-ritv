@@ -81,3 +81,10 @@ Struct.new(
   :workflow_klass,
   keyword_init: true
 )
+
+Struct.new(
+  'VaultSourceItem',
+  :id,
+  :name,
+  keyword_init: true
+)

@@ -46,14 +46,14 @@ module LarCity
                     reader_thread =
                       Thread.new do
                         stdout_stderr.each do |line|
-                          output_buffer << line
+                          output_buffer << line if eval
                           block.call(line)
                         end
                       end
 
                     process_status = wait_thread.value
                     reader_thread.join # Wait for the reader thread to finish before the stream is closed
-                    process_status
+                    process_status.success?
                   end
                 eval ? output_buffer.join : status
               elsif eval
