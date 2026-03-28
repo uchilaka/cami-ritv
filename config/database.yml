@@ -14,6 +14,18 @@
 # Configure Using Gemfile
 # gem "pg"
 #
+<%
+  postgres_creds = nil
+  begin
+    # Only attempt to load credentials if they are likely to be available
+    # to avoid ActiveSupport::MessageEncryptor::InvalidMessage
+    if Rails.application.respond_to?(:credentials)
+      postgres_creds = Rails.application.credentials.postgres
+    end
+  rescue => e
+    # Silently ignore credential loading errors in database config
+  end
+%>
 default: &default
   adapter: postgresql
   encoding: unicode
@@ -37,7 +49,7 @@ development:
     username: <%= ENV.fetch('APP_DATABASE_USER', 'postgres') %>
 
     # The password associated with the postgres role (username).
-    password: <%= ENV.fetch('APP_DATABASE_PASSWORD', Rails.application.credentials.postgres&.password) %>
+    password: <%= ENV.fetch('APP_DATABASE_PASSWORD', postgres_creds&.password) %>
 
     # Connect on a TCP socket. Omitted by default since the client uses a
     # domain socket that doesn't need configuration. Windows does not have
@@ -67,8 +79,8 @@ development:
 test:
   <<: *default
   database: sails_test
-  username: <%= ENV.fetch('APP_DATABASE_USER', Rails.application.credentials.postgres&.user) %>
-  password: <%= ENV.fetch('APP_DATABASE_PASSWORD', Rails.application.credentials.postgres&.password) %>
+  username: <%= ENV.fetch('APP_DATABASE_USER', postgres_creds&.user || 'postgres') %>
+  password: <%= ENV.fetch('APP_DATABASE_PASSWORD', postgres_creds&.password) %>
 
 lab:
   primary: &primary_lab
@@ -79,7 +91,7 @@ lab:
       lock_timeout: 10s
     database: <%= ENV.fetch("APP_PRIMARY_DATABASE_NAME", "sails_lab") %>
     username: <%= ENV.fetch('APP_DATABASE_USER', 'postgres') %>
-    password: <%= ENV.fetch("APP_DATABASE_PASSWORD", Rails.application.credentials.postgres&.password) %>
+    password: <%= ENV.fetch("APP_DATABASE_PASSWORD", postgres_creds&.password) %>
   queue:
     <<: *primary_lab
 
@@ -93,7 +105,7 @@ staging:
       lock_timeout: 10s
     database: <%= ENV.fetch("APP_PRIMARY_DATABASE_NAME", "sails_staging") %>
     username: <%= ENV.fetch('APP_DATABASE_USER', 'postgres') %>
-    password: <%= ENV.fetch("APP_DATABASE_PASSWORD", Rails.application.credentials.postgres&.password) %>
+    password: <%= ENV.fetch("APP_DATABASE_PASSWORD", postgres_creds&.password) %>
   queue:
     <<: *primary_staging
     # database: sails_staging_queue
@@ -127,11 +139,11 @@ production:
     variables:
       statement_timeout: 15s
       lock_timeout: 10s
-    database: <%= ENV.fetch('APP_DATABASE_NAME', Rails.application.credentials.postgres&.database) %>
-    host: <%= ENV.fetch('APP_DATABASE_HOST', Rails.application.credentials.postgres&.host) %>
-    port: <%= ENV.fetch('APP_DATABASE_PORT', Rails.application.credentials.postgres&.port) %>
-    username: <%= ENV.fetch('APP_DATABASE_USER', Rails.application.credentials.postgres&.user) %>
-    password: <%= ENV.fetch("APP_DATABASE_PASSWORD", Rails.application.credentials.postgres&.password) %>
+    database: <%= ENV.fetch('APP_DATABASE_NAME', postgres_creds&.database) %>
+    host: <%= ENV.fetch('APP_DATABASE_HOST', postgres_creds&.host) %>
+    port: <%= ENV.fetch('APP_DATABASE_PORT', postgres_creds&.port) %>
+    username: <%= ENV.fetch('APP_DATABASE_USER', postgres_creds&.user) %>
+    password: <%= ENV.fetch("APP_DATABASE_PASSWORD", postgres_creds&.password) %>
   queue:
     <<: *primary_production
     # database: sails_production_queue

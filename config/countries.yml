@@ -500,7 +500,7 @@ shared:
     alpha-2: MP
     country-code: "580"
   - name: Norway
-    alpha-2: NO
+    alpha-2: "NO"
     country-code: "578"
   - name: Oman
     alpha-2: OM
