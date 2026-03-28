@@ -55,7 +55,7 @@ module Swagger
             type: :object,
             properties: {
               parent: {
-                ref: '#/components/schemas/notion_entity'
+                '$ref' => '#/components/schemas/notion_entity'
               },
               updated_blocks: {
                 type: :array,
