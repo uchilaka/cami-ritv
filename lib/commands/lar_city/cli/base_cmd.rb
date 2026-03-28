@@ -8,9 +8,6 @@ require 'thor'
 require 'awesome_print'
 require 'concerns/operating_system_detectable'
 require 'lar_city/cli/utils'
-require 'lar_city/cli/interruptible'
-require 'lar_city/cli/reversible'
-require 'lar_city/cli/runnable'
 
 # Conventions for command or task implementation classes:
 # - Use the namespace method to define a namespace for the Thor class.
