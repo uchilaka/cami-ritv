@@ -12,8 +12,7 @@ module Swagger
         money: money,
         invoice: invoice,
         invoice_search_params: invoice_search_params,
-        invoice_search_params_with_array_mode: invoice_search_params_with_array_mode
-,
+        invoice_search_params_with_array_mode: invoice_search_params_with_array_mode,
         country: country,
         country_mapped: country_mapped
       }
@@ -215,7 +214,7 @@ module Swagger
           id: { type: :string },
           name: { type: :string },
           alpha2: { type: :string },
-          dial_code: { type: :string }
+          dial_code: { type: :string, nullable: true }
         },
         required: %w[id name alpha2 dial_code]
       }
@@ -228,7 +227,7 @@ module Swagger
           id: { type: :string },
           name: { type: :string },
           alpha2: { type: :string },
-          dialCode: { type: :string }
+          dialCode: { type: :string, nullable: true }
         },
         required: %w[id name alpha2 dialCode]
       }
