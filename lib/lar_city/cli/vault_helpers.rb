@@ -8,7 +8,6 @@ module LarCity
   module CLI
     module VaultHelpers
       extend Utils::ClassHelpers
-      VaultSourceItem = Struct.new(:id, :name, keyword_init: true)
 
       def self.included(base)
         base.include EnvHelpers
@@ -42,13 +41,13 @@ module LarCity
         def vault_source_items
           @vault_sources ||= {
             shared:
-              VaultSourceItem
+              ::Struct::VaultSourceItem
                 .new(
                   id: vault_credentials.shared_env_vars_item_id,
                   name: 'Environment variables (shared)'
                 ),
             detected_environment =>
-              VaultSourceItem
+              ::Struct::VaultSourceItem
                 .new(
                   id: vault_credentials.env_vars_item_id,
                   name: "Environment variables (#{detected_environment})"
