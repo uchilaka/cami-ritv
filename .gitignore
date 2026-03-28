@@ -133,4 +133,6 @@ app*.yaml
 
 # Agents
 .claude/*
-.gemini/*
+
+# Gemini CLI
+.gemini/

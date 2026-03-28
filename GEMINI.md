@@ -69,8 +69,7 @@ At the start of every new session, before doing any other work, you MUST use the
 Please ask me:
 
 1. What part of the stack we are focusing on today (Frontend, Backend, Infrastructure, etc.) - Make this a multiple choice question.
-2. What the primary goal of the session is (e.g., Bug fixing, New feature, Refactoring).
+2. What the primary goal of the session is - Make this a multiple choice question with these options: Architecture & System Design, Complex Bug Resolution, System-wide Refactoring, Code Review & Mentoring, Performance Optimization.
 3. Any specific files or contexts I want you to prioritize.
-4. Whether to proceed in "Yolo" mode - Ensure that this enables Yolo for the session.
 
 Do not proceed with any other tasks until I have answered these questions. Read GEMINI.md to understand my stack and rules. Update the Shared Memory section before you finish.
