@@ -1,3 +1,7 @@
+# TODO: [LWS-309] Templatize this file and have `lx-cli env-setup` handle generating it for different environments
+#   based on a template and environment-specific .env files that are the source of truth for environment
+#   variables. This would help reduce duplication and make it easier to manage environment variables
+#   across different environments.
 services:
   mailhog:
     container_name: mailhog.cami.larcity
@@ -49,6 +53,7 @@ services:
     profiles:
       - batteries-included
       - essential
+      - standalone
       - all
 
   web:
@@ -109,7 +114,7 @@ services:
       - app-store
     profiles:
       - batteries-included
-      - essential
+      - standalone
       - all
 
   worker:
@@ -154,7 +159,7 @@ services:
       - app-store
     profiles:
       - batteries-included
-      - essential
+      - standalone
       - all
 
 volumes:
@@ -175,5 +180,5 @@ secrets:
 networks:
   default:
     name: larcity_apps
-    enable_ipv6: true
+    enable_ipv6: false
     driver: bridge
