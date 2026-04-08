@@ -23,7 +23,7 @@ jobs:
 
     env:
       CI: true
-      RUN_MODE: non-parallel
+      RUN_MODE: ${{ env.RUN_MODE || 'parallel' }}
       # TODO: Change to 16006 to match the port in the docker-compose.yml file
       PORT: 3000
       RAILS_ENV: test
@@ -130,15 +130,6 @@ jobs:
 
       - name: RSpec tests
         if: ${{ env.RUN_MODE != 'parallel' }}
-        #env:
-        #  KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC: ${{ secrets.KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC }}
-        #  KNAPSACK_PRO_CI_NODE_BUILD_ID: ${{ github.run_id }}
-        #  KNAPSACK_PRO_CI_NODE_TOTAL: ${{ matrix.ci_node_total }}
-        #  KNAPSACK_PRO_CI_NODE_INDEX: ${{ matrix.ci_node_index }}
-        #  # See https://docs.knapsackpro.com/ruby/queue-mode/#dynamic-split-vs-fixed-split
-        #  KNAPSACK_PRO_FIXED_QUEUE_SPLIT: true
-        #  KNAPSACK_PRO_LOG_LEVEL: info
-        # See https://docs.knapsackpro.com/ruby/rspec/
         run: |
           # Run all specs except those with the option skip_in_ci: true
           bundle exec rspec --tag ~skip_in_ci:true
