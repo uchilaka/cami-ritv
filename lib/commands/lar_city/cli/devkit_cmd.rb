@@ -6,7 +6,11 @@ require 'uri'
 module LarCity
   module CLI
     class DevkitCmd < BaseCmd
-      include ControlFlowHelpers
+      no_commands do
+        include ControlFlowHelpers
+        include GitOpsHelpers
+        include IntegrationHelpers
+      end
 
       namespace 'devkit'
 
@@ -100,6 +104,9 @@ module LarCity
 
       desc 'yeet_deploy', 'Shove the current code to production'
       long_desc <<-LONGDESC
+        🚧 @TODO: This command should be moved to a separate namespace (e.g. `deploy:yeet`)
+        and should require additional confirmation steps to prevent accidental usage.
+
         🚨 WARNING: This command forcefully deploys the current code to production
         without any checks or confirmations.
 
@@ -268,6 +275,7 @@ module LarCity
 
       desc 'check-blueprint', I18n.t('commands.devkit.check_blueprint.short_desc')
       long_desc I18n.t('commands.devkit.check_blueprint.long_desc')
+      # @deprecated use `lx-cli blueprint:check` command instead
       def check_blueprint
         blueprint_config = Rails.root.join('render.yaml')
         require_render_cli!
@@ -279,19 +287,66 @@ module LarCity
         ) { |line| say_info line }
       end
 
-      no_commands do
-        def require_render_cli!
-          return if run('which render > /dev/null 2>&1', mock_return: true, inline: true)
-
-          say_warning <<~MSG.squish
-            ⚠️ The 'render' CLI tool is not installed or not found in the system PATH.
-            Please install the Render CLI to use this command. You can install it via
-            Brew by running 'brew install render' or by following the instructions at
-            https://render.com/docs/cli#setup.
+      define_platform_option self,
+                             class_option: false,
+                             desc: 'The platform to get the blueprint for (currently only supported for DigitalOcean)'
+      desc 'get-blueprint', I18n.t('commands.devkit.get_blueprint.short_desc')
+      long_desc I18n.t('commands.devkit.get_blueprint.long_desc')
+      # @deprecated Use `lx-cli blueprint:get` command instead
+      def get_blueprint
+        unless options[:platform] == 'digitalocean'
+          raise NotImplementedError, <<~MSG
+            The get-blueprint command is currently only implemented for the DigitalOcean platform.
           MSG
-          raise Thor::Error, 'Render CLI is required but not found in PATH.'
+        end
+        require_doctl_cli!
+        app_id = DigitalOcean::Utils.app_id!
+        access_token = DigitalOcean::Utils.access_token!
+        codegen_cmd = ['doctl apps spec get', app_id, "--access-token #{access_token}", '--format yaml']
+        codegen_cmd << '--verbose' if verbose?
+        yaml_content = run(*codegen_cmd, eval: true)
+        yaml_template = File.read(Rails.root.join('config', 'app.yaml.erb'))
+        yaml_output = ERB.new(yaml_template).result(binding)
+        output_file =
+          if Rails.env.production?
+            Rails.root.join('app.yaml')
+          else
+            Rails.root.join("app.#{detected_environment}.yaml")
+          end
+        status = pretend? ? 1 : File.write(output_file, yaml_output)
+        if status.positive?
+          say_success "Generated blueprint has been written to #{output_file}"
+        else
+          say_warning "Failed to write generated blueprint to #{output_file}"
+        end
+        say_debug yaml_output
+      end
+
+      define_platform_option self,
+                             class_option: false,
+                             desc: 'The platform to build the blueprint for (currently only supported for DigitalOcean)'
+      desc 'build', 'Build the project blueprint locally'
+      def build
+        unless options[:platform] == 'digitalocean'
+          raise NotImplementedError, <<~MSG
+            The build command is currently only implemented for the DigitalOcean platform.
+          MSG
         end
 
+        require_doctl_cli!
+
+        app_id = DigitalOcean::Utils.app_id!
+        access_token = DigitalOcean::Utils.access_token!
+        run(
+          'doctl apps dev build',
+          "--access-token #{access_token}",
+          "--app #{app_id}"
+        ) do |line|
+          say_debug line
+        end
+      end
+
+      no_commands do
         def check_or_prompt_for_branch_to_review
           say "Checking branch status for #{selected_branch}...", :yellow
           check_pr_cmd = "gh pr list --head #{selected_branch} --json number -q '.[].number'"
@@ -365,15 +420,6 @@ module LarCity
             #{'=' * branch_list_hr.size}
             #{branches.map { |i, b| "#{i + 1}. #{is_current_branch_phrase(b)}#{b}" }.join("\n")}
           PROMPT_MSG
-        end
-
-        def branches
-          @branches ||=
-            if @branches.blank?
-              `git branch --list`.split("\n").map.with_index do |b, i|
-                [i, b.gsub('*', '').strip]
-              end
-            end
         end
 
         def is_current_branch_phrase(branch)
@@ -461,15 +507,6 @@ module LarCity
           PROMPT_MSG
         end
 
-        def branches
-          @branches ||=
-            if @branches.blank?
-              `git branch --list`.split("\n").map.with_index do |b, i|
-                [i, b.gsub('*', '').strip]
-              end
-            end
-        end
-
         def is_current_branch_phrase(branch)
           if branch == current_branch
             '* '
@@ -524,10 +561,6 @@ module LarCity
 
       def current_branch_tuple
         @current_branch_tuple ||= branches.find { |_, b| b == current_branch }
-      end
-
-      def current_branch
-        @current_branch ||= `git rev-parse --abbrev-ref HEAD`.strip
       end
 
       def log_stream_url

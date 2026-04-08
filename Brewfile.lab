@@ -1,0 +1,21 @@
+# Brewfile.lab
+# frozen_string_literal: true
+
+tap 'protonpass/tap'
+
+eval(File.read('Brewfile'))
+
+brew 'certbot'
+
+# Inherited tools from the "Dev/Lab" shared group
+brew 'pass-cli'
+brew 'render'
+cask 'gcloud-cli'
+#cask 'notion'
+#cask 'discord'
+#cask 'slack'
+#cask 'whatsapp'
+#cask 'signal'
+cask 'moom'
+cask 'stats'
+cask 'iterm2'

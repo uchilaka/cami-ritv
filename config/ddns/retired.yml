@@ -3,3 +3,19 @@ shared:
     content: registry.ho
     type: A
     ttl: 3600
+  - domain: larcity.tech
+    content: accounts.staging
+    type: A
+    ttl: 3600
+  - domain: larcity.business
+    content: accounts.staging
+    type: A
+    ttl: 3600
+  - domain: larcity.org
+    content: staging.ho
+    type: A
+    ttl: 3600
+  - domain: larcity.org
+    content: accounts.staging
+    type: A
+    ttl: 3600

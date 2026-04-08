@@ -50,6 +50,7 @@
 
 ### Context Summary for Next Session
 
+- Just established the project-specific `GEMINI.md` and documented core architectural decisions (Inertia.js, Solid Queue, Vite).
 - Addressed Copilot PR feedback for PR #264 in the `refactor/docs-and-base-setup` branch.
 - Consolidated Swagger definitions and refactored request specs to eliminate duplicate POST operations and OAS syntax errors.
 - Updated `.replit` to Ruby 3.4.4 and created `config/dotenvs/` template directory.
@@ -57,6 +58,7 @@
 - Next steps: Review the updated PR on GitHub and wait for final approval/merge.
 
 ---
+
 ## 🛠 MCP Tooling Reference
 
 - **DB:** `postgresql-mcp` (Local introspection enabled)
@@ -73,5 +75,6 @@ Please ask me:
 1. What part of the stack we are focusing on today (Frontend, Backend, Infrastructure, etc.) - Make this a multiple choice question.
 2. What the primary goal of the session is - Make this a multiple choice question with these options: Architecture & System Design, Complex Bug Resolution, System-wide Refactoring, Code Review & Mentoring, Performance Optimization.
 3. Any specific files or contexts I want you to prioritize.
+4. Whether to proceed in "Yolo" mode - Ensure that this enables Yolo for the session.
 
 Do not proceed with any other tasks until I have answered these questions. Read GEMINI.md to understand my stack and rules. Update the Shared Memory section before you finish.
