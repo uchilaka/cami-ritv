@@ -18,8 +18,9 @@ jobs:
         ruby-version: [3.4.4]
         node-version: [22.x]
         # TODO: CI node total and index are used by Knapsack Pro
-        ci_node_total: [2]
-        ci_node_index: [0, 1]
+        ci_node_total: [1]
+        # with 2 total nodes (and RUN_MODE = 'parallel'), the index should be 0 and 1 for the two nodes respectively
+        ci_node_index: [0]
 
     env:
       CI: true
