@@ -7,6 +7,11 @@ module LarCity
     class SecretsCmd < BaseCmd
       namespace 'secrets'
 
+      no_commands do
+        include EnvHelpers
+        include VaultHelpers
+      end
+
       desc 'gpg-keys', 'List GPG keys in the system'
       def gpg_keys
         run 'gpg --list-secret-keys --keyid-format LONG'
@@ -24,7 +29,7 @@ module LarCity
         executable = Rails.root.join('bin', 'rails')
         run "EDITOR=\"#{editor} --wait\"",
             "bundle exec #{executable} credentials:edit",
-            "--environment=#{environment}"
+            "--environment=#{detected_environment}"
       end
 
       # TODO: Add interactive :history command to peek into backup credential files
@@ -77,7 +82,7 @@ module LarCity
             say no_secret_file_msg
           end
         else
-          backup_file = Rails.root.join('config', 'credentials', "#{environment}--#{timestamp}.yml.enc")
+          backup_file = Rails.root.join('config', 'credentials', "#{detected_environment}--#{timestamp}.yml.enc")
           FileUtils.cp(credentials_file, backup_file, verbose: verbose?) unless dry_run?
 
           backup_msg = []
@@ -113,6 +118,14 @@ module LarCity
         puts error
       end
 
+      desc 'list-vault-items', 'List secrets vault items'
+      def list_vault_items
+        require_authenticated_vault_connection!
+
+        say_debug "Fetching list of vault items from Proton Vault share with ID: #{vault_share_id}"
+        run 'pass-cli item list', "--share-id #{vault_share_id}"
+      end
+
       private
 
       def timestamp(style: :url_safe)
@@ -132,14 +145,8 @@ module LarCity
         system('which code')
       end
 
-      def environment
-        @environment = options[:environment]
-        @environment = Rails.env if @environment.blank?
-        @environment
-      end
-
       def credentials_file
-        Rails.root.join('config', 'credentials', "#{environment}.yml.enc")
+        Rails.root.join('config', 'credentials', "#{detected_environment}.yml.enc")
       end
 
       def editor

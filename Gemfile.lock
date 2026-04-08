@@ -250,6 +250,9 @@ GEM
     jsonapi-renderer (0.2.2)
     jwt (2.10.1)
       base64
+    knapsack_pro (9.2.3)
+      logger
+      rake
     language_server-protocol (3.17.0.4)
     launchy (3.1.1)
       addressable (~> 2.8)
@@ -673,6 +676,7 @@ DEPENDENCIES
   inertia_rails
   interactor (~> 3.1)
   jbuilder
+  knapsack_pro
   letter_opener
   logtail-rails
   mission_control-jobs
@@ -724,6 +728,9 @@ DEPENDENCIES
   vcr (~> 6.2)
   vite_rails
   web-console
+
+RUBY VERSION
+   ruby 3.4.4p34
 
 BUNDLED WITH
    2.6.7

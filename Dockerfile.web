@@ -1,0 +1,102 @@
+# syntax = docker/dockerfile:1.2
+FROM ruby:3.4.4 AS base
+# Install git-crypt and other dependencies
+RUN apt-get update -qq && \
+  apt-get install -y --no-install-recommends \
+  build-essential \
+  curl \
+  git-crypt \
+  pkg-config \
+  libvips \
+  libpq-dev \
+  && rm -rf /var/lib/apt/lists/*
+
+FROM base AS src
+ENV WORKDIR="/opt/project/src"
+RUN mkdir -p $WORKDIR
+# Set up your app directory
+WORKDIR $WORKDIR
+# Copy the source code into the container
+COPY . .
+
+# See documentation on accessing secret files at runtime on Render:
+# https://render.com/docs/docker-secrets#accessing-secret-files-at-runtime
+
+FROM src AS web
+
+ARG RAILS_ENV
+ARG RAILS_MASTER_KEY
+ARG APP_DATABASE_USER
+ARG APP_DATABASE_PASSWORD
+ARG DATABASE_URL
+ARG PAYPAL_API_BASE_URL
+ARG PAYPAL_BASE_URL
+ARG PAYPAL_CLIENT_ID
+ARG PAYPAL_CLIENT_SECRET
+ARG ZOHO_CLIENT_ID
+ARG ZOHO_CLIENT_SECRET
+ARG CRM_ORG_ID
+ARG SMTP_USER
+
+# Decrypt credentials and git-crypt files during build ensuring that all sensitive
+# information is available for the build process without being included in the
+# image layers. This allows you to keep your secrets secure while still enabling
+# a successful build.
+RUN ./bin/unlock-repo
+
+# Handle secrets during build by mounting them as files, and ensure they are available
+# for the build steps that need them, such as installing dependencies and precompiling
+# assets. This allows you to keep sensitive information out of the image layers while
+# still enabling a successful build.
+RUN ./bin/link-key-file
+
+# Setup Node.js LTS and install it
+RUN curl -fsSL https://deb.nodesource.com/setup_lts.x | bash - \
+  && apt update -qq \
+  && apt install -y nodejs \
+  && rm -rf /var/lib/apt/lists/*
+
+# Setup corepack and install it
+RUN npm install -g corepack
+
+# Enable corepack and install yarn
+RUN corepack enable && corepack prepare yarn@stable --activate
+
+# Temporarily disable environment variable checks during build, as some may not be set until runtime on Render
+ENV APP_CONFIG_CHECK_REQUIRED_VARS=no
+
+# Default to production environment, but allow override at runtime
+ENV RAILS_ENV="${RAILS_ENV:-production}"
+
+# Set other ENV defaults to prevent build-time errors, but allow override at runtime
+ENV APP_CONFIG_OMNIAUTH_ENABLED="${APP_CONFIG_OMNIAUTH_ENABLED:-no}"
+ENV SEMANTIC_LOGGER_STREAMING_ENABLED="${SEMANTIC_LOGGER_STREAMING_ENABLED:-no}"
+ENV SEND_EMAILS_ENABLED="${SEND_EMAILS_ENABLED:-no}"
+ENV WEB_CONSOLE_ENABLED="${WEB_CONSOLE_ENABLED:-no}"
+
+RUN --mount=type=secret,id=${RAILS_ENV}.key,dst=${WORKDIR}/config/credentials/${RAILS_ENV}.key \
+   echo "🔑 Secrets mounted successfully"
+
+# Unlock the repository to access encrypted files during build
+RUN --mount=type=secret,id=git-crypt.key,dst=${WORKDIR}/.git/git-crypt/keys/default \
+  ./bin/unlock-repo
+# Setup frontend package dependencies
+RUN --mount=type=secret,id=${RAILS_ENV}.key,dst=${WORKDIR}/config/credentials/${RAILS_ENV}.key \
+  yarn install --immutable
+# Install gems
+RUN --mount=type=secret,id=${RAILS_ENV}.key,dst=${WORKDIR}/config/credentials/${RAILS_ENV}.key \
+  bundle install
+# Build Tailwind CSS assets
+RUN --mount=type=secret,id=${RAILS_ENV}.key,dst=${WORKDIR}/config/credentials/${RAILS_ENV}.key \
+  bundle exec rake tailwindcss:build
+# Precompile Rails assets for production
+RUN --mount="type=secret,id=${RAILS_ENV}.key,dst=${WORKDIR}/config/credentials/${RAILS_ENV}.key" \
+  bundle exec rake assets:precompile
+
+# Review your deployment provider docs on building from a Dockerfile, for example:
+# Render:       https://render.com/docs/docker#building-from-a-dockerfile
+# DigitalOcean: https://docs.digitalocean.com/products/app-platform/how-to/deploy-from-container-images/
+EXPOSE 3000
+
+# Specify the entrypoint command to run your Rails server
+CMD ["bundle", "exec", "rails", "server", "--binding", "0.0.0.0"]

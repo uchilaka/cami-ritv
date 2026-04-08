@@ -26,37 +26,42 @@ paths:
               oneOf:
               - "$ref": "#/components/schemas/invoice_search_params"
               - "$ref": "#/components/schemas/invoice_search_params_with_array_mode"
-  "/api/v2/webhooks/notion/events":
+  "/api/v2/webhooks/{slug}/events":
+    parameters:
+    - name: X-Notion-Signature
+      in: header
+      required: true
+      description: Signature header for Notion webhook verification
+      schema:
+        type: string
+    - name: event_params
+      in: body
+      schema:
+        type: object
+        properties:
+          verification_token:
+            type: string
+            description: Verification token for the webhook, sent once during Notion
+              webhook setup
+            nullable: true
+          event:
+            "$ref": "#/components/schemas/notion_event"
+            nullable: true
+    - name: slug
+      in: path
+      required: true
+      description: Webhook slug (e.g., notion)
+      schema:
+        type: string
     post:
-      summary: Notion vendor database event
+      summary: Notion deal verification token request
       tags:
       - Webhooks
-      parameters:
-      - name: X-Notion-Signature
-        in: header
-        required: true
-        description: Signature header for Notion webhook verification
-        schema:
-          type: string
       responses:
         '200':
-          description: update event is processed
+          description: token is valid
         '422':
           description: invalid event data
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                verification_token:
-                  type: string
-                  description: Verification token for the webhook, sent once during
-                    Notion webhook setup
-                  nullable: true
-                event:
-                  "$ref": "#/components/schemas/notion_event"
-                  nullable: true
   "/invoices/search.json":
     post:
       summary: Retrieves all invoices

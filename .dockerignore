@@ -1,0 +1,7 @@
+.envrc
+.env.*
+.replit
+Brewfile
+cami.*.code-workspace
+Procfile.*
+config/credentials/*.key
