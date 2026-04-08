@@ -50,8 +50,21 @@
 
 ### Context Summary for Next Session
 
-- Just established the project-specific `GEMINI.md` and documented core architectural decisions (Inertia.js, Solid Queue, Vite).
-- Waiting for the next feature task or bug fix.
+- Just established the project-specific `GEMINI.md` and documented core
+  architectural decisions (Inertia.js, Solid Queue, Vite).
+- Addressed Copilot PR feedback for PR #264 in the
+  `refactor/docs-and-base-setup` branch.
+- Consolidated Swagger definitions and refactored request specs into a single
+  `events_spec.rb` to eliminate duplicate POST operations and OAS syntax errors.
+- Fixed OpenAPI 3.0 syntax errors related to sibling keywords on `$ref` and
+  redundant top-level keys in example payloads.
+- Updated `.replit` to Ruby 3.4.4 and restored `packageManager: "yarn@4.9.1"` in
+  `package.json`.
+- Uncommented Knapsack Pro matrix configurations in
+  `.github/workflows/full-stack.yml` and defined a default `RUN_MODE`.
+- Verified changes with `rspec` and `rswag:specs:swaggerize` (all green) and
+  ensured clean `rubocop` status.
+- Next steps: Review the updated PR on GitHub and wait for final approval/merge.
 
 ---
 
@@ -69,7 +82,7 @@ At the start of every new session, before doing any other work, you MUST use the
 Please ask me:
 
 1. What part of the stack we are focusing on today (Frontend, Backend, Infrastructure, etc.) - Make this a multiple choice question.
-2. What the primary goal of the session is (e.g., Bug fixing, New feature, Refactoring).
+2. What the primary goal of the session is - Make this a multiple choice question with these options: Architecture & System Design, Complex Bug Resolution, System-wide Refactoring, Code Review & Mentoring, Performance Optimization.
 3. Any specific files or contexts I want you to prioritize.
 4. Whether to proceed in "Yolo" mode - Ensure that this enables Yolo for the session.
 
