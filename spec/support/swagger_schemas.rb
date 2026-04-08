@@ -130,10 +130,10 @@ module Swagger
         properties: {
           id: { type: :string },
           account: {
-            oneOf: [
+            allOf: [
               { '$ref' => '#/components/schemas/account' },
-              { type: 'null' },
             ],
+            nullable: true,
           },
           contacts: {
             type: :array,
