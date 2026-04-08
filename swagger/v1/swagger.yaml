@@ -89,10 +89,8 @@ paths:
                 verification_token:
                   type: string
                   description: Verification token for the webhook
-                  nullable: true
                 event:
                   "$ref": "#/components/schemas/notion_event"
-                  nullable: true
   "/invoices/search.json":
     post:
       summary: Retrieves all invoices
@@ -178,7 +176,7 @@ components:
           - parent
         type:
           type: string
-          pattern: "^(page.created|page.content_updated|page.deleted|page.moved|page.properties_updated|database.content_updated|database.schema_updated|database.deleted)$"
+          pattern: "^(page\\.(created|content_updated|deleted|moved|properties_updated)|database\\.(content_updated|schema_updated|deleted))$"
         entity:
           "$ref": "#/components/schemas/notion_entity"
       required:
@@ -246,8 +244,9 @@ components:
         id:
           type: string
         account:
-          "$ref": "#/components/schemas/account"
-          nullable: true
+          oneOf:
+          - "$ref": "#/components/schemas/account"
+          - type: 'null'
         contacts:
           type: array
           items:

@@ -3,7 +3,7 @@
 require 'swagger_helper'
 
 RSpec.describe 'API::V2::Webhooks::Notion::Events', type: :request do
-  let(:vendor_database_id) { SecureRandom.uuid }
+  let(:database_id) { SecureRandom.uuid }
   let(:integration_id) { SecureRandom.uuid }
   let(:integration_name) { 'CAMI Lab Integration' }
   let(:verification_token) { SecureRandom.hex(24) }
@@ -21,7 +21,7 @@ RSpec.describe 'API::V2::Webhooks::Notion::Events', type: :request do
       'type' => event_type,
       'data' => {
         'parent' => {
-          'id' => vendor_database_id,
+          'id' => database_id,
           'type' => 'database',
         },
         'updated_properties' => ['y_%3D%3C'],
@@ -41,9 +41,9 @@ RSpec.describe 'API::V2::Webhooks::Notion::Events', type: :request do
     before do
       Flipper.enable(:feat__notion_webhook_skip_signature_validation)
       Flipper.enable(:feat__notion_use_persist_event_workflow)
-      Fabricate(:notion_webhook, data: { integration_id:, integration_name:, vendor_database_id: })
       allow(ActiveSupport::SecurityUtils).to \
         receive(:secure_compare).and_return(true)
+      allow(Notion::Utils).to receive(:skip_signature_validation?).and_return(true)
     end
 
     after do
@@ -63,19 +63,48 @@ RSpec.describe 'API::V2::Webhooks::Notion::Events', type: :request do
           verification_token: {
             type: :string,
             description: 'Verification token for the webhook',
-            nullable: true,
           },
           event: {
             '$ref': '#/components/schemas/notion_event',
-            nullable: true,
           },
         },
       }
 
       response '200', 'Success' do
-        context 'when update event is processed' do
+        context 'when processing vendor events' do
+          before do
+            Fabricate(:notion_webhook, data: { integration_id:, integration_name:, vendor_database_id: database_id })
+          end
+
           let(:event_type) { 'page.properties_updated' }
-          let(:event_params) { { **event_data, event: event_data } }
+          let(:event_params) { { event: event_data } }
+
+          run_test! do
+            expect(response).to have_http_status(:ok)
+          end
+        end
+
+        context 'when processing deal events' do
+          before do
+            Fabricate(:notion_webhook, data: { integration_id:, integration_name:, deal_database_id: database_id })
+          end
+
+          let(:event_type) { 'page.properties_updated' }
+          let(:event_params) { { event: event_data } }
+
+          run_test! do
+            expect(response).to have_http_status(:ok)
+          end
+        end
+
+        context 'when persist event workflow is enabled' do
+          before do
+            Fabricate(:notion_webhook, data: { integration_id:, integration_name:, deal_database_id: database_id })
+            allow(Notion::Utils).to receive(:use_persist_event_workflow?).and_return(true)
+          end
+
+          let(:event_type) { 'page.properties_updated' }
+          let(:event_params) { { event: event_data } }
 
           run_test! do
             expect(response).to have_http_status(:ok)
@@ -83,6 +112,10 @@ RSpec.describe 'API::V2::Webhooks::Notion::Events', type: :request do
         end
 
         context 'when a verification_token is sent' do
+          before do
+            Fabricate(:notion_webhook, data: { integration_id:, integration_name:, vendor_database_id: database_id })
+          end
+
           let(:event_type) { 'page.properties_updated' }
           let(:event_params) { { verification_token: } }
 
@@ -93,6 +126,10 @@ RSpec.describe 'API::V2::Webhooks::Notion::Events', type: :request do
       end
 
       response '422', 'invalid event data' do
+        before do
+          Fabricate(:notion_webhook, data: { integration_id:, integration_name:, vendor_database_id: database_id })
+        end
+
         let(:event_type) { 'page.properties_updated' }
         let(:event_params) do
           {

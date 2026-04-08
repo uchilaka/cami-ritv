@@ -50,11 +50,20 @@
 
 ### Context Summary for Next Session
 
-- Just established the project-specific `GEMINI.md` and documented core architectural decisions (Inertia.js, Solid Queue, Vite).
-- Addressed Copilot PR feedback for PR #264 in the `refactor/docs-and-base-setup` branch.
-- Consolidated Swagger definitions and refactored request specs to eliminate duplicate POST operations and OAS syntax errors.
-- Updated `.replit` to Ruby 3.4.4 and created `config/dotenvs/` template directory.
-- Verified changes with `rspec` and `rswag:specs:swaggerize` (all green).
+- Just established the project-specific `GEMINI.md` and documented core
+  architectural decisions (Inertia.js, Solid Queue, Vite).
+- Addressed Copilot PR feedback for PR #264 in the
+  `refactor/docs-and-base-setup` branch.
+- Consolidated Swagger definitions and refactored request specs into a single
+  `events_spec.rb` to eliminate duplicate POST operations and OAS syntax errors.
+- Fixed OpenAPI 3.0 syntax errors related to sibling keywords on `$ref` and
+  redundant top-level keys in example payloads.
+- Updated `.replit` to Ruby 3.4.4 and restored `packageManager: "yarn@4.9.1"` in
+  `package.json`.
+- Uncommented Knapsack Pro matrix configurations in
+  `.github/workflows/full-stack.yml` and defined a default `RUN_MODE`.
+- Verified changes with `rspec` and `rswag:specs:swaggerize` (all green) and
+  ensured clean `rubocop` status.
 - Next steps: Review the updated PR on GitHub and wait for final approval/merge.
 
 ---
