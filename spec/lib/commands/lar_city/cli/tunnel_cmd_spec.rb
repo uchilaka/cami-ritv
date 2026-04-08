@@ -133,7 +133,7 @@ RSpec.describe LarCity::CLI::TunnelCmd, type: :thor, devtool: true, skip_in_ci: 
     context 'when in supported environment' do
       before do
         allow(Rails.env).to receive(:test?).and_return(false)
-        allow(tunnel_cmd).to receive(:detected_environment).and_return('staging')
+        allow(tunnel_cmd).to receive(:detected_environment).and_return('development')
       end
 
       context 'when NGROK_AUTH_TOKEN is not set' do
