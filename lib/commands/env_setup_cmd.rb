@@ -213,6 +213,7 @@ class EnvSetupCmd < Thor::Group
         *database_env_sets.map { |env_key, vault_field| [env_key, vault_field, 'database'] },
         *platform_env_sets.map { |env_key, vault_field| [env_key, vault_field, 'platform'] },
         #['HOSTNAME', nil, 'app'],
+        #['RAILS_MASTER_KEY', nil, 'app'],
         ['REDIS_URL', nil, 'cache'],
         ['NGROK_AUTH_TOKEN', nil, 'proxy'],
         ['PAYPAL_BASE_URL', nil, 'paypal'],
@@ -228,19 +229,15 @@ class EnvSetupCmd < Thor::Group
     end
 
     def shared_source_item_id
-      @shared_source_item_id ||= vault_source_items[:shared].share_id
+      vault_source_items[:shared].id
     end
 
     def source_item_id
       @source_item_id ||=
         ENV.fetch(
           'ENV_VARS_ITEM_ID',
-          vault_source_items[detected_environment].share_id
+          vault_source_items[detected_environment].id
         )
-    end
-
-    def proton_credentials
-      @proton_credentials ||= Rails.application.credentials.proton!
     end
 
     def output_file_path
