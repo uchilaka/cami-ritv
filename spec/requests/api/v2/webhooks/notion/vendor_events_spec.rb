@@ -32,7 +32,8 @@ RSpec.describe 'API::V2::Webhooks::Notion::Events', type: :request do
   path '/api/v2/webhooks/{slug}/events' do
     parameter name: :'X-Notion-Signature', in: :header, schema: { type: :string }, required: true,
               description: 'Signature header for Notion webhook verification'
-    parameter name: :slug, in: :path, schema: { type: :string }, required: true, description: 'Webhook slug (e.g., notion)'
+    parameter name: :slug, in: :path, schema: { type: :string, enum: ['notion'] }, required: true,
+              description: "Webhook slug (currently only 'notion' is supported)"
 
     let(:'X-Notion-Signature') { 'valid-notion-request-signature' }
     let(:slug) { 'notion' }
@@ -51,40 +52,48 @@ RSpec.describe 'API::V2::Webhooks::Notion::Events', type: :request do
       Flipper.disable(:feat__notion_use_persist_event_workflow)
     end
 
-    post 'Notion vendor database event' do
-
-    parameter name: :event_params, in: :body, schema: {
-      type: :object,
-      properties: {
-        verification_token: {
-          type: :string,
-          description: 'Verification token for the webhook, sent once during Notion webhook setup',
-          nullable: true,
-        },
-        event: {
-          '$ref': '#/components/schemas/notion_event',
-          nullable: true,
-        },
-      },
-    }
-      # TODO: Read up on how the tags feature works in rswag
+    post 'Webhook event processing' do
       tags 'Webhooks'
       consumes 'application/json'
       produces 'application/json'
 
-      response '200', 'update event is processed' do
-        let(:event_type) { 'page.properties_updated' }
-        let(:testing_id) { SecureRandom.hex(4) }
-        let(:event_params) do
-          { **event_data, event: event_data }
+      parameter name: :event_params, in: :body, schema: {
+        type: :object,
+        properties: {
+          verification_token: {
+            type: :string,
+            description: 'Verification token for the webhook',
+            nullable: true,
+          },
+          event: {
+            '$ref': '#/components/schemas/notion_event',
+            nullable: true,
+          },
+        },
+      }
+
+      response '200', 'Success' do
+        context 'when update event is processed' do
+          let(:event_type) { 'page.properties_updated' }
+          let(:event_params) { { **event_data, event: event_data } }
+
+          run_test! do
+            expect(response).to have_http_status(:ok)
+          end
         end
 
-        run_test! do
-          expect(response).to have_http_status(:ok)
+        context 'when a verification_token is sent' do
+          let(:event_type) { 'page.properties_updated' }
+          let(:event_params) { { verification_token: } }
+
+          run_test! do
+            expect(response).to have_http_status(:ok)
+          end
         end
       end
 
       response '422', 'invalid event data' do
+        let(:event_type) { 'page.properties_updated' }
         let(:event_params) do
           {
             event: {
@@ -97,36 +106,6 @@ RSpec.describe 'API::V2::Webhooks::Notion::Events', type: :request do
         run_test! do
           expect(response).to have_http_status(:unprocessable_entity)
           expect(JSON.parse(response.body)).to have_key('errors')
-        end
-      end
-
-      context 'when a verification_token is sent' do
-        post 'Notion deal verification token request' do
-
-    parameter name: :event_params, in: :body, schema: {
-      type: :object,
-      properties: {
-        verification_token: {
-          type: :string,
-          description: 'Verification token for the webhook, sent once during Notion webhook setup',
-          nullable: true,
-        },
-        event: {
-          '$ref': '#/components/schemas/notion_event',
-          nullable: true,
-        },
-      },
-    }
-          produces 'application/json'
-          consumes 'application/json'
-
-          response '200', 'token is valid' do
-            let(:event_params) { { verification_token: } }
-
-            run_test! do
-              expect(response).to have_http_status(:ok)
-            end
-          end
         end
       end
     end

@@ -4,6 +4,34 @@ info:
   title: API V1
   version: v1
 paths:
+  "/api/v1/form_data/countries":
+    get:
+      summary: Retrieves a list of countries
+      tags:
+      - Form Data
+      responses:
+        '200':
+          description: countries found
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  "$ref": "#/components/schemas/country"
+  "/api/v1/form_data/countries_map":
+    get:
+      summary: Retrieves a map of countries
+      tags:
+      - Form Data
+      responses:
+        '200':
+          description: countries map found
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  "$ref": "#/components/schemas/country_mapped"
   "/api/v1/invoices/search.json":
     post:
       summary: Retrieves all invoices
@@ -30,20 +58,28 @@ paths:
     parameters:
     - name: X-Notion-Signature
       in: header
+      schema:
+        type: string
       required: true
       description: Signature header for Notion webhook verification
-      schema:
-        type: string
     - name: slug
       in: path
-      required: true
-      description: Webhook slug (e.g., notion)
       schema:
         type: string
+        enum:
+        - notion
+      required: true
+      description: Webhook slug (currently only 'notion' is supported)
     post:
-      summary: Notion deal verification token request
+      summary: Webhook event processing
       tags:
       - Webhooks
+      parameters: []
+      responses:
+        '200':
+          description: Success
+        '422':
+          description: invalid event data
       requestBody:
         content:
           application/json:
@@ -52,16 +88,11 @@ paths:
               properties:
                 verification_token:
                   type: string
-                  description: Verification token for the webhook, sent once during Notion webhook setup
+                  description: Verification token for the webhook
                   nullable: true
                 event:
                   "$ref": "#/components/schemas/notion_event"
                   nullable: true
-      responses:
-        '200':
-          description: token is valid
-        '422':
-          description: invalid event data
   "/invoices/search.json":
     post:
       summary: Retrieves all invoices
@@ -84,34 +115,6 @@ paths:
               oneOf:
               - "$ref": "#/components/schemas/invoice_search_params"
               - "$ref": "#/components/schemas/invoice_search_params_with_array_mode"
-  "/api/v1/form_data/countries":
-    get:
-      summary: Retrieves a list of countries
-      tags:
-      - Form Data
-      responses:
-        '200':
-          description: countries found
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/country"
-  "/api/v1/form_data/countries_map":
-    get:
-      summary: Retrieves a map of countries
-      tags:
-      - Form Data
-      responses:
-        '200':
-          description: countries map found
-          content:
-            application/json:
-              schema:
-                type: object
-                additionalProperties:
-                  $ref: "#/components/schemas/country_mapped"
 servers:
 - url: https://{defaultHost}
   variables:
@@ -337,7 +340,6 @@ components:
                 type: string
               direction:
                 type: string
-
     country:
       type: object
       properties:
@@ -349,6 +351,7 @@ components:
           type: string
         dial_code:
           type: string
+          nullable: true
       required:
       - id
       - name
@@ -365,6 +368,7 @@ components:
           type: string
         dialCode:
           type: string
+          nullable: true
       required:
       - id
       - name
