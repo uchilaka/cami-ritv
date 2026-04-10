@@ -1,47 +1,64 @@
 # frozen_string_literal: true
 
 require_relative 'base_cmd'
+require 'uri'
 
 module LarCity
   module CLI
     class DevkitCmd < BaseCmd
+      no_commands do
+        include ControlFlowHelpers
+        include GitOpsHelpers
+        include IntegrationHelpers
+      end
+
       namespace 'devkit'
 
-      option :force,
-             desc: 'Force an upsert operation on any matching webhook (by vendor)',
-             type: :boolean,
-             default: false
+      define_force_option(
+        self,
+        class_option: false,
+        desc: 'Force an upsert operation on any matching webhook (by vendor)'
+      )
       option :vendor,
              desc: 'The vendor to use for the devkit',
              type: :string,
              aliases: '-s',
              enum: %w[zoho notion],
              required: true
+      option :dataset,
+             desc: 'The vendor dataset serviced by the webhook (if applicable)',
+             type: :string,
+             enum: %w[deal vendor product]
       desc 'setup_webhooks', 'Setup webhooks for the project'
       def setup_webhooks
-        if Rails.env.test?
+        if Rails.env.test? && !debug?
           say_highlight('🚫 Skipping webhook setup in test environment')
           return
         end
 
-        with_interruption_rescue do
+        with_optional_pretend_safety do
           case options[:vendor]
           when 'notion'
-            integration_id, verification_token, deal_database_id =
-              Rails.application.credentials.notion&.values_at :integration_id, :verification_token, :deal_database_id
+            integration_id, verification_token, deal_database_id, vendor_database_id =
+              Rails.application.credentials.notion&.values_at :integration_id,
+                                                              :verification_token,
+                                                              :deal_database_id,
+                                                              :vendor_database_id
             dashboard_url = "https://www.notion.so/profile/integrations/internal/#{integration_id}"
-            records_index_workflow_name = 'Notion::DownloadLatestDealsWorkflow'
-            record_download_workflow_name = 'Notion::DownloadDealWorkflow'
+            records_index_workflow_name = Notion::Deals::DownloadLatestWorkflow.name
+            record_download_workflow_name = Notion::Deals::DownloadWorkflow.name
             ::Webhook.transaction do
               webhook =
                 ::Webhook
                   .find_or_initialize_by(
                     slug: options[:vendor],
+                    dataset: options[:dataset],
                     verification_token:
                   )
-              updates = {
+              upserts = {
                 integration_id:,
                 deal_database_id:,
+                vendor_database_id:,
                 dashboard_url:,
                 records_index_workflow_name:,
                 record_download_workflow_name:,
@@ -54,11 +71,11 @@ module LarCity
                 else
                   say "⏳️ Setting up webhook '#{options[:vendor]}'", :yellow
                 end
-                ap updates, options: { indent: 2 }
+                ap upserts, options: { indent: 2 }
               end
 
-              if webhook.new_record? || options[:force]
-                webhook.data = { integration_id:, deal_database_id:, dashboard_url: }.compact
+              if webhook.new_record? || force?
+                webhook.data = upserts.compact
                 if webhook.changed?
                   webhook.save!
                   say "⚡ Webhook for #{options[:vendor]} has been set up successfully.", :green
@@ -66,7 +83,8 @@ module LarCity
                   say "💅🏾 Webhook for #{options[:vendor]} is already set up and no changes were made.", :cyan
                 end
               else
-                updates.each { |k, v| webhook.send(:"#{k}=", v) if webhook.respond_to?("#{k}=") }
+                webhook.set_on_data(**upserts)
+                # updates.each { |k, v| webhook.send(:"#{k}=", v) if webhook.respond_to?("#{k}=") }
                 if webhook.changed?
                   webhook.save!
                   say "⚡ Webhook for #{options[:vendor]} has been updated successfully.", :green
@@ -81,6 +99,103 @@ module LarCity
           else
             raise ArgumentError, "Unsupported vendor: #{options[:vendor]}"
           end
+        end
+      end
+
+      desc 'yeet_deploy', 'Shove the current code to production'
+      long_desc <<-LONGDESC
+        🚧 @TODO: This command should be moved to a separate namespace (e.g. `deploy:yeet`)
+        and should require additional confirmation steps to prevent accidental usage.
+
+        🚨 WARNING: This command forcefully deploys the current code to production
+        without any checks or confirmations.
+
+        This deployment pipeline operates via the releases/production branch and a deploy
+        hook configured in the repository settings on the hosting platform.
+
+        This deployment method is highly discouraged for regular use and should only
+        be used in emergency situations where immediate action is required to resolve
+        critical issues.
+      LONGDESC
+      def yeet_deploy
+        # Check to make sure current branch is clean (no dangling changes)
+        with_interruption_rescue do
+          # status_output = `git status --porcelain`.strip
+          # unless status_output.blank?
+          #   raise 'Current branch has uncommitted changes. Please commit or stash them before deploying.'
+          # end
+          block_deployment_on_uncommitted_changes!
+
+          run 'git pull --ff', inline: true
+          run 'git push', inline: true
+
+          @selected_branch = "releases/#{detected_environment}"
+          # if current_branch == selected_branch
+          #   raise 'You are already on the releases/production branch. Please switch to another branch before deploying.'
+          # end
+          block_deployment_on_same_branch!
+          block_deployment_on_release_branches!
+
+          # Merge the current branch into the target releases/* branch
+          checkout_cmd = "git checkout #{selected_branch}"
+
+          success = run checkout_cmd, inline: true, mock_return: true
+          raise "Failed to checkout #{selected_branch} branch." unless success
+
+          run 'git pull --ff', inline: true
+          commit_msg = <<~COMMIT_MSG
+            Merging #{current_branch} into #{selected_branch} for emergency deploy
+          COMMIT_MSG
+          merge_cmd = "git merge --no-ff #{current_branch} -m \"#{commit_msg.strip}\""
+          run merge_cmd, inline: true
+
+          deploy_cmd = ['git push origin', "HEAD:#{selected_branch}"]
+          success = run(*deploy_cmd, inline: true, mock_return: true)
+          raise 'Deployment failed. Please check the output above for details.' unless success || pretend?
+
+          # Use curl to trigger the deploy hook if one is configured
+          env_name = ['app_deploy', detected_environment, 'hook_url'].join('_').upcase
+          deploy_hook_url = ENV.fetch(env_name, nil)
+
+          # Validate deploy_hook_url is a valid URL using Rails URI parsing
+          if deploy_hook_url.present?
+            begin
+              uri = URI.parse(deploy_hook_url)
+              unless uri.is_a?(URI::HTTP) || uri.is_a?(URI::HTTPS)
+                raise URI::InvalidURIError, "Invalid URL scheme: #{uri.scheme}"
+              end
+            rescue URI::InvalidURIError => e
+              say_warning <<~MSG
+                ⚠️ The deploy hook URL configured in #{env_name} is invalid: #{e.message}.
+                Please ensure that the URL is correct and try again.
+              MSG
+              deploy_hook_url = nil
+            end
+          end
+
+          result =
+            if deploy_hook_url.present?
+              curl_cmd = "curl -X POST #{deploy_hook_url}"
+              # Extract domain name from deploy hook URL for logging
+              uri = URI.parse(deploy_hook_url)
+              if pretend?
+                say_highlight "Pretending to execute deployment via #{uri.host}..."
+                true
+              else
+                say_info "Triggering deployment via #{uri.host}..."
+                run curl_cmd, inline: true
+              end
+            else
+              say_warning <<~MSG
+                ⚠️ No deploy hook URL configured. Please ensure that the deployment \
+                process is triggered manually if required.
+              MSG
+              true if pretend?
+            end
+          say_success "🚀 Code has been forcefully deployed to #{selected_branch}." if result
+        ensure
+          # Switch back to the original working branch
+          run "git switch #{current_branch}", inline: true
         end
       end
 
@@ -128,7 +243,8 @@ module LarCity
         raise e
       end
 
-      desc 'swaggerize', 'Generate Swagger JSON file(s)'
+      desc 'swaggerize', I18n.t('commands.devkit.swaggerize.short_desc')
+      long_desc I18n.t('commands.devkit.swaggerize.long_desc')
       def swaggerize
         cmd = 'bundle exec rails rswag'
         if verbose?
@@ -140,7 +256,7 @@ module LarCity
         return if dry_run?
 
         ClimateControl.modify RAILS_ENV: 'test' do
-          system(cmd)
+          run cmd, inline: true
         end
       end
 
@@ -154,7 +270,80 @@ module LarCity
             Executing#{dry_run? ? ' (dry-run)' : ''}: #{cmd}
           CMD
         end
-        system(cmd) unless dry_run?
+        run cmd unless dry_run?
+      end
+
+      desc 'check-blueprint', I18n.t('commands.devkit.check_blueprint.short_desc')
+      long_desc I18n.t('commands.devkit.check_blueprint.long_desc')
+      # @deprecated use `lx-cli blueprint:check` command instead
+      def check_blueprint
+        blueprint_config = Rails.root.join('render.yaml')
+        require_render_cli!
+
+        run(
+          'render blueprints validate',
+          "--workspace #{ENV.fetch('RENDER_WORKSPACE_ID')}",
+          blueprint_config
+        ) { |line| say_info line }
+      end
+
+      define_platform_option self,
+                             class_option: false,
+                             desc: 'The platform to get the blueprint for (currently only supported for DigitalOcean)'
+      desc 'get-blueprint', I18n.t('commands.devkit.get_blueprint.short_desc')
+      long_desc I18n.t('commands.devkit.get_blueprint.long_desc')
+      # @deprecated Use `lx-cli blueprint:get` command instead
+      def get_blueprint
+        unless options[:platform] == 'digitalocean'
+          raise NotImplementedError, <<~MSG
+            The get-blueprint command is currently only implemented for the DigitalOcean platform.
+          MSG
+        end
+        require_doctl_cli!
+        app_id = DigitalOcean::Utils.app_id!
+        access_token = DigitalOcean::Utils.access_token!
+        codegen_cmd = ['doctl apps spec get', app_id, "--access-token #{access_token}", '--format yaml']
+        codegen_cmd << '--verbose' if verbose?
+        yaml_content = run(*codegen_cmd, eval: true)
+        yaml_template = File.read(Rails.root.join('config', 'app.yaml.erb'))
+        yaml_output = ERB.new(yaml_template).result(binding)
+        output_file =
+          if Rails.env.production?
+            Rails.root.join('app.yaml')
+          else
+            Rails.root.join("app.#{detected_environment}.yaml")
+          end
+        status = pretend? ? 1 : File.write(output_file, yaml_output)
+        if status.positive?
+          say_success "Generated blueprint has been written to #{output_file}"
+        else
+          say_warning "Failed to write generated blueprint to #{output_file}"
+        end
+        say_debug yaml_output
+      end
+
+      define_platform_option self,
+                             class_option: false,
+                             desc: 'The platform to build the blueprint for (currently only supported for DigitalOcean)'
+      desc 'build', 'Build the project blueprint locally'
+      def build
+        unless options[:platform] == 'digitalocean'
+          raise NotImplementedError, <<~MSG
+            The build command is currently only implemented for the DigitalOcean platform.
+          MSG
+        end
+
+        require_doctl_cli!
+
+        app_id = DigitalOcean::Utils.app_id!
+        access_token = DigitalOcean::Utils.access_token!
+        run(
+          'doctl apps dev build',
+          "--access-token #{access_token}",
+          "--app #{app_id}"
+        ) do |line|
+          say_debug line
+        end
       end
 
       no_commands do
@@ -231,15 +420,6 @@ module LarCity
             #{'=' * branch_list_hr.size}
             #{branches.map { |i, b| "#{i + 1}. #{is_current_branch_phrase(b)}#{b}" }.join("\n")}
           PROMPT_MSG
-        end
-
-        def branches
-          @branches ||=
-            if @branches.blank?
-              `git branch --list`.split("\n").map.with_index do |b, i|
-                [i, b.gsub('*', '').strip]
-              end
-            end
         end
 
         def is_current_branch_phrase(branch)
@@ -327,15 +507,6 @@ module LarCity
           PROMPT_MSG
         end
 
-        def branches
-          @branches ||=
-            if @branches.blank?
-              `git branch --list`.split("\n").map.with_index do |b, i|
-                [i, b.gsub('*', '').strip]
-              end
-            end
-        end
-
         def is_current_branch_phrase(branch)
           if branch == current_branch
             '* '
@@ -346,6 +517,34 @@ module LarCity
       end
 
       private
+
+      def block_deployment_on_release_branches!
+        return unless current_branch.start_with?('releases/')
+
+        raise Errors::Forbidden, <<~MSG
+          🙅🏾‍♂️ Deployment operations are blocked on release branches (current branch: #{current_branch}).
+          Please switch to a non-release branch to proceed.
+        MSG
+      end
+
+      def block_deployment_on_same_branch!
+        return if selected_branch != current_branch
+
+        raise Errors::Forbidden, <<~MSG
+          🙅🏾‍♂️ Deployment operations are blocked on the current branch (#{current_branch}).
+          Please switch to a different branch to proceed.
+        MSG
+      end
+
+      def block_deployment_on_uncommitted_changes!
+        status_output = `git status --porcelain`.strip
+        return if status_output.blank?
+
+        raise Errors::Forbidden, <<~MSG
+          🙅🏾‍♂️ Deployment operations are blocked due to uncommitted changes in the current branch (#{current_branch}).
+          Please commit or stash your changes before proceeding.
+        MSG
+      end
 
       def interactive?
         options[:interactive]
@@ -362,10 +561,6 @@ module LarCity
 
       def current_branch_tuple
         @current_branch_tuple ||= branches.find { |_, b| b == current_branch }
-      end
-
-      def current_branch
-        @current_branch ||= `git rev-parse --abbrev-ref HEAD`.strip
       end
 
       def log_stream_url

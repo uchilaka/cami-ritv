@@ -22,3 +22,18 @@ en:
     conflict: "The request could not be completed due to a conflict with the current state of the resource"
     precondition_failed: "The request could not be completed due to a conflict with the current state of the resource"
     precondition_required: "The request could not be completed due to a conflict with the current state of the resource"
+    missing_smtp_credentials: >
+      SMTP credentials [%{config_key}] not found - SMTP settings will be empty unless \
+      overridden by environment variables
+    integration_command_not_implemented: >
+      The %{cmd} is currently not implemented for %{platform}. \
+      If you are the application owner, review the codebase on main \
+      or check the logs for more information.
+    integration_command_not_supported: >
+      The %{cmd} is currently not supported for %{platform}. \
+      If you are the application owner, review the codebase on main \
+      or check the logs for more information.
+    integration_command_deprecated: >
+      The %{cmd} has been deprecated for %{platform}. \
+      If you are the application owner, review the codebase on main \
+      or check the logs for more information.

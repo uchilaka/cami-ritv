@@ -1,21 +1,38 @@
 # frozen_string_literal: true
 
-production_env_vars = %w[
-  APP_DATABASE_NAME
-  APP_DATABASE_HOST
-  APP_DATABASE_PORT
-]
+production_env_vars = []
+if AppUtils.database_url_present?
+  puts <<~MSG
+    ⚠️ DATABASE_URL environment variable detected. Skipping individual
+    database configuration checks.
+  MSG
+else
+  {
+    'APP_DATABASE_NAME' => :database,
+    'APP_DATABASE_HOST' => :host,
+    'APP_DATABASE_PORT' => :port,
+  }.each do |var, config_key|
+    production_env_vars << var \
+      if Rails.application.credentials.dig(:postgres, config_key).blank?
+  end
+end
 
-required_env_vars =
-  %w[
-    PORT
-    RAILS_ENV
-    REDIS_URL
-    APP_DATABASE_USER
-    APP_DATABASE_PASSWORD
-  ]
+# Build required environment variables based on available configurations
 
-# Will require the resolved variables within this guard when Rails.env != test
+# TODO: Taking REDIS_URL out for now, since we're running jobs against a postgres
+#   co-located database instance. Revisit this later.
+required_env_vars = %w[PORT RAILS_ENV REDIS_URL]
+
+unless AppUtils.database_url_present?
+  {
+    'APP_DATABASE_USER' => :user,
+    'APP_DATABASE_PASSWORD' => :password,
+  }.each do |var, config_key|
+    required_env_vars << var \
+      if Rails.application.credentials.dig(:postgres, config_key).blank?
+  end
+end
+
 unless Rails.env.test?
   case Rails.env
   when 'development'
@@ -36,17 +53,39 @@ unless Rails.env.test?
     required_env_vars += production_env_vars
   end
 
+  {
+    'PAYPAL_API_BASE_URL' => :base_url,
+    'PAYPAL_BASE_URL' => :base_url,
+    'PAYPAL_CLIENT_ID' => :client_id,
+    'PAYPAL_CLIENT_SECRET' => :client_secret,
+  }.each do |var, config_key|
+    required_env_vars << var \
+      if Rails.application.credentials.dig(:paypal, config_key).blank?
+  end
+
   # These apply for all non-test environments
-  required_env_vars += %w[
-    HOSTNAME
-    PAYPAL_BASE_URL
-    PAYPAL_CLIENT_ID
-    PAYPAL_CLIENT_SECRET
-    ZOHO_CLIENT_ID
-    ZOHO_CLIENT_SECRET
-    CRM_ORG_ID
-  ]
+  required_env_vars += %w[HOSTNAME]
+
+  # ZOHO CRM Credentials
+  {
+    'ZOHO_CLIENT_ID' => :client_id,
+    'ZOHO_CLIENT_SECRET' => :client_secret,
+    'CRM_ORG_ID' => :org_id,
+  }.each do |var, config_key|
+    required_env_vars << var \
+      if Rails.application.credentials.dig(:zoho, config_key).blank?
+  end
 end
 
-# Doc on required keys: https://github.com/bkeepers/dotenv?tab=readme-ov-file#required-keys
-Dotenv.require_keys(required_env_vars)
+if AppUtils.check_env_vars?
+  puts ['🛠️ Configuring required', Rails.env, 'environment variables'].compact.join(' ')
+  # Doc on required keys: https://github.com/bkeepers/dotenv?tab=readme-ov-file#required-keys
+  Dotenv.require_keys(required_env_vars)
+else
+  puts <<~MSG
+    ⚠️ Skipping environment variable check in #{Rails.env} environment.
+    To enable, set the APP_CONFIG_CHECK_ENV_VARS environment variable to "true".
+    The following environment variables are required for this environment:
+    #{required_env_vars.join("\n- ")}
+  MSG
+end

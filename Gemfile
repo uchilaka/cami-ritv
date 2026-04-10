@@ -1,5 +1,8 @@
+# frozen_string_literal: true
+
 source 'https://rubygems.org'
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
+ruby "3.4.4"
 
 # Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
 gem 'rails', '~> 8.0'
@@ -11,6 +14,10 @@ gem 'mission_control-jobs'
 # Autoload dotenv in Rails https://github.com/bkeepers/dotenv
 # IMPORTANT: This should be loaded as early as possible
 gem 'dotenv', require: 'dotenv/load'
+
+gem 'flipper-active_record', '~> 1.3'
+gem 'flipper-api'
+gem 'flipper-ui'
 
 # Feature rich logging framework that replaces the Rails logger.
 gem 'rails_semantic_logger'
@@ -25,7 +32,7 @@ gem 'sprockets-rails'
 gem 'pg', '~> 1.5'
 
 # Use the Puma web server [https://github.com/puma/puma]
-gem 'puma', '~> 6'
+gem 'puma', '~> 7'
 
 # Build JSON APIs with ease [https://github.com/rails/jbuilder]
 gem 'jbuilder'
@@ -34,7 +41,6 @@ gem 'jbuilder'
 gem 'tzinfo-data', platforms: %i[mingw mswin x64_mingw jruby]
 
 gem 'dartsass-rails', '~> 0.5'
-gem 'sassc-rails', '~> 2.1'
 
 gem 'cssbundling-rails'
 gem 'inertia_rails'
@@ -87,10 +93,6 @@ gem 'rolify', '~> 6.0'
 # Rationale: setup "staging" environments to be identical to production, distinguished by their domain name.
 gem 'sib-api-v3-sdk', groups: %i[production]
 
-gem 'flipper-active_record', '~> 1.3'
-gem 'flipper-api'
-gem 'flipper-ui'
-
 # OpenAPI (formerly named Swagger) tooling for Rails APIs https://github.com/rswag/rswag
 gem 'rswag-api'
 gem 'rswag-ui'
@@ -102,10 +104,10 @@ gem 'ostruct'
 # Simple, feature rich ascii table generation library https://github.com/tj/terminal-table
 gem 'terminal-table'
 
+gem 'dry-types', '~> 1.8'
+gem 'highline', '~> 3.1'
 gem 'nokogiri'
 gem 'reverse_markdown'
-gem 'highline', '~> 3.1'
-gem 'dry-types', '~> 1.8'
 
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
@@ -115,6 +117,7 @@ group :development, :test do
   gem 'climate_control'
   gem 'fabrication'
   gem 'faker'
+  gem 'knapsack_pro'
   gem 'open3'
   gem 'rspec-rails', '~> 7'
   gem 'rswag-specs'

@@ -44,9 +44,13 @@ development: &development
     enabled: true
   feat__notion_integration_dashboard:
     enabled: true
+  feat__notion_use_persist_event_workflow:
+    enabled: true
   feat__native_objects_crm_dashboard:
     enabled: true
 test:
+  <<: *default
+lab:
   <<: *default
 staging:
   <<: *default

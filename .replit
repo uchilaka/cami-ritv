@@ -1,0 +1,51 @@
+modules = ["ruby-3.4", "web", "bash", "nodejs-22"]
+[agent]
+expertMode = true
+
+run = "./bin/build"
+
+[nix]
+channel = "stable-25_05"
+packages = ["direnv", "git-crypt", "gnupg", "nano", "zsh", "zsh-completions", "postgresql", "vips", "pkg-config", "libyaml", "libsass"]
+
+[userenv]
+
+[userenv.staging]
+RAILS_ENV = "staging"
+PORT = "5000"
+HOSTNAME = "0.0.0.0"
+SOLID_QUEUE_IN_PUMA = "false"
+LETTER_OPENER_ENABLED = "no"
+MAILHOG_ENABLED = "no"
+SEND_EMAILS_ENABLED = "no"
+SEMANTIC_LOGGER_STREAMING_ENABLED = "no"
+RAILS_LOG_LEVEL = "info"
+
+[workflows]
+runButton = "Project"
+
+[[workflows.workflow]]
+name = "Project"
+mode = "parallel"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Start application"
+
+[[workflows.workflow.metadata]]
+outputType = "webview"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = """
+cd /home/runner/workspace && npx vite dev &
+bundle exec rails s -b 0.0.0.0 -p 5000"""
+waitForPort = 5000
+
+[[ports]]
+localPort = 3036
+externalPort = 3000
+
+[[ports]]
+localPort = 5000
+externalPort = 80

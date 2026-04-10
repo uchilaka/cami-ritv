@@ -30,18 +30,26 @@ Rails.application.configure do
   # config.flipper.instrumenter = ActiveSupport::Notifications
 end
 
-Flipper.configure do |config|
-  ## Configure other adapters that you want to use here:
-  ## See http://flippercloud.io/docs/adapters
-  # config.use Flipper::Adapters::ActiveSupportCacheStore, Rails.cache, expires_in: 5.minutes
+# Prevent the "Early Load" of Flipper from causing N+1 queries during the request cycle
+# Rails.application.config.middleware.use Flipper::Middleware::Memoizer, preload: true
+
+Rails.application.config.to_prepare do
+  if ActiveRecord::Base.connected? || File.exist?('db/schema.rb')
+    Flipper.configure do |config|
+      # Configure other adapters that you want to use here:
+      # See http://flippercloud.io/docs/adapters
+      config.adapter { Flipper::Adapters::ActiveRecord.new }
+    end
+  end
+
+  ## Register a group that can be used for enabling features.
+  ##
+  ##   Flipper.enable_group :my_feature, :admins
+  ##
+  ## See https://www.flippercloud.io/docs/features#enablement-group
+  #
+  # Flipper.register(:admins) do |actor|
+  #  actor.respond_to?(:admin?) && actor.admin?
+  # end
 end
 
-## Register a group that can be used for enabling features.
-##
-##   Flipper.enable_group :my_feature, :admins
-##
-## See https://www.flippercloud.io/docs/features#enablement-group
-#
-# Flipper.register(:admins) do |actor|
-#  actor.respond_to?(:admin?) && actor.admin?
-# end

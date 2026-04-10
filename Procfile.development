@@ -3,3 +3,4 @@ vite: bin/vite dev
 web: bin/rails s -p 16006
 css: bin/rails tailwindcss:watch
 css: bin/rails dartsass:watch
+worker: bin/rails solid_queue:start

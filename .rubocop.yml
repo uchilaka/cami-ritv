@@ -242,6 +242,10 @@ Style/YAMLFileRead: # new in 1.53
   Enabled: true
 # End recommended styles
 
+Style/RegexpLiteral:
+  EnforcedStyle: percent_r
+  AllowInnerSlashes: false
+
 Metrics:
   Enabled: false
 
@@ -267,3 +271,8 @@ Style/TrailingCommaInArrayLiteral:
 Style/TrailingCommaInHashLiteral:
   Enabled: true
   EnforcedStyleForMultiline: consistent_comma
+
+Style/EmptyElse:
+  Enabled: true
+  Exclude:
+    - 'app/workflows/notion/handle_page_event_workflow.rb'

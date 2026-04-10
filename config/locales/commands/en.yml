@@ -1,5 +1,81 @@
 en:
   commands:
+    blueprint:
+      check:
+        short_desc: Check the app's YAML blueprint configuration for errors
+        long_desc: >
+          This command checks the app's YAML blueprint configuration for errors.
+
+          For documentation on validating the YAML blueprint configuration on Render, see:
+          https://render.com/docs/blueprint-spec#validating-blueprints
+
+          For documentation on validating the app.yaml configuration for DigitalOcean, see:
+          https://docs.digitalocean.com/reference/doctl/reference/apps/spec/validate/
+      get:
+        short_desc: Get the app's YAML spec (currently only supports DigitalOcean)
+        long_desc: >
+          This command retrieves the app's YAML spec. It currently only
+          supports retrieving the yaml spec for DigitalOcean, but it could be
+          extended in the future to support retrieving the YAML spec for Render as well.
+      update:
+        short_desc: Update the app's YAML specification on the hosting platform (currently only supports DigitalOcean)
+        long_desc: >
+          This command updates the app's YAML spec. It currently only
+          supports DigitalOcean, but it could be extended in the future to support
+          updating the app's YAML spec for Render as well.
+
+          - Further reading on working with Render:
+            - For documentation on the YAML blueprint configuration, see:
+              https://render.com/docs/blueprint-spec
+            - For documentation on triggering deployments, see:
+              https://render.com/docs/deploy-hooks#triggering-a-deploy
+          - Further reading on working with DigitalOcean:
+            - For documentation on updating the app specification, see:
+              https://docs.digitalocean.com/reference/doctl/reference/apps/update/
+            - For documentation on forcing a rebuild of the app, see:
+              https://docs.digitalocean.com/products/app-platform/how-to/restart-rebuild-app/#force-rebuild-your-app-using-the-api-or-cli
+    devkit:
+      check_blueprint:
+        short_desc: Check the app's YAML blueprint configuration for errors
+        long_desc: >
+          🚧 @TODO: This command should be moved to a new namespace e.g. `blueprint:check`
+          or `blueprint:validate` to better reflect its purpose and scope. The `devkit`
+          namespace should be reserved for commands that are specifically related to
+          the development environment and workflow, while blueprint validation is a more
+          general task that can be relevant in both development and production contexts.
+
+          This command checks the app's YAML blueprint configuration for errors.
+          For documentation on validating the YAML blueprint configuration, see:
+          https://render.com/docs/blueprint-spec#validating-blueprints
+      get_blueprint:
+        short_desc: Get the app's YAML blueprint configuration (currently only supports DigitalOcean)
+        long_desc: >
+          🚧 @TODO: This command should be moved to a new namespace e.g. `blueprint:update`
+          or `blueprint:validate` to better reflect its purpose and scope. The `devkit`
+          namespace should be reserved for commands that are specifically related to
+          the development environment and workflow, while blueprint validation is a more
+          general task that can be relevant in both development and production contexts.
+
+          This command retrieves the app's YAML blueprint configuration. It currently only
+          supports retrieving the blueprint configuration for DigitalOcean, but it could be
+          extended in the future to support retrieving the blueprint configuration for Render as well.
+
+          The YAML blueprint defines the app's services, databases, and other resources,
+          and is used to deploy the app to Render/DigitalOcean.
+
+          For documentation on the YAML blueprint
+          configuration for Render, see: https://render.com/docs/blueprint-spec
+
+          For documentation on using the app.yaml configuration for DigitalOcean, see:
+          https://docs.digitalocean.com/products/app-platform/how-to/archive-restore/#using-the-app-spec
+      swaggerize:
+        short_desc: Generate Swagger JSON specification for the app's API
+        long_desc: >
+          This command generates a Swagger JSON specification for the app's API.
+          The generated specification can be used to create interactive API documentation
+          and client libraries. For documentation on Swagger configuration and
+          customization in Rails apps, see:
+          https://github.com/rswag/rswag?tab=readme-ov-file#configuration--customization
     services:
       daemonize:
         short_desc: Configure the app service as a background daemon process
@@ -69,14 +145,32 @@ en:
           trying to kill a process, please check the system process list to confirm
           that it has been terminated.
 
+      teardown:
+        short_desc: Stop and remove all/specific services for the CAMI app
+        long_desc: >
+          This command stops and removes all or specific services for the CAMI app.
+          It can be used to clean up resources and free up system resources when
+          they are no longer needed. For example, you might use this command to stop
+          and remove a local database service after you are done with development or testing.
+        options:
+          service:
+            short_desc: The name of the service to stop and remove
+            long_desc: >
+              The name of the service is a string value e.g. `app-store` or `tunnel`
+              and can be found in the app's Docker Compose configuration file or Render
+              blueprint configuration file. Engineers should ensure to keep these service
+              names consistent across development and production configurations to ensure
+              compatibility as CLI features are updated to support app instances across these
+              environments. If no service name is specified, all services will be stopped and removed.
     tunnel:
       init:
-        short_desc: Initialize proxy tunnel configuration for the CAMI app
+        short_desc: Initialize %{service} proxy tunnel configuration for the CAMI app
         long_desc: >
           This command initializes the proxy tunnel configuration for the CAMI app.
           It sets up the necessary files and directories to enable secure tunneling
           for the application in non-production environments. This feature is currently
           implemented with NGROK.
+        skip_message: 🚫 Skipping initialization of ngrok config in %{env} environment.
         options:
           force:
             short_desc: Force re-initialization of the tunnel configuration

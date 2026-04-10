@@ -14,6 +14,8 @@ module LarCity
     class UnsupportedOSError < StandardError; end
     class Unknown3rdPartyHostError < StandardError; end
     class UnexpectedDataResponseError < StandardError; end
+    class MisconfigurationError < StandardError; end
+    class AdhocValidationError < StandardError; end
 
     class IntegrationRequestFailed < StandardError
       attr_reader :status, :vendor

@@ -7,6 +7,9 @@
 # Ignore bundler config.
 /.bundle
 
+# Ignore Replit resource paths
+/vendor/bundle
+
 # Ignore the default SQLite database.
 /db/*.sqlite3
 /db/*.sqlite3-*
@@ -123,3 +126,11 @@ Temporary Items
 # Chromatic
 chromatic-diagnostics.json
 chromatic.log
+
+# DigitalOcean
+.do/*
+app*.yaml
+
+# Agents
+.claude/*
+.gemini/*

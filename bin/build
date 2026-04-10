@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+# Exit on error
+set -o errexit
+
+# Calculate script directory
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+# Decrypt secrets
+"$SCRIPT_DIR/unlock-repo"
+
+# Link credential key file
+"$SCRIPT_DIR/link-key-file"
+
+# Setup package dependencies
+yarn install --immutable
+
+# Install gems
+bundle install
+
+# Build Tailwind CSS assets
+bundle exec rake tailwindcss:build
+
+# Precompile assets
+bundle exec rake assets:precompile

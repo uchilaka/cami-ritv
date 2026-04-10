@@ -6,63 +6,65 @@ require 'thor'
 
 RSpec.describe LarCity::CLI::OutputHelpers, :time_sensitive do
   # Inline Thor class used for testing OutputHelpers behavior
-  TestThorClass = Class.new(Thor) do
-    include LarCity::CLI::OutputHelpers
+  def test_thor_class
+    Class.new(Thor) do
+      include LarCity::CLI::OutputHelpers
 
-    LarCity::CLI::OutputHelpers.define_class_options(self)
+      define_output_options(self, class_options: true)
 
-    desc 'show_secret', 'Displays the partially masked application secret'
-    def show_secret
-      partially_masked_secret(app_secret)
-    end
+      desc 'show_secret', 'Displays the partially masked application secret'
+      def show_secret
+        partially_masked_secret(app_secret)
+      end
 
-    no_commands do
-      def app_secret
-        ENV.fetch('TEST_APP_SECRET')
+      no_commands do
+        def app_secret
+          ENV.fetch('TEST_APP_SECRET')
+        end
       end
     end
   end
 
-  subject(:cmd) { TestThorClass.new }
+  subject(:cmd) { test_thor_class.new }
 
-  describe "#pretend?" do
-    subject(:cmd) { TestThorClass.new(cmd_args, **options) }
+  describe '#pretend?' do
+    subject(:cmd) { test_thor_class.new(cmd_args, **options) }
 
-    it("is a protected method") { expect(cmd.protected_methods).to include(:pretend?) }
+    it('is a protected method') { expect(cmd.protected_methods).to include(:pretend?) }
 
     let(:result) { cmd.send(:pretend?) }
     let(:cmd_args) { [] }
     let(:options) { {} }
 
-    context "when dry_run is enabled" do
+    context 'when dry_run is enabled' do
       let(:options) { { dry_run: true } }
 
       it { expect(result).to be true }
     end
 
-    context "when dry_run is disabled" do
+    context 'when dry_run is disabled' do
       let(:options) { { dry_run: false } }
 
       it { expect(result).to be false }
     end
   end
 
-  describe "#debug?" do
-    subject(:cmd) { TestThorClass.new(cmd_args, **options) }
+  describe '#debug?' do
+    subject(:cmd) { test_thor_class.new(cmd_args, **options) }
 
-    it("is a protected method") { expect(cmd.protected_methods).to include(:debug?) }
+    it('is a protected method') { expect(cmd.protected_methods).to include(:debug?) }
 
     let(:result) { cmd.send(:debug?) }
     let(:cmd_args) { [] }
     let(:options) { {} }
 
-    context "when verbose is enabled" do
+    context 'when verbose is enabled' do
       let(:options) { { verbose: true } }
 
       it { expect(result).to be true }
     end
 
-    context "when verbose is disabled" do
+    context 'when verbose is disabled' do
       let(:options) { { verbose: false } }
 
       it { expect(result).to be false }
@@ -123,49 +125,49 @@ RSpec.describe LarCity::CLI::OutputHelpers, :time_sensitive do
     end
   end
 
-  describe "#tally" do
+  describe '#tally' do
     subject(:result) { cmd.tally(set, collection_class.name) }
     let(:collection_class) { Webhook }
 
-    context "with no items" do
+    context 'with no items' do
       let(:set) { Webhook.none }
 
-      it { is_expected.to eq "0 Webhooks" }
+      it { is_expected.to eq '0 Webhooks' }
     end
 
-    context "with a single item" do
+    context 'with a single item' do
       let(:set) { Fabricate.times(1, :webhook) }
 
-      it { is_expected.to eq "1 Webhook" }
+      it { is_expected.to eq '1 Webhook' }
     end
 
-    context "with multiple items" do
+    context 'with multiple items' do
       let(:set) { Fabricate.times(3, :webhook) }
 
-      it { is_expected.to eq "3 Webhooks" }
+      it { is_expected.to eq '3 Webhooks' }
     end
   end
 
-  describe "#range" do
+  describe '#range' do
     subject(:result) { cmd.range(set) }
 
-    context "with no items" do
+    context 'with no items' do
       let(:set) { Webhook.none }
 
       it { is_expected.to be_nil }
     end
 
-    context "with a single item" do
+    context 'with a single item' do
       let(:set) { Fabricate.times(1, :webhook) }
 
-      it { is_expected.to eq "[1]" }
+      it { is_expected.to eq '[1]' }
     end
 
-    context "with multiple items" do
+    context 'with multiple items' do
       let(:set) { Fabricate.times(3, :webhook) }
       let(:ids) { set.pluck(:id).sort }
 
-      it { is_expected.to eq "[1-3]" }
+      it { is_expected.to eq '[1-3]' }
     end
   end
 end

@@ -20,6 +20,26 @@ class AppUtils
   end
 
   class << self
+    def thor_mode?
+      yes?(ENV.fetch('MJOLNIR_IS_UP', 'no'))
+    end
+
+    def asset_pipeline_disabled?
+      thor_mode?
+    end
+
+    def smtp_settings
+      smtp_config_to_env_mapping.to_h do |(rails_key, brevo_key), env_var|
+        value = ENV.fetch(env_var, nil)
+        if value.blank? && check_credentials?
+          credential_value = brevo_credentials(brevo_key)
+          [rails_key, credential_value]
+        else
+          [rails_key, value]
+        end
+      end.merge(enable_starttls_auto: yes?(ENV.fetch('SMTP_ENABLE_STARTTLS_AUTO', 'yes')))
+    end
+
     def crm_org_id
       override_value = ENV.fetch('CRM_ORG_ID', nil)
       return override_value if override_value.present?
@@ -45,16 +65,10 @@ class AppUtils
 
     # LetterOpener should be enabled by default in the development environment
     def letter_opener_enabled?
-      configured_value = Rails.application.credentials.letter_opener_enabled
-      return configured_value unless configured_value.nil?
-
       yes?(ENV.fetch('LETTER_OPENER_ENABLED', 'yes'))
     end
 
     def mailhog_enabled?
-      configured_value = Rails.application.credentials.mailhog_enabled
-      return configured_value unless configured_value.nil?
-
       yes?(ENV.fetch('MAILHOG_ENABLED', 'no'))
     end
 
@@ -89,7 +103,7 @@ class AppUtils
     def healthy?(resource_url)
       response = Faraday.get(resource_url) do |options|
         options.headers = {
-          'User-Agent' => 'VirtualOfficeManager health check bot v1.0'
+          'User-Agent' => 'VirtualOfficeManager health check bot v1.0',
         }
       end
       Rails.logger.info "Health check for #{resource_url}", response: response.inspect
@@ -115,7 +129,13 @@ class AppUtils
     def hostname
       # TODO: Check if tunnel is available and use the NGROK hostname if so
       #   otherwise, fallback to the configured hostname 👇🏾
-      ENV.fetch('HOSTNAME', Rails.application.credentials.hostname)
+      @hostname ||= ENV.fetch('HOSTNAME', nil)
+      @hostname ||=
+        if check_credentials?
+          Rails.application.credentials.hostname
+        else
+          `hostname`.strip
+        end
     end
 
     def log_level
@@ -127,7 +147,7 @@ class AppUtils
     end
 
     def daemon_script
-      @daemon_script ||= Rails.root.join("bin/start").to_s
+      @daemon_script ||= Rails.root.join('bin/start').to_s
     end
 
     def log_file
@@ -164,11 +184,84 @@ class AppUtils
       end
     end
 
+    def web_console_enabled?
+      default_value = Rails.env.development? ? 'yes' : 'no'
+
+      yes?(ENV.fetch('WEB_CONSOLE_ENABLED', default_value))
+    end
+
+    def omniauth_enabled?
+      default_value = Rails.env.test? ? 'no' : 'yes'
+
+      yes?(ENV.fetch('APP_CONFIG_OMNIAUTH_ENABLED', default_value))
+    end
+
     def jbuilder_pre_keys
       @jbuilder_pre_keys ||= begin
         keys = Rails.application.credentials&.jbuilder&.pre_keys || %i[predicate]
         keys.is_a?(Array) ? keys : [keys]
       end
+    end
+
+    def host_queue_name
+      `hostname`.strip.split('.').reverse.join('-')
+    end
+
+    # @deprecated This method is deprecated and will be removed
+    #   in a future release. Use `check_required_vars?` instead.
+    def check_env_vars?
+      return false if Rails.env.test?
+
+      yes?(ENV.fetch('APP_CONFIG_CHECK_ENV_VARS', 'yes'))
+    end
+
+    def check_required_vars?
+      return false if Rails.env.test?
+
+      yes?(ENV.fetch('APP_CONFIG_CHECK_REQUIRED_VARS', 'yes'))
+    end
+
+    def devise_jwt_secret_key!
+      if check_required_vars?
+        return ENV.fetch('APP_CONFIG_JWT_SECRET_KEY', Rails.application.credentials.devise_jwt_secret_key!)
+      end
+
+      ENV.fetch('APP_CONFIG_JWT_SECRET_KEY', Rails.application.credentials.devise_jwt_secret_key)
+    end
+
+    def database_url_present?
+      ENV['DATABASE_URL'].present?
+    end
+
+    private
+
+    def check_credentials?
+      return false if Rails.env.test?
+
+      yes?(ENV.fetch('CHECK_CREDENTIALS_ENABLED', 'no'))
+    end
+
+    def brevo_credentials(config_key)
+      @brevo_credentials ||=
+        begin
+          config = Rails.application.credentials.brevo
+          if config.blank?
+            Rails.logger.warn(I18n.t('exceptions.missing_smtp_credentials', config_key:))
+            nil
+          else
+            config[config_key]
+          end
+        end
+    end
+
+    def smtp_config_to_env_mapping
+      {
+        # [rails_config, brevo_config] => env_var_name
+        %i[address smtp_server] => 'SMTP_SERVER',
+        %i[port smtp_port] => 'SMTP_PORT',
+        %i[user_name smtp_user] => 'SMTP_USERNAME',
+        %i[password smtp_password] => 'SMTP_PASSWORD',
+      }
     end
   end
 end

@@ -1,3 +1,7 @@
 #!/usr/bin/env zsh
-bin/rails dartsass:clobber tailwindcss:clobber assets:clobber &&\
-  bin/rails dartsass:build tailwindcss:build
+
+# Calculate the application root directory
+APP_ROOT_DIR="$(dirname "${0:A}" | xargs dirname)"
+
+"$APP_ROOT_DIR/bin/rails" dartsass:clobber tailwindcss:clobber assets:clobber &&\
+  "$APP_ROOT_DIR/bin/rails" dartsass:build tailwindcss:build

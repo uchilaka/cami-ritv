@@ -21,7 +21,9 @@ module LarCity
       module InstanceMethods
         protected
 
-        def run(*args, inline: false, eval: false, &block)
+        # Runs a system command with support for dry-run mode, verbose output, and
+        # optional inline output processing when a block is given.
+        def run(*args, inline: false, mock_return: nil, eval: false, &block)
           with_interruption_rescue do
             cmd = args.compact.join(' ')
             if verbose? || dry_run?
@@ -34,25 +36,34 @@ module LarCity
                 say_info msg
               end
             end
-            return if dry_run?
+            return mock_return if dry_run?
 
-            if eval
+            result =
               if block_given?
-                # Example: doing this with Open3
-                Open3.popen2e(cmd) do |_stdin, stdout_stderr, wait_thread|
-                  Thread.new do
-                    stdout_stderr.each(&block)
+                output_buffer = []
+                status =
+                  Open3.popen2e(cmd) do |_stdin, stdout_stderr, wait_thread|
+                    reader_thread =
+                      Thread.new do
+                        stdout_stderr.each do |line|
+                          output_buffer << line
+                          block.call(line)
+                        end
+                      end
+
+                    process_status = wait_thread.value
+                    reader_thread.join # Wait for the reader thread to finish before the stream is closed
+                    process_status
                   end
-                  wait_thread.value
-                end
+                eval ? output_buffer.join : status
+              elsif eval
+                `#{cmd}`
               else
-                result = `#{cmd}`
-                return result
+                system(cmd, out: $stdout, err: :out)
               end
-            else
-              result = system(cmd, out: $stdout, err: :out)
-              return result if inline
-            end
+            # Return the result if inline, otherwise return nil. This avoids
+            # unintended consequences of returning command output in non-inline contexts
+            result if eval || inline
           end
         end
       end

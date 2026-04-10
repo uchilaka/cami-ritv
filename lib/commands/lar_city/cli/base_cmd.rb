@@ -8,9 +8,6 @@ require 'thor'
 require 'awesome_print'
 require 'concerns/operating_system_detectable'
 require 'lar_city/cli/utils'
-require 'lar_city/cli/interruptible'
-require 'lar_city/cli/reversible'
-require 'lar_city/cli/runnable'
 
 # Conventions for command or task implementation classes:
 # - Use the namespace method to define a namespace for the Thor class.
@@ -32,8 +29,8 @@ module LarCity
         include OutputHelpers
       end
 
-      EnvHelpers.define_class_options(self)
-      OutputHelpers.define_class_options(self)
+      define_env_options(self, class_options: true)
+      define_output_options(self, class_options: true)
 
       no_commands do
         include Interruptible

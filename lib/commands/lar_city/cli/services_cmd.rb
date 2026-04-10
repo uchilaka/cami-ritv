@@ -5,6 +5,8 @@ require_relative 'base_cmd'
 module LarCity
   module CLI
     class ServicesCmd < BaseCmd
+      include ControlFlowHelpers
+
       namespace 'services'
 
       class_option :profile,
@@ -23,14 +25,23 @@ module LarCity
                long_desc:, desc:, required:
       end
 
-      option :force,
-             desc: 'Force overwrite of existing daemon config',
-             type: :boolean,
-             default: false
+      def self.add_service_option(
+        desc:,
+        long_desc: nil,
+        required: false
+      )
+        option :service,
+               aliases: 's',
+               type: :array,
+               enum: %w[web app-store worker mailhog tunnel].sort,
+               desc:, long_desc:, required:
+      end
+
+      define_force_option self, class_option: false, desc: 'Force overwrite of existing daemon config'
       desc 'daemonize', 'Run a command to setup the app service as a background daemon process'
       def daemonize
-        if Rails.env.test?
-          say 'Skipping daemonize in test environment.', :red
+        if Rails.env.test? && !force?
+          say_error 'Skipping daemonize in test environment.'
           return
         end
 
@@ -144,6 +155,7 @@ module LarCity
       long_desc I18n.t('commands.services.kill.long_desc')
       def kill
         # TODO: pending implementation
+        raise NotImplementedError, 'Kill by port functionality is not yet implemented.'
       end
 
       option :pid,
@@ -187,12 +199,14 @@ module LarCity
             'logs --follow --since 5m'
       end
 
-      desc 'list', 'List the services'
-      def list
+      desc 'info', 'List the services'
+      def info
         run 'docker compose',
             profile_clause,
             'ps'
       end
+
+      map 'list' => :info
 
       desc 'logs', 'Show the logs of the services'
       def logs
@@ -208,11 +222,24 @@ module LarCity
             'stop'
       end
 
-      desc 'teardown', 'Stop and remove the services'
+      add_service_option(
+        desc: I18n.t('commands.services.teardown.options.service.short_desc'),
+        long_desc: I18n.t('commands.services.teardown.options.service.long_desc'),
+        required: false
+      )
+      desc 'teardown', I18n.t('commands.services.teardown.short_desc')
+      long_desc I18n.t('commands.services.teardown.long_desc')
       def teardown
-        run 'docker compose',
-            profile_clause,
-            'down --remove-orphans --volumes'
+        if options[:service].blank?
+          run 'docker compose',
+              profile_clause,
+              'down --remove-orphans --volumes'
+        else
+          options[:service].each do |service|
+            run 'docker compose stop', service, inline: true
+            run 'docker compose rm', '--force', '--volumes', service, inline: true
+          end
+        end
       end
 
       no_commands do
