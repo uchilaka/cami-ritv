@@ -3,6 +3,7 @@
 require 'lar_city/base_cmd_stack'
 require 'lar_city/cli/services_cmd'
 require_relative 'restore_db'
+require_relative 'features_cmd'
 
 class InitApp < Thor::Group
   include LarCity::BaseCmdStack
@@ -35,15 +36,16 @@ class InitApp < Thor::Group
   end
 
   def create_data_stores_if_not_exists
-    Rails::Command.invoke("db:create:primary")
-    Rails::Command.invoke("db:create:crm")
+    Rails::Command.invoke('db:create:primary')
+    Rails::Command.invoke('db:create:crm')
   end
 
   def maybe_restore_primary_databases_from_backup
-    if options[:restore_primary]
-      say_info "Restoring primary database from latest backup..."
-      restore_database_from_backup(target: 'primary')
-    end
+    return unless options[:restore_primary]
+
+    say_info 'Restoring primary database from latest backup...'
+    restore_database_from_backup(target: 'primary')
+
   end
 
   def wait_for_crm_database_service_health_check
@@ -51,17 +53,22 @@ class InitApp < Thor::Group
   end
 
   def apply_migrations
-    Rails::Command.invoke("db:migrate:primary")
-    Rails::Command.invoke("db:migrate:crm")
+    Rails::Command.invoke('db:migrate:primary')
+    Rails::Command.invoke('db:migrate:crm')
+    Rails::Command.invoke('data:migrate')
+  end
+
+  def setup_feature_flags
+    svc = FeaturesCmd.new
+    svc.invoke(:init, [], dry_run: pretend?, verbose: verbose?)
   end
 
   def maybe_restore_crm_database_from_backup
-    if options[:restore_crm]
-      say_info "Restoring CRM database from latest backup..."
-      restore_database_from_backup(target: 'crm')
-    end
-  end
+    return unless options[:restore_crm]
 
+    say_info 'Restoring CRM database from latest backup...'
+    restore_database_from_backup(target: 'crm')
+  end
 
   def start_all_services
     svc = LarCity::CLI::ServicesCmd.new

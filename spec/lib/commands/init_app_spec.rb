@@ -79,6 +79,7 @@ RSpec.describe InitApp, type: :command_stack do
     it 'invokes db:migrate for primary and crm' do
       expect(Rails::Command).to receive(:invoke).with('db:migrate:primary')
       expect(Rails::Command).to receive(:invoke).with('db:migrate:crm')
+      expect(Rails::Command).to receive(:invoke).with('data:migrate')
       instance.apply_migrations
     end
   end

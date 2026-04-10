@@ -20,6 +20,11 @@ class EnvSetupCmd < Thor::Group
                 enum: %w[template cli],
                 desc: 'The source system(s) to use in setting up ENV variables',
                 default: %w[template]
+  # Partial option
+  class_option :section_slug,
+               type: :string,
+               desc: 'The section of credentials to provision',
+               enum: %w[paypal-integration zoho-crm-integration]
 
   # --- Sequential steps ---
   def debug_template_file_content
@@ -61,6 +66,7 @@ class EnvSetupCmd < Thor::Group
         Pretending to write provisioned dotenv file to #{output_file_path} with the following content:
         #{template_content}
       DEBUG_MSG
+      return
     end
 
     File.write output_file_path, template_content
@@ -114,6 +120,7 @@ class EnvSetupCmd < Thor::Group
         '--output=json',
         "--item-id=#{source_item_id}",
         "--share-id=#{vault_share_id}",
+        always_run: true,
         eval: true
       )
       json_data = JSON.parse(result)
@@ -121,12 +128,18 @@ class EnvSetupCmd < Thor::Group
       erb_template_array = []
       json_data.dig('item', 'content', 'content', 'Custom', 'sections').each do |section|
         section_name, fields = section.values_at 'section_name', 'section_fields'
-        section_header = "#{'#' * 24} #{section_name} #{'#' * 24}"
+        section_slug = paramify(section_name)
+        section_header = "#{'#' * 24} #{section_name} (#{detected_environment}) #{'#' * 24}"
         erb_template_array << section_header
         # The prefix should ALWAYS be a plain text field, never hidden
         prefix = (fields.find { |f| paramify(f['name']) == 'prefix' } || {}).dig('content', 'Text')
-        say_debug "Processing section: #{section_name} with #{tally(fields, 'field')}"
-        say_debug "Found section prefix: #{prefix}" if prefix.present?
+        say_debug <<~SECTION_INFO
+          |-----------------Section-------------------
+          | Name:     #{section_name}
+          | Slug:     #{section_slug}
+          | Tally:    #{tally(fields, 'field')}
+          | Prefix:   #{(prefix.presence || '<None>').strip}
+        SECTION_INFO
         fields.each do |field|
           name, content = field.values_at 'name', 'content'
           value = content['Text'] || content['Hidden']
@@ -227,6 +240,10 @@ class EnvSetupCmd < Thor::Group
     end
 
     private
+
+    def section_only_setup?
+      options[:section_slug].present?
+    end
 
     def use_explicit_mappings?
       options[:source].include?('template')

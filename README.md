@@ -120,6 +120,9 @@ lx-cli env-setup
 
 ```shell
 .mise/services/postgresql/bin/initialize
+
+# Load essential data (like vendors) via data migrations
+bin/rails data:migrate
 ```
 
 ## Running the app

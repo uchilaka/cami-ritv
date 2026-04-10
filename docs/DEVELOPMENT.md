@@ -41,7 +41,15 @@ Initialize the application's feature flags with their default states:
 bin/thor features:init
 ```
 
-### 3. Setup Application Webhooks
+### 3. Run Data Migrations
+
+The application uses data migrations to load essential data (like vendors) into the database. Run the following command to apply these migrations:
+
+```shell
+bin/rails data:migrate
+```
+
+### 4. Setup Application Webhooks
 
 Set up the required webhooks for the app. Be sure to replace `<vendor>` with the appropriate service provider (we recommend starting with `--vendor notion`):
 
