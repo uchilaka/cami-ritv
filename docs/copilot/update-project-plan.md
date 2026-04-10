@@ -25,3 +25,10 @@ Review and merge the outstanding Dependabot PRs.
 - Re-run `bin/thor devkit:check-blueprint` to validate `render.yaml`.
 - Verify the local Docker containers build successfully (`docker compose build`).
 - Verify asset compilation succeeds (`bin/rails assets:precompile` / `yarn build`).
+
+## Session Info
+To resume the AI session that generated this plan, run:
+```shell
+gemini --resume 19f93089-d0d8-48b6-9eb6-64be1a9d14d5
+```
+

@@ -25,3 +25,10 @@ This plan covers resolving the code review feedback provided by Copilot on PR #2
 
 ## 5. Documentation
 - [ ] Add method-level documentation for `wait_for_db` and `FormatHelperMethods`.
+
+## Session Info
+To resume the AI session that generated this plan, run:
+```shell
+gemini --resume 19f93089-d0d8-48b6-9eb6-64be1a9d14d5
+```
+
