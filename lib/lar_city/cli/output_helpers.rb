@@ -34,7 +34,7 @@ module LarCity
       end
 
       module ClassMethods
-        def define_output_options(thor_class, class_options: true)
+        def define_output_options(thor_class = self, class_options: true)
           option_method = class_options ? :class_option : :option
           thor_class.public_send option_method, :help, type: :boolean, default: false
           # Define pretend option

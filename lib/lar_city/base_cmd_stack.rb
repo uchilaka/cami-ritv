@@ -8,6 +8,8 @@ require 'thor/group'
 require 'awesome_print'
 require 'concerns/operating_system_detectable'
 require 'lar_city/cli/utils'
+require 'lar_city/cli/env_helpers'
+require 'lar_city/cli/output_helpers'
 require 'lar_city/cli/interruptible'
 require 'lar_city/cli/reversible'
 require 'lar_city/cli/runnable'
@@ -23,10 +25,10 @@ module LarCity
         base.include OperatingSystemDetectable
         base.include LarCity::CLI::EnvHelpers
         base.include LarCity::CLI::OutputHelpers
-      end
 
-      LarCity::CLI::EnvHelpers.define_class_options(base)
-      LarCity::CLI::OutputHelpers.define_class_options(base)
+        base.define_env_options
+        base.define_output_options
+      end
 
       # TODO: Is this "no_commands" block wrapper necessary?
       base.no_commands do

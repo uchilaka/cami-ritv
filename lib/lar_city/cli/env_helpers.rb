@@ -22,7 +22,7 @@ module LarCity
       end
 
       module ClassMethods
-        def define_env_options(thor_class, class_options: true)
+        def define_env_options(thor_class = self, class_options: true)
           option_method = class_options ? :class_option : :option
           # Define Environment option
           thor_class
