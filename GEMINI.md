@@ -85,5 +85,6 @@ Please ask me:
 2. What the primary goal of the session is - Make this a multiple choice question with these options: Architecture & System Design, Complex Bug Resolution, System-wide Refactoring, Code Review & Mentoring, Performance Optimization.
 3. Any specific files or contexts I want you to prioritize.
 4. Whether to proceed in "Yolo" mode - Ensure that this enables Yolo for the session.
+5. **(New) Add a "Skip" or "None" option to all multiple-choice questions to allow for a quick startup.**
 
 Do not proceed with any other tasks until I have answered these questions. Read GEMINI.md to understand my stack and rules. Update the Shared Memory section before you finish.

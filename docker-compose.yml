@@ -60,12 +60,13 @@ services:
       POSTGRES_DB: ${APP_DATABASE_NAME}
       POSTGRES_USER: ${APP_DATABASE_USER}
       POSTGRES_PASSWORD: ${APP_DATABASE_PASSWORD}
+      CRM_DATABASE_NAME: ${CRM_DATABASE_NAME}
       POSTGRES_HOST_AUTH_METHOD: trust # IMPORTANT allows all connections without a password - experimental only!
     ports:
       - "16032:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./db/${RAILS_ENV:-development}/postgres/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d:ro
+      - ./db/shared/postgres/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d:ro
     healthcheck:
       test: pg_isready -U ${APP_DATABASE_USER} -h localhost -d ${APP_DATABASE_NAME}
       interval: 5s
@@ -183,26 +184,6 @@ services:
       - standalone
       - all
 
-  # TODO: deprecate this service in favor of just app-store
-  crm-store:
-    image: postgres:17
-    container_name: db.twenty.larcity
-    volumes:
-      - server_postgres_data:/var/lib/postgresql/data
-      - ./db/${NODE_ENV:-development}/postgres/downloads:/usr/local/downloads
-    environment:
-      POSTGRES_DB: ${CRM_DATABASE_NAME:-default}
-      POSTGRES_PASSWORD: ${APP_DATABASE_PASSWORD}
-      POSTGRES_USER: ${APP_DATABASE_USER}
-    healthcheck:
-      test: pg_isready -U ${APP_DATABASE_USER} -h localhost -d ${CRM_DATABASE_NAME:-default}
-      interval: 5s
-      timeout: 5s
-      retries: 10
-    restart: always
-    profiles:
-      - all
-
   crm-app:
     container_name: twenty-server.cami.larcity
     image: twentycrm/twenty:${TAG:-latest}
@@ -212,7 +193,7 @@ services:
       - "${CRM_SERVICE_PORT:-16016}:3000"
     environment:
       NODE_PORT: 3000
-      PG_DATABASE_URL: postgres://${APP_DATABASE_USER:-postgres}:${APP_DATABASE_PASSWORD:-postgres}@${CRM_DATABASE_HOST:-app-store}:${CRM_DATABASE_PORT:-5432}/${CRM_DATABASE_NAME:-default}
+      PG_DATABASE_URL: postgres://${APP_DATABASE_USER:-postgres}:${APP_DATABASE_PASSWORD:-postgres}@db.cami.larcity:${CRM_DATABASE_PORT:-5432}/${CRM_DATABASE_NAME:-default}
       SERVER_URL: ${SERVER_URL}
       REDIS_URL: ${CRM_REDIS_URL:-redis://redis:6379}
       DISABLE_DB_MIGRATIONS: ${DISABLE_DB_MIGRATIONS}
@@ -271,7 +252,7 @@ services:
       - server_local_data:/app/packages/twenty-server/.local-storage
     command: ["yarn", "worker:prod"]
     environment:
-      PG_DATABASE_URL: postgres://${APP_DATABASE_USER:-postgres}:${APP_DATABASE_PASSWORD:-postgres}@${CRM_DATABASE_HOST:-app-store}:${CRM_DATABASE_PORT:-5432}/${CRM_DATABASE_NAME:-default}
+      PG_DATABASE_URL: postgres://${APP_DATABASE_USER:-postgres}:${APP_DATABASE_PASSWORD:-postgres}@db.cami.larcity:${CRM_DATABASE_PORT:-5432}/${CRM_DATABASE_NAME:-default}
       SERVER_URL: ${SERVER_URL}
       REDIS_URL: ${CRM_REDIS_URL:-redis://redis:6379}
       DISABLE_DB_MIGRATIONS: "true" # it already runs on the server
@@ -320,7 +301,6 @@ services:
 
 volumes:
   postgres_data:
-  server_postgres_data:
   server_local_data:
 
 secrets:
