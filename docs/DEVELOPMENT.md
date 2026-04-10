@@ -43,10 +43,10 @@ bin/thor features:init
 
 ### 3. Setup Application Webhooks
 
-Set up the required webhooks for the app. Be sure to replace `<vendor>` with the appropriate service provider (e.g., `stripe`, `github`, etc.):
+Set up the required webhooks for the app. Be sure to replace `<vendor>` with the appropriate service provider (we recommend starting with `--vendor notion`):
 
 ```shell
-bin/thor devkit:setup_webhooks -s <vendor>
+bin/thor devkit:setup_webhooks -s notion
 ```
 
 ### 4. Setup Your Admin User
