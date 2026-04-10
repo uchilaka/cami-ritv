@@ -14,6 +14,12 @@ class EnvSetupCmd < Thor::Group
   end
 
   define_output_options self, class_options: true
+  # Select the source system to use
+  class_option  :source,
+                type: :array,
+                enum: %w[template cli],
+                desc: 'The source system(s) to use in setting up ENV variables',
+                default: %w[template]
 
   # --- Sequential steps ---
   def debug_template_file_content
@@ -43,38 +49,100 @@ class EnvSetupCmd < Thor::Group
     end
   end
 
-  def provision_env_file_from_template
-    require_template_exists!
-    require_proton_pass_cli!
-
-    say_info "Provisioning #{output_file_path} file from template at #{template_file_path}..."
-    result = run(
-      'pass-cli inject',
-      "--in-file #{template_file_path}",
-      "--out-file #{output_file_path}",
-      '--force',
-      eval: true
-    ) do |line|
-      say_debug line
+  def provision_env_file
+    if use_explicit_mappings?
+      # This process will also check for and fold in source item data if requested
+      provision_env_file_from_template
+      return
     end
-    say_debug <<~DEBUG_MSG
-      Result of provisioning dotenv file from template: #{result.inspect}
-    DEBUG_MSG
 
-    if %r{injected successfully}.match?(result)
-      say_success "Successfully provisioned dotenv file at #{output_file_path} from template."
-    elsif %r{requires an authenticated client}.match?(result)
-      say_error "Authentication required to access Proton Vault. Please sign in by running: `pass-cli login`"
-    else
-      say_error <<~ERROR_MSG
-        Failed to provision dotenv file from template. \
-        Ensure that you have access to the required secrets in Proton Vault and that your authentication is valid. \
-        You can also try running the setup command with --verbose and check for error messages in the result.
-      ERROR_MSG
+    if pretend?
+      say_debug <<~DEBUG_MSG
+        Pretending to write provisioned dotenv file to #{output_file_path} with the following content:
+        #{template_content}
+      DEBUG_MSG
     end
+
+    File.write output_file_path, template_content
   end
 
   no_commands do
+    def paramify(value, separator: '-')
+      return '' if value.blank?
+
+      value.to_s.parameterize(separator:).strip
+    end
+
+    def provision_env_file_from_template
+      require_template_exists!
+      require_proton_pass_cli!
+
+      say_info "Provisioning #{output_file_path} file from template at #{template_file_path}..."
+      result = run(
+        'pass-cli inject',
+        "--in-file #{template_file_path}",
+        "--out-file #{output_file_path}",
+        '--force',
+        mock_return: 'injected successfully',
+        eval: true
+      ) do |line|
+        say_debug line
+      end
+      say_debug <<~DEBUG_MSG
+        Result of provisioning dotenv file from template: #{result.inspect}
+      DEBUG_MSG
+
+      if %r{injected successfully}.match?(result)
+        say_success "Successfully provisioned dotenv file at #{output_file_path} from template."
+      elsif %r{requires an authenticated client}.match?(result)
+        say_error 'Authentication required to access Proton Vault. Please sign in by running: `pass-cli login`'
+      else
+        say_error <<~ERROR_MSG
+          Failed to provision dotenv file from template. \
+          Ensure that you have access to the required secrets in Proton Vault and that your authentication is valid. \
+          You can also try running the setup command with --verbose and check for error messages in the result.
+        ERROR_MSG
+      end
+    end
+
+    def env_content_from_source_item_data
+      require_proton_pass_cli!
+
+      say_info "Provisioning #{output_file_path} file from #{detected_environment} vault source item data..."
+      result = run(
+        'pass-cli item view',
+        '--output=json',
+        "--item-id=#{source_item_id}",
+        "--share-id=#{vault_share_id}",
+        eval: true
+      )
+      json_data = JSON.parse(result)
+      say_debug JSON.pretty_generate(json_data)
+      erb_template_array = []
+      json_data.dig('item', 'content', 'content', 'Custom', 'sections').each do |section|
+        section_name, fields = section.values_at 'section_name', 'section_fields'
+        section_header = "#{'#' * 24} #{section_name} #{'#' * 24}"
+        erb_template_array << section_header
+        # The prefix should ALWAYS be a plain text field, never hidden
+        prefix = (fields.find { |f| paramify(f['name']) == 'prefix' } || {}).dig('content', 'Text')
+        say_debug "Processing section: #{section_name} with #{tally(fields, 'field')}"
+        say_debug "Found section prefix: #{prefix}" if prefix.present?
+        fields.each do |field|
+          name, content = field.values_at 'name', 'content'
+          value = content['Text'] || content['Hidden']
+          next if value.blank? || paramify(name) == 'prefix'
+
+          var_name = [prefix, paramify(name, separator: '_')].compact.join('_').upcase
+          erb_template_array << "export #{var_name}=\"#{value}\""
+        end
+        erb_template_array << "\n"
+      end
+      erb_template_array.join("\n")
+    rescue JSON::ParserError => e
+      say_error e.message
+      nil
+    end
+
     def template_content
       say_debug <<~DEBUG_MSG
         Fetching environment variable values from Proton Vault to initialize \
@@ -101,6 +169,56 @@ class EnvSetupCmd < Thor::Group
         # Process the ERB template file bound to current execution context
         ERB.new(File.read(dotenv_template_file_path)).result(binding)
       else
+        shared_header = <<~SHARED_HEADER
+          # This file is auto-generated from an ERB template for configuration
+          # of secret mappings. The secrets to be provisioned are managed in a
+          # Proton Pass Vault.
+          #
+          # ERB template: #{dotenv_template_file_path}
+          #
+          # To update the secrets, modify the corresponding item in the vault and
+          # re-run this command.
+          #
+          # Do NOT edit this file directly, as changes will be overwritten.
+          # -----------------------------------------------------------------
+          # Last generated at: #{Time.current.iso8601}
+          # -----------------------------------------------------------------
+          export NODE_ENV=#{detected_environment}
+        SHARED_HEADER
+
+        file_header = <<~HEADER
+          export GITCRYPT_KEY_FILE="config/credentials/git-crypt.key"
+          export PORT=16006
+
+          # Was 1 for local debugging
+          export RAILS_QUEUE_THREADS=3
+          export RAILS_MIN_THREADS=3
+          export RAILS_MAX_THREADS=5
+
+          # TODO: Testing between 0 and 2 while observing +[NSCharacterSet initialize] crashing issues on local
+          export WEB_CONCURRENCY=0
+
+          # TODO: See https://github.com/railsjazz/rails_live_reload/pull/42
+          #export RAILS_LIVE_RELOAD_ENABLED=yes
+        HEADER
+
+        file_footer = <<~FOOTER
+          export DEFAULT_EMAIL_SENDER="do-not-reply@larcity.tech"
+          export INVOICING_EMAIL_SENDER="invoicing@lar.city"
+          export MARKETING_EMAIL_SENDER="info@lar.city"
+
+          #export SEMANTIC_LOGGER_STREAMING_ENABLED="yes"
+          export APP_DEBUG_MODE=no
+          export OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES
+          export DISABLE_SPRING=true
+
+          # Email controls
+          #export SEND_EMAILS_ENABLED=yes
+
+          # ETL
+          #export UPSERT_INVOICE_BATCH_LIMIT=1000
+        FOOTER
+
         say_warning "⚠️ No environment-specific .env template found at #{dotenv_template_file_path}. Proceeding with default template content."
         build_template_body(shared_header, file_header) do |content|
           [content, file_footer].join("\n")
@@ -110,6 +228,14 @@ class EnvSetupCmd < Thor::Group
 
     private
 
+    def use_explicit_mappings?
+      options[:source].include?('template')
+    end
+
+    def use_source_item_data?
+      options[:source].include?('cli')
+    end
+
     def dotenv_template_file_path
       Rails.root.join('config', 'dotenvs', ".env.#{detected_environment}.erb").to_s
     end
@@ -117,40 +243,50 @@ class EnvSetupCmd < Thor::Group
     def build_template_body(*parts)
       erb_template_array = [*parts.map(&:to_s)]
 
-      # Provision secrets from ENV variable item in Proton Vault
-      erb_template_array << "# #{item_sections['platform']}"
-      platform_env_sets.each do |env_key, vault_field|
-        vault_field ||= env_key
-        erb_template_array <<
-          "export #{env_key}=\"{{ pass://#{value_path(vault_share_id, shared_source_item_id, vault_field)} }}\""
-      end
-
-      # Provision secrets in other sections
-      sections = item_env_sets.map do |_env_key, _vault_field, item_section|
-        item_section
-      end.flatten.uniq
-
-      say_debug ''
-      say_debug '|--------- Sections ---------|'
-      say_debug sections.map { |s| "- #{s}" }.join("\n").to_s
-      say_debug '|----------------------------|'
-      say_debug ''
-
-      erb_template_array << ''
-      sections.each do |section|
-        next if section == 'platform'
-
-        erb_template_array <<
-          "# #{item_sections[section] || section.capitalize}"
-
-        item_env_sets_by(section:).each do |env_key, vault_field, _item_section|
+      if use_explicit_mappings?
+        # Provision secrets from ENV variable item in Proton Vault
+        erb_template_array << "# #{item_sections['platform']}"
+        platform_env_sets.each do |env_key, vault_field|
           vault_field ||= env_key
           erb_template_array <<
-            "export #{env_key}=\"{{ pass://#{value_path(vault_share_id, source_item_id, vault_field)} }}\""
+            "export #{env_key}=\"{{ pass://#{value_path(vault_share_id, shared_source_item_id, vault_field)} }}\""
         end
 
+        # Provision secrets in other sections
+        sections = item_env_sets.map do |_env_key, _vault_field, item_section|
+          item_section
+        end.flatten.uniq
+
+        say_debug ''
+        say_debug '|--------- Sections ---------|'
+        say_debug sections.map { |s| "- #{s}" }.join("\n").to_s
+        say_debug '|----------------------------|'
+        say_debug ''
+
+        # We are currently always generating the ENV file with template mappings included for the
+        # "Extra fields" (i.e. non-sectioned items) but the intent is to migrate over to using the
+        # sections feature in the Vault to organize as well as annotate the contents in the output
+        # file. In the future, we will only support either of the output modes but not both, so the
+        # template will be simplified to only support the sectioned output mode.
         erb_template_array << ''
+        sections.each do |section|
+          next if section == 'platform'
+
+          erb_template_array <<
+            "# #{item_sections[section] || section.capitalize}"
+
+          item_env_sets_by(section:).each do |env_key, vault_field, _item_section|
+            vault_field ||= env_key
+            erb_template_array <<
+              "export #{env_key}=\"{{ pass://#{value_path(vault_share_id, source_item_id, vault_field)} }}\""
+          end
+
+          erb_template_array << ''
+        end
       end
+
+      # Optionally compose data from the source item sections if requested
+      erb_template_array << env_content_from_source_item_data if use_source_item_data?
 
       if block_given?
         yield erb_template_array.join("\n")
@@ -177,7 +313,7 @@ class EnvSetupCmd < Thor::Group
       [
         ['APP_DATABASE_USER', nil],
         ['APP_DATABASE_PASSWORD', nil],
-        ['APP_DATABASE_PORT', nil]
+        ['APP_DATABASE_PORT', nil],
       ]
     end
 
@@ -250,62 +386,6 @@ class EnvSetupCmd < Thor::Group
 
     def template_file_path
       @template_path ||= Rails.root.join('.env.tpl').to_s
-    end
-
-    def shared_header
-      @shared_header ||= <<~SHARED_HEADER
-        # This file is auto-generated from an ERB template for configuration
-        # of secret mappings. The secrets to be provisioned are managed in a
-        # Proton Pass Vault.
-        #
-        # ERB template: #{dotenv_template_file_path}
-        #
-        # To update the secrets, modify the corresponding item in the vault and
-        # re-run this command.
-        #
-        # Do NOT edit this file directly, as changes will be overwritten.
-        # -----------------------------------------------------------------
-        # Last generated at: #{Time.current.iso8601}
-        # -----------------------------------------------------------------
-        export NODE_ENV=#{detected_environment}
-      SHARED_HEADER
-    end
-
-    def file_header
-      @file_header ||= <<~HEADER
-        export GITCRYPT_KEY_FILE="config/credentials/git-crypt.key"
-        export PORT=16006
-
-        # Was 1 for local debugging
-        export RAILS_QUEUE_THREADS=3
-        export RAILS_MIN_THREADS=3
-        export RAILS_MAX_THREADS=5
-
-        # TODO: Testing between 0 and 2 while observing +[NSCharacterSet initialize] crashing issues on local
-        export WEB_CONCURRENCY=0
-
-        # TODO: See https://github.com/railsjazz/rails_live_reload/pull/42
-        #export RAILS_LIVE_RELOAD_ENABLED=yes
-      HEADER
-    end
-
-    def file_footer
-      @file_footer ||= <<~FOOTER
-        export DEFAULT_EMAIL_SENDER="do-not-reply@larcity.tech"
-        export INVOICING_EMAIL_SENDER="invoicing@lar.city"
-        export MARKETING_EMAIL_SENDER="info@lar.city"
-
-        #export SEMANTIC_LOGGER_STREAMING_ENABLED="yes"
-        export APP_DEBUG_MODE=no
-        export OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES
-        export DISABLE_SPRING=true
-
-        # Email controls
-        #export SEND_EMAILS_ENABLED=yes
-
-        # ETL
-        #export UPSERT_INVOICE_BATCH_LIMIT=1000
-      FOOTER
     end
 
     def master_key_from_file
