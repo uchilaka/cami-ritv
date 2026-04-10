@@ -8,6 +8,8 @@ class RestoreDb < Thor::Group
 
   attr_reader :data_source_file, :restore_file
 
+  namespace 'restore-db'
+
   class_option :target,
                type: :string,
                required: true,
@@ -16,9 +18,9 @@ class RestoreDb < Thor::Group
                default: 'primary'
 
   class_option :latest_backup,
-                type: :boolean,
-                desc: 'Automatically select the latest backup file without prompting',
-                default: false
+               type: :boolean,
+               desc: 'Automatically select the latest backup file without prompting',
+               default: false
 
   desc 'Command to restore a database from a backup file'
 

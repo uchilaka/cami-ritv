@@ -67,6 +67,7 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./db/shared/postgres/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d:ro
+      - ./db/${RAILS_ENV:-development}/postgres/downloads:/usr/local/downloads:ro
     healthcheck:
       test: pg_isready -U ${APP_DATABASE_USER} -h localhost -d ${APP_DATABASE_NAME}
       interval: 5s
