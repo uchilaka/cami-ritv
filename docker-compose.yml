@@ -65,6 +65,7 @@ services:
       - "16032:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+      - ./db/${RAILS_ENV:-development}/postgres/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d:ro
     healthcheck:
       test: pg_isready -U ${APP_DATABASE_USER} -h localhost -d ${APP_DATABASE_NAME}
       interval: 5s
@@ -310,7 +311,7 @@ services:
     depends_on:
       app-store:
         condition: service_healthy
-      server:
+      crm-app:
         condition: service_healthy
     profiles:
       - all
