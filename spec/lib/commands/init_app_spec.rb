@@ -48,8 +48,8 @@ RSpec.describe InitApp, type: :command_stack do
     end
   end
 
-  describe '#wait_for_database_service_health_check' do
-    subject(:health_check) { instance.wait_for_database_service_health_check }
+  describe '#wait_for_primary_database_service_health_check' do
+    subject(:health_check) { instance.wait_for_primary_database_service_health_check }
 
     before do
       allow(instance).to receive(:run).and_call_original
