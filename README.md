@@ -88,13 +88,11 @@ You can get the environment master keys from the Proton Pass vault (search for "
 
 Alternatively, you can follow the Rails convention for maintaining credentials in the open - if doing so, the credentials will be encrypted in a `./config/credentials/<environment>.yml.enc` file and the master key can be set in a corresponding credentials file. Reference the following table for the corresponding master key value for your environment.
 
-| Environment        | Master key file name                      |
-| ------------------ | ----------------------------------------- |
-| `development`      | `./config/credentials/development.key`    |
-| ------------------ | ----------------------------------------- |
-| `lab`              | `./config/credentials/lab.key`            |
-| ------------------ | ----------------------------------------- |
-| `test`             | `./config/credentials/test.key`           |
+| Environment   | Master key file name                   |
+| ------------- | -------------------------------------- |
+| `development` | `./config/credentials/development.key` |
+| `lab`         | `./config/credentials/lab.key`         |
+| `test`        | `./config/credentials/test.key`        |
 
 ### 5. Run the CLI setup command
 
