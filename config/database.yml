@@ -89,6 +89,7 @@ test:
     password: <%= ENV.fetch('APP_DATABASE_PASSWORD', postgres_creds&.password) %>
   crm:
     <<: *primary_test
+    database: twenty_crm_test
 
 lab:
   primary: &primary_lab
