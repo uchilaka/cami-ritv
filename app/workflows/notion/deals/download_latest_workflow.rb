@@ -125,7 +125,7 @@ module Notion
           next_page_params = context.query_params.merge(start_cursor: next_cursor)
 
           response = client.database_query(
-            database_id: database_id,
+            database_id:,
             query_params: next_page_params
           )
 

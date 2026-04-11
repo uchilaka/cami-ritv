@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
 RSpec.describe 'accounts/new', type: :view do
@@ -14,7 +16,6 @@ RSpec.describe 'accounts/new', type: :view do
     render
 
     assert_select 'form[action=?][method=?]', accounts_path, 'post' do
-
       assert_select 'input[name=?]', 'account[display_name]'
 
       assert_select 'input[name=?]', 'account[slug]'

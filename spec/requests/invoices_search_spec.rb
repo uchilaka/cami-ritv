@@ -101,7 +101,7 @@ RSpec.describe 'Invoice Search API', type: :request, feature: :invoicing do
           oneOf: [
             { '$ref': '#/components/schemas/invoice_search_params' },
             { '$ref': '#/components/schemas/invoice_search_params_with_array_mode' },
-          ]
+          ],
         }
 
         response '200', 'invoices found' do

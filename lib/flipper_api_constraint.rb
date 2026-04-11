@@ -7,7 +7,7 @@ class FlipperApiConstraint < ApplicationRouteConstraint
   def matches?(request)
     Rails.logger.info log_prefix(__method__), request: {
       remote_ip: request.remote_ip,
-      forwarded_for: request.forwarded_for
+      forwarded_for: request.forwarded_for,
     }
 
     request.method == 'GET' || admin_scope_constraint.matches?(request)

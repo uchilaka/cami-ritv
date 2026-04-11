@@ -39,7 +39,7 @@ RSpec.describe InvoiceSearchQuery, type: :query do
         {
           'q' => qs,
           'f' => {},
-          's' => {}
+          's' => {},
         }
       end
 
@@ -50,7 +50,7 @@ RSpec.describe InvoiceSearchQuery, type: :query do
       let(:params) do
         {
           'q' => qs,
-          's' => { 'dueAt' => 'desc' }
+          's' => { 'dueAt' => 'desc' },
         }
       end
 
@@ -65,7 +65,7 @@ RSpec.describe InvoiceSearchQuery, type: :query do
         'mode' => 'array',
         'q' => qs,
         'f' => [{ 'field' => 'status', 'value' => status.upcase }],
-        's' => [{ 'field' => 'dueAt', 'direction' => 'desc' }]
+        's' => [{ 'field' => 'dueAt', 'direction' => 'desc' }],
       }
     end
 
@@ -84,7 +84,7 @@ RSpec.describe InvoiceSearchQuery, type: :query do
       {
         'q' => qs,
         'f' => { 'status' => status.upcase },
-        's' => { 'dueAt' => 'desc' }
+        's' => { 'dueAt' => 'desc' },
       }
     end
 
@@ -109,19 +109,19 @@ RSpec.describe InvoiceSearchQuery, type: :query do
     it_should_behave_like 'search by query string',
                           'logistics',
                           {
-                            'invoice_number_or_invoiceable_of_Account_type_display_name_or_invoiceable_of_Account_type_email_cont' => 'logistics'
+                            'invoice_number_or_invoiceable_of_Account_type_display_name_or_invoiceable_of_Account_type_email_cont' => 'logistics',
                           }
     it_should_behave_like 'search filtering by status and sorting by due date (with array of hashes inputs)',
                           'logistics', 'PAID',
                           {
                             'invoice_number_or_invoiceable_of_Account_type_display_name_or_invoiceable_of_Account_type_email_cont' => 'logistics',
-                            :status_eq => 'paid'
+                            :status_eq => 'paid',
                           }
     it_should_behave_like 'search filtering by status and sorting by due date',
                           'logistics', 'SENT',
                           {
                             'invoice_number_or_invoiceable_of_Account_type_display_name_or_invoiceable_of_Account_type_email_cont' => 'logistics',
-                            :status_eq => 'sent'
+                            :status_eq => 'sent',
                           }
   end
 end

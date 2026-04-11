@@ -1,7 +1,7 @@
 # encoding : utf-8
+# frozen_string_literal: true
 
 MoneyRails.configure do |config|
-
   # To set the default currency
   #
   config.default_currency = :usd
@@ -41,7 +41,7 @@ MoneyRails.configure do |config|
     type: :string,
     present: true,
     null: false,
-    default: 'USD'
+    default: 'USD',
   }
 
   # Register a custom currency
