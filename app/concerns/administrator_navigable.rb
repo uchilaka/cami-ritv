@@ -23,17 +23,12 @@ module AdministratorNavigable
     end
 
     def show_native_objects_admin_link?
-      base_url = ENV['PUBLIC_DOMAIN_URL']
-      unless Rails.env.development?
-        return false if base_url.blank?
+      if Rails.env.development?
+        ENV['PUBLIC_DOMAIN_URL'].present? || ENV['SERVER_URL'].present?
+      else
+        ENV['PUBLIC_DOMAIN_URL'].present?
       end
-
-      base_url ||= ENV['SERVER_URL']
-      return false if base_url.blank?
-
-      true
     end
-
     def admin_menu
       @admin_menu ||= [
         { label: I18n.t("globals.shared.navbar.products"), path: '/products', admin: true },
