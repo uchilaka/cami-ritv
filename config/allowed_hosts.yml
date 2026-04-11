@@ -9,6 +9,7 @@ lab:
   - accounts.lab.larcity.dev
   - accounts.lab.larcity.hopto.org
 staging:
+  - cami-staging-app-ghexn.ondigitalocean.app
   - accounts.staging.lar.city
   - accounts.staging.larcity.org
   - accounts.staging.larcity.tech
@@ -20,6 +21,7 @@ staging:
   #- accounts.staging.madebylar.city
   #- accounts.staging.larcity.com
 production:
+  - larcity-production-app-98wcr.ondigitalocean.app
   - cami-production.onrender.com
   - accounts.larcity.hopto.org
   #- accounts.ho.lar.city
