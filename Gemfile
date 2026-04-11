@@ -2,6 +2,7 @@
 
 source 'https://rubygems.org'
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
+ruby "3.4.4"
 
 # Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
 gem 'rails', '~> 8.0'
@@ -116,12 +117,14 @@ group :development, :test do
   gem 'climate_control'
   gem 'fabrication'
   gem 'faker'
+  gem 'knapsack_pro'
   gem 'open3'
   gem 'rspec-rails', '~> 7'
   gem 'rswag-specs'
   gem 'rubocop', require: false
   gem 'rubocop-rails-omakase', require: false
   gem 'strong_migrations'
+  gem 'pry'
 end
 
 group :development do

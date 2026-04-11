@@ -71,7 +71,8 @@ module Swagger
           },
           type: {
             type: :string,
-            pattern: '^(page.created|page.content_updated|page.deleted|page.moved|page.properties_updated|database.content_updated|database.schema_updated|database.deleted)$',
+            pattern: '^(page\.(created|content_updated|deleted|moved|properties_updated)|' \
+                     'database\.(content_updated|schema_updated|deleted))$',
           },
           entity: {
             '$ref' => '#/components/schemas/notion_entity',
@@ -129,7 +130,9 @@ module Swagger
         properties: {
           id: { type: :string },
           account: {
-            '$ref' => '#/components/schemas/account',
+            allOf: [
+              { '$ref' => '#/components/schemas/account' },
+            ],
             nullable: true,
           },
           contacts: {

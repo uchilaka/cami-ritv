@@ -22,11 +22,15 @@ RSpec.describe LarCity::CLI::DDNSCmd do
       builder.adapter :test, stubs
     end
   end
+  let(:mock_credentials) do
+    credentials = ActiveSupport::OrderedOptions.new
+    credentials.access_token = access_token
+    credentials
+  end
 
   before do
     # Stub environment variables
-    allow(Rails.application.credentials).to \
-      receive(:digitalocean).and_return(OpenStruct.new(access_token:))
+    allow(Rails.application.credentials).to receive(:digitalocean).and_return(mock_credentials)
 
     # Stub the HTTP client to use our test adapter
     allow(LarCity::HttpClient).to receive(:client).and_return(test_client)
@@ -95,6 +99,87 @@ RSpec.describe LarCity::CLI::DDNSCmd do
       )
 
       instance.upsert
+    end
+  end
+
+  describe '#prune', skip: 'TODO: Evaluate sloppy tests' do
+    let(:options) do
+      {
+        domain:,
+        record: record_name,
+        type: record_type,
+        batch_size: 25,
+      }
+    end
+    let(:records) do
+      [
+        { 'id' => '1', 'name' => record_name, 'type' => record_type, 'data' => '1.1.1.1' },
+        { 'id' => '2', 'name' => record_name, 'type' => record_type, 'data' => '2.2.2.2' },
+        { 'id' => '3', 'name' => record_name, 'type' => record_type, 'data' => '3.3.3.3' },
+      ]
+    end
+
+    before do
+      allow(instance).to receive(:say)
+      allow(instance).to receive(:say_info)
+      allow(instance).to receive(:say_warning)
+      allow(instance).to receive(:options).and_return(options)
+      allow(DigitalOcean::DeleteDomainRecordJob).to receive_message_chain(:set, :perform_later)
+    end
+
+    context 'when only one record is found' do
+      before do
+        stubs.get(%r{/v2/domains/#{domain}/records}) do |_env|
+          [200, { 'Content-Type' => 'application/json' },  'domain_records' => [records.first]]
+        end
+      end
+
+      it 'does not prune any records' do
+        instance.prune
+        expect(DigitalOcean::DeleteDomainRecordJob).not_to have_received(:set)
+      end
+    end
+
+    context 'when multiple records are found' do
+      let(:expected_job_args) do
+        [
+          [records.dig(1, 'id'), domain:, access_token: anything, pretend: anything],
+          [records.dig(2, 'id'), domain:, access_token: anything, pretend: anything],
+        ]
+      end
+
+      before do
+        ActiveJob::Base.queue_adapter = :test
+        stubs.get(%r{/v2/domains/#{domain}/records}) do |_env|
+          [200, { 'Content-Type' => 'application/json' }, 'domain_records' => records]
+        end
+        stubs.delete(%r{/v2/domains/#{domain}/records/\d+}) do |_env|
+          [200, 'Content-Type' => 'application/json']
+        end
+      end
+
+      it 'prunes the extra records' do
+        instance.prune
+        expect(DigitalOcean::DeleteDomainRecordJob).to have_been_enqueued.exactly(2).times
+        # expect { instance.prune }.to \
+        #   have_enqueued_job(DigitalOcean::DeleteDomainRecordJob)
+        #     .with(*expected_job_args[0]).on_queue(:critical)
+      end
+    end
+
+    context 'when no records are found' do
+      before do
+        stubs.get(%r{/v2/domains/#{domain}/records}) do |_env|
+          [200, { 'Content-Type' => 'application/json' }, 'domain_records' => []]
+        end
+      end
+
+      it 'prints a warning message' do
+        instance.prune
+        expect(instance).to have_received(:say_warning) do |*args|
+          expect(args).to eq(["No records found for #{record_name}.#{domain} on #{domain}"])
+        end
+      end
     end
   end
 
@@ -331,7 +416,7 @@ RSpec.describe LarCity::CLI::DDNSCmd do
 
   describe '#access_token' do
     before do
-      # Clear any existing stubs
+      # TODO: Clear any existing stubs
       # stubs.instance_variable_get(:@stack).clear
       # RSpec::Mocks.teardown
 
@@ -378,11 +463,13 @@ RSpec.describe LarCity::CLI::DDNSCmd do
 
     context 'when token is in credentials',
             skip: 'deprecated in favor of handling within the DigitalOcean::API implementation' do
-      before do
-        allow(instance).to receive(:options).and_return({})
-        allow(Rails.application.credentials).to \
-          receive(:digitalocean).and_return(OpenStruct.new(access_token: 'credential_token'))
+      let(:mock_credentials) do
+        credentials = ActiveSupport::OrderedOptions.new
+        credentials.access_token = 'credential_token'
+        credentials
       end
+
+      before { allow(instance).to receive(:options).and_return({}) }
 
       it 'returns the token from credentials' do
         expect(instance.send(:access_token)).to eq('credential_token')
@@ -392,7 +479,6 @@ RSpec.describe LarCity::CLI::DDNSCmd do
     context 'when no token is available' do
       before do
         allow(instance).to receive(:options).and_return({})
-        # allow(ENV).to receive(:fetch).with('DIGITALOCEAN_ACCESS_TOKEN', nil).and_return(nil)
         allow(Rails.application.credentials).to receive(:digitalocean).and_return(nil)
         allow(instance).to receive(:say_error).with(
           'DigitalOcean API token not provided. Use --token or set DIGITALOCEAN_TOKEN environment variable.'

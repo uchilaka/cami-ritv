@@ -27,6 +27,10 @@ module SharedNavigable
       "https://developer.paypal.com/dashboard/applications/#{paypal_env}"
     end
 
+    def zoho_crm_dashboard_url
+      "https://crm.zoho.com/crm/org#{crm_org_id}/tab/Home/begin"
+    end
+
     def system_log_url
       @system_log_url ||= VirtualOfficeManager.logstream_vendor_url
     end

@@ -4,6 +4,34 @@ info:
   title: API V1
   version: v1
 paths:
+  "/api/v1/form_data/countries":
+    get:
+      summary: Retrieves a list of countries
+      tags:
+      - Form Data
+      responses:
+        '200':
+          description: countries found
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  "$ref": "#/components/schemas/country"
+  "/api/v1/form_data/countries_map":
+    get:
+      summary: Retrieves a map of countries
+      tags:
+      - Form Data
+      responses:
+        '200':
+          description: countries map found
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  "$ref": "#/components/schemas/country_mapped"
   "/api/v1/invoices/search.json":
     post:
       summary: Retrieves all invoices
@@ -26,21 +54,30 @@ paths:
               oneOf:
               - "$ref": "#/components/schemas/invoice_search_params"
               - "$ref": "#/components/schemas/invoice_search_params_with_array_mode"
-  "/api/v2/webhooks/notion/events":
+  "/api/v2/webhooks/{slug}/events":
+    parameters:
+    - name: X-Notion-Signature
+      in: header
+      schema:
+        type: string
+      required: true
+      description: Signature header for Notion webhook verification
+    - name: slug
+      in: path
+      schema:
+        type: string
+        enum:
+        - notion
+      required: true
+      description: Webhook slug (currently only 'notion' is supported)
     post:
-      summary: Notion vendor database event
+      summary: Webhook event processing
       tags:
       - Webhooks
-      parameters:
-      - name: X-Notion-Signature
-        in: header
-        required: true
-        description: Signature header for Notion webhook verification
-        schema:
-          type: string
+      parameters: []
       responses:
         '200':
-          description: update event is processed
+          description: Success
         '422':
           description: invalid event data
       requestBody:
@@ -51,12 +88,9 @@ paths:
               properties:
                 verification_token:
                   type: string
-                  description: Verification token for the webhook, sent once during
-                    Notion webhook setup
-                  nullable: true
+                  description: Verification token for the webhook
                 event:
                   "$ref": "#/components/schemas/notion_event"
-                  nullable: true
   "/invoices/search.json":
     post:
       summary: Retrieves all invoices
@@ -79,34 +113,6 @@ paths:
               oneOf:
               - "$ref": "#/components/schemas/invoice_search_params"
               - "$ref": "#/components/schemas/invoice_search_params_with_array_mode"
-  "/api/v1/form_data/countries":
-    get:
-      summary: Retrieves a list of countries
-      tags:
-      - Form Data
-      responses:
-        '200':
-          description: countries found
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/country"
-  "/api/v1/form_data/countries_map":
-    get:
-      summary: Retrieves a map of countries
-      tags:
-      - Form Data
-      responses:
-        '200':
-          description: countries map found
-          content:
-            application/json:
-              schema:
-                type: object
-                additionalProperties:
-                  $ref: "#/components/schemas/country_mapped"
 servers:
 - url: https://{defaultHost}
   variables:
@@ -170,7 +176,7 @@ components:
           - parent
         type:
           type: string
-          pattern: "^(page.created|page.content_updated|page.deleted|page.moved|page.properties_updated|database.content_updated|database.schema_updated|database.deleted)$"
+          pattern: "^(page\\.(created|content_updated|deleted|moved|properties_updated)|database\\.(content_updated|schema_updated|deleted))$"
         entity:
           "$ref": "#/components/schemas/notion_entity"
       required:
@@ -238,7 +244,8 @@ components:
         id:
           type: string
         account:
-          "$ref": "#/components/schemas/account"
+          allOf:
+          - "$ref": "#/components/schemas/account"
           nullable: true
         contacts:
           type: array
@@ -332,7 +339,6 @@ components:
                 type: string
               direction:
                 type: string
-
     country:
       type: object
       properties:
@@ -344,6 +350,7 @@ components:
           type: string
         dial_code:
           type: string
+          nullable: true
       required:
       - id
       - name
@@ -360,6 +367,7 @@ components:
           type: string
         dialCode:
           type: string
+          nullable: true
       required:
       - id
       - name

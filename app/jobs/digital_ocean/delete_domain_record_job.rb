@@ -4,7 +4,7 @@
 
 module DigitalOcean
   class DeleteDomainRecordJob < ApplicationJob
-    queue_as :yeet
+    queue_as :critical
 
     def perform(id, domain:, access_token: nil, pretend: false)
       # Check if there's a pending failed execution

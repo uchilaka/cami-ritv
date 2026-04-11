@@ -34,7 +34,7 @@ module LarCity
       end
 
       module ClassMethods
-        def define_output_options(thor_class, class_options: true)
+        def define_output_options(thor_class = self, class_options: true)
           option_method = class_options ? :class_option : :option
           thor_class.public_send option_method, :help, type: :boolean, default: false
           # Define pretend option
@@ -89,7 +89,7 @@ module LarCity
         end
 
         def say_warning(message)
-          say(message, :yellow)
+          say("⚠️ WARNING: #{message}", :yellow)
         end
 
         def say_success(message)
@@ -123,8 +123,7 @@ module LarCity
       module FormatHelperMethods
         def extract_timestamp(filename)
           return nil if filename.blank?
-
-          return unless filename =~ /\((\d{4})(\d{2})(\d{2})\.(\d{2})(\d{2})(\d{2})([+-]\d{4})\)/
+          return unless filename =~ %r{\(?(\d{4})(\d{2})(\d{2})\.(\d{2})(\d{2})(\d{2})([+-]\d{4})\)?}
 
           year = ::Regexp.last_match(1)
           month = ::Regexp.last_match(2)

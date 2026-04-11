@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+return unless AppUtils.omniauth_enabled?
+
 Rails.application.config.middleware.use OmniAuth::Builder do
   # Accessible at /auth/google
   provider :google_oauth2,

@@ -45,7 +45,7 @@ RSpec.describe LarCity::CLI::DevkitCmd, type: :command do
         with_modified_env(RAILS_ENV: 'test') { example.run }
       end
 
-      it { expect { run_command }.to output(/🚫 Skipping webhook setup in test environment/).to_stdout }
+      it { expect { run_command }.to output(%r{🚫 Skipping webhook setup in test environment}).to_stdout }
     end
 
     context 'in non-test environment' do
@@ -80,7 +80,7 @@ RSpec.describe LarCity::CLI::DevkitCmd, type: :command do
           context 'and the webhook does not exist' do
             it 'creates a new webhook' do
               expect { run_command }.to change(Webhook, :count).by(1).and \
-                output(/⚡ Webhook for notion has been set up successfully/).to_stdout
+                output(%r{⚡ Webhook for notion has been set up successfully}).to_stdout
             end
 
             context 'after creating the webhook' do
@@ -159,112 +159,6 @@ RSpec.describe LarCity::CLI::DevkitCmd, type: :command do
                            { vendor: 'invalid' })
           end.to raise_error(ArgumentError, /Unsupported vendor: invalid/)
         end
-      end
-    end
-  end
-
-  describe '#peek', skip: 'TODO: validate possibly sloppy codegen' do
-    before do
-      allow(command).to receive(:`).with('git branch --list').and_return("* main\n  feature-branch")
-      allow(command).to receive(:`).with('git rev-parse --abbrev-ref HEAD').and_return('main')
-    end
-
-    context 'when a PR exists' do
-      before do
-        allow(command).to receive(:`).with("gh pr list --head main --json number -q '.[].number'").and_return("123\n")
-      end
-
-      it 'views the PR on the web by default' do
-        expect(command).to receive(:run).with('gh pr view 123 --web', inline: true)
-        command.invoke(:peek, [], { interactive: false, branch_name: 'main' })
-        expect(stdout.string).to include('PR number: 123')
-      end
-
-      it 'views the PR inline with --output=inline' do
-        expect(command).to receive(:run).with('gh pr view 123', inline: true)
-        command.invoke(:peek, [], { interactive: false, branch_name: 'main', output: 'inline' })
-      end
-    end
-
-    context 'when no PR exists' do
-      before do
-        allow(command).to receive(:`).with("gh pr list --head feature-branch --json number -q '.[].number'").and_return("\n")
-      end
-
-      context 'in non-interactive mode' do
-        it 'reports no PR was found' do
-          command.invoke(:peek, [], { interactive: false, branch_name: 'feature-branch' })
-          expect(stdout.string).to include('🙅🏾‍♂️ No PR found for branch feature-branch.')
-        end
-      end
-
-      context 'in interactive mode' do
-        it 'prompts to delete the branch and deletes it on "y"' do
-          allow(command.shell).to receive(:ask).with(/Delete the feature-branch branch/).and_return('y')
-          expect(command).to receive(:run).with('git branch --delete feature-branch', inline: true).and_return(true)
-          # Interrupt the command loop after the first action
-          allow(command).to receive(:prompt_for_branch_selection).and_raise(SystemExit)
-
-          expect do
-            command.invoke(:peek, [], { interactive: true, branch_name: 'feature-branch' })
-          end.to raise_error(SystemExit)
-          expect(stdout.string).to include('Branch feature-branch deleted.')
-        end
-
-        it 'does not delete the branch on "n"' do
-          allow(command.shell).to receive(:ask).with(/Delete the feature-branch branch/).and_return('n')
-          expect(command).not_to receive(:run).with(/git branch --delete/)
-          allow(command).to receive(:prompt_for_branch_selection).and_raise(SystemExit)
-
-          expect do
-            command.invoke(:peek, [], { interactive: true, branch_name: 'feature-branch' })
-          end.to raise_error(SystemExit)
-        end
-      end
-    end
-  end
-
-  describe '#swaggerize', skip: 'TODO: validate possibly sloppy codegen' do
-    it 'executes the rswag command' do
-      expect(ClimateControl).to receive(:modify).with(RAILS_ENV: 'test').and_yield
-      expect(command).to receive(:system).with('bundle exec rails rswag')
-      command.invoke(:swaggerize)
-    end
-
-    it 'does not execute on a dry run' do
-      expect(command).not_to receive(:system)
-      command.invoke(:swaggerize, [], { dry_run: true })
-      expect(stdout.string).to include('Executing (dry-run): bundle exec rails rswag')
-    end
-  end
-
-  describe '#logs', skip: 'TODO: validate possibly sloppy codegen' do
-    before do
-      credentials = { betterstack: { team_id: 'team-id', source_id: 'source-id' } }
-      allow(Rails.application).to receive(:credentials).and_return(credentials.with_indifferent_access)
-    end
-
-    context 'on macOS' do
-      before { allow(command).to receive(:mac?).and_return(true) }
-
-      it 'opens the log stream URL' do
-        expected_url = 'https://logs.betterstack.com/team/team-id/tail?s=source-id'
-        expect(command).to receive(:system).with("open --url #{expected_url}")
-        command.invoke(:logs)
-      end
-
-      it 'does not open the URL on a dry run' do
-        expect(command).not_to receive(:system)
-        command.invoke(:logs, [], { dry_run: true })
-        expect(stdout.string).to include('Executing (dry-run): open --url')
-      end
-    end
-
-    context 'on a non-macOS system' do
-      before { allow(command).to receive(:mac?).and_return(false) }
-
-      it 'raises an UnsupportedOSError' do
-        expect { command.invoke(:logs) }.to raise_error(LarCity::Errors::UnsupportedOSError, 'Unsupported OS')
       end
     end
   end

@@ -91,6 +91,15 @@ class AppUtils
       result.nil? ? false : result
     end
 
+    def resource_is_okayish?(host)
+      result = resource_status_code(host)
+      result.to_i >= 200 && result.to_i < 400
+    end
+
+    def resource_status_code(resource_url)
+      `curl -s -o /dev/null -w "%{http_code}" #{resource_url}`.strip
+    end
+
     def healthy?(resource_url)
       response = Faraday.get(resource_url) do |options|
         options.headers = {
@@ -175,11 +184,53 @@ class AppUtils
       end
     end
 
+    def web_console_enabled?
+      default_value = Rails.env.development? ? 'yes' : 'no'
+
+      yes?(ENV.fetch('WEB_CONSOLE_ENABLED', default_value))
+    end
+
+    def omniauth_enabled?
+      default_value = Rails.env.test? ? 'no' : 'yes'
+
+      yes?(ENV.fetch('APP_CONFIG_OMNIAUTH_ENABLED', default_value))
+    end
+
     def jbuilder_pre_keys
       @jbuilder_pre_keys ||= begin
         keys = Rails.application.credentials&.jbuilder&.pre_keys || %i[predicate]
         keys.is_a?(Array) ? keys : [keys]
       end
+    end
+
+    def host_queue_name
+      `hostname`.strip.split('.').reverse.join('-')
+    end
+
+    # @deprecated This method is deprecated and will be removed
+    #   in a future release. Use `check_required_vars?` instead.
+    def check_env_vars?
+      return false if Rails.env.test?
+
+      yes?(ENV.fetch('APP_CONFIG_CHECK_ENV_VARS', 'yes'))
+    end
+
+    def check_required_vars?
+      return false if Rails.env.test?
+
+      yes?(ENV.fetch('APP_CONFIG_CHECK_REQUIRED_VARS', 'yes'))
+    end
+
+    def devise_jwt_secret_key!
+      if check_required_vars?
+        return ENV.fetch('APP_CONFIG_JWT_SECRET_KEY', Rails.application.credentials.devise_jwt_secret_key!)
+      end
+
+      ENV.fetch('APP_CONFIG_JWT_SECRET_KEY', Rails.application.credentials.devise_jwt_secret_key)
+    end
+
+    def database_url_present?
+      ENV['DATABASE_URL'].present?
     end
 
     private
@@ -211,10 +262,6 @@ class AppUtils
         %i[user_name smtp_user] => 'SMTP_USERNAME',
         %i[password smtp_password] => 'SMTP_PASSWORD',
       }
-    end
-
-    def use_persist_event_workflow?
-      Flipper.enabled?(:feat__notion_use_persist_event_workflow)
     end
   end
 end

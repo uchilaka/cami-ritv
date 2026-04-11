@@ -13,6 +13,10 @@ module LarCity
         '/opt/homebrew/etc/nginx'
       end
 
+      no_commands do
+        include ControlFlowHelpers
+      end
+
       namespace :'proxy-server'
 
       define_sudo_option self, class_option: false
