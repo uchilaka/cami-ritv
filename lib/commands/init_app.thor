@@ -36,6 +36,7 @@ class InitApp < Thor::Group
   end
 
   def create_data_stores_if_not_exists
+    say_info 'Creating data stores if they do not exist...'
     Rails::Command.invoke('db:create:primary')
     Rails::Command.invoke('db:create:crm')
   end
@@ -45,7 +46,6 @@ class InitApp < Thor::Group
 
     say_info 'Restoring primary database from latest backup...'
     restore_database_from_backup(target: 'primary')
-
   end
 
   def wait_for_crm_database_service_health_check
@@ -76,6 +76,7 @@ class InitApp < Thor::Group
   end
 
   no_commands do
+
     # @TODO Explore refactoring to use `rails db:seed:primary` and `rails db:seed:crm` instead
     def restore_database_from_backup(target: 'primary')
       restore_cmd = RestoreDb.new([], target:, latest_backup: true, verbose: verbose?, dry_run: pretend?)
