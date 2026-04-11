@@ -50,21 +50,19 @@
 
 ### Context Summary for Next Session
 
-- Just established the project-specific `GEMINI.md` and documented core
-  architectural decisions (Inertia.js, Solid Queue, Vite).
-- Addressed Copilot PR feedback for PR #264 in the
-  `refactor/docs-and-base-setup` branch.
-- Consolidated Swagger definitions and refactored request specs into a single
-  `events_spec.rb` to eliminate duplicate POST operations and OAS syntax errors.
-- Fixed OpenAPI 3.0 syntax errors related to sibling keywords on `$ref` and
-  redundant top-level keys in example payloads.
-- Updated `.replit` to Ruby 3.4.4 and restored `packageManager: "yarn@4.9.1"` in
-  `package.json`.
-- Uncommented Knapsack Pro matrix configurations in
-  `.github/workflows/full-stack.yml` and defined a default `RUN_MODE`.
-- Verified changes with `rspec` and `rswag:specs:swaggerize` (all green) and
-  ensured clean `rubocop` status.
-- Next steps: Review the updated PR on GitHub and wait for final approval/merge.
+```yaml
+state:
+  pr_number: 273
+  branch: refactor/fix-swagger-config
+  status: verified
+recent_changes:
+  - Verified PR 273. Executed `rswag:specs:swaggerize` successfully and confirmed that V1 and V2 swagger documents are generated separately without path collisions.
+  - Noted that some RSpec tests are failing locally due to a `SolidQueueAdapter` vs `Active Job test adapter` configuration issue, but this is unrelated to the Swagger generation.
+  - Added a review comment to the PR confirming the successful generation.
+next_steps:
+  - Review the PR on GitHub and await final approval/merge.
+  - Investigate and fix the `SolidQueueAdapter` configuration in the test environment so that the full RSpec suite passes cleanly.
+```
 
 ---
 
