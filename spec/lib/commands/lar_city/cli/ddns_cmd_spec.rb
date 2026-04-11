@@ -53,7 +53,7 @@ RSpec.describe LarCity::CLI::DDNSCmd do
 
   after do
     stubs.verify_stubbed_calls
-  rescue => e
+  rescue StandardError => e
     # Don't fail tests for unstubbed calls in after hook
     Rails.logger.warn("Faraday stubs verification failed: #{e.message}")
   end
@@ -324,7 +324,6 @@ RSpec.describe LarCity::CLI::DDNSCmd do
           }
         end
 
-
         it 'updates the existing record' do
           expect(instance).to receive(:say).with(/Updated record/, :green)
           expect(test_client).to \
@@ -404,7 +403,6 @@ RSpec.describe LarCity::CLI::DDNSCmd do
           :red
         )
         expect(instance).to receive(:exit).with(1)
-
 
         instance.send(:upsert_dns_record,
                       domain:,

@@ -31,7 +31,7 @@ Rails.application.configure do
 end
 
 # Prevent the "Early Load" of Flipper from causing N+1 queries during the request cycle
-Rails.application.config.middleware.use Flipper::Middleware::Memoizer
+# Rails.application.config.middleware.use Flipper::Middleware::Memoizer, preload: true
 
 Rails.application.config.to_prepare do
   if ActiveRecord::Base.connected? || File.exist?('db/schema.rb')
@@ -52,4 +52,3 @@ Rails.application.config.to_prepare do
   #  actor.respond_to?(:admin?) && actor.admin?
   # end
 end
-

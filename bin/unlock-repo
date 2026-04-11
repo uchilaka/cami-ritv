@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+# Exit on error
+set -o errexit
+
+if ! command -v git-crypt &> /dev/null; then
+  echo "ERROR: git-crypt is not installed in this environment!"
+  exit 1
+fi
+
+# Ensure the temporary directory exists
+mkdir -pv ./tmp
+
+# Process the GIT_CRYPT_KEY_BASE64 environment variable.
+# It should contain the base64-encoded git-crypt key if set
+if [[ -n "$GIT_CRYPT_KEY_BASE64" ]]; then
+  echo "INFO: GIT_CRYPT_KEY_BASE64 environment variable is set. Attempting to unlock the repository with git-crypt."
+
+  # Decode the key from the environment variable into a temporary file
+  echo "$GIT_CRYPT_KEY_BASE64" | base64 -d > ./tmp/git-crypt-key.key
+
+  # Unlock the repository - NOTE: Ensure git-crypt is installed in your environment
+  git crypt unlock ./tmp/git-crypt-key.key
+
+  # Discard the crypt file
+  rm -v ./tmp/git-crypt-key.key
+fi

@@ -28,24 +28,6 @@ Bundler.require(*Rails.groups)
 
 module Cami
   class Application < Rails::Application
-    # # Prevent the "Early Load" of Flipper from causing N+1 queries during the request cycle
-    # config.middleware.use Flipper::Middleware::Memoizer
-    #
-    # config.to_prepare do
-    #   # Initialize the Flipper intstance (if we can actually reach the DB)
-    #   if ActiveRecord::Base.connected? || File.exist('db/schema.rb')
-    #     Flipper.configure do |config|
-    #       # Configure other adapters that you want to use here:
-    #       # See http://flippercloud.io/docs/adapters
-    #       #config.use Flipper::Adapters::ActiveSupportCacheStore, Rails.cache, expires_in: 5.minutes
-    #       config.default do
-    #         adapter = Flipper::Adapters::ActiveRecord.new
-    #         Flipper.new(adapter)
-    #       end
-    #     end
-    #   end
-    # end
-
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 7.0
 
@@ -83,7 +65,9 @@ module Cami
     # Set the application log level
     config.log_level = ENV.fetch('RAILS_LOG_LEVEL', 'debug')
 
-    # Highlight code that triggered database queries in logs.
+    # Highlight code that triggered database queries in logs. This MUST be
+    # evaluated after the log level is set, since it depends on the log level
+    # to determine whether to enable verbose query logs or not.
     config.active_record.verbose_query_logs = LogUtils.verbose_query_logs?
 
     # Configuration for the application, engines, and railties goes here.

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 json.extract! event.serializable_hash,
               :id, :slug, :status, :created_at, :updated_at,
               :workspace_id, :workspace_name, :database_id, :remote_record_id,

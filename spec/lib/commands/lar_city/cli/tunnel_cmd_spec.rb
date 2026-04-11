@@ -65,7 +65,9 @@ RSpec.describe LarCity::CLI::TunnelCmd, type: :thor, devtool: true, skip_in_ci: 
           end
 
           it 'warns about overwriting and writes the config file' do
-            expect(tunnel_cmd).to receive(:say).with(/WARNING: Any existing NGROK configuration files will be overwritten/, anything)
+            expect(tunnel_cmd).to receive(:say).with(
+              /WARNING: Any existing NGROK configuration files will be overwritten/, anything
+            )
             expect(File).to receive(:write).with(%r{/config/ngrok.yml$}, 'processed yaml content')
             tunnel_cmd.init
           end

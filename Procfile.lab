@@ -1,0 +1,2 @@
+web: mise x -- bin/rails s -p 16006
+jobs: mise x -- bin/rails solid_queue:start

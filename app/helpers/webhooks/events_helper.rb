@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Webhooks
   module EventsHelper
     def webhook_events_pagination_enabled?

@@ -1,5 +1,8 @@
+# frozen_string_literal: true
+
 source 'https://rubygems.org'
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
+ruby "3.4.4"
 
 # Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
 gem 'rails', '~> 8.0'
@@ -29,7 +32,7 @@ gem 'sprockets-rails'
 gem 'pg', '~> 1.5'
 
 # Use the Puma web server [https://github.com/puma/puma]
-gem 'puma', '~> 6'
+gem 'puma', '~> 7'
 
 # Build JSON APIs with ease [https://github.com/rails/jbuilder]
 gem 'jbuilder'
@@ -101,10 +104,10 @@ gem 'ostruct'
 # Simple, feature rich ascii table generation library https://github.com/tj/terminal-table
 gem 'terminal-table'
 
+gem 'dry-types', '~> 1.8'
+gem 'highline', '~> 3.1'
 gem 'nokogiri'
 gem 'reverse_markdown'
-gem 'highline', '~> 3.1'
-gem 'dry-types', '~> 1.8'
 
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
@@ -114,12 +117,14 @@ group :development, :test do
   gem 'climate_control'
   gem 'fabrication'
   gem 'faker'
+  gem 'knapsack_pro'
   gem 'open3'
   gem 'rspec-rails', '~> 7'
   gem 'rswag-specs'
   gem 'rubocop', require: false
   gem 'rubocop-rails-omakase', require: false
   gem 'strong_migrations'
+  gem 'pry'
 end
 
 group :development do

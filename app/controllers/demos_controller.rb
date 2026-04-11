@@ -102,7 +102,7 @@ class DemosController < ApplicationController
             'Custom integrations',
           ],
           featured: true,
-        }
+        },
       ],
     }
   end

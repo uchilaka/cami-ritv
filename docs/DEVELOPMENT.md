@@ -1,6 +1,9 @@
 # CAMI: Development guide
 
 - [CAMI: Development guide](#cami-development-guide)
+  - [First Time Setup / Getting Started](#first-time-setup--getting-started)
+  - [Install the CLI](#install-the-cli)
+  - [Working with Render deployments](#working-with-render-deployments)
   - [Managing application secrets](#managing-application-secrets)
     - [Managing `git-crypt` secrets](#managing-git-crypt-secrets)
     - [Using the `secrets` CLI command](#using-the-secrets-cli-command)
@@ -17,6 +20,67 @@
     - [Converting a JSON fixture file to a YAML fixture file](#converting-a-json-fixture-file-to-a-yaml-fixture-file)
 
 Notes on working with the application in a (local) dev environment.
+
+## First Time Setup / Getting Started
+
+When running the application for the first time, there are a few steps you'll need to complete to properly set up your local environment:
+
+### 1. Discovering Application Commands
+
+You can always find the available CLI commands for the application by running:
+
+```shell
+bin/thor -T
+```
+
+### 2. Initialize Feature Flags
+
+Initialize the application's feature flags with their default states:
+
+```shell
+bin/thor features:init
+```
+
+### 3. Run Data Migrations
+
+The application uses data migrations to load essential data (like vendors) into the database. Run the following command to apply these migrations:
+
+```shell
+bin/rails data:migrate
+```
+
+### 4. Setup Application Webhooks
+
+Set up the required webhooks for the app. Be sure to replace `<vendor>` with the appropriate service provider (we recommend starting with `--vendor notion`):
+
+```shell
+bin/thor devkit:setup_webhooks -s notion
+```
+
+### 4. Setup Your Admin User
+
+To access the admin application menu, you will need to create or designate a local user as an admin.
+
+1. Complete a standard registration/login flow in the application to create your user account.
+2. Open the Rails console (`bin/rails c`) and run the following commands to grant your user the `admin` role:
+
+```ruby
+# Find your local user
+me = User.find_by_email '<email-address>'
+
+# Make the user an admin
+me.add_role :admin
+```
+
+Once you have an admin local user, you'll be able to see the admin application menu in the UI.
+
+### 5. Testing with NGROK
+
+For testing features that require a public URL (like webhooks or SSO), you can run the app through an NGROK proxy using:
+
+```shell
+bin/thor tunnel:open_all
+```
 
 ## Install the CLI
 
@@ -37,7 +101,7 @@ bin/thor entrypoint:setup
 brew bundle
 
 # To validate your blueprint, run the following command in your console from the project root:
-lx-cli devkit:check-blueprint
+bin/thor devkit:check-blueprint
 ```
 
 ## Managing application secrets
@@ -73,7 +137,7 @@ git-crypt add-gpg-user USERID
 
 ```shell
 # To edit credentials in your IDE, run the following command in your console:
-bin/thor lx-cli:secrets:edit
+bin/thor secrets:edit
 ```
 
 ### Using the Rails credentials command
@@ -182,19 +246,19 @@ Follow these steps to setup `ngrok` for your local environment:
 - Finally, generate your `config/ngrok.yml` file by running the following command:
 
   ```shell
-  bin/thor lx-cli:tunnel:init
+  bin/thor tunnel:init
   ```
 
 Now you can open a tunnel to your local environment by running:
 
 ```shell
-thor lx-cli:tunnel:open_all
+bin/thor tunnel:open_all
 ```
 
 ## Print key file
 
 ```shell
-bin/thor help lx-cli:secrets:print_key
+bin/thor help secrets:print_key
 ```
 
 ## Handling fixture files
@@ -205,10 +269,10 @@ A few helpful commands for handling fixture files.
 
 ```shell
 # Show help menu for the sanitize command
-bin/thor help lx-cli:fixtures:sanitize
+bin/thor help datakit:sanitize
 
 # Sanitize the fixture file (outputs to the same directory as the fixture)
-bin/thor lx-cli:fixtures:sanitize --file ./path/to/fixture.yml
+bin/thor datakit:sanitize --file ./path/to/fixture.yml
 ```
 
 ### Converting a JSON fixture file to a YAML fixture file

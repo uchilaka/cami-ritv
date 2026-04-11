@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 require 'commands/lar_city/cli/devkit_cmd'
 
@@ -152,7 +154,10 @@ RSpec.describe LarCity::CLI::DevkitCmd, type: :command do
         let(:stub_vendor_creds) { nil }
 
         it 'raises ArgumentError' do
-          expect { command.invoke(:setup_webhooks, [], { vendor: 'invalid' }) }.to raise_error(ArgumentError, /Unsupported vendor: invalid/)
+          expect do
+            command.invoke(:setup_webhooks, [],
+                           { vendor: 'invalid' })
+          end.to raise_error(ArgumentError, /Unsupported vendor: invalid/)
         end
       end
     end

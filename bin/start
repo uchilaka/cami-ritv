@@ -1,16 +1,15 @@
-#!/usr/bin/env zsh
+#!/usr/bin/env bash
+# Exit on error
+set -o errexit
+
+# Calculate script directory
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # Calculate the process file to run
 PROCESS_FILE="Procfile.${RAILS_ENV}"
 
-# Build css
-yarn build:css
+GOREMAN_EXEC="$(brew --prefix goreman)/bin/goreman"
 
-# Pre-build app assets
-yarn build:assets
-
-# Build frontend
-yarn build
-
-# Start the processes for the Rails application
-/opt/homebrew/bin/goreman -f "$PROCESS_FILE" start
+"$SCRIPT_DIR/build" &&\
+  "$SCRIPT_DIR/pre-deploy" &&\
+    "$GOREMAN_EXEC" -f "$PROCESS_FILE" start

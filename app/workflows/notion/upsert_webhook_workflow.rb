@@ -127,14 +127,14 @@ module Notion
       # If dataset is not set, skip the check for backward compatibility.
       return if dataset.blank?
 
-      unless self.class.dataset_supported?(dataset)
-        error =
-          StandardError.new(
-            I18n.t('workflows.upsert_webhook_workflow.errors.unsupported_dataset', name: vendor.to_s.humanize, dataset:)
-          )
-        context.fail!(error:)
-        raise error
-      end
+      return if self.class.dataset_supported?(dataset)
+
+      error =
+        StandardError.new(
+          I18n.t('workflows.upsert_webhook_workflow.errors.unsupported_dataset', name: vendor.to_s.humanize, dataset:)
+        )
+      context.fail!(error:)
+      raise error
     end
 
     # The :vendor option must match a slug for an account of type "Vendor"

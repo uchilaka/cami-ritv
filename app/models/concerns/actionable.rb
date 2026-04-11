@@ -25,7 +25,7 @@ module Actionable
       raise ArgumentError, "#{name}.supported_actions must return an array with valid values" \
         unless invalid_values.none?
 
-      self.define_method(:supported_actions) do
+      define_method(:supported_actions) do
         actions.presence || []
       end
     end

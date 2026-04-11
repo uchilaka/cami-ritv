@@ -271,9 +271,9 @@ RSpec.describe Account, type: :model do
     let(:user) { Fabricate(:user) }
 
     it 'adds a user to the account members' do
-      expect {
+      expect do
         account.add_member(user)
-      }.to change { account.members.count }.by(1)
+      end.to change { account.members.count }.by(1)
 
       expect(account.members).to include(user)
     end
@@ -287,7 +287,7 @@ RSpec.describe Account, type: :model do
     end
 
     it 'returns the CRM URL when remote_crm_id is present' do
-      expect(account.crm_url).to eq("https://crm.zoho.com/crm/org877691058/tab/Accounts/12345")
+      expect(account.crm_url).to eq('https://crm.zoho.com/crm/org877691058/tab/Accounts/12345')
     end
 
     it 'returns nil when remote_crm_id is blank' do
@@ -356,20 +356,20 @@ RSpec.describe Account, type: :model do
     end
 
     it 'enqueues a Zoho::UpsertAccountJob with the correct parameters' do
-      expect {
+      expect do
         account.send(:push_to_crm)
-      }.to have_enqueued_job(Zoho::UpsertAccountJob)
-        .with(account.id)
-        .on_queue('critical')
-        .at(a_value_within(1.second).of(5.seconds.from_now))
+      end.to have_enqueued_job(Zoho::UpsertAccountJob)
+               .with(account.id)
+               .on_queue('critical')
+               .at(a_value_within(1.second).of(5.seconds.from_now))
     end
 
     it 'does not enqueue job when feature flag is disabled' do
       Flipper.disable(:feat__push_updates_to_crm)
 
-      expect {
+      expect do
         account.send(:push_to_crm)
-      }.not_to have_enqueued_job(Zoho::UpsertAccountJob)
+      end.not_to have_enqueued_job(Zoho::UpsertAccountJob)
     end
   end
 
