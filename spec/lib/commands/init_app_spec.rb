@@ -121,7 +121,7 @@ RSpec.describe InitApp, type: :command_stack do
 
   describe '#app_store_resource_path' do
     it 'returns correct path' do
-      expect(instance.app_store_resource_path.to_s).to eq('/tmp/app/db/test/postgres/downloads')
+      expect(instance.app_store_resource_path.to_s).to eq("/tmp/app/db/#{Rails.env}/postgres/downloads")
     end
   end
 end

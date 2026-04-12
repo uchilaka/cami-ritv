@@ -120,7 +120,11 @@ module LarCity
         alias debug? verbose?
       end
 
+        # Helper methods for formatting output data
       module FormatHelperMethods
+        # Extracts a Time object from a filename containing a timestamp in the expected format
+        # @param filename [String] the filename to parse
+        # @return [Time, nil] the parsed Time object, or nil if no timestamp is found
         def extract_timestamp(filename)
           return nil if filename.blank?
           return unless filename =~ %r{\(?(\d{4})(\d{2})(\d{2})\.(\d{2})(\d{2})(\d{2})([+-]\d{4})\)?}
@@ -136,6 +140,10 @@ module LarCity
         end
 
         # Show a human-readable tally of items in the collection
+        # Returns a human-readable tally of items in the collection
+        # @param collection [Enumerable] the collection to tally
+        # @param name [String] the name of the items (singular)
+        # @return [String, nil] formatted tally (e.g. "5 items"), or nil if not enumerable
         def tally(collection, name)
           return unless enumerable?(collection)
 
@@ -144,6 +152,9 @@ module LarCity
         end
 
         # Show a range based on the number of items in the collection
+        # Returns a string representing the range of items in the collection (e.g. "[1-5]")
+        # @param collection [Enumerable] the collection
+        # @return [String, nil] formatted range, or nil if not enumerable or empty
         def range(collection)
           return unless enumerable?(collection)
           return unless collection.any?

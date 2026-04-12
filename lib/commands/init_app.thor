@@ -28,7 +28,7 @@ class InitApp < Thor::Group
   end
 
   def start_database_service
-    run 'docker-compose up', '--detach app-store'
+    run 'docker compose up', '--detach ' + app_store_service_name
   end
 
   def wait_for_primary_database_service_health_check
@@ -83,6 +83,9 @@ class InitApp < Thor::Group
       restore_cmd.invoke_all
     end
 
+    def app_store_service_name
+      "app-store"
+    end
     def app_store_resource_path
       Rails.root.join('db', Rails.env, 'postgres', 'downloads')
     end
