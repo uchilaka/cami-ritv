@@ -123,7 +123,7 @@ module LarCity
             "--access-token #{access_token}"
           ]
           check_cmd << '--verbose' if verbose?
-          result = run(*check_cmd, eval: false, inline: true)
+          result = run(*check_cmd, eval: false, inline: true, mock_return: true)
           say_debug "Check command result: #{result}"
           if result == true
             say_success "Successfully validated blueprint: #{output_file_path}"

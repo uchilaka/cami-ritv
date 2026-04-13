@@ -62,14 +62,11 @@ module LarCity
             per_page = [batch_size, 100].min
             page = 1
             # Iterate over the pages and fetch records as long as a result is returned
-            while (next_records = get_records(domain:, name:, type: record_type, access_token:, page:, per_page:))&.any?
-              # Exit while loop if we exceed the batch size
-              break if records.size >= batch_size
-
-              records += next_records
-              # say_info "Found #{records.size} records for #{name} on #{domain} (page #{page})"
+            while records.size < batch_size && (next_records = get_records(domain:, name:, type: record_type, access_token:, page:, per_page:))&.any?
+              records.concat(next_records)
               page += 1
             end
+            records = records.take(batch_size)
 
             verified_count = 0
             if records&.any?
@@ -78,8 +75,7 @@ module LarCity
               records.each_with_index do |record, index|
                 backoff_seconds = (index + 1) * 5
                 record_details =
-                  record_info(id: record['id'], name: record['name'], domain:, type: record['type'],
-                              content: record['data'])
+                  record_info(id: record['id'], name: record['name'], domain:, type: record['type'], content: record['data'])
                 next unless cleanup_hit?(domain:, **record.symbolize_keys.slice(:name, :type))
 
                 verified_count += 1
@@ -116,14 +112,11 @@ module LarCity
             per_page = [batch_size, 100].min
             page = 1
             # Iterate over the pages and fetch records as long as a result is returned
-            while (next_records = get_records(domain:, name:, type: record_type, access_token:, page:, per_page:))&.any?
-              # Exit while loop if we exceed the batch size
-              break if records.size >= batch_size
-
-              records += next_records
-              # say_info "Found #{records.size} records for #{name} on #{domain} (page #{page})"
+            while records.size < batch_size && (next_records = get_records(domain:, name:, type: record_type, access_token:, page:, per_page:))&.any?
+              records.concat(next_records)
               page += 1
             end
+            records = records.take(batch_size)
 
             verified_count = 0
             if records.size == 1
@@ -183,25 +176,25 @@ module LarCity
         fqdn = [name, domain].join('.')
         matching_records = filter_records_by(name:, type: record_type)
         say_debug JSON.pretty_generate(matching_records) unless matching_records.size > 100
-        unless matching_records.size == 1
-          say_warning <<~FIX_ASK
-            ⚠️ Your task returned #{tally(matching_records, 'record')} found for #{fqdn}. \
-            You need to have exactly 1 record for ddclient to work properly. \
-            Please review the records and confirm that you want to proceed \
-            with updating the record(s) for #{fqdn}.
-
-            To cleanup dirty records, run `lx-cli ddns:prune` before \
-            retrying this command.
+        if matching_records.blank?
+          say_warning <<~FIX_ASK, prefix: ''
+            ⚠️ WARNING: No records found for #{fqdn}. You need to have exactly 1 record for ddclient to work properly.
+            Please create a record for #{fqdn} with the desired IP address.
           FIX_ASK
-
           return
         end
 
-        if matching_records.blank?
-          say_warning <<~FIX_ASK
-            ⚠️ No records found for #{fqdn}. You need to have exactly 1 record for ddclient to work properly. \
-            Please create a record for #{fqdn} with the desired IP address.
+        if matching_records.size > 1
+          say_warning <<~FIX_ASK, prefix: ''
+            ⚠️ WARNING: Your task returned #{tally(matching_records, 'record')} found for #{fqdn}.
+            You need to have exactly 1 record for ddclient to work properly.
+            Please review the records and confirm that you want to proceed
+            with updating the record(s) for #{fqdn}.
+
+            To cleanup dirty records, run `lx-cli ddns:prune` before
+            retrying this command.
           FIX_ASK
+
           return
         end
 

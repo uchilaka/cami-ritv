@@ -88,8 +88,8 @@ module LarCity
           say(message, :cyan)
         end
 
-        def say_warning(message)
-          say("⚠️ WARNING: #{message}", :yellow)
+        def say_warning(message, prefix: '⚠️ WARNING: ')
+          say("#{prefix}#{message}", :yellow)
         end
 
         def say_success(message)

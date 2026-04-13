@@ -47,6 +47,7 @@ module LarCity
                     reader_thread =
                       Thread.new do
                         stdout_stderr.each do |line|
+                          # TODO: There was a condition on eval for this line - review later.
                           output_buffer << line
                           block.call(line)
                         end
