@@ -112,7 +112,8 @@ module LarCity
             per_page = [batch_size, 100].min
             page = 1
             # Iterate over the pages and fetch records as long as a result is returned
-            while records.size < batch_size && (next_records = get_records(domain:, name:, type: record_type, access_token:, page:, per_page:))&.any?
+            while records.size < batch_size &&
+                (next_records = get_records(domain:, name:, type: record_type, access_token:, page:, per_page:))&.any?
               records.concat(next_records)
               page += 1
             end
@@ -209,7 +210,7 @@ module LarCity
           "--record-id #{record['id']}",
           "--record-name #{record['name']}",
           "--record-type #{record_type}",
-          "--record-data #{public_ip}"
+          "--record-data #{public_ip}",
         ]
         update_cmd << '--verbose' if verbose?
         run(*update_cmd, inline: true)
@@ -256,7 +257,7 @@ module LarCity
           services.each do |url|
             response = client.get(url)
             ip = response.body.strip
-            return ip if ip.match?(/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/)
+            return ip if ip.match?(%r{^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$})
           rescue Faraday::Error => e
             say "Failed to get IP from #{url}: #{e.message}", :yellow
             next
@@ -354,9 +355,9 @@ module LarCity
             'doctl compute domain records list',
             domain,
             "--access-token #{DigitalOcean::Utils.access_token!}",
-            '--output json'
+            '--output json',
           ]
-          list_cmd << "--verbose" if verbose?
+          list_cmd << '--verbose' if verbose?
           JSON.parse(run(*list_cmd, eval: true, mock_return: '[]', inline: true))
         end
 
