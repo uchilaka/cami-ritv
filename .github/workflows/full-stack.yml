@@ -18,11 +18,13 @@ jobs:
         ruby-version: [3.4.4]
         node-version: [22.x]
         # TODO: CI node total and index are used by Knapsack Pro
-        #ci_node_total: [2]
-        #ci_node_index: [0, 1]
+        ci_node_total: [1]
+        # with 2 total nodes (and RUN_MODE = 'parallel'), the index should be 0 and 1 for the two nodes respectively
+        ci_node_index: [0]
 
     env:
       CI: true
+      RUN_MODE: ${{ vars.RUN_MODE || 'default' }}
       # TODO: Change to 16006 to match the port in the docker-compose.yml file
       PORT: 3000
       RAILS_ENV: test
@@ -66,7 +68,7 @@ jobs:
       - name: Check ruby version
         run: ruby -v
 
-      - uses: actions/cache@v4
+      - uses: actions/cache@v5
         with:
           path: vendor/bundle
           key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.lock') }}
@@ -129,15 +131,6 @@ jobs:
 
       - name: RSpec tests
         if: ${{ env.RUN_MODE != 'parallel' }}
-        #env:
-        #  KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC: ${{ secrets.KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC }}
-        #  KNAPSACK_PRO_CI_NODE_BUILD_ID: ${{ github.run_id }}
-        #  KNAPSACK_PRO_CI_NODE_TOTAL: ${{ matrix.ci_node_total }}
-        #  KNAPSACK_PRO_CI_NODE_INDEX: ${{ matrix.ci_node_index }}
-        #  # See https://docs.knapsackpro.com/ruby/queue-mode/#dynamic-split-vs-fixed-split
-        #  KNAPSACK_PRO_FIXED_QUEUE_SPLIT: true
-        #  KNAPSACK_PRO_LOG_LEVEL: info
-        # See https://docs.knapsackpro.com/ruby/rspec/
         run: |
           # Run all specs except those with the option skip_in_ci: true
           bundle exec rspec --tag ~skip_in_ci:true

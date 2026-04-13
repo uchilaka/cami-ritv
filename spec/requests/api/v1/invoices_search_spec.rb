@@ -2,7 +2,7 @@
 
 require 'swagger_helper'
 
-RSpec.describe 'Invoice Search API', type: :request, feature: :invoicing do
+RSpec.describe 'Invoice Search API', type: :request, feature: :invoicing, openapi_spec: 'v1/swagger.yaml' do
   describe 'POST /api/v1/invoices/search' do
     let(:user) { Fabricate :user, email: Faker::Internet.email(name: 'logistics') }
     let(:other_user) { Fabricate :user, email: Faker::Internet.email(name: 'catering') }
@@ -101,7 +101,7 @@ RSpec.describe 'Invoice Search API', type: :request, feature: :invoicing do
           oneOf: [
             { '$ref': '#/components/schemas/invoice_search_params' },
             { '$ref': '#/components/schemas/invoice_search_params_with_array_mode' },
-          ]
+          ],
         }
 
         response '200', 'invoices found' do

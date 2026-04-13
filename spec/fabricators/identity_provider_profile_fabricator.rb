@@ -42,7 +42,7 @@ Fabricator(:identity_provider_profile) do
     {
       unverified_email: attrs[:email],
       email_verified: false,
-      confirmed_at: nil
+      confirmed_at: nil,
     }.merge(attrs[:metadata] || {})
   end
 end

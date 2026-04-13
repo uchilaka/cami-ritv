@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 case record.integration
 when :notion
   json.partial! 'webhooks/notion/record', record:

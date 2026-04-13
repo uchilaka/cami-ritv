@@ -1,0 +1,4 @@
+#!/usr/bin/env zsh
+
+docker compose --profile essential up -d &&\
+  docker compose --profile essential logs --follow --since 1m

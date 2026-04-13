@@ -22,7 +22,7 @@ module LarCity
       end
 
       module ClassMethods
-        def define_env_options(thor_class, class_options: true)
+        def define_env_options(thor_class = self, class_options: true)
           option_method = class_options ? :class_option : :option
           # Define Environment option
           thor_class
@@ -59,13 +59,15 @@ module LarCity
           default: 'digitalocean',
           required: true
         )
-          option :platform,
-                 desc: 'The platform to get the blueprint for',
-                 enum: %w[render fly digitalocean],
-                 required: true,
-                 default: 'digitalocean'
           option_method = class_option ? :class_option : :option
-          thor_class.public_send(option_method, :platform, type: :string, desc:, long_desc:, default:, required:)
+          thor_class
+            .public_send(
+              option_method,
+              :platform,
+              type: :string,
+              enum: %w[render fly digitalocean],
+              desc:, long_desc:, default:, required:
+            )
         end
       end
 

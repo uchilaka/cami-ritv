@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 json.query do
   json.deep_format_keys! false
   # json.page @page

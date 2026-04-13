@@ -15,7 +15,6 @@ RSpec.describe 'webhooks/new', type: :view do
     render
 
     assert_select 'form[action=?][method=?]', webhooks_path, 'post' do
-
       assert_select 'input[name=?]', 'webhook[url]'
 
       assert_select 'input[name=?]', 'webhook[verification_token]'
@@ -25,7 +24,6 @@ RSpec.describe 'webhooks/new', type: :view do
       assert_select 'input[name=?]', 'webhook[integration_name]'
 
       assert_select 'input[name=?]', 'webhook[verification_token]'
-
     end
   end
 end

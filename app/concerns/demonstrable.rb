@@ -17,7 +17,7 @@ module Demonstrable
         { name: 'Product', href: '#' },
         showcase_nav_item,
         { name: 'Marketplace', href: '#' },
-        { name: 'Company', href: '#' },
+        name: 'Company', href: '#',
       ]
     end
 

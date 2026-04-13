@@ -1,0 +1,121 @@
+#!/usr/bin/env bash
+
+# bin/worktree - Automate git worktree management.
+# Follows project convention: ../<project>-<branch>
+#
+# Usage:
+#   bin/worktree [branch-name]
+#
+# If no branch name is provided, it will ask for a task description
+# and generate a slug-based branch name.
+
+set -e
+
+PROJECT_ROOT=$(pwd)
+PROJECT_NAME=$(basename "$PROJECT_ROOT")
+CURRENT_BRANCH=$(git branch --show-current)
+TASK_DESC="$1"
+
+# Helper for WIP
+has_wip() {
+  [[ -n "$(git status --short)" ]]
+}
+
+# Slugify function
+slugify() {
+  echo "$1" | iconv -t ascii//TRANSLIT | sed -E 's/[^a-zA-Z0-9]+/-/g' | sed -E 's/^-+|-+$//g' | tr '[:upper:]' '[:lower:]'
+}
+
+# Interactive prompt if no description provided
+if [[ -z "$TASK_DESC" ]]; then
+  echo "🤔 What are you about to work on?"
+  read -p "> " USER_INPUT
+  if [[ -z "$USER_INPUT" ]]; then
+    echo "❌ Error: Description cannot be empty."
+    exit 1
+  fi
+  TARGET_BRANCH=$(slugify "$USER_INPUT")
+else
+  # If argument provided, check if it's already a slug or needs slugifying
+  # If it contains spaces or uppercase, slugify it.
+  if [[ "$TASK_DESC" =~ [[:space:]] ]] || [[ "$TASK_DESC" =~ [[:upper:]] ]]; then
+    TARGET_BRANCH=$(slugify "$TASK_DESC")
+  else
+    TARGET_BRANCH="$TASK_DESC"
+  fi
+fi
+
+# Ensure branch name isn't on main
+if [[ "$TARGET_BRANCH" == "main" ]]; then
+  echo "❌ Error: Cannot use 'main' as a worktree branch."
+  exit 1
+fi
+
+WORKTREE_PATH="../${PROJECT_NAME}-${TARGET_BRANCH//\//-}"
+
+# Case 1: Worktree already exists
+if [[ -d "$WORKTREE_PATH" ]]; then
+  echo "✅ Worktree already exists for '$TARGET_BRANCH' at $WORKTREE_PATH"
+  echo "👉 Switch with: cd $WORKTREE_PATH"
+  exit 0
+fi
+
+# Case 2: Create or Move to Worktree
+echo "🚀 Setting up worktree for '$TARGET_BRANCH'..."
+
+STASHED=false
+if has_wip; then
+  echo "📦 Stashing work in progress..."
+  # Use --include-untracked to ensure all changes are moved
+  STASH_OUT=$(git stash push -u -m "worktree-migration: $TARGET_BRANCH")
+  if echo "$STASH_OUT" | grep -q "No local changes to save"; then
+    STASHED=false
+  else
+    STASHED=true
+  fi
+fi
+
+# If we are on the branch we want to move to a worktree, we must vacate it first
+if [[ "$CURRENT_BRANCH" == "$TARGET_BRANCH" ]]; then
+  echo "🔄 Vacating branch '$TARGET_BRANCH' in primary checkout..."
+  git checkout main
+fi
+
+# Create worktree
+# We use -c filter.git-crypt.smudge=cat to prevent files from being checked out encrypted
+# before we have a chance to unlock the repository in the new worktree.
+if git rev-parse --verify "$TARGET_BRANCH" &>/dev/null; then
+  echo "🌿 Branch '$TARGET_BRANCH' exists. Adding worktree..."
+  git -c filter.git-crypt.smudge=cat worktree add "$WORKTREE_PATH" "$TARGET_BRANCH"
+else
+  echo "🌿 Creating new branch '$TARGET_BRANCH' and adding worktree..."
+  git -c filter.git-crypt.smudge=cat worktree add -b "$TARGET_BRANCH" "$WORKTREE_PATH" main
+fi
+
+# Handle git-crypt if present
+if [[ -f "$PROJECT_ROOT/bin/unlock-repo" ]]; then
+    echo "🔐 Unlocking repository in new worktree..."
+    # We need to trust mise if present to ensure the environment is ready
+    if [[ -f "$WORKTREE_PATH/mise.toml" ]]; then
+        (cd "$WORKTREE_PATH" && mise trust &>/dev/null || true)
+    fi
+    
+    (cd "$WORKTREE_PATH" && ./bin/unlock-repo)
+    
+    echo "🧹 Resetting worktree to apply git-crypt filters..."
+    (cd "$WORKTREE_PATH" && git reset --hard HEAD &>/dev/null)
+fi
+
+# Apply stash if needed
+if [[ "$STASHED" == "true" ]]; then
+  echo "📥 Restoring work in progress to new worktree..."
+  # Use --quiet to minimize noise, but warn on failure
+  if ! (cd "$WORKTREE_PATH" && git stash pop --quiet); then
+    echo "⚠️ Warning: Stash pop had conflicts. Please resolve them in the worktree."
+  fi
+fi
+
+echo ""
+echo "✨ Success!"
+echo "Location: $WORKTREE_PATH"
+echo "Command:  cd $WORKTREE_PATH"

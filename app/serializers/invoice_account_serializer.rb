@@ -7,7 +7,7 @@ class InvoiceAccountSerializer < AdhocSerializer
       family_name:,
       display_name:,
       email:,
-      type:
+      type:,
     }.compact
   end
 

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # 20250419113733_rolify_create_roles.rb
 class RolifyCreateRoles < ActiveRecord::Migration[8.0]
   def change

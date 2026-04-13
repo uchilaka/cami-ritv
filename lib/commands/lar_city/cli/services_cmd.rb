@@ -31,7 +31,7 @@ module LarCity
         required: false
       )
         option :service,
-               aliases: 's',
+               aliases: '-s',
                type: :array,
                enum: %w[web app-store worker mailhog tunnel].sort,
                desc:, long_desc:, required:
@@ -58,11 +58,11 @@ module LarCity
 
         if options[:force]
           force_msg = <<~WARNING
-            **************************************************************************
-            *  WARNING: Any existing plist configuration file(s) will be overwritten *
-            **************************************************************************
+            ****************************************************************************
+            * ⚠️ WARNING: Any existing plist configuration file(s) will be overwritten *
+            ****************************************************************************
           WARNING
-          say force_msg, Color::YELLOW
+          say_warning force_msg, prefix: ''
         end
 
         say 'Processing daemon config ERB...'
@@ -130,7 +130,7 @@ module LarCity
             next if parts.first == 'COMMAND' # Skip header line
 
             listening_port = parts[8]
-            if /[\.:]#{port}$/.match?(listening_port)
+            if %r{[\.:]#{port}$}.match?(listening_port)
               output << {
                 command: parts[0],
                 pid: parts[1],
@@ -155,7 +155,7 @@ module LarCity
       long_desc I18n.t('commands.services.kill.long_desc')
       def kill
         # TODO: pending implementation
-        raise NotImplementedError, 'Kill by port functionality is not yet implemented.'
+        raise Thor::Error, 'Kill by port functionality is not yet implemented.'
       end
 
       option :pid,

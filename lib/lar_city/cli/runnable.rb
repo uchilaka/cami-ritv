@@ -23,7 +23,8 @@ module LarCity
 
         # Runs a system command with support for dry-run mode, verbose output, and
         # optional inline output processing when a block is given.
-        def run(*args, inline: false, mock_return: nil, eval: false, &block)
+        def run(*args, inline: false, always_run: nil, mock_return: nil, eval: false, &block)
+          always_run ||= mock_return.nil?
           with_interruption_rescue do
             cmd = args.compact.join(' ')
             if verbose? || dry_run?
@@ -36,7 +37,7 @@ module LarCity
                 say_info msg
               end
             end
-            return mock_return if dry_run?
+            return mock_return if dry_run? && !always_run
 
             result =
               if block_given?
@@ -46,6 +47,7 @@ module LarCity
                     reader_thread =
                       Thread.new do
                         stdout_stderr.each do |line|
+                          # TODO: There was a condition on eval for this line - review later.
                           output_buffer << line
                           block.call(line)
                         end

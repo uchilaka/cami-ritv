@@ -19,7 +19,7 @@ module PayPal
         payments:,
         notes:,
         links:,
-        metadata:
+        metadata:,
       }
     end
 
@@ -120,7 +120,7 @@ module PayPal
         response: {
           body: object,
           serialized_at: Time.zone.now.iso8601,
-        }
+        },
       }
     end
 
