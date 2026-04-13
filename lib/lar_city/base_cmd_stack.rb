@@ -56,9 +56,9 @@ module LarCity
       #   error is raised.
       # @param delay [Numeric] the number of seconds to sleep between connection attempts.
       #
-      # @return [Hash, nil] returns a hash with the database engine name and version information
-      #   (e.g. { engine: "PostgreSQL", version: "..." }) when a connection is
-      #   successfully established, or +nil+ when running in pretend mode and the check is skipped.
+      # @return [Hash] returns `{ skipped: true }` when running in pretend mode and the check is
+      #   skipped, or a hash describing the database connection when successfully established
+      #   (e.g. `{ engine: "PostgreSQL", healthy: true, version: "..." }`).
       #
       # @raise [PG::ConnectionBad] if the database cannot be reached within +max_attempts+ attempts.
       # @raise [ActiveRecord::NoDatabaseError] if the configured database does not exist and the

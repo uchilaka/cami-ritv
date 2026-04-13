@@ -28,7 +28,7 @@ class InitApp < Thor::Group
   end
 
   def start_database_service
-    run 'docker compose up', '--detach ' + app_store_service_name
+    run 'docker compose up', '--detach', app_store_service_name
   end
 
   def wait_for_primary_database_service_health_check
