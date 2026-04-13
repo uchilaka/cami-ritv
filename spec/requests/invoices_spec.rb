@@ -16,7 +16,7 @@ load 'lib/tasks/fixtures/invoices.thor'
 # of tools you can use to make these specs even more expressive, but we're
 # sticking to rails and rspec-rails APIs to keep things simple and stable.
 
-RSpec.describe 'Invoices API', type: :request do
+RSpec.describe 'Invoices API', type: :request, openapi_spec: 'v1/swagger.yaml' do
   # This should return the minimal set of attributes required to create a valid
   # Invoice. As you add validations to Invoice, be sure to
   # adjust the attributes here as well.
@@ -29,8 +29,8 @@ RSpec.describe 'Invoices API', type: :request do
     {
       billing_info: {
         business_name: Faker::Business.name,
-        email_address: Faker::Internet.email
-      }
+        email_address: Faker::Internet.email,
+      },
     }
   end
   let(:individual_contact) do
@@ -40,8 +40,8 @@ RSpec.describe 'Invoices API', type: :request do
         name: {
           given_name: Faker::Name.first_name,
           surname: Faker::Name.last_name,
-        }
-      }
+        },
+      },
     }
   end
   let(:primary_recipients) do
@@ -65,7 +65,7 @@ RSpec.describe 'Invoices API', type: :request do
       amount_currency: 'USD',
       due_amount_cents: 12_00,
       due_amount_currency: 'USD',
-      metadata: { accounts: }
+      metadata: { accounts: },
     }
   end
 

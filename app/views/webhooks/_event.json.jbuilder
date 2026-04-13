@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 json.extract! event.serializable_hash,
               :id, :type, :slug, :created_at, :updated_at
 

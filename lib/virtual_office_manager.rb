@@ -49,7 +49,7 @@ class VirtualOfficeManager
         'https://logs.betterstack.com/team/',
         logstream_vendor.team_id,
         '/tail?s=',
-        logstream_vendor.source_id
+        logstream_vendor.source_id,
       ].join
     end
 

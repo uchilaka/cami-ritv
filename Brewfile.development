@@ -1,0 +1,49 @@
+# Brewfile.development
+# frozen_string_literal: true
+
+tap 'protonpass/tap'
+
+eval(File.read('Brewfile'))
+
+# Dev-specific CLI
+
+# Editors
+if File.exist?('/Applications/RubyMine.app')
+  puts 'Found RubyMine installed 🎊 - skipping'
+elsif ENV['VISUAL'] == 'rubymine' || ENV['EDITOR'] == 'rubymine'
+  cask 'rubymine'
+else
+  cask 'visual-studio-code'
+end
+
+# Docker
+if !File.exist?('/usr/local/bin/docker') && OS.mac?
+  cask 'orbstack'
+end
+
+# Tools & Apps
+cask 'ngrok'
+cask 'pgadmin4'
+cask 'keepassxc'
+cask 'claude-code'
+cask 'insomnia'
+
+# Communication & Productivity (Shared with Lab)
+tap 'protonpass/tap'
+brew 'pass-cli'
+brew 'render'
+cask 'gcloud-cli'
+cask 'notion'
+cask 'discord'
+cask 'slack'
+cask 'whatsapp'
+cask 'signal'
+cask 'moom'
+cask 'stats'
+cask 'iterm2'
+
+begin
+  cask 'messenger'
+rescue StandardError
+  puts 'Messenger check failed or already installed.'
+end

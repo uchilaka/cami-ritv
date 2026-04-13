@@ -90,4 +90,3 @@ RSpec.describe Webhooks::EventSearchQuery do
     pending 'add examples for predicates composition'
   end
 end
-

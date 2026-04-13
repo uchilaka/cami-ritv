@@ -14,7 +14,7 @@ def random_invoice_vendor_record_id(vendor: 'paypal')
     vendor == 'paypal' ? "INV#{SecureRandom.random_number(9)}" : SecureRandom.hex(4),
     SecureRandom.alphanumeric(4),
     SecureRandom.alphanumeric(4),
-    SecureRandom.alphanumeric(4)
+    SecureRandom.alphanumeric(4),
   ].join('-').upcase
 end
 

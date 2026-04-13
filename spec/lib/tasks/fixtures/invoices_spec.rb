@@ -18,16 +18,16 @@ RSpec.describe Fixtures::Invoices, devtools: true do
             'invoice_number': random_invoice_number(year: 2019),
             'invoice_date': '2019-06-14',
             'payment_term': {
-              'due_date': '2019-06-14'
+              'due_date': '2019-06-14',
             },
             'viewed_by_recipient': false,
             'group_draft': false,
             'metadata': {
-              'create_time': '2019-06-14T10:23:26Z'
-            }
+              'create_time': '2019-06-14T10:23:26Z',
+            },
           },
           'invoicer': {
-            'email_address': 'filiberto@funk.test'
+            'email_address': 'filiberto@funk.test',
           },
           'primary_recipients': [
             {
@@ -36,34 +36,34 @@ RSpec.describe Fixtures::Invoices, devtools: true do
                 'name': {
                   'given_name': 'Dylan',
                   'surname': 'Azariah',
-                  'full_name': 'Onyx'
+                  'full_name': 'Onyx',
                 },
-                'email_address': 'rossie@beer-friesen.example'
-              }
-            }
+                'email_address': 'rossie@beer-friesen.example',
+              },
+            },
           ],
           'amount': {
             'currency_code': 'USD',
-            'value': '200.00'
+            'value': '200.00',
           },
           'due_amount': {
             'currency_code': 'USD',
-            'value': '0.00'
+            'value': '0.00',
           },
           'payments': {
             'paid_amount': {
               'currency_code': 'USD',
-              'value': '200.00'
-            }
+              'value': '200.00',
+            },
           },
           'links': [
             {
               'href': 'https://api.paypal.com/v2/invoicing/invoices/INV2-9E3C-DPSK-2H9Y-4VA6',
               'rel': 'self',
-              'method': 'GET'
-            }
+              'method': 'GET',
+            },
           ],
-          'unilateral': false
+          'unilateral': false,
         },
         {
           'id': random_invoice_vendor_record_id,
@@ -74,16 +74,16 @@ RSpec.describe Fixtures::Invoices, devtools: true do
             'invoice_number': random_invoice_number(year: 2019),
             'invoice_date': '2019-05-01',
             'payment_term': {
-              'due_date': '2019-05-01'
+              'due_date': '2019-05-01',
             },
             'viewed_by_recipient': true,
             'group_draft': false,
             'metadata': {
-              'create_time': '2019-06-14T10:12:43Z'
-            }
+              'create_time': '2019-06-14T10:12:43Z',
+            },
           },
           'invoicer': {
-            'email_address': 'lashawna_parisian@moore.test'
+            'email_address': 'lashawna_parisian@moore.test',
           },
           'primary_recipients': [
             {
@@ -92,28 +92,28 @@ RSpec.describe Fixtures::Invoices, devtools: true do
                 'name': {
                   'given_name': 'Armani',
                   'surname': 'Sawyer',
-                  'full_name': 'Briar'
+                  'full_name': 'Briar',
                 },
-                'email_address': 'logan@becker.example'
-              }
-            }
+                'email_address': 'logan@becker.example',
+              },
+            },
           ],
           'amount': {
             'currency_code': 'USD',
-            'value': '17.20'
+            'value': '17.20',
           },
           'due_amount': {
             'currency_code': 'USD',
-            'value': '17.20'
+            'value': '17.20',
           },
           'links': [
             {
               'href': 'https://api.paypal.com/v2/invoicing/invoices/INV2-FHP4-DTGD-XFH7-5WBU',
               'rel': 'self',
-              'method': 'GET'
-            }
+              'method': 'GET',
+            },
           ],
-          'unilateral': false
+          'unilateral': false,
         },
         {
           'id': random_invoice_vendor_record_id,
@@ -124,42 +124,42 @@ RSpec.describe Fixtures::Invoices, devtools: true do
             'invoice_number': random_invoice_number(year: 2019),
             'invoice_date': '2019-06-01',
             'payment_term': {
-              'due_date': '2019-06-01'
+              'due_date': '2019-06-01',
             },
             'viewed_by_recipient': false,
             'group_draft': false,
             'metadata': {
-              'create_time': '2019-06-01T11:00:59Z'
-            }
+              'create_time': '2019-06-01T11:00:59Z',
+            },
           },
           'invoicer': {
-            'email_address': 'kari@kub-lynch.test'
+            'email_address': 'kari@kub-lynch.test',
           },
           'primary_recipients': [
             {
               'billing_info': {
                 'business_name': 'Tatum',
-                'email_address': 'wilber.nitzsche@rogahn.example'
-              }
-            }
+                'email_address': 'wilber.nitzsche@rogahn.example',
+              },
+            },
           ],
           'amount': {
             'currency_code': 'USD',
-            'value': '10.00'
+            'value': '10.00',
           },
           'due_amount': {
             'currency_code': 'USD',
-            'value': '10.00'
+            'value': '10.00',
           },
           'links': [
             {
               'href': 'https://api.paypal.com/v2/invoicing/invoices/INV2-HRJG-TB9Z-8CZW-9SFW',
               'rel': 'self',
-              'method': 'GET'
-            }
+              'method': 'GET',
+            },
           ],
           'recurring_Id': 'RI-56D78462GL467282P',
-          'unilateral': false
+          'unilateral': false,
         },
         {
           'id': random_invoice_vendor_record_id,
@@ -170,42 +170,42 @@ RSpec.describe Fixtures::Invoices, devtools: true do
             'invoice_number': random_invoice_number(year: 2019),
             'invoice_date': '2019-05-01',
             'payment_term': {
-              'due_date': '2019-05-01'
+              'due_date': '2019-05-01',
             },
             'viewed_by_recipient': false,
             'group_draft': false,
             'metadata': {
-              'create_time': '2019-05-01T11:01:22Z'
-            }
+              'create_time': '2019-05-01T11:01:22Z',
+            },
           },
           'invoicer': {
-            'email_address': 'cody.denesik@morissette.test'
+            'email_address': 'cody.denesik@morissette.test',
           },
           'primary_recipients': [
             {
               'billing_info': {
                 'business_name': 'Phoenix',
-                'email_address': 'landon_abbott@williamson-smith.example'
-              }
-            }
+                'email_address': 'landon_abbott@williamson-smith.example',
+              },
+            },
           ],
           'amount': {
             'currency_code': 'USD',
-            'value': '10.00'
+            'value': '10.00',
           },
           'due_amount': {
             'currency_code': 'USD',
-            'value': '10.00'
+            'value': '10.00',
           },
           'links': [
             {
               'href': 'https://api.paypal.com/v2/invoicing/invoices/INV2-MFMZ-A99Q-TLZT-X862',
               'rel': 'self',
-              'method': 'GET'
-            }
+              'method': 'GET',
+            },
           ],
           'recurring_Id': 'RI-56D78462GL467282P',
-          'unilateral': false
+          'unilateral': false,
         },
         {
           'id': random_invoice_vendor_record_id,
@@ -216,42 +216,42 @@ RSpec.describe Fixtures::Invoices, devtools: true do
             'invoice_number': random_invoice_number(year: 2019),
             'invoice_date': '2019-04-01',
             'payment_term': {
-              'due_date': '2019-04-01'
+              'due_date': '2019-04-01',
             },
             'viewed_by_recipient': false,
             'group_draft': false,
             'metadata': {
-              'create_time': '2019-04-01T11:00:56Z'
-            }
+              'create_time': '2019-04-01T11:00:56Z',
+            },
           },
           'invoicer': {
-            'email_address': 'warren@hermann.test'
+            'email_address': 'warren@hermann.test',
           },
           'primary_recipients': [
             {
               'billing_info': {
                 'business_name': 'Robin',
-                'email_address': 'brigitte@murazik-graham.example'
-              }
-            }
+                'email_address': 'brigitte@murazik-graham.example',
+              },
+            },
           ],
           'amount': {
             'currency_code': 'USD',
-            'value': '10.00'
+            'value': '10.00',
           },
           'due_amount': {
             'currency_code': 'USD',
-            'value': '10.00'
+            'value': '10.00',
           },
           'links': [
             {
               'href': 'https://api.paypal.com/v2/invoicing/invoices/INV2-ECB7-2YMP-GVPT-Q7BH',
               'rel': 'self',
-              'method': 'GET'
-            }
+              'method': 'GET',
+            },
           ],
           'recurring_Id': 'RI-56D78462GL467282P',
-          'unilateral': false
+          'unilateral': false,
         },
         {
           'id': random_invoice_vendor_record_id,
@@ -262,16 +262,16 @@ RSpec.describe Fixtures::Invoices, devtools: true do
             'invoice_number': random_invoice_number(year: 2019),
             'invoice_date': '2019-03-09',
             'payment_term': {
-              'due_date': '2019-03-09'
+              'due_date': '2019-03-09',
             },
             'viewed_by_recipient': false,
             'group_draft': false,
             'metadata': {
-              'create_time': '2019-03-09T12:00:39Z'
-            }
+              'create_time': '2019-03-09T12:00:39Z',
+            },
           },
           'invoicer': {
-            'email_address': 'cody@kilback-heidenreich.example'
+            'email_address': 'cody@kilback-heidenreich.example',
           },
           'primary_recipients': [
             {
@@ -280,35 +280,35 @@ RSpec.describe Fixtures::Invoices, devtools: true do
                 'name': {
                   'given_name': 'Alexis',
                   'surname': 'Indigo',
-                  'full_name': 'Avery'
+                  'full_name': 'Avery',
                 },
-                'email_address': 'laree@murphy.test'
-              }
-            }
+                'email_address': 'laree@murphy.test',
+              },
+            },
           ],
           'amount': {
             'currency_code': 'USD',
-            'value': '12.00'
+            'value': '12.00',
           },
           'due_amount': {
             'currency_code': 'USD',
-            'value': '0.00'
+            'value': '0.00',
           },
           'payments': {
             'paid_amount': {
               'currency_code': 'USD',
-              'value': '12.00'
-            }
+              'value': '12.00',
+            },
           },
           'links': [
             {
               'href': 'https://api.paypal.com/v2/invoicing/invoices/INV2-HP54-4DUA-ZZ4X-AKNK',
               'rel': 'self',
-              'method': 'GET'
-            }
+              'method': 'GET',
+            },
           ],
           'recurring_Id': 'RI-42C626788M529081F',
-          'unilateral': false
+          'unilateral': false,
         },
         {
           'id': random_invoice_vendor_record_id,
@@ -319,16 +319,16 @@ RSpec.describe Fixtures::Invoices, devtools: true do
             'invoice_number': random_invoice_number(year: 2018),
             'invoice_date': '2018-12-16',
             'payment_term': {
-              'due_date': '2018-12-16'
+              'due_date': '2018-12-16',
             },
             'viewed_by_recipient': false,
             'group_draft': false,
             'metadata': {
-              'create_time': '2018-12-16T23:17:02Z'
-            }
+              'create_time': '2018-12-16T23:17:02Z',
+            },
           },
           'invoicer': {
-            'email_address': 'ailene.veum@ratke.example'
+            'email_address': 'ailene.veum@ratke.example',
           },
           'primary_recipients': [
             {
@@ -336,34 +336,34 @@ RSpec.describe Fixtures::Invoices, devtools: true do
                 'name': {
                   'given_name': 'Greer',
                   'surname': 'Cameron',
-                  'full_name': 'Phoenix'
+                  'full_name': 'Phoenix',
                 },
-                'email_address': 'mohammad_ratke@keebler.test'
-              }
-            }
+                'email_address': 'mohammad_ratke@keebler.test',
+              },
+            },
           ],
           'amount': {
             'currency_code': 'USD',
-            'value': '12.00'
+            'value': '12.00',
           },
           'due_amount': {
             'currency_code': 'USD',
-            'value': '0.00'
+            'value': '0.00',
           },
           'payments': {
             'paid_amount': {
               'currency_code': 'USD',
-              'value': '12.00'
-            }
+              'value': '12.00',
+            },
           },
           'links': [
             {
               'href': 'https://api.paypal.com/v2/invoicing/invoices/INV2-J7PA-R9MM-DKCC-7NB4',
               'rel': 'self',
-              'method': 'GET'
-            }
+              'method': 'GET',
+            },
           ],
-          'unilateral': false
+          'unilateral': false,
         },
         {
           'id': random_invoice_vendor_record_id,
@@ -374,16 +374,16 @@ RSpec.describe Fixtures::Invoices, devtools: true do
             'invoice_number': random_invoice_number(year: 2018),
             'invoice_date': '2018-12-16',
             'payment_term': {
-              'due_date': '2018-12-16'
+              'due_date': '2018-12-16',
             },
             'viewed_by_recipient': false,
             'group_draft': false,
             'metadata': {
-              'create_time': '2018-12-16T21:13:08Z'
-            }
+              'create_time': '2018-12-16T21:13:08Z',
+            },
           },
           'invoicer': {
-            'email_address': 'rene@oreilly-dickens.test'
+            'email_address': 'rene@oreilly-dickens.test',
           },
           'primary_recipients': [
             {
@@ -392,35 +392,35 @@ RSpec.describe Fixtures::Invoices, devtools: true do
                 'name': {
                   'given_name': 'Emerson',
                   'surname': 'Ryan',
-                  'full_name': 'River'
+                  'full_name': 'River',
                 },
-                'email_address': 'denis_price@dibbert.test'
-              }
-            }
+                'email_address': 'denis_price@dibbert.test',
+              },
+            },
           ],
           'amount': {
             'currency_code': 'USD',
-            'value': '12.00'
+            'value': '12.00',
           },
           'due_amount': {
             'currency_code': 'USD',
-            'value': '0.00'
+            'value': '0.00',
           },
           'payments': {
             'paid_amount': {
               'currency_code': 'USD',
-              'value': '12.00'
-            }
+              'value': '12.00',
+            },
           },
           'links': [
             {
               'href': 'https://api.paypal.com/v2/invoicing/invoices/INV2-SXVE-DE6X-N4F6-V5Z7',
               'rel': 'self',
-              'method': 'GET'
-            }
+              'method': 'GET',
+            },
           ],
           'recurring_Id': 'RI-71W40404Y76836012',
-          'unilateral': false
+          'unilateral': false,
         },
         {
           'id': random_invoice_vendor_record_id,
@@ -431,47 +431,47 @@ RSpec.describe Fixtures::Invoices, devtools: true do
             'invoice_number': random_invoice_number(year: 2019),
             'invoice_date': '2019-01-04',
             'payment_term': {
-              'due_date': '2019-01-04'
+              'due_date': '2019-01-04',
             },
             'viewed_by_recipient': false,
             'group_draft': false,
             'metadata': {
-              'create_time': '2018-12-03T04:07:55Z'
-            }
+              'create_time': '2018-12-03T04:07:55Z',
+            },
           },
           'invoicer': {
-            'email_address': 'berta@gutmann-shields.test'
+            'email_address': 'berta@gutmann-shields.test',
           },
           'primary_recipients': [
             {
               'billing_info': {
                 'business_name': 'Gray',
-                'email_address': 'elijah@prosacco-koepp.test'
-              }
-            }
+                'email_address': 'elijah@prosacco-koepp.test',
+              },
+            },
           ],
           'amount': {
             'currency_code': 'USD',
-            'value': '120.00'
+            'value': '120.00',
           },
           'due_amount': {
             'currency_code': 'USD',
-            'value': '0.00'
+            'value': '0.00',
           },
           'payments': {
             'paid_amount': {
               'currency_code': 'USD',
-              'value': '120.00'
-            }
+              'value': '120.00',
+            },
           },
           'links': [
             {
               'href': 'https://api.paypal.com/v2/invoicing/invoices/INV2-AET3-SRKH-REPK-B8MT',
               'rel': 'self',
-              'method': 'GET'
-            }
+              'method': 'GET',
+            },
           ],
-          'unilateral': false
+          'unilateral': false,
         },
         {
           'id': random_invoice_vendor_record_id,
@@ -482,60 +482,60 @@ RSpec.describe Fixtures::Invoices, devtools: true do
             'invoice_number': random_invoice_number(year: 2018),
             'invoice_date': '2018-01-19',
             'payment_term': {
-              'due_date': '2018-01-19'
+              'due_date': '2018-01-19',
             },
             'viewed_by_recipient': false,
             'group_draft': false,
             'metadata': {
-              'create_time': '2018-01-20T02:50:30Z'
-            }
+              'create_time': '2018-01-20T02:50:30Z',
+            },
           },
           'invoicer': {
-            'email_address': 'wes_vonrueden@jacobi-rice.example'
+            'email_address': 'wes_vonrueden@jacobi-rice.example',
           },
           'primary_recipients': [
             {
               'billing_info': {
-                'email_address': 'phil_gusikowski@kessler.example'
-              }
-            }
+                'email_address': 'phil_gusikowski@kessler.example',
+              },
+            },
           ],
           'amount': {
             'currency_code': 'USD',
-            'value': '12.00'
+            'value': '12.00',
           },
           'due_amount': {
             'currency_code': 'USD',
-            'value': '0.00'
+            'value': '0.00',
           },
           'payments': {
             'paid_amount': {
               'currency_code': 'USD',
-              'value': '12.00'
-            }
+              'value': '12.00',
+            },
           },
           'links': [
             {
               'href': 'https://api.paypal.com/v2/invoicing/invoices/INV2-JCL6-CFC5-T3ZT-G8S8',
               'rel': 'self',
-              'method': 'GET'
-            }
+              'method': 'GET',
+            },
           ],
-          'unilateral': false
+          'unilateral': false,
         },
       ],
       'links' => [
         {
           'href': 'https://api.paypal.com/v2/invoicing/invoices?page=2&page_size=10&total_required=false',
           'rel': 'self',
-          'method': 'GET'
+          'method': 'GET',
         },
         {
           'href': 'https://api.paypal.com/v2/invoicing/invoices?page=1&page_size=10&total_required=false',
           'rel': 'prev',
-          'method': 'GET'
-        }
-      ]
+          'method': 'GET',
+        },
+      ],
     }
     # rubocop:enable Lint/SymbolConversion
   end

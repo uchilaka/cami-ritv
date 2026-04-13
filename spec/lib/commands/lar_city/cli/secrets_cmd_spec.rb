@@ -47,4 +47,3 @@ RSpec.describe LarCity::CLI::SecretsCmd, type: :thor, devtool: true, skip_in_ci:
     end
   end
 end
-

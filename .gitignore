@@ -131,6 +131,9 @@ chromatic.log
 .do/*
 app*.yaml
 
+# Agentic exceptions
+!.gemini/skills/*
+
 # Agents
 .claude/*
 .gemini/*

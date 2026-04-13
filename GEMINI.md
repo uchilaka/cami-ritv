@@ -50,8 +50,22 @@
 
 ### Context Summary for Next Session
 
-- Just established the project-specific `GEMINI.md` and documented core architectural decisions (Inertia.js, Solid Queue, Vite).
-- Waiting for the next feature task or bug fix.
+```yaml
+state:
+  pr_number: 265
+  branch: refactor/cli-and-helpers
+  status: updated_and_verified
+recent_changes:
+  - Updated PR #265 with a comprehensive description following the project template.
+  - Performed a specialist review of the 'refactor/cli-and-helpers' branch.
+  - Fixed a duplicate line bug in 'app/assets/config/manifest.js'.
+  - Removed redundant 'sassc-rails' gem from Gemfile.
+  - Verified all relevant CLI tests pass in the 'test' environment.
+next_steps:
+  - Review the updated PR #265 on GitHub for final merge.
+  - Monitor the PR #273 (already merged) for any downstream effects.
+  - Address pending tests in 'DDNSCmd' if needed for full coverage.
+```
 
 ---
 
@@ -66,11 +80,24 @@
 
 At the start of every new session, before doing any other work, you MUST use the `ask_user` tool to interview me about the goals and constraints for this session.
 
-Please ask me:
+**Step 1: Inference & Topline Skip**
+- Attempt to infer the answers to the questions below from my initial prompt.
+- If you can confidently infer all answers, skip the interview and summarize your assumptions.
+- Otherwise, present the interview but include a **topline option to "Skip entire interview"**.
 
-1. What part of the stack we are focusing on today (Frontend, Backend, Infrastructure, etc.) - Make this a multiple choice question.
-2. What the primary goal of the session is (e.g., Bug fixing, New feature, Refactoring).
-3. Any specific files or contexts I want you to prioritize.
-4. Whether to proceed in "Yolo" mode - Ensure that this enables Yolo for the session.
+**Step 2: The Interview**
+If an interview is necessary, ask:
 
-Do not proceed with any other tasks until I have answered these questions. Read GEMINI.md to understand my stack and rules. Update the Shared Memory section before you finish.
+1. What part of the stack we are focusing on today? (e.g., Frontend, Backend, Infrastructure, etc.) - Multiple choice.
+2. What is the primary goal of the session? (Options: Architecture & System Design, Complex Bug Resolution, System-wide Refactoring, Code Review & Mentoring, Performance Optimization).
+3. Any specific files or contexts I want you to prioritize?
+
+**Rules for the Interview:**
+- **No individual "Skip" options:** Do not add "Skip" or "None" to individual questions.
+- **Unanswered = Skipped:** If I leave a question unanswered, treat it as skipped and proceed with sensible defaults.
+- **Stop for Clarification:** If my goals are fundamentally ambiguous or I provide conflicting instructions, stop and ask for clarification.
+- **Auto-Approval Tip:** If you are being asked for confirmation too often, you can toggle auto-approval directly:
+  - **Gemini CLI:** Press `Ctrl+Y` to toggle YOLO mode (or `Shift+Tab` to cycle modes).
+  - **Claude Code:** Press `Shift+Tab` to select "Auto" mode (or start with `claude --enable-auto-mode`).
+
+Do not proceed with any other tasks until I have answered these questions or the interview is skipped. Read GEMINI.md to understand my stack and rules. Update the Shared Memory section before you finish.

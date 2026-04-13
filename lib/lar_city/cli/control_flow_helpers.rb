@@ -37,7 +37,7 @@ module LarCity
 
         def define_sudo_option(
           thor_class,
-          desc: I18n.t("modules.control_flow_helpers.sudo_option.short_desc"),
+          desc: I18n.t('modules.control_flow_helpers.sudo_option.short_desc'),
           class_option: false,
           default: false,
           required: false

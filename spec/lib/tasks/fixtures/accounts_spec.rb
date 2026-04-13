@@ -10,7 +10,7 @@ RSpec.describe Fixtures::Accounts do
   let(:fixtures) do
     [
       { display_name: 'Acme Corp', slug: 'acme-corp', tax_id: '123-45-6789' },
-      { display_name: 'Widget Co', slug: 'widget-co', tax_id: '987-65-4321' }
+      { display_name: 'Widget Co', slug: 'widget-co', tax_id: '987-65-4321' },
     ].map(&:stringify_keys)
   end
 
@@ -37,7 +37,7 @@ RSpec.describe Fixtures::Accounts do
       let(:fixtures) do
         [
           { display_name: 'Acme Corp', slug: 'acme-corp' },
-          { display_name: 'Widget Co', slug: 'widget-co' }
+          { display_name: 'Widget Co', slug: 'widget-co' },
         ]
       end
 

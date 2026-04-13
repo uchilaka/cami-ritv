@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 json.event do
   # Render specific details based on the event type or slug
   case @event

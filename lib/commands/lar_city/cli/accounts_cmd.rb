@@ -40,7 +40,7 @@ module LarCity
           if verbose?
             output = {
               predicates: @search_query.predicates,
-              sorters: @search_query.sorters
+              sorters: @search_query.sorters,
             }
             ap output
           end
