@@ -58,11 +58,11 @@ module LarCity
 
         if options[:force]
           force_msg = <<~WARNING
-            **************************************************************************
-            *  WARNING: Any existing plist configuration file(s) will be overwritten *
-            **************************************************************************
+            ****************************************************************************
+            * ⚠️ WARNING: Any existing plist configuration file(s) will be overwritten *
+            ****************************************************************************
           WARNING
-          say force_msg, Color::YELLOW
+          say_warning force_msg, prefix: ''
         end
 
         say 'Processing daemon config ERB...'
@@ -130,7 +130,7 @@ module LarCity
             next if parts.first == 'COMMAND' # Skip header line
 
             listening_port = parts[8]
-            if /[\.:]#{port}$/.match?(listening_port)
+            if %r{[\.:]#{port}$}.match?(listening_port)
               output << {
                 command: parts[0],
                 pid: parts[1],
