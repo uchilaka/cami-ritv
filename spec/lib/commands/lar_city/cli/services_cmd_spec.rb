@@ -4,9 +4,9 @@ require 'rails_helper'
 require 'commands/lar_city/cli/services_cmd'
 
 RSpec.describe LarCity::CLI::ServicesCmd do
-  subject(:command) { described_class.new }
+  subject(:command) { described_class.new([], mock_options, {}) }
 
-  let(:mock_options) { { dry_run: true } }
+  let(:mock_options) { { 'dry_run' => true } }
 
   before do
     allow(command).to receive(:run)
@@ -16,7 +16,6 @@ RSpec.describe LarCity::CLI::ServicesCmd do
     allow(command).to receive(:say_success)
     allow(command).to receive(:say_highlight)
     allow(command).to receive(:print_line_break)
-    allow(command).to receive(:options).and_return(mock_options)
   end
 
   describe '#daemonize' do
@@ -31,31 +30,34 @@ RSpec.describe LarCity::CLI::ServicesCmd do
     end
 
     context 'when in test environment' do
+      before do
+        allow(Rails.env).to receive(:test?).and_return(true)
+      end
+
       context 'with force option' do
-        let(:mock_options) { { dry_run: true, force: true } }
+        let(:mock_options) { { 'dry_run' => true, 'force' => true } }
 
-        before do
-          allow(command).to receive(:options).and_return(mock_options)
+        it 'does not skip' do
           command.daemonize
+          expect(command).not_to have_received(:say_error)
         end
-
-        it { expect(command).not_to have_received(:say_error) }
       end
 
       context 'without force option' do
-        before do
-          allow(command).to receive(:options).and_return({ dry_run: true })
-          command.daemonize
-        end
+        let(:mock_options) { { 'dry_run' => true, 'force' => false } }
 
-        it { expect(command).to have_received(:say_error).with('Skipping daemonize in test environment.') }
+        it 'skips and says error' do
+          command.daemonize
+          expect(command).to have_received(:say_error).with('Skipping daemonize in test environment.')
+        end
       end
     end
 
     context 'when config file exists' do
+      let(:mock_options) { { 'dry_run' => true, 'force' => false } }
+
       it 'does not overwrite without force' do
         allow(command).to receive(:config_file_exists?).and_return(true)
-        allow(command).to receive(:options).and_return({ force: false })
         command.daemonize
         expect(File).not_to have_received(:write)
       end
@@ -75,8 +77,9 @@ RSpec.describe LarCity::CLI::ServicesCmd do
   end
 
   describe '#kill_process' do
+    let(:mock_options) { { 'pid' => '12345' } }
+
     it 'kills the process with the given pid' do
-      allow(command).to receive(:options).and_return({ pid: '12345' })
       command.kill_process
       expect(command).to have_received(:run) do |*args|
         expect(args).to eq(['kill -9', '12345'])
@@ -85,8 +88,9 @@ RSpec.describe LarCity::CLI::ServicesCmd do
   end
 
   describe '#connect' do
+    let(:mock_options) { { 'database' => true } }
+
     it 'connects to the app-store service for the database' do
-      allow(command).to receive(:options).and_return({ database: true })
       allow(command).to receive(:service_connect_command).and_return('psql command')
       command.connect
       expect(command).to have_received(:run) do |*args|
@@ -96,88 +100,77 @@ RSpec.describe LarCity::CLI::ServicesCmd do
   end
 
   describe '#start' do
+    let(:mock_options) { { 'profile' => 'all' } }
+
     it 'starts the services' do
-      allow(command).to receive(:options).and_return({ profile: 'batteries-included' })
       command.start
-      expect(command).to have_received(:run) do |*args|
-        expect(args).to \
-          eq(
-            [
-              'docker compose', '--profile batteries-included', 'up --detach', '&&',
-              'docker compose', '--profile batteries-included', 'logs --follow --since 5m',
-            ]
-          )
-      end
+      expect(command).to have_received(:run).with(
+        'docker compose', '--profile all', 'up --detach', '&&',
+        'docker compose', '--profile all', 'logs --follow --since 5m'
+      )
     end
   end
 
   describe '#info' do
+    let(:mock_options) { { 'profile' => 'essential' } }
+
     it 'lists the services' do
-      allow(command).to receive(:options).and_return({ profile: 'batteries-included' })
       command.info
-      expect(command).to have_received(:run) do |*args|
-        expect(args).to eq(['docker compose', '--profile batteries-included', 'ps'])
-      end
+      expect(command).to have_received(:run).with('docker compose', '--profile essential', 'ps')
+    end
+  end
+
+  describe 'command mapping' do
+    it 'maps "list" to "info"' do
+      expect(described_class.map['list']).to eq(:info)
     end
   end
 
   describe '#logs' do
+    let(:mock_options) { { 'profile' => 'batteries-included' } }
+
     it 'shows the logs of the services' do
-      allow(command).to receive(:options).and_return({ profile: 'batteries-included' })
       command.logs
-      expect(command).to have_received(:run) do |*args|
-        expect(args).to eq(['docker compose', '--profile batteries-included', 'logs --follow --since 5m'])
-      end
+      expect(command).to have_received(:run).with('docker compose', '--profile batteries-included', 'logs --follow --since 5m')
     end
   end
 
   describe '#stop' do
+    let(:mock_options) { { 'profile' => 'batteries-included' } }
+
     it 'stops the services' do
-      allow(command).to receive(:options).and_return({ profile: 'batteries-included' })
       command.stop
-      expect(command).to have_received(:run) do |*args|
-        expect(args).to eq(['docker compose', '--profile batteries-included', 'stop'])
-      end
+      expect(command).to have_received(:run).with('docker compose', '--profile batteries-included', 'stop')
     end
   end
 
   describe '#teardown' do
-    before { command.teardown }
-
     context 'when no service is specified' do
-      let(:mock_options) { { dry_run: true, profile: 'batteries-included', service: [] } }
+      let(:mock_options) { { 'dry_run' => true, 'profile' => 'batteries-included', 'service' => [] } }
 
       it 'tears down all services' do
-        expect(command).to have_received(:run) do |*args|
-          expect(args).to eq(['docker compose', '--profile batteries-included', 'down --remove-orphans --volumes'])
-        end
+        command.teardown
+        expect(command).to have_received(:run).with('docker compose', '--profile batteries-included', 'down --remove-orphans --volumes')
       end
     end
 
     shared_examples 'teardown logic for services' do |*service_keys|
-      let(:mock_options) { { dry_run: true, service: service_keys } }
+      let(:mock_options) { { 'dry_run' => true, 'service' => service_keys } }
 
       service_keys.each do |service|
         it "tears down the #{service} service" do
-          [
-            ['docker compose stop', service, inline: true],
-            ['docker compose rm', '--force', '--volumes', service, inline: true],
-          ].each do |expected_args|
-            expect(command).to have_received(:run).with(*expected_args)
-          end
+          command.teardown
+          expect(command).to have_received(:run).with('docker compose stop', service, inline: true)
+          expect(command).to have_received(:run).with('docker compose rm', '--force', '--volumes', service, inline: true)
         end
       end
     end
 
     context 'when a service is specified' do
-      let(:mock_options) { { dry_run: true, service: %w[web] } }
-
       it_behaves_like 'teardown logic for services', 'web'
     end
 
     context 'when multiple services are specified' do
-      let(:mock_options) { { dry_run: true, service: %w[web worker] } }
-
       it_behaves_like 'teardown logic for services', 'web', 'worker'
     end
   end

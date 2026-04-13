@@ -81,11 +81,15 @@ development:
 # re-generated from your development database when you run "rake".
 # Do not set this db to the same as development or production.
 test:
-  <<: *default
-  host: <%= ENV.fetch('APP_DATABASE_HOST', 'localhost') %>
-  database: sails_test
-  username: <%= ENV.fetch('APP_DATABASE_USER', postgres_creds&.user || 'postgres') %>
-  password: <%= ENV.fetch('APP_DATABASE_PASSWORD', postgres_creds&.password) %>
+  primary: &primary_test
+    <<: *default
+    host: <%= ENV.fetch('APP_DATABASE_HOST', 'localhost') %>
+    database: sails_test
+    username: <%= ENV.fetch('APP_DATABASE_USER', postgres_creds&.user || 'postgres') %>
+    password: <%= ENV.fetch('APP_DATABASE_PASSWORD', postgres_creds&.password) %>
+  crm:
+    <<: *primary_test
+    database: twenty_crm_test
 
 lab:
   primary: &primary_lab

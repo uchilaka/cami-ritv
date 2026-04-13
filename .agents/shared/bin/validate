@@ -1,0 +1,64 @@
+#!/usr/bin/env bash
+
+# Exit immediately if a command exits with a non-zero status
+set -e
+
+echo "🚀 Starting full stack validation..."
+
+# We will run these tasks in parallel, capturing their output to files
+# and joining them at the end. If any background task fails, wait returns non-zero.
+
+TMP_DIR=$(mktemp -d)
+trap 'rm -rf "$TMP_DIR"' EXIT
+
+echo "=> Running RuboCop..."
+bundle exec rubocop > "$TMP_DIR/rubocop.out" 2>&1 &
+RUBOCOP_PID=$!
+
+echo "=> Running RSpec..."
+# Note: we exclude running rswag:specs:swaggerize here by default to keep tests fast, 
+# but it should be run separately if API docs change.
+RAILS_ENV=test bundle exec rspec > "$TMP_DIR/rspec.out" 2>&1 &
+RSPEC_PID=$!
+
+echo "=> Running ESLint..."
+yarn lint > "$TMP_DIR/eslint.out" 2>&1 &
+ESLINT_PID=$!
+
+echo "=> Running Vitest..."
+yarn test --run > "$TMP_DIR/vitest.out" 2>&1 &
+VITEST_PID=$!
+
+FAILURES=0
+
+wait $RUBOCOP_PID || {
+  echo "❌ RuboCop failed:"
+  cat "$TMP_DIR/rubocop.out"
+  FAILURES=$((FAILURES + 1))
+}
+
+wait $RSPEC_PID || {
+  echo "❌ RSpec failed:"
+  cat "$TMP_DIR/rspec.out"
+  FAILURES=$((FAILURES + 1))
+}
+
+wait $ESLINT_PID || {
+  echo "❌ ESLint failed:"
+  cat "$TMP_DIR/eslint.out"
+  FAILURES=$((FAILURES + 1))
+}
+
+wait $VITEST_PID || {
+  echo "❌ Vitest failed:"
+  cat "$TMP_DIR/vitest.out"
+  FAILURES=$((FAILURES + 1))
+}
+
+if [ $FAILURES -eq 0 ]; then
+  echo "✅ All validations passed!"
+  exit 0
+else
+  echo "🚨 $FAILURES validation step(s) failed. Check outputs above."
+  exit 1
+fi

@@ -85,14 +85,14 @@ RSpec.describe LarCity::CLI::OutputHelpers, :time_sensitive do
     it_should_behave_like 'expected secret masking', 'myvalue', 'm*****e'
     it_should_behave_like 'expected secret masking', 'my-secret-value', 'my-*********lue'
     it_should_behave_like 'expected secret masking', 'my#Longer#secret#value', 'my#************lue'
-    it_should_behave_like 'expected secret masking', 'my#V3ryMuchLongerThatWillBeCutOff#secret#value',
-                          'my#************lue'
+    it_should_behave_like 'expected secret masking',
+                          'my#V3ryMuchLongerThatWillBeCutOffByMaskMaximumLength#secret#value', 'my#************lue'
   end
 
   describe '#extract_timestamp' do
     shared_examples 'supported timestamp extraction' do |fname|
       let(:expected_time) do
-        Time.new(2024, 6, 15, 12, 30, 45, "-0400")
+        Time.new(2024, 6, 15, 12, 30, 45, '-0400')
       end
 
       around do |example|

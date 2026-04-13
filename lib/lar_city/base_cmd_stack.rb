@@ -48,10 +48,25 @@ module LarCity
     module InstanceMethods
       protected
 
+      # Waits for the database to become available by repeatedly attempting a simple query.
+      #
+      # @param target [Symbol] the database target (:primary or :crm)
+      # @param max_attempts [Integer] the maximum number of connection attempts before giving up.
+      #   When this limit is reached and the database is still unavailable, the last connection
+      #   error is raised.
+      # @param delay [Numeric] the number of seconds to sleep between connection attempts.
+      #
+      # @return [Hash] returns `{ skipped: true }` when running in pretend mode and the check is
+      #   skipped, or a hash describing the database connection when successfully established
+      #   (e.g. `{ engine: "PostgreSQL", healthy: true, version: "..." }`).
+      #
+      # @raise [PG::ConnectionBad] if the database cannot be reached within +max_attempts+ attempts.
+      # @raise [ActiveRecord::NoDatabaseError] if the configured database does not exist and the
+      #   error persists for +max_attempts+ attempts.
       def wait_for_db(target: :primary, max_attempts: 30, delay: 2)
         if pretend?
           say_warning 'Pretend mode enabled - skipping database connection check.'
-          return
+          return { skipped: true }
         end
 
         say_highlight 'Waiting for database service to become available...'
