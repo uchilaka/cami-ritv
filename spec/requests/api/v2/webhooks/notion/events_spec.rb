@@ -50,6 +50,7 @@ RSpec.describe 'API::V2::Webhooks::Notion::Events', type: :request, openapi_spec
       allow(ActiveSupport::SecurityUtils).to \
         receive(:secure_compare).and_call_original
       Flipper.disable(:feat__notion_use_persist_event_workflow)
+      Flipper.disable(:feat__notion_webhook_skip_signature_validation)
     end
 
     post 'Webhook event processing' do
@@ -67,7 +68,7 @@ RSpec.describe 'API::V2::Webhooks::Notion::Events', type: :request, openapi_spec
               },
             },
             required: ['event'],
-            description: 'Notion database event payload'
+            description: 'Notion database event payload',
           },
           {
             type: :object,
@@ -78,9 +79,9 @@ RSpec.describe 'API::V2::Webhooks::Notion::Events', type: :request, openapi_spec
               },
             },
             required: ['verification_token'],
-            description: 'Notion verification token payload'
-          }
-        ]
+            description: 'Notion verification token payload',
+          },
+        ],
       }
 
       response '200', 'Success' do
