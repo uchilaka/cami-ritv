@@ -48,4 +48,3 @@ describe PhoneNumber do
     end
   end
 end
-

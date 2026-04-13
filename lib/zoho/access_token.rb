@@ -47,7 +47,7 @@ module Zoho
           client_secret: Credentials.client_secret,
           grant_type: 'client_credentials',
           soid: Credentials.soid,
-          scope: supported_scopes.join(',')
+          scope: supported_scopes.join(','),
         }
       end
 

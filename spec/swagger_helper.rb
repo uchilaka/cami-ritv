@@ -47,6 +47,37 @@ RSpec.configure do |config|
         },
         schemas: Swagger::Schemas.all
       }
+    },
+    'v2/swagger.yaml' => {
+      openapi: '3.0.1',
+      info: {
+        title: 'API V2',
+        version: 'v2'
+      },
+      paths: {},
+      servers: [
+        {
+          url: 'https://{defaultHost}',
+          variables: {
+            defaultHost: {
+              default: 'accounts.larcity.local'
+            }
+          }
+        }
+      ],
+      components: {
+        securitySchemes: {
+          bearer_auth: {
+            type: :http,
+            scheme: :bearer,
+          },
+          basic_auth: {
+            type: :http,
+            scheme: :basic,
+          }
+        },
+        schemas: Swagger::Schemas.all
+      }
     }
   }
 

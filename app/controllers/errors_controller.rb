@@ -109,7 +109,7 @@ class ErrorsController < ApplicationController
     {
       403 => 'errors/forbidden',
       404 => 'errors/not_found',
-      500 => 'errors/server_error'
+      500 => 'errors/server_error',
     }.with_indifferent_access
   end
 end

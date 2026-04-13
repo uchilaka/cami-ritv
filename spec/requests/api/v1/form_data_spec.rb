@@ -2,7 +2,7 @@
 
 require 'swagger_helper'
 
-RSpec.describe 'API::V1::FormData', type: :request do
+RSpec.describe 'API::V1::FormData', type: :request, openapi_spec: 'v1/swagger.yaml' do
   path '/api/v1/form_data/countries' do
     get 'Retrieves a list of countries' do
       tags 'Form Data'

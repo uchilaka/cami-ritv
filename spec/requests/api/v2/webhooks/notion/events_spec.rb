@@ -2,7 +2,7 @@
 
 require 'swagger_helper'
 
-RSpec.describe 'API::V2::Webhooks::Notion::Events', type: :request do
+RSpec.describe 'API::V2::Webhooks::Notion::Events', type: :request, openapi_spec: 'v2/swagger.yaml' do
   let(:database_id) { SecureRandom.uuid }
   let(:integration_id) { SecureRandom.uuid }
   let(:integration_name) { 'CAMI Lab Integration' }
@@ -50,6 +50,7 @@ RSpec.describe 'API::V2::Webhooks::Notion::Events', type: :request do
       allow(ActiveSupport::SecurityUtils).to \
         receive(:secure_compare).and_call_original
       Flipper.disable(:feat__notion_use_persist_event_workflow)
+      Flipper.disable(:feat__notion_webhook_skip_signature_validation)
     end
 
     post 'Webhook event processing' do
@@ -58,16 +59,29 @@ RSpec.describe 'API::V2::Webhooks::Notion::Events', type: :request do
       produces 'application/json'
 
       parameter name: :event_params, in: :body, schema: {
-        type: :object,
-        properties: {
-          verification_token: {
-            type: :string,
-            description: 'Verification token for the webhook',
+        oneOf: [
+          {
+            type: :object,
+            properties: {
+              event: {
+                '$ref': '#/components/schemas/notion_event',
+              },
+            },
+            required: ['event'],
+            description: 'Notion database event payload',
           },
-          event: {
-            '$ref': '#/components/schemas/notion_event',
+          {
+            type: :object,
+            properties: {
+              verification_token: {
+                type: :string,
+                description: 'Verification token for the webhook',
+              },
+            },
+            required: ['verification_token'],
+            description: 'Notion verification token payload',
           },
-        },
+        ],
       }
 
       response '200', 'Success' do

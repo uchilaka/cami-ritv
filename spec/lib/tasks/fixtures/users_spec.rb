@@ -12,42 +12,42 @@ RSpec.describe Fixtures::Users do
         family_name: Faker::Name.last_name,
         given_name: Faker::Name.gender_neutral_first_name,
         profile: {
-          image_url: Faker::Avatar.image
+          image_url: Faker::Avatar.image,
         },
         providers: %w[google facebook whatsapp],
         roles: %w[admin user],
         uids: {
           google: SecureRandom.random_number(1_000_000_000),
           facebook: SecureRandom.random_number(1_000_000_000),
-          whatsapp: SecureRandom.random_number(1_000_000_000)
-        }
+          whatsapp: SecureRandom.random_number(1_000_000_000),
+        },
       },
       {
         email: Faker::Internet.email,
         family_name: Faker::Name.last_name,
         given_name: Faker::Name.gender_neutral_first_name,
         profile: {
-          image_url: Faker::Avatar.image
+          image_url: Faker::Avatar.image,
         },
         providers: %w[whatsapp],
         roles: %w[],
         uids: {
-          whatsapp: SecureRandom.random_number(1_000_000_000)
-        }
+          whatsapp: SecureRandom.random_number(1_000_000_000),
+        },
       },
       {
         email: Faker::Internet.email,
         family_name: Faker::Name.last_name,
         given_name: Faker::Name.gender_neutral_first_name,
         profile: {
-          image_url: Faker::Avatar.image
-        }
+          image_url: Faker::Avatar.image,
+        },
       },
       {
         email: Faker::Internet.email,
         family_name: Faker::Name.last_name,
         given_name: Faker::Name.gender_neutral_first_name,
-        roles: []
+        roles: [],
       },
     ].map(&:stringify_keys)
   end

@@ -32,7 +32,7 @@ module LarCity
         expect(geo_region['TW']).to \
           include(name: 'Taiwan, Province of China', alpha_2: 'TW', country_code: '158')
       end
-      
+
       # SH
       it do
         expect(geo_region['SH']).to \

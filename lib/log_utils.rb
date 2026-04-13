@@ -23,19 +23,19 @@ module LogUtils
     def initialize_stream
       # Stdout appender
       SemanticLogger.add_appender(io: $stdout, level: :debug, formatter: :color)
-      if streaming_enabled?
-        # BetterStack via HTTPS Appender
-        SemanticLogger.add_appender(
-          appender: SemanticLogger::Appender::Http.new(
-            url: "https://#{log_stream_ingestion_host!}",
-            ssl: { verify: OpenSSL::SSL::VERIFY_NONE },
-            header: {
-              'Content-Type': 'application/json',
-              Authorization: "Bearer #{log_stream_token!}",
-            }
-          )
+      return unless streaming_enabled?
+
+      # BetterStack via HTTPS Appender
+      SemanticLogger.add_appender(
+        appender: SemanticLogger::Appender::Http.new(
+          url: "https://#{log_stream_ingestion_host!}",
+          ssl: { verify: OpenSSL::SSL::VERIFY_NONE },
+          header: {
+            'Content-Type': 'application/json',
+            Authorization: "Bearer #{log_stream_token!}",
+          }
         )
-      end
+      )
     end
 
     def verbose_query_logs?

@@ -19,7 +19,7 @@ module DDNS
           .new
           .invoke(
             :cleanup, [], batch_size: 100,
-            domain:, record:, type: record_type, verbose: Rails.env.development?
+                          domain:, record:, type: record_type, verbose: Rails.env.development?
           )
       end
     end

@@ -43,29 +43,25 @@
 
 ## 🧠 Shared Memory (Hand-off Log)
 
-*This section is the relay between Gemini (Home) and Claude (Work).*
+_This section is the relay between Gemini (Home) and Claude (Work)._
 
 ### Context Summary for Next Session
 
-```yaml
-state:
-  pr_number: 264
-  branch: refactor/docs-and-base-setup
-  status: waiting_for_review
-recent_changes:
-  - Just established the project-specific GEMINI.md and documented core architectural decisions.
-  - Addressed Copilot PR feedback for PR 264.
-  - Consolidated Swagger definitions into events_spec.rb to eliminate duplicate POST operations and OAS syntax errors.
-  - Uncommented Knapsack Pro matrix configurations in full-stack.yml.
-  - Verified changes with rspec and rswag:specs:swaggerize.
-  - Created `.agents/shared/bin/validate` for concurrent validation.
-next_steps:
-  - Review the updated PR on GitHub and await final approval/merge.
-  - Execute the verification plan for adopting `devkit:swaggerize` into workflows:
-    1. Verify test coverage & ensure RSpec is green, checking spec/requests and spec/integration for Rswag tests.
-    2. Run `bin/thor devkit:swaggerize` and verify generated swagger/v1/swagger.yaml|json is free of OAS syntax errors.
-    3. Once verified, incorporate into `.agents/shared/bin/validate` or establish a rule to run before API commits.
-```
+- Just established the project-specific `GEMINI.md` and documented core
+  architectural decisions (Inertia.js, Solid Queue, Vite).
+- Addressed Copilot PR feedback for PR #264 in the
+  `refactor/docs-and-base-setup` branch.
+- Consolidated Swagger definitions and refactored request specs into a single
+  `events_spec.rb` to eliminate duplicate POST operations and OAS syntax errors.
+- Fixed OpenAPI 3.0 syntax errors related to sibling keywords on `$ref` and
+  redundant top-level keys in example payloads.
+- Updated `.replit` to Ruby 3.4.4 and restored `packageManager: "yarn@4.9.1"` in
+  `package.json`.
+- Uncommented Knapsack Pro matrix configurations in
+  `.github/workflows/full-stack.yml` and defined a default `RUN_MODE`.
+- Verified changes with `rspec` and `rswag:specs:swaggerize` (all green) and
+  ensured clean `rubocop` status.
+- Next steps: Review the updated PR on GitHub and wait for final approval/merge.
 
 ---
 
@@ -78,7 +74,7 @@ next_steps:
 
 ## 🚀 Session Startup Routine (Automated)
 
-The session startup interview and "Inference-First" protocol are now managed globally by the **Ralph extension startup hook**. 
+The session startup interview and "Inference-First" protocol are now managed globally by the **Ralph extension startup hook**.
 
 - **Behavior:** The agent will automatically attempt to infer your goals and stack focus from your initial prompt.
 - **Manual Control:** If inference is insufficient, an interview will be presented with a **"Skip entire interview"** option.
