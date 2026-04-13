@@ -6,4 +6,3 @@
 //= link application.css
 //= link application.tailwind.css
 //= link actiontext.css
-//= link actiontext.css
