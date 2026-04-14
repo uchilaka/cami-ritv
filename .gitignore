@@ -137,3 +137,10 @@ app*.yaml
 # Agents
 .claude/*
 .gemini/*
+
+
+# Terraform / OpenTofu
+.terraform/.terraform/
+.terraform/*.tfstate
+.terraform/*.tfstate.backup
+.terraform/*.tfvars
