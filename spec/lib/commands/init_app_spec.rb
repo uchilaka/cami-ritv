@@ -67,6 +67,45 @@ RSpec.describe InitApp, type: :command_stack do
     it { is_expected.to include(healthy: true) }
   end
 
+  describe '#wait_for_crm_database_service_health_check' do
+    subject(:health_check) { instance.wait_for_crm_database_service_health_check }
+
+    before do
+      allow(instance).to receive(:run).and_call_original
+    end
+
+    around do |example|
+      with_modified_env(
+        PG_DATABASE_HOST: '127.0.0.1',
+        CRM_DATABASE_NAME: 'sails_test'
+      ) do
+        example.run
+      end
+    end
+
+    it { is_expected.to include(healthy: true) }
+  end
+
+  describe '#maybe_restore_primary_databases_from_backup' do
+    context 'when restore_primary option is true' do
+      let(:options) { { restore_primary: true } }
+
+      it 'restores primary database from backup' do
+        expect(instance).to receive(:restore_database_from_backup).with(target: 'primary')
+        instance.maybe_restore_primary_databases_from_backup
+      end
+    end
+
+    context 'when restore_primary option is false' do
+      let(:options) { { restore_primary: false } }
+
+      it 'does not restore primary database' do
+        expect(instance).not_to receive(:restore_database_from_backup)
+        instance.maybe_restore_primary_databases_from_backup
+      end
+    end
+  end
+
   describe '#create_data_stores_if_not_exists' do
     it 'invokes db:create for primary and crm' do
       expect(Rails::Command).to receive(:invoke).with('db:create:primary')
@@ -80,6 +119,26 @@ RSpec.describe InitApp, type: :command_stack do
       expect(Rails::Command).to receive(:invoke).with('db:migrate:primary')
       expect(Rails::Command).to receive(:invoke).with('db:migrate:crm')
       instance.apply_migrations
+    end
+  end
+
+  describe '#maybe_restore_crm_database_from_backup' do
+    context 'when restore_crm option is true' do
+      let(:options) { { restore_crm: true } }
+
+      it 'restores crm database from backup' do
+        expect(instance).to receive(:restore_database_from_backup).with(target: 'crm')
+        instance.maybe_restore_crm_database_from_backup
+      end
+    end
+
+    context 'when restore_crm option is false' do
+      let(:options) { { restore_crm: false } }
+
+      it 'does not restore crm database' do
+        expect(instance).not_to receive(:restore_database_from_backup)
+        instance.maybe_restore_crm_database_from_backup
+      end
     end
   end
 
