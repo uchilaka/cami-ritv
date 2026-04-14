@@ -22,7 +22,7 @@ primary_region = "iad"
 
 [processes]
   web = "bin/rails server"
-  worker = "bin/jobs"
+  worker = "bin/rails solid_queue:start"
 
 [[services]]
   protocol = "tcp"

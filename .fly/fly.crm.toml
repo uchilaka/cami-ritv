@@ -21,7 +21,7 @@ primary_region = "iad"
 
 [processes]
   web = "yarn start:prod"
-  worker = "yarn worker:prod"
+  worker = "/bin/sh -c 'DISABLE_DB_MIGRATIONS=true DISABLE_CRON_JOBS_REGISTRATION=true yarn worker:prod'"
 
 [[services]]
   protocol = "tcp"
