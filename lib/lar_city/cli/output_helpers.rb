@@ -120,7 +120,13 @@ module LarCity
         alias debug? verbose?
       end
 
+      # Provides helper methods for formatting command output, handling collections,
+      # and parsing timestamps. Includes logic to make strings human-readable.
       module FormatHelperMethods
+        # Extracts a timestamp from a given filename based on a specific regex pattern.
+        #
+        # @param filename [String] the filename to parse
+        # @return [Time, nil] the parsed timestamp, or nil if no match or empty filename
         def extract_timestamp(filename)
           return nil if filename.blank?
           return unless filename =~ %r{\(?(\d{4})(\d{2})(\d{2})\.(\d{2})(\d{2})(\d{2})([+-]\d{4})\)?}
@@ -156,10 +162,19 @@ module LarCity
 
         protected
 
+        # Pluralizes a word based on count.
+        #
+        # @param count [Integer] the number of items
+        # @param name [String] the word to pluralize
+        # @return [String] the appropriately pluralized word
         def things(count, name: 'item')
           name.pluralize(count)
         end
 
+        # Checks if an object is an Enumerable.
+        #
+        # @param collection [Object] the object to check
+        # @return [Boolean] true if the collection is enumerable, false otherwise
         def enumerable?(collection)
           collection.is_a?(Enumerable)
         end
