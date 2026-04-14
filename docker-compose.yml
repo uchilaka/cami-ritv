@@ -21,7 +21,7 @@ services:
     restart: always
     command: ["--maxmemory-policy", "noeviction"]
     ports:
-      - "16079:6379"
+      - "16379:6379"
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 5s
@@ -69,7 +69,7 @@ services:
       - ./db/shared/postgres/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d:ro
       - ./db/${RAILS_ENV:-development}/postgres/downloads:/usr/local/downloads:ro
     healthcheck:
-      test: pg_isready -U ${APP_DATABASE_USER} -h localhost -d ${APP_DATABASE_NAME}
+      test: ["CMD-SHELL", "pg_isready -U ${APP_DATABASE_USER} -h localhost -d ${APP_DATABASE_NAME}"]
       interval: 5s
       timeout: 5s
       retries: 10
@@ -134,7 +134,8 @@ services:
     ports:
       - "16006:3000"
     depends_on:
-      - app-store
+      app-store:
+        condition: service_healthy
     profiles:
       - batteries-included
       - standalone
@@ -179,7 +180,8 @@ services:
       - ./config/credentials/git-crypt.key:/opt/project/src/.git/git-crypt/keys/default:ro
       - ./config/credentials/$RAILS_ENV.yml.enc:/opt/project/src/config/credentials.yml.enc:ro
     depends_on:
-      - app-store
+      app-store:
+        condition: service_healthy
     profiles:
       - batteries-included
       - standalone
@@ -237,7 +239,7 @@ services:
       redis:
         condition: service_healthy
     healthcheck:
-      test: curl --fail http://localhost:3000/healthz
+      test: ["CMD-SHELL", "curl --fail http://localhost:3000/healthz"]
       interval: 5s
       timeout: 5s
       retries: 20
