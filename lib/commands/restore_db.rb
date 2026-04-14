@@ -49,14 +49,24 @@ class RestoreDb < Thor::Group
 
   def restore_database_from_backup
     database_config = Rails.application.config_for(:database)[:primary]
-    username, port, host, password, database =
+    username, port, host, password, _database =
       database_config.values_at(:username, :port, :host, :password, :database)
+    
+    env = {}
+    env['PGPASSWORD'] = password.to_s if password.present?
+
     cmd_parts = %w[pg_restore --jobs 8 --clean]
-    cmd_parts << "--verbose" if verbose?
-    cmd_parts += %W[--username='#{username}' --host='#{host}' --port='#{port}' --dbname='#{restore_database}']
+    cmd_parts << '--verbose' if verbose?
+    cmd_parts += ['--username', username.to_s, '--host', host.to_s, '--port', port.to_s, '--dbname', restore_database.to_s]
     cmd_parts << (password.blank? ? '--no-password' : '--password')
     cmd_parts << restore_source_path
-    run *cmd_parts
+
+    if pretend?
+      say_info "Would run: #{cmd_parts.join(' ')}"
+    else
+      say_info "Running: #{cmd_parts.join(' ')}"
+      Kernel.system(env, *cmd_parts, exception: true)
+    end
   end
 
   no_commands do
