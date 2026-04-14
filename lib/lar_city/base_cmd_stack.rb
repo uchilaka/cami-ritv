@@ -48,6 +48,13 @@ module LarCity
     module InstanceMethods
       protected
 
+      # Waits for the database service to become available before executing queries.
+      #
+      # @param target [Symbol] the target database to check (e.g. :primary or :crm)
+      # @param max_attempts [Integer] maximum number of connection attempts before raising an error
+      # @param delay [Integer] seconds to wait between attempts
+      # @return [Hash, nil] containing connection :engine, :healthy status, and :version, or nil if pretend? is true
+      # @raise [ActiveRecord::DatabaseConnectionError, ActiveRecord::NoDatabaseError] if unable to connect after max_attempts
       def wait_for_db(target: :primary, max_attempts: 30, delay: 2)
         if pretend?
           say_warning 'Pretend mode enabled - skipping database connection check.'

@@ -31,6 +31,10 @@ RSpec.describe LarCity::CLI::ServicesCmd do
     end
 
     context 'when in test environment' do
+      before do
+        allow(Rails.env).to receive(:test?).and_return(true)
+      end
+
       context 'with force option' do
         let(:mock_options) { { dry_run: true, force: true } }
 
@@ -69,6 +73,65 @@ RSpec.describe LarCity::CLI::ServicesCmd do
         command.lookup
         expect(command).to have_received(:say) do |*args|
           expect(args).to eq(['No configured ports found. Please ensure your environment variables are set correctly.', :red])
+        end
+      end
+    end
+
+    context 'when port is specified' do
+      before do
+        allow(command).to receive(:configured_ports).and_return(['3000'])
+        allow(command).to receive(:options).and_return({ port: '3000' })
+      end
+
+      it 'runs the lookup command for the specified port' do
+        allow(command).to receive(:lookup_all_listening_ports_command).and_return('lsof_cmd')
+        allow(command).to receive(:run).with('sudo', 'lsof_cmd', eval: true).and_yield("COMMAND PID USER FD TYPE DEVICE SIZE/OFF NODE NAME").and_yield("node 1234 user 22u IPv4 25812 0t0 TCP *:3000 (LISTEN)")
+        expect(command).to receive(:ap).with([{ command: 'node', pid: '1234', user: 'user', port: '*:3000' }])
+        command.lookup
+      end
+
+      it 'says no service found when no output matches' do
+        allow(command).to receive(:lookup_all_listening_ports_command).and_return('lsof_cmd')
+        allow(command).to receive(:run).with('sudo', 'lsof_cmd', eval: true).and_yield("COMMAND PID USER FD TYPE DEVICE SIZE/OFF NODE NAME")
+        command.lookup
+        expect(command).to have_received(:say_info).with("No service found listening on 3000")
+      end
+    end
+
+    context 'when port is not specified' do
+      before do
+        allow(command).to receive(:configured_ports).and_return(['3000'])
+        allow(command).to receive(:options).and_return({})
+      end
+
+      context 'when feat__lookup_by_configured_ports is disabled' do
+        before do
+          allow(Flipper).to receive(:enabled?).with(:feat__lookup_by_configured_ports).and_return(false)
+        end
+
+        it 'prints the no port specified message' do
+          command.lookup
+          expect(command).to have_received(:say_highlight).with(I18n.t('commands.services.lookup.no_port_specified_msg'))
+        end
+      end
+
+      context 'when feat__lookup_by_configured_ports is enabled' do
+        before do
+          allow(Flipper).to receive(:enabled?).with(:feat__lookup_by_configured_ports).and_return(true)
+        end
+
+        it 'looks up by configured ports and prints the result' do
+          allow(command).to receive(:lookup_listening_ports_command).with('3000').and_return('lsof_cmd | grep 3000')
+          allow(command).to receive(:run).with('sudo', 'lsof_cmd | grep 3000', eval: true).and_return("node 1234 user 22u IPv4 25812 0t0 TCP *:3000 (LISTEN)")
+          command.lookup
+          expect(command).to have_received(:say_info).with("node 1234 user 22u IPv4 25812 0t0 TCP *:3000 (LISTEN)")
+        end
+
+        it 'says no services found if result is nil' do
+          allow(command).to receive(:lookup_listening_ports_command).with('3000').and_return('lsof_cmd | grep 3000')
+          allow(command).to receive(:run).with('sudo', 'lsof_cmd | grep 3000', eval: true).and_return(nil)
+          command.lookup
+          expect(command).to have_received(:say_highlight).with('No services found listening on configured ports.')
         end
       end
     end

@@ -26,48 +26,48 @@ RSpec.describe RestoreDb do
     # allow(Rails).to receive(:env).and_return('test')
   end
 
-  describe '#check_for_available_backups', skip: 'Pending validation' do
+  describe '#check_for_available_backups' do
     it 'lists available backups' do
       expect(instance).to receive(:list_available_backups)
       instance.check_for_available_backups
     end
   end
 
-  describe '#select_backup_file_from_prioritized_list', skip: 'Pending validation' do
+  describe '#select_backup_file_from_prioritized_list' do
     it 'selects a backup file' do
-      expect(instance).to receive(:selected_data_source_file).and_return('primary_20240601.dump')
+      allow(instance).to receive(:selected_data_source_file).and_return('primary_20240601.dump')
       instance.select_backup_file_from_prioritized_list
       expect(instance.data_source_file).to eq('primary_20240601.dump')
     end
   end
 
-  describe '#copy_backup_file_to_mounted_volume', skip: 'Pending validation' do
+  describe '#copy_backup_file_to_mounted_volume' do
     it 'copies the backup file' do
       instance.instance_variable_set(:@data_source_file, 'primary_20240601.dump')
-      expect(FileUtils).to receive(:cp)
+      expect(FileUtils).to receive(:cp).with('/tmp/backups/primary_20240601.dump', '/tmp/downloads/primary_restore.dump', verbose: false, noop: false)
       instance.copy_backup_file_to_mounted_volume
       expect(instance.restore_file).to eq('primary_restore.dump')
     end
   end
 
-  describe '#restore_database_from_backup', skip: 'Pending validation' do
+  describe '#restore_database_from_backup' do
     it 'runs pg_restore command' do
       instance.instance_variable_set(:@restore_file, 'primary_restore.dump')
       expect(instance).to receive(:run).with(
-        a_string_starting_with('pg_restore'), *anything
+        'pg_restore', '--jobs', '8', '--clean', "--username='user'", "--host='localhost'", "--port='5432'", "--dbname='sails_test'", "--no-password", "/tmp/downloads/primary_restore.dump"
       )
       instance.restore_database_from_backup
     end
   end
 
-  describe '#restore_database', skip: 'Pending validation' do
+  describe '#restore_database' do
     it 'returns correct db name for primary' do
-      expect(instance.send(:restore_database)).to eq('sails_test')
+      expect(instance.send(:restore_database)).to eq("sails_#{Rails.env}")
     end
 
-    it 'returns correct db name for crm', skip: 'Pending validation' do
-      instance.options[:target] = 'crm'
-      expect(instance.send(:restore_database)).to eq('twenty_crm_test')
+    it 'returns correct db name for crm' do
+      instance.options = { target: 'crm', latest_backup: false }
+      expect(instance.send(:restore_database)).to eq("twenty_crm_#{Rails.env}")
     end
   end
 
