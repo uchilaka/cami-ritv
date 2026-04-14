@@ -1,0 +1,64 @@
+name: Deploy to Fly.io
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  infrastructure:
+    name: Manage Infrastructure
+    runs-on: ubuntu-latest
+    env:
+      FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup OpenTofu
+        uses: opentofu/setup-opentofu@v1
+        with:
+          tofu_version: 1.11.6
+
+      - name: OpenTofu Init
+        working-directory: .terraform
+        run: |
+          tofu init \
+            -backend-config="bucket=${{ secrets.TF_STATE_BUCKET }}" \
+            -backend-config="key=cami/fly/terraform.tfstate" \
+            -backend-config="region=${{ vars.TF_STATE_REGION || 'us-east-1' }}" \
+            -backend-config="endpoint=${{ vars.TF_STATE_ENDPOINT }}" \
+            -backend-config="access_key=${{ secrets.AWS_ACCESS_KEY_ID }}" \
+            -backend-config="secret_key=${{ secrets.AWS_SECRET_ACCESS_KEY }}" \
+            -backend-config="skip_credentials_validation=true" \
+            -backend-config="skip_metadata_api_check=true" \
+            -backend-config="skip_region_validation=true" \
+            -backend-config="skip_s3_checksum=true"
+
+      - name: OpenTofu Apply
+        working-directory: .terraform
+        run: tofu apply -auto-approve
+        env:
+          TF_VAR_fly_org: ${{ vars.FLY_ORG }}
+          TF_VAR_fly_region: ${{ vars.FLY_REGION }}
+          TF_VAR_rails_master_key: ${{ secrets.RAILS_MASTER_KEY }}
+          TF_VAR_gitcrypt_key_base64: ${{ secrets.GITCRYPT_KEY_BASE64 }}
+          TF_VAR_app_secret: ${{ secrets.APP_SECRET }}
+
+  deploy:
+    name: Deploy Applications
+    needs: infrastructure
+    runs-on: ubuntu-latest
+    env:
+      FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Flyctl
+        uses: superfly/flyctl-actions/setup-flyctl@master
+
+      - name: Deploy Rails Core
+        run: flyctl deploy --config .fly/fly.toml --remote-only
+
+      - name: Deploy Twenty CRM
+        run: flyctl deploy --config .fly/fly.crm.toml --remote-only
