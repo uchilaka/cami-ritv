@@ -7,12 +7,12 @@ app = "cami-crm"
 primary_region = "iad"
 
 [build]
-  image = "twentycrm/twenty:latest"
+  image = "twentycrm/twenty:2.0.3"
 
 [env]
   PORT = "3000"
   NODE_PORT = "3000"
-  CRM_DATABASE_NAME = "twenty"
+  CRM_DATABASE_NAME = "twenty_production"
   CRM_DATABASE_PORT = "5432"
   APP_DATABASE_USER = "postgres"
   DISABLE_DB_MIGRATIONS = "false"

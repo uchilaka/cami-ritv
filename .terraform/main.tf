@@ -12,16 +12,16 @@ resource "fly_postgres_cluster" "db" {
   name         = "${var.app_name_prefix}-postgres"
   org          = var.fly_org
   region       = var.fly_region
-  vm_size      = "shared-cpu-1x"
-  cluster_size = 1
-  volume_size  = 10
+  vm_size      = var.fly_postgres_vm_size
+  cluster_size = var.fly_postgres_cluster_size
+  volume_size  = var.fly_postgres_volume_size
 }
 
 resource "fly_redis" "cache" {
   name   = "${var.app_name_prefix}-redis"
   org    = var.fly_org
   region = var.fly_region
-  plan   = "free"
+  plan   = var.fly_redis_plan
 }
 
 # Core DB Attachment
@@ -36,7 +36,7 @@ resource "fly_postgres_attachment" "core_db" {
 resource "fly_postgres_attachment" "crm_db" {
   app           = fly_app.crm.name
   postgres_app  = fly_postgres_cluster.db.name
-  database_name = "twenty"
+  database_name = "twenty_production"
   variable_name = "PG_DATABASE_URL"
 }
 

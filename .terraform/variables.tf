@@ -15,14 +15,32 @@ variable "app_name_prefix" {
   default     = "cami"
 }
 
-variable "rails_master_key" {
-  description = "Rails Master Key"
+variable "fly_postgres_vm_size" {
+  description = "Fly.io Postgres VM Size"
   type        = string
-  sensitive   = true
+  default     = "shared-cpu-1x"
 }
 
-variable "gitcrypt_key_base64" {
-  description = "Base64 encoded git-crypt key"
+variable "fly_postgres_cluster_size" {
+  description = "Number of Postgres instances"
+  type        = number
+  default     = 1
+}
+
+variable "fly_postgres_volume_size" {
+  description = "Size of Postgres volume in GB"
+  type        = number
+  default     = 10
+}
+
+variable "fly_redis_plan" {
+  description = "Fly.io Redis Plan"
+  type        = string
+  default     = "free"
+}
+
+variable "rails_master_key" {
+  description = "Rails Master Key"
   type        = string
   sensitive   = true
 }
