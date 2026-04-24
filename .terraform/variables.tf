@@ -50,3 +50,15 @@ variable "app_secret" {
   type        = string
   sensitive   = true
 }
+
+variable "tf_state_bucket" {
+  description = "S3 bucket for Terraform state"
+  type        = string
+  sensitive   = true
+}
+
+variable "fly_aws_endpoint_url_s3" {
+  description = "Custom AWS S3 Endpoint URL for Fly.io (Tigris)"
+  type        = string
+  default     = "https://fly.storage.tigris.dev"
+}

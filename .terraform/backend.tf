@@ -1,12 +1,12 @@
 terraform {
   backend "s3" {
     # Replace with your bucket name
-    # bucket = "my-terraform-state"
-    # key    = "cami/fly/terraform.tfstate"
-    # region = "us-east-1"
+    bucket    = var.tf_state_bucket
+    key       = "cami/fly/terraform.tfstate"
+    region    = "us-east-1"
 
     # For Tigris (Fly.io), you would set the endpoint and skip some AWS-specific checks
-    # endpoint                    = "https://fly.storage.tigris.io"
+    endpoint                      = var.fly_aws_endpoint_url_s3
     # skip_credentials_validation = true
     # skip_metadata_api_check     = true
     # skip_region_validation      = true
