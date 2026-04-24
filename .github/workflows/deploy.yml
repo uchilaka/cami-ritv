@@ -26,17 +26,26 @@ jobs:
       - name: OpenTofu Init
         working-directory: .terraform
         run: |
-          tofu init \
-            -backend-config="bucket=${{ secrets.TF_STATE_BUCKET }}" \
-            -backend-config="key=cami/fly/terraform.tfstate" \
-            -backend-config="region=${{ vars.TF_STATE_REGION || 'us-east-1' }}" \
-            -backend-config="endpoint=${{ vars.TF_STATE_ENDPOINT }}" \
-            -backend-config="access_key=${{ secrets.AWS_ACCESS_KEY_ID }}" \
-            -backend-config="secret_key=${{ secrets.AWS_SECRET_ACCESS_KEY }}" \
-            -backend-config="skip_credentials_validation=true" \
-            -backend-config="skip_metadata_api_check=true" \
-            -backend-config="skip_region_validation=true" \
-            -backend-config="skip_s3_checksum=true"
+          if [ -n "${{ vars.TF_STATE_ENDPOINT }}" ]; then
+            tofu init \
+              -backend-config="bucket=${{ secrets.TF_STATE_BUCKET }}" \
+              -backend-config="key=cami/fly/terraform.tfstate" \
+              -backend-config="region=${{ vars.TF_STATE_REGION || 'us-east-1' }}" \
+              -backend-config="endpoint=${{ vars.TF_STATE_ENDPOINT }}" \
+              -backend-config="access_key=${{ secrets.AWS_ACCESS_KEY_ID }}" \
+              -backend-config="secret_key=${{ secrets.AWS_SECRET_ACCESS_KEY }}" \
+              -backend-config="skip_credentials_validation=true" \
+              -backend-config="skip_metadata_api_check=true" \
+              -backend-config="skip_region_validation=true" \
+              -backend-config="skip_s3_checksum=true"
+          else
+            tofu init \
+              -backend-config="bucket=${{ secrets.TF_STATE_BUCKET }}" \
+              -backend-config="key=cami/fly/terraform.tfstate" \
+              -backend-config="region=${{ vars.TF_STATE_REGION || 'us-east-1' }}" \
+              -backend-config="access_key=${{ secrets.AWS_ACCESS_KEY_ID }}" \
+              -backend-config="secret_key=${{ secrets.AWS_SECRET_ACCESS_KEY }}"
+          fi
 
       - name: OpenTofu Apply
         working-directory: .terraform
@@ -69,7 +78,7 @@ jobs:
             --config .fly/fly.toml \
             --remote-only \
             --build-secret production.key="${RAILS_MASTER_KEY}" \
-            --build-secret gitcrypt_key_base64="${GITCRYPT_KEY_BASE64}"
+            --build-secret git-crypt.key="${GITCRYPT_KEY_BASE64}"
 
       - name: Deploy Twenty CRM
         env:
@@ -80,4 +89,4 @@ jobs:
             --config .fly/fly.crm.toml \
             --remote-only \
             --build-secret production.key="${RAILS_MASTER_KEY}" \
-            --build-secret gitcrypt_key_base64="${GITCRYPT_KEY_BASE64}"
+            --build-secret git-crypt.key="${GITCRYPT_KEY_BASE64}"

@@ -47,12 +47,6 @@ resource "fly_secret" "core_rails_master_key" {
   value = var.rails_master_key
 }
 
-resource "fly_secret" "core_gitcrypt_key" {
-  app   = fly_app.core.name
-  key   = "GITCRYPT_KEY_BASE64"
-  value = var.gitcrypt_key_base64
-}
-
 resource "fly_secret" "core_redis_url" {
   app   = fly_app.core.name
   key   = "REDIS_URL"

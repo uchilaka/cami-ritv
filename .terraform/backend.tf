@@ -4,7 +4,7 @@ terraform {
     # bucket = "my-terraform-state"
     # key    = "cami/fly/terraform.tfstate"
     # region = "us-east-1"
-    
+
     # For Tigris (Fly.io), you would set the endpoint and skip some AWS-specific checks
     # endpoint                    = "https://fly.storage.tigris.io"
     # skip_credentials_validation = true
