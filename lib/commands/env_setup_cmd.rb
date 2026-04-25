@@ -73,11 +73,11 @@ class EnvSetupCmd < Thor::Group
   end
 
   no_commands do
-    def paramify(value, separator: '-')
-      return '' if value.blank?
-
-      value.to_s.parameterize(separator:).strip
-    end
+    # def paramify(value, separator: '-')
+    #   return '' if value.blank?
+    #
+    #   value.to_s.parameterize(separator:).strip
+    # end
 
     def provision_env_file_from_template
       require_template_exists!
@@ -145,7 +145,8 @@ class EnvSetupCmd < Thor::Group
           value = content['Text'] || content['Hidden']
           next if value.blank? || paramify(name) == 'prefix'
 
-          var_name = [prefix, paramify(name, separator: '_')].compact.join('_').upcase
+          #var_name = [prefix, paramify(name, separator: '_')].compact.join('_').upcase
+          var_name = envify(prefix, name)
           erb_template_array << "export #{var_name}=\"#{value}\""
         end
         erb_template_array << "\n"

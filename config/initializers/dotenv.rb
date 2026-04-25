@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 production_env_vars = []
-if AppUtils.database_url_present?
+if AppUtils.database_url_from_env.present?
   puts <<~MSG
     ⚠️ DATABASE_URL environment variable detected. Skipping individual
     database configuration checks.
@@ -23,7 +23,7 @@ end
 #   co-located database instance. Revisit this later.
 required_env_vars = %w[PORT RAILS_ENV REDIS_URL]
 
-unless AppUtils.database_url_present?
+unless AppUtils.database_url_from_env.present?
   {
     'APP_DATABASE_USER' => :user,
     'APP_DATABASE_PASSWORD' => :password,

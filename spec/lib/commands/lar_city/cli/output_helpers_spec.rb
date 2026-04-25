@@ -149,6 +149,62 @@ RSpec.describe LarCity::CLI::OutputHelpers, :time_sensitive do
     end
   end
 
+  describe '#envify' do
+    subject(:result) { cmd.envify(*values) }
+
+    shared_examples "expected ENV safe output" do |inputs, expected_output|
+      subject(:result) { cmd.envify(*inputs) }
+
+      it { is_expected.to eq(expected_output) }
+    end
+
+    it_behaves_like "expected ENV safe output", %w[Hello World], 'HELLO_WORLD'
+    it_behaves_like "expected ENV safe output", ['Hello', 'World, friends!'], 'HELLO_WORLD_FRIENDS'
+    it_behaves_like "expected ENV safe output", ['Hello, World!', 'friends (from Austin!)'], 'HELLO_WORLD_FRIENDS_FROM_AUSTIN'
+    it_behaves_like "expected ENV safe output", ['Hello, World!'], 'HELLO_WORLD'
+
+    context 'with an empty string' do
+      let(:values) { [''] }
+
+      it { is_expected.to eq '' }
+    end
+
+    context 'with nil value' do
+      let(:values) { [nil] }
+
+      it { is_expected.to eq '' }
+    end
+  end
+
+  describe '#paramify' do
+    subject(:result) { cmd.paramify(value, separator:) }
+
+    shared_examples "expected parameter safe output" do |input, expected_output, separator = ''|
+      subject(:result) { cmd.paramify(input, separator:) }
+
+      it { is_expected.to eq(expected_output) }
+    end
+
+    it_behaves_like "expected parameter safe output", 'Hello World', 'hello-world'
+    it_behaves_like "expected parameter safe output", 'Hello, World!', 'hello-world'
+    it_behaves_like "expected parameter safe output", 'Hello, World!', 'hello_world', '_'
+    it_behaves_like "expected parameter safe output", 'Hello, World (from Utah)!', 'hello_world_from_utah', '_'
+    
+    context 'with an empty string' do
+      let(:value) { '' }
+      let(:separator) { '-' }
+
+      it { is_expected.to eq '' }
+    end
+
+    context 'with nil value' do
+      let(:value) { nil }
+      let(:separator) { '-' }
+
+      it { is_expected.to eq '' }
+    end
+  end
+
   describe '#range' do
     subject(:result) { cmd.range(set) }
 

@@ -229,14 +229,9 @@ class AppUtils
       ENV.fetch('APP_CONFIG_JWT_SECRET_KEY', Rails.application.credentials.devise_jwt_secret_key)
     end
 
-    def database_url_present?
-      ENV['DATABASE_URL'].present?
-    end
-
     # Build PostgreSQL database URL from ENV variables
     def database_url(config_name = :primary)
-      configured_database_url = ENV.fetch('DATABASE_URL', nil)
-      return configured_database_url if database_url_present?
+      return database_url_from_env if database_url_from_env.present?
 
       adapter, host, port, database, username, password =
         database_config!(config_name)
@@ -244,6 +239,10 @@ class AppUtils
           .values_at(:adapter, :host, :port, :database, :username, :password)
 
       "#{adapter}://#{username}:#{password}@#{host}:#{port}/#{database}"
+    end
+
+    def database_url_from_env
+      ENV.fetch('DATABASE_URL', nil)
     end
 
     private
