@@ -128,7 +128,7 @@ module LarCity
         def paramify(value, separator: '-')
           return '' if value.blank?
 
-          value.to_s.parameterize(separator:).strip
+          value.to_s.parameterize(separator: separator.to_s).strip
         end
 
         def extract_timestamp(filename)

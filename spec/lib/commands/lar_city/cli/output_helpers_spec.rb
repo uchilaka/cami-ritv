@@ -179,7 +179,7 @@ RSpec.describe LarCity::CLI::OutputHelpers, :time_sensitive do
   describe '#paramify' do
     subject(:result) { cmd.paramify(value, separator:) }
 
-    shared_examples "expected parameter safe output" do |input, expected_output, separator = ''|
+    shared_examples "expected parameter safe output" do |input, expected_output, separator = '-'|
       subject(:result) { cmd.paramify(input, separator:) }
 
       it { is_expected.to eq(expected_output) }
@@ -189,7 +189,21 @@ RSpec.describe LarCity::CLI::OutputHelpers, :time_sensitive do
     it_behaves_like "expected parameter safe output", 'Hello, World!', 'hello-world'
     it_behaves_like "expected parameter safe output", 'Hello, World!', 'hello_world', '_'
     it_behaves_like "expected parameter safe output", 'Hello, World (from Utah)!', 'hello_world_from_utah', '_'
-    
+
+    context 'without a separator' do
+      let(:value) { 'Hello, World!' }
+      let(:separator) { nil }
+
+      it { is_expected.to eq 'hello-world' }
+    end
+
+    context 'with a blank separator' do
+      let(:value) { 'Hello, World!' }
+      let(:separator) { '' }
+
+      it { is_expected.to eq 'helloworld' }
+    end
+
     context 'with an empty string' do
       let(:value) { '' }
       let(:separator) { '-' }
