@@ -233,7 +233,29 @@ class AppUtils
       ENV['DATABASE_URL'].present?
     end
 
+    # Build PostgreSQL database URL from ENV variables
+    def database_url(config_name = :primary)
+      configured_database_url = ENV.fetch('DATABASE_URL', nil)
+      return configured_database_url if database_url_present?
+
+      adapter, host, port, database, username, password =
+        database_config!(config_name)
+          .symbolize_keys
+          .values_at(:adapter, :host, :port, :database, :username, :password)
+
+      "#{adapter}://#{username}:#{password}@#{host}:#{port}/#{database}"
+    end
+
     private
+
+    def database_config!(name = :primary)
+      full_config = Rails.application.config_for(:database)
+      unless full_config.key?(name)
+        raise ArgumentError, I18n.t('exceptions.missing_database_configuration', name:, input_options: full_config.keys)
+      end
+
+      full_config[name]
+    end
 
     def check_credentials?
       return false if Rails.env.test?
