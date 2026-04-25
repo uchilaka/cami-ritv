@@ -191,8 +191,9 @@ RSpec.describe LarCity::CLI::OutputHelpers, :time_sensitive do
     it_behaves_like "expected parameter safe output", 'Hello, World (from Utah)!', 'hello_world_from_utah', '_'
 
     context 'without a separator' do
+      subject(:result) { cmd.paramify(value) }
+
       let(:value) { 'Hello, World!' }
-      let(:separator) { nil }
 
       it { is_expected.to eq 'hello-world' }
     end
@@ -200,6 +201,13 @@ RSpec.describe LarCity::CLI::OutputHelpers, :time_sensitive do
     context 'with a blank separator' do
       let(:value) { 'Hello, World!' }
       let(:separator) { '' }
+
+      it { is_expected.to eq 'helloworld' }
+    end
+
+    context 'with a nil separator' do
+      let(:value) { 'Hello, World!' }
+      let(:separator) { nil }
 
       it { is_expected.to eq 'helloworld' }
     end
