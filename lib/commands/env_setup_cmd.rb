@@ -19,7 +19,7 @@ class EnvSetupCmd < Thor::Group
                 type: :array,
                 enum: %w[template cli],
                 desc: 'The source system(s) to use in setting up ENV variables',
-                default: %w[template]
+                default: %w[cli]
   # Partial option
   class_option :section_slug,
                type: :string,
@@ -363,21 +363,21 @@ class EnvSetupCmd < Thor::Group
 
     def item_env_sets
       [
-        *database_env_sets.map { |env_key, vault_field| [env_key, vault_field, 'database'] },
+        #*database_env_sets.map { |env_key, vault_field| [env_key, vault_field, 'database'] },
         *platform_env_sets.map { |env_key, vault_field| [env_key, vault_field, 'platform'] },
         #['HOSTNAME', nil, 'app'],
         #['RAILS_MASTER_KEY', nil, 'app'],
         ['REDIS_URL', nil, 'cache'],
         ['NGROK_AUTH_TOKEN', nil, 'proxy'],
-        ['PAYPAL_BASE_URL', nil, 'paypal'],
-        ['PAYPAL_API_BASE_URL', nil, 'paypal'],
-        ['PAYPAL_CLIENT_ID', nil, 'paypal'],
-        ['PAYPAL_CLIENT_SECRET', nil, 'paypal'],
-        ['ZOHO_CLIENT_ID', nil, 'crm'],
-        ['ZOHO_CLIENT_SECRET', nil, 'crm'],
+        #['PAYPAL_BASE_URL', nil, 'paypal'],
+        #['PAYPAL_API_BASE_URL', nil, 'paypal'],
+        #['PAYPAL_CLIENT_ID', nil, 'paypal'],
+        #['PAYPAL_CLIENT_SECRET', nil, 'paypal'],
+        #['ZOHO_CLIENT_ID', nil, 'crm'],
+        #['ZOHO_CLIENT_SECRET', nil, 'crm'],
         ['CRM_ORG_ID', nil, 'crm'],
-        ['BETTERSTACK_SOURCE_TOKEN', nil, 'logging'],
-        ['BETTERSTACK_INGESTION_HOST', nil, 'logging'],
+        #['BETTERSTACK_SOURCE_TOKEN', nil, 'logging'],
+        #['BETTERSTACK_INGESTION_HOST', nil, 'logging'],
       ]
     end
 

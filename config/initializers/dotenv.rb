@@ -8,7 +8,7 @@ if AppUtils.database_url_present?
   MSG
 else
   {
-    'APP_DATABASE_NAME' => :database,
+    'APP_DATABASE_NAME_PRIMARY' => :database,
     'APP_DATABASE_HOST' => :host,
     'APP_DATABASE_PORT' => :port,
   }.each do |var, config_key|
