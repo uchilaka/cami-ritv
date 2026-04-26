@@ -1,16 +1,17 @@
-shared:
-  - accounts.larcity.ngrok.dev
 development:
+  - accounts.larcity.ngrok.dev
   - accounts.larcity
 test:
   - accounts.larcity.ngrok.test
   - accounts.larcity.test
   - www.example.com
 lab:
+  - accounts.larcity.ngrok.dev
   - accounts.lab.larcity.dev
   - accounts.lab.larcity.tech
   - accounts.lab.larcity.hopto.org
 staging:
+  - accounts.larcity.ngrok.dev
   - cami-staging-app-ghexn.ondigitalocean.app
   - accounts.staging.lar.city
   - accounts.staging.larcity.org
