@@ -73,12 +73,6 @@ class EnvSetupCmd < Thor::Group
   end
 
   no_commands do
-    def paramify(value, separator: '-')
-      return '' if value.blank?
-
-      value.to_s.parameterize(separator:).strip
-    end
-
     def provision_env_file_from_template
       require_template_exists!
       require_proton_pass_cli!
@@ -109,51 +103,6 @@ class EnvSetupCmd < Thor::Group
           You can also try running the setup command with --verbose and check for error messages in the result.
         ERROR_MSG
       end
-    end
-
-    def env_content_from_source_item_data
-      require_proton_pass_cli!
-
-      say_info "Provisioning #{output_file_path} file from #{detected_environment} vault source item data..."
-      result = run(
-        'pass-cli item view',
-        '--output=json',
-        "--item-id=#{source_item_id}",
-        "--share-id=#{vault_share_id}",
-        always_run: true,
-        eval: true
-      )
-      json_data = JSON.parse(result)
-      say_debug JSON.pretty_generate(json_data)
-      erb_template_array = []
-      json_data.dig('item', 'content', 'content', 'Custom', 'sections').each do |section|
-        section_name, fields = section.values_at 'section_name', 'section_fields'
-        section_slug = paramify(section_name)
-        section_header = "#{'#' * 24} #{section_name} (#{detected_environment}) #{'#' * 24}"
-        erb_template_array << section_header
-        # The prefix should ALWAYS be a plain text field, never hidden
-        prefix = (fields.find { |f| paramify(f['name']) == 'prefix' } || {}).dig('content', 'Text')
-        say_debug <<~SECTION_INFO
-          |-----------------Section-------------------
-          | Name:     #{section_name}
-          | Slug:     #{section_slug}
-          | Tally:    #{tally(fields, 'field')}
-          | Prefix:   #{(prefix.presence || '<None>').strip}
-        SECTION_INFO
-        fields.each do |field|
-          name, content = field.values_at 'name', 'content'
-          value = content['Text'] || content['Hidden']
-          next if value.blank? || paramify(name) == 'prefix'
-
-          var_name = [prefix, paramify(name, separator: '_')].compact.join('_').upcase
-          erb_template_array << "export #{var_name}=\"#{value}\""
-        end
-        erb_template_array << "\n"
-      end
-      erb_template_array.join("\n")
-    rescue JSON::ParserError => e
-      say_error e.message
-      nil
     end
 
     def template_content
@@ -235,7 +184,7 @@ class EnvSetupCmd < Thor::Group
         say_warning "⚠️ No environment-specific .env template found at #{dotenv_template_file_path}. Proceeding with default template content."
         build_template_body(shared_header, file_header) do |content|
           [content, file_footer].join("\n")
-        end.join("\n")
+        end
       end
     end
 
@@ -326,14 +275,6 @@ class EnvSetupCmd < Thor::Group
       raise Thor::Error, "Template file not found at #{template_file_path}"
     end
 
-    def database_env_sets
-      [
-        ['APP_DATABASE_USER', nil],
-        ['APP_DATABASE_PASSWORD', nil],
-        ['APP_DATABASE_PORT', nil],
-      ]
-    end
-
     def platform_env_sets
       [
         ['RENDER_WORKSPACE_ID', 'Render Workspace ID'],
@@ -363,42 +304,18 @@ class EnvSetupCmd < Thor::Group
 
     def item_env_sets
       [
-        *database_env_sets.map { |env_key, vault_field| [env_key, vault_field, 'database'] },
         *platform_env_sets.map { |env_key, vault_field| [env_key, vault_field, 'platform'] },
-        #['HOSTNAME', nil, 'app'],
-        #['RAILS_MASTER_KEY', nil, 'app'],
-        ['REDIS_URL', nil, 'cache'],
-        ['NGROK_AUTH_TOKEN', nil, 'proxy'],
-        ['PAYPAL_BASE_URL', nil, 'paypal'],
-        ['PAYPAL_API_BASE_URL', nil, 'paypal'],
-        ['PAYPAL_CLIENT_ID', nil, 'paypal'],
-        ['PAYPAL_CLIENT_SECRET', nil, 'paypal'],
-        ['ZOHO_CLIENT_ID', nil, 'crm'],
-        ['ZOHO_CLIENT_SECRET', nil, 'crm'],
-        ['CRM_ORG_ID', nil, 'crm'],
-        ['BETTERSTACK_SOURCE_TOKEN', nil, 'logging'],
-        ['BETTERSTACK_INGESTION_HOST', nil, 'logging'],
+        # ['NGROK_AUTH_TOKEN', nil, 'proxy'],
+        # ['CRM_ORG_ID', nil, 'crm'],
       ]
     end
 
-    def shared_source_item_id
-      vault_source_items[:shared].id
-    end
-
-    def source_item_id
-      @source_item_id ||=
-        ENV.fetch(
-          'ENV_VARS_ITEM_ID',
-          vault_source_items[detected_environment].id
-        )
-    end
-
     def output_file_path
-      @output_file_path ||= Rails.root.join(output_filename).to_s
-    end
-
-    def output_filename
-      @output_filename ||= ['.env', detected_environment, 'local'].join('.')
+      @output_file_path ||=
+        begin
+          output_filename = ['.env', detected_environment, 'local'].join('.')
+          Rails.root.join(output_filename).to_s
+        end
     end
 
     def template_file_path
