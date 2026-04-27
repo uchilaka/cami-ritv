@@ -19,3 +19,5 @@ if OS.mac?
   brew 'pinentry-mac'
   brew 'tree'
 end
+
+brew 'flyctl'
