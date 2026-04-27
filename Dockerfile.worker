@@ -34,7 +34,8 @@ ENV RAILS_ENV="${RAILS_ENV:-production}"
 # information is available for the build process without being included in the
 # image layers. This allows you to keep your secrets secure while still enabling
 # a successful build.
-RUN ./bin/unlock-repo
+RUN --mount=type=secret,id=git-crypt.key,dst=${WORKDIR}/.git/git-crypt/keys/default \
+  ./bin/unlock-repo
 
 # Handle secrets during build by mounting them as files, and ensure they are available
 # for the build steps that need them, such as installing dependencies and precompiling

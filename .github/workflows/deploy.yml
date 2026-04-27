@@ -22,6 +22,10 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: fly-deploy-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
   infrastructure:
     name: Manage Infrastructure
@@ -30,8 +34,12 @@ jobs:
       FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
       WORKFLOW_REF: ${{ github.ref }}
       DEPLOY_TARGET_REF: refs/heads/${{ github.event.inputs.git_ref }}
+    outputs:
+      redis_url: ${{ steps.tf_outputs.outputs.redis_url }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.git_ref || github.ref }}
 
       - name: Setup OpenTofu
         uses: opentofu/setup-opentofu@v1
@@ -68,9 +76,13 @@ jobs:
         env:
           TF_VAR_fly_org: ${{ vars.FLY_ORG }}
           TF_VAR_fly_region: ${{ vars.FLY_REGION }}
-          TF_VAR_rails_master_key: ${{ secrets.RAILS_MASTER_KEY }}
-          TF_VAR_gitcrypt_key_base64: ${{ secrets.GITCRYPT_KEY_BASE64 }}
-          TF_VAR_app_secret: ${{ secrets.APP_SECRET }}
+          TF_VAR_tf_state_bucket: ${{ secrets.TF_STATE_BUCKET }}
+
+      - name: Get Terraform Outputs
+        id: tf_outputs
+        working-directory: .terraform
+        run: |
+          echo "redis_url=$(tofu output -raw redis_url)" >> $GITHUB_OUTPUT
 
   deploy:
     name: Deploy Applications
@@ -82,9 +94,25 @@ jobs:
       DEPLOY_TARGET_REF: refs/heads/${{ github.event.inputs.git_ref }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.git_ref || github.ref }}
 
       - name: Setup Flyctl
         uses: superfly/flyctl-actions/setup-flyctl@v1
+
+      - name: Set Runtime Secrets (Core)
+        env:
+          RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
+          REDIS_URL: ${{ needs.infrastructure.outputs.redis_url }}
+        run: |
+          flyctl secrets set RAILS_MASTER_KEY="${RAILS_MASTER_KEY}" REDIS_URL="${REDIS_URL}" --app ${{ vars.APP_NAME_PREFIX || 'cami' }}-core
+
+      - name: Set Runtime Secrets (CRM)
+        env:
+          APP_SECRET: ${{ secrets.APP_SECRET }}
+          REDIS_URL: ${{ needs.infrastructure.outputs.redis_url }}
+        run: |
+          flyctl secrets set APP_SECRET="${APP_SECRET}" REDIS_URL="${REDIS_URL}" --app ${{ vars.APP_NAME_PREFIX || 'cami' }}-crm
 
       - name: Deploy Rails Core
         env:

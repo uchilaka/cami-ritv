@@ -39,17 +39,7 @@ variable "fly_redis_plan" {
   default     = "free"
 }
 
-variable "rails_master_key" {
-  description = "Rails Master Key"
-  type        = string
-  sensitive   = true
-}
 
-variable "app_secret" {
-  description = "Secret for Twenty CRM"
-  type        = string
-  sensitive   = true
-}
 
 variable "tf_state_bucket" {
   description = "S3 bucket for Terraform state"
