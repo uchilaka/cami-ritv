@@ -50,4 +50,4 @@ primary_region = "iad"
 
 [mounts]
   source = "core_storage"
-  destination = "/rails/storage"
+  destination = "/opt/project/src/storage"
