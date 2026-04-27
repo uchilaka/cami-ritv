@@ -9,31 +9,20 @@ if AppUtils.database_url_present?
     database configuration checks.
   MSG
 else
+  # Build required environment variables based on available configurations
   {
     'APP_DATABASE_NAME_PRIMARY' => :database,
     'APP_DATABASE_HOST' => :host,
     'APP_DATABASE_PORT' => :port,
+    'APP_DATABASE_USER' => :user,
+    'APP_DATABASE_PASSWORD' => :password,
   }.each do |var, config_key|
     production_env_vars << var \
       if Rails.application.credentials.dig(:postgres, config_key).blank?
   end
 end
 
-# Build required environment variables based on available configurations
-
-# TODO: Taking REDIS_URL out for now, since we're running jobs against a postgres
-#   co-located database instance. Revisit this later.
-required_env_vars = %w[PORT RAILS_ENV REDIS_URL]
-
-unless AppUtils.database_url_present?
-  {
-    'APP_DATABASE_USER' => :user,
-    'APP_DATABASE_PASSWORD' => :password,
-  }.each do |var, config_key|
-    required_env_vars << var \
-      if Rails.application.credentials.dig(:postgres, config_key).blank?
-  end
-end
+required_env_vars = %w[PORT RAILS_ENV]
 
 unless Rails.env.test?
   required_env_vars +=

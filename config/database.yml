@@ -126,7 +126,11 @@ staging:
     # migration_paths: db/queue_migrate
   crm:
     <<: *primary_staging
+    <% if ENV['CRM_DATABASE_URL'].present? %>
+    url: <%= ENV['CRM_DATABASE_URL'] %>
+    <% else %>
     database: <%= ENV.fetch("APP_DATABASE_NAME_CRM", "twenty_crm_staging") %>
+    <% end %>
 
 # As with config/credentials.yml, you never want to store sensitive information,
 # like your database password, in your source code. If your source code is
@@ -171,4 +175,8 @@ production:
     # migration_paths: db/queue_migrate
   crm:
     <<: *primary_production
-    database: <%= ENV.fetch("APP_DATABASE_NAME_CRM", "twenty_crm_production") %>
+    <% if ENV['CRM_DATABASE_URL'].present? %>
+    url: <%= ENV['CRM_DATABASE_URL'] %>
+    <% else %>
+    database: <%= ENV["CRM_DATABASE_NAME"].presence || ENV.fetch("APP_DATABASE_NAME_CRM", "twenty_crm_production") %>
+    <% end %>
