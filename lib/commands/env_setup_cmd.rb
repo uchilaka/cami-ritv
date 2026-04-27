@@ -184,7 +184,7 @@ class EnvSetupCmd < Thor::Group
         say_warning "⚠️ No environment-specific .env template found at #{dotenv_template_file_path}. Proceeding with default template content."
         build_template_body(shared_header, file_header) do |content|
           [content, file_footer].join("\n")
-        end.join("\n")
+        end
       end
     end
 
