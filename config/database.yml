@@ -40,7 +40,7 @@ development:
   primary: &primary_development
     <<: *default
     host: <%= ENV.fetch('APP_DATABASE_HOST', 'localhost') %>
-    database: sails_development
+    database: <%= ENV.fetch('APP_DATABASE_NAME_PRIMARY', 'sails_development') %>
 
     # The specified database role being used to connect to postgres.
     # To create additional roles in postgres see `$ createuser --help`.

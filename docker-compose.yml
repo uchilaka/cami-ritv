@@ -57,10 +57,10 @@ services:
     image: postgres:17
     restart: unless-stopped
     environment:
-      POSTGRES_DB: ${APP_DATABASE_NAME}
+      POSTGRES_DB: ${APP_DATABASE_NAME_PRIMARY}
       POSTGRES_USER: ${APP_DATABASE_USER}
       POSTGRES_PASSWORD: ${APP_DATABASE_PASSWORD}
-      CRM_DATABASE_NAME: ${CRM_DATABASE_NAME}
+      APP_DATABASE_NAME_CRM: ${APP_DATABASE_NAME_CRM}
       POSTGRES_HOST_AUTH_METHOD: trust # IMPORTANT allows all connections without a password - experimental only!
     ports:
       - "16032:5432"
@@ -69,7 +69,7 @@ services:
       - ./db/shared/postgres/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d:ro
       - ./db/${RAILS_ENV:-development}/postgres/downloads:/usr/local/downloads:ro
     healthcheck:
-      test: pg_isready -U ${APP_DATABASE_USER} -h localhost -d ${APP_DATABASE_NAME}
+      test: pg_isready -U ${APP_DATABASE_USER} -h localhost -d ${APP_DATABASE_NAME_PRIMARY}
       interval: 5s
       timeout: 5s
       retries: 10
@@ -89,7 +89,7 @@ services:
         - RAILS_ENV=${RAILS_ENV:-development}
         - APP_DATABASE_USER=${APP_DATABASE_USER}
         - APP_DATABASE_PASSWORD=${APP_DATABASE_PASSWORD}
-        - APP_DATABASE_NAME=${APP_DATABASE_NAME}
+        - APP_DATABASE_NAME_PRIMARY=${APP_DATABASE_NAME_PRIMARY}
         - GITCRYPT_KEY_BASE64=${GITCRYPT_KEY_BASE64}
         - SMTP_USER=${SMTP_USER}
         - PAYPAL_API_BASE_URL=${PAYPAL_API_BASE_URL}
@@ -114,7 +114,7 @@ services:
       RAILS_MASTER_KEY: ${RAILS_MASTER_KEY}
       APP_CONFIG_CHECK_ENV_VARS: yes
       APP_DATABASE_HOST: db.cami.larcity
-      APP_DATABASE_NAME_PRIMARY: ${APP_DATABASE_NAME}
+      APP_DATABASE_NAME_PRIMARY: ${APP_DATABASE_NAME_PRIMARY}
       APP_DATABASE_USER: ${APP_DATABASE_USER}
       APP_DATABASE_PASSWORD: ${APP_DATABASE_PASSWORD}
       GITCRYPT_KEY_BASE64: ${GITCRYPT_KEY_BASE64}
@@ -161,7 +161,7 @@ services:
       RAILS_MASTER_KEY: ${RAILS_MASTER_KEY}
       APP_CONFIG_CHECK_ENV_VARS: yes
       APP_DATABASE_HOST: db.cami.larcity
-      APP_DATABASE_NAME_PRIMARY: ${APP_DATABASE_NAME}
+      APP_DATABASE_NAME_PRIMARY: ${APP_DATABASE_NAME_PRIMARY}
       APP_DATABASE_USER: ${APP_DATABASE_USER}
       APP_DATABASE_PASSWORD: ${APP_DATABASE_PASSWORD}
       GITCRYPT_KEY_BASE64: ${GITCRYPT_KEY_BASE64}
@@ -187,14 +187,14 @@ services:
 
   crm-app:
     container_name: twenty-server.cami.larcity
-    image: twentycrm/twenty:${TAG:-latest}
+    image: twentycrm/twenty:v2
     volumes:
       - server_local_data:/app/packages/twenty-server/.local-storage
     ports:
       - "${CRM_SERVICE_PORT:-16016}:3000"
     environment:
       NODE_PORT: 3000
-      PG_DATABASE_URL: postgres://${APP_DATABASE_USER:-postgres}:${APP_DATABASE_PASSWORD:-postgres}@db.cami.larcity:${CRM_DATABASE_PORT:-5432}/${CRM_DATABASE_NAME:-default}
+      PG_DATABASE_URL: postgres://${APP_DATABASE_USER:-postgres}:${APP_DATABASE_PASSWORD:-postgres}@db.cami.larcity:${CRM_DATABASE_PORT:-5432}/${APP_DATABASE_NAME_CRM:-default}
       SERVER_URL: ${SERVER_URL}
       REDIS_URL: ${CRM_REDIS_URL:-redis://redis:6379}
       DISABLE_DB_MIGRATIONS: ${DISABLE_DB_MIGRATIONS}
@@ -248,12 +248,12 @@ services:
 
   crm-worker:
     container_name: twenty-worker.cami.larcity
-    image: twentycrm/twenty:${TAG:-latest}
+    image: twentycrm/twenty:v2
     volumes:
       - server_local_data:/app/packages/twenty-server/.local-storage
     command: ["yarn", "worker:prod"]
     environment:
-      PG_DATABASE_URL: postgres://${APP_DATABASE_USER:-postgres}:${APP_DATABASE_PASSWORD:-postgres}@db.cami.larcity:${CRM_DATABASE_PORT:-5432}/${CRM_DATABASE_NAME:-default}
+      PG_DATABASE_URL: postgres://${APP_DATABASE_USER:-postgres}:${APP_DATABASE_PASSWORD:-postgres}@db.cami.larcity:${CRM_DATABASE_PORT:-5432}/${APP_DATABASE_NAME_CRM:-default}
       SERVER_URL: ${SERVER_URL}
       REDIS_URL: ${CRM_REDIS_URL:-redis://redis:6379}
       DISABLE_DB_MIGRATIONS: "true" # it already runs on the server
