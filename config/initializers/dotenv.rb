@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+return if AppUtils.thor_mode?
+
 production_env_vars = []
 if AppUtils.database_url_present?
   puts <<~MSG

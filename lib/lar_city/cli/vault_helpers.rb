@@ -56,6 +56,28 @@ module LarCity
               next if value.blank? || paramify(name) == 'prefix'
 
               var_name = envify(prefix, name)
+              # Skip setting the Rails master key if it has already been set for
+              # the detected environment
+              if var_name == 'RAILS_MASTER_KEY' && ENV.key?(var_name)
+                say_warning <<~WARNING
+                  RAILS_MASTER_KEY was detected in the environment and will be skipped.
+                  If you need to update the value, please update it directly in your environment
+                  and ensure it is not being fetched from Proton Vault to avoid potential issues
+                  with Rails encrypted credentials.
+                WARNING
+                next
+              end
+
+              if var_name == 'HOSTNAME' && ENV.key?(var_name)
+                say_warning <<~WARNING
+                  HOSTNAME was detected in the environment and will be skipped.
+                  If you need to update the value, please update it directly in your environment
+                  and ensure it is not being fetched from Proton Vault to avoid potential issues
+                  with server configuration and connectivity.
+                WARNING
+                next
+              end
+
               erb_template_array << "export #{var_name}=\"#{value}\""
               params << { name: var_name, value: }
             end
