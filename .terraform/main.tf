@@ -47,3 +47,10 @@ resource "fly_volume" "crm_storage" {
   size   = 10
   region = var.fly_region
 }
+
+resource "fly_volume" "core_storage" {
+  app    = fly_app.core.name
+  name   = "core_storage"
+  size   = 10
+  region = var.fly_region
+}
