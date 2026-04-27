@@ -121,6 +121,16 @@ module LarCity
       end
 
       module FormatHelperMethods
+        def envify(*values)
+          values.map { |value| value.blank? ? nil : paramify(value, separator: '_') }.compact.join('_').upcase
+        end
+
+        def paramify(value, separator: '-')
+          return '' if value.blank?
+
+          value.to_s.parameterize(separator: separator.to_s).strip
+        end
+
         def extract_timestamp(filename)
           return nil if filename.blank?
           return unless filename =~ %r{\(?(\d{4})(\d{2})(\d{2})\.(\d{2})(\d{2})(\d{2})([+-]\d{4})\)?}

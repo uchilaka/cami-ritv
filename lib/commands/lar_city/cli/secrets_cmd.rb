@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative 'base_cmd'
+require 'yaml'
 
 module LarCity
   module CLI
@@ -124,6 +125,17 @@ module LarCity
 
         say_debug "Fetching list of vault items from Proton Vault share with ID: #{vault_share_id}"
         run 'pass-cli item list', "--share-id #{vault_share_id}"
+      end
+
+      desc 'list-vault-vars', 'List secrets vault variables'
+      def list_vault_vars
+        require_authenticated_vault_connection!
+
+        say_debug "Fetching list of vault variables from Proton Vault share with ID: #{vault_share_id}"
+        params = env_content_from_source_item_data(structured: true)
+        # Convert params JSON data to YAML using YAML library for better readability in CLI output
+        yaml_output = YAML.dump(params)
+        say_info yaml_output
       end
 
       private
