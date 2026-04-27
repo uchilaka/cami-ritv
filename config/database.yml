@@ -40,7 +40,7 @@ development:
   primary: &primary_development
     <<: *default
     host: <%= ENV.fetch('APP_DATABASE_HOST', 'localhost') %>
-    database: sails_development
+    database: <%= ENV.fetch('APP_DATABASE_NAME_PRIMARY', 'sails_development') %>
 
     # The specified database role being used to connect to postgres.
     # To create additional roles in postgres see `$ createuser --help`.
@@ -75,7 +75,7 @@ development:
 
   crm:
     <<: *primary_development
-    database: twenty_crm_development
+    database: <%= ENV.fetch("APP_DATABASE_NAME_CRM", "twenty_crm_development") %>
 
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".
@@ -95,14 +95,14 @@ lab:
       statement_timeout: 15s
       lock_timeout: 10s
     host: <%= ENV.fetch('APP_DATABASE_HOST', 'localhost') %>
-    database: <%= ENV.fetch("APP_PRIMARY_DATABASE_NAME", "sails_lab") %>
+    database: <%= ENV.fetch("APP_DATABASE_NAME_PRIMARY", "sails_lab") %>
     username: <%= ENV.fetch('APP_DATABASE_USER', 'postgres') %>
     password: <%= ENV.fetch("APP_DATABASE_PASSWORD", postgres_creds&.password) %>
   queue:
     <<: *primary_lab
   crm:
     <<: *primary_lab
-    database: twenty_crm_lab
+    database: <%= ENV.fetch("APP_DATABASE_NAME_CRM", "twenty_crm_lab") %>
 
 staging:
   primary: &primary_staging
@@ -116,7 +116,7 @@ staging:
     url: <%= ENV['DATABASE_URL'] %>
     <% else %>
     host: <%= ENV.fetch('APP_DATABASE_HOST', 'localhost') %>
-    database: <%= ENV.fetch("APP_PRIMARY_DATABASE_NAME", "sails_staging") %>
+    database: <%= ENV.fetch("APP_DATABASE_NAME_PRIMARY", "sails_staging") %>
     username: <%= ENV.fetch('APP_DATABASE_USER', 'postgres') %>
     password: <%= ENV.fetch("APP_DATABASE_PASSWORD", postgres_creds&.password) %>
     <% end %>
@@ -126,7 +126,11 @@ staging:
     # migration_paths: db/queue_migrate
   crm:
     <<: *primary_staging
-    database: twenty_crm_staging
+    <% if ENV['CRM_DATABASE_URL'].present? %>
+    url: <%= ENV['CRM_DATABASE_URL'] %>
+    <% else %>
+    database: <%= ENV.fetch("APP_DATABASE_NAME_CRM", "twenty_crm_staging") %>
+    <% end %>
 
 # As with config/credentials.yml, you never want to store sensitive information,
 # like your database password, in your source code. If your source code is
@@ -159,7 +163,7 @@ production:
     <% if ENV['DATABASE_URL'].present? %>
     url: <%= ENV['DATABASE_URL'] %>
     <% else %>
-    database: <%= ENV.fetch('APP_DATABASE_NAME', postgres_creds&.database) %>
+    database: <%= ENV.fetch('APP_DATABASE_NAME_PRIMARY', postgres_creds&.database) %>
     host: <%= ENV.fetch('APP_DATABASE_HOST', postgres_creds&.host) %>
     port: <%= ENV.fetch('APP_DATABASE_PORT', postgres_creds&.port) %>
     username: <%= ENV.fetch('APP_DATABASE_USER', postgres_creds&.user) %>
@@ -171,4 +175,8 @@ production:
     # migration_paths: db/queue_migrate
   crm:
     <<: *primary_production
-    database: twenty_crm_production
+    <% if ENV['CRM_DATABASE_URL'].present? %>
+    url: <%= ENV['CRM_DATABASE_URL'] %>
+    <% else %>
+    database: <%= ENV["CRM_DATABASE_NAME"].presence || ENV.fetch("APP_DATABASE_NAME_CRM", "twenty_crm_production") %>
+    <% end %>

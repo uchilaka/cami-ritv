@@ -10,23 +10,13 @@ fi
 # Ensure the temporary directory exists
 mkdir -pv ./tmp
 
-# Check if the secret file is mounted
-SECRET_FILE=".git/git-crypt/keys/default"
-if [ -f "$SECRET_FILE" ]; then
-  echo "INFO: Secret file found at $SECRET_FILE."
-  # The file contains the base64 encoded string from GitHub Actions. Decode it.
-  cat "$SECRET_FILE" | base64 -d > ./tmp/git-crypt-key.key
-  git crypt unlock ./tmp/git-crypt-key.key
-  rm -v ./tmp/git-crypt-key.key
-  exit 0
-fi
-
-# Fallback: Process the GIT_CRYPT_KEY_BASE64 environment variable.
-if [[ -n "$GIT_CRYPT_KEY_BASE64" ]]; then
-  echo "INFO: GIT_CRYPT_KEY_BASE64 environment variable is set. Attempting to unlock the repository with git-crypt."
+# Process the GITCRYPT_KEY_BASE64 environment variable.
+# It should contain the base64-encoded git-crypt key if set
+if [[ -n "$GITCRYPT_KEY_BASE64" ]]; then
+  echo "INFO: GITCRYPT_KEY_BASE64 environment variable is set. Attempting to unlock the repository with git-crypt."
 
   # Decode the key from the environment variable into a temporary file
-  echo "$GIT_CRYPT_KEY_BASE64" | base64 -d > ./tmp/git-crypt-key.key
+  echo "$GITCRYPT_KEY_BASE64" | base64 -d > ./tmp/git-crypt-key.key
 
   # Unlock the repository
   git crypt unlock ./tmp/git-crypt-key.key
@@ -36,4 +26,4 @@ if [[ -n "$GIT_CRYPT_KEY_BASE64" ]]; then
   exit 0
 fi
 
-echo "WARNING: Neither $SECRET_FILE nor GIT_CRYPT_KEY_BASE64 is set. Repository might not be unlocked."
+echo "WARNING: Neither $SECRET_FILE nor GITCRYPT_KEY_BASE64 is set. Repository might not be unlocked."

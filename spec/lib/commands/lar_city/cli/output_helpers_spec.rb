@@ -92,7 +92,7 @@ RSpec.describe LarCity::CLI::OutputHelpers, :time_sensitive do
   describe '#extract_timestamp' do
     shared_examples 'supported timestamp extraction' do |fname|
       let(:expected_time) do
-        Time.new(2024, 6, 15, 12, 30, 45, "-0400")
+        Time.new(2024, 6, 15, 12, 30, 45, '-0400')
       end
 
       around do |example|
@@ -152,16 +152,16 @@ RSpec.describe LarCity::CLI::OutputHelpers, :time_sensitive do
   describe '#envify' do
     subject(:result) { cmd.envify(*values) }
 
-    shared_examples "expected ENV safe output" do |inputs, expected_output|
+    shared_examples 'expected ENV safe output' do |inputs, expected_output|
       subject(:result) { cmd.envify(*inputs) }
 
       it { is_expected.to eq(expected_output) }
     end
 
-    it_behaves_like "expected ENV safe output", %w[Hello World], 'HELLO_WORLD'
-    it_behaves_like "expected ENV safe output", ['Hello', 'World, friends!'], 'HELLO_WORLD_FRIENDS'
-    it_behaves_like "expected ENV safe output", ['Hello, World!', 'friends (from Austin!)'], 'HELLO_WORLD_FRIENDS_FROM_AUSTIN'
-    it_behaves_like "expected ENV safe output", ['Hello, World!'], 'HELLO_WORLD'
+    it_behaves_like 'expected ENV safe output', %w[Hello World], 'HELLO_WORLD'
+    it_behaves_like 'expected ENV safe output', ['Hello', 'World, friends!'], 'HELLO_WORLD_FRIENDS'
+    it_behaves_like 'expected ENV safe output', ['Hello, World!', 'friends (from Austin!)'], 'HELLO_WORLD_FRIENDS_FROM_AUSTIN'
+    it_behaves_like 'expected ENV safe output', ['Hello, World!'], 'HELLO_WORLD'
 
     context 'with an empty string' do
       let(:values) { [''] }
@@ -179,16 +179,16 @@ RSpec.describe LarCity::CLI::OutputHelpers, :time_sensitive do
   describe '#paramify' do
     subject(:result) { cmd.paramify(value, separator:) }
 
-    shared_examples "expected parameter safe output" do |input, expected_output, separator = '-'|
+    shared_examples 'expected parameter safe output' do |input, expected_output, separator = '-'|
       subject(:result) { cmd.paramify(input, separator:) }
 
       it { is_expected.to eq(expected_output) }
     end
 
-    it_behaves_like "expected parameter safe output", 'Hello World', 'hello-world'
-    it_behaves_like "expected parameter safe output", 'Hello, World!', 'hello-world'
-    it_behaves_like "expected parameter safe output", 'Hello, World!', 'hello_world', '_'
-    it_behaves_like "expected parameter safe output", 'Hello, World (from Utah)!', 'hello_world_from_utah', '_'
+    it_behaves_like 'expected parameter safe output', 'Hello World', 'hello-world'
+    it_behaves_like 'expected parameter safe output', 'Hello, World!', 'hello-world'
+    it_behaves_like 'expected parameter safe output', 'Hello, World!', 'hello_world', '_'
+    it_behaves_like 'expected parameter safe output', 'Hello, World (from Utah)!', 'hello_world_from_utah', '_'
 
     context 'without a separator' do
       subject(:result) { cmd.paramify(value) }

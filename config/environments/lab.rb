@@ -71,7 +71,7 @@ Rails.application.configure do
   # Configure logging for the app's mail service.
   config.action_mailer.logger = Rails.logger
 
-  config.action_mailer.default_url_options = { host: ENV.fetch('HOSTNAME', 'accounts.lab.larcity.dev') }
+  config.action_mailer.default_url_options = { host: ENV.fetch('HOSTNAME') }
 
   # Print deprecation notices to the Rails logger.
   # config.active_support.deprecation = :log

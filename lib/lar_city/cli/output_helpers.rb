@@ -122,7 +122,7 @@ module LarCity
 
       module FormatHelperMethods
         def envify(*values)
-          values.map { |value| paramify(value, separator: '_') }.compact.join('_').upcase
+          values.map { |value| value.blank? ? nil : paramify(value, separator: '_') }.compact.join('_').upcase
         end
 
         def paramify(value, separator: '-')

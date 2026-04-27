@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+return if AppUtils.thor_mode?
+
 production_env_vars = []
 if AppUtils.database_url_from_env.present?
   puts <<~MSG
@@ -7,51 +9,41 @@ if AppUtils.database_url_from_env.present?
     database configuration checks.
   MSG
 else
+  # Build required environment variables based on available configurations
   {
-    'APP_PRIMARY_DATABASE_NAME' => :database,
+    'APP_DATABASE_NAME_PRIMARY' => :database,
     'APP_DATABASE_HOST' => :host,
     'APP_DATABASE_PORT' => :port,
+    'APP_DATABASE_USER' => :user,
+    'APP_DATABASE_PASSWORD' => :password,
   }.each do |var, config_key|
     production_env_vars << var \
       if Rails.application.credentials.dig(:postgres, config_key).blank?
   end
 end
 
-# Build required environment variables based on available configurations
-
-# TODO: Taking REDIS_URL out for now, since we're running jobs against a postgres
-#   co-located database instance. Revisit this later.
-required_env_vars = %w[PORT RAILS_ENV REDIS_URL]
-
-unless AppUtils.database_url_from_env.present?
-  {
-    'APP_DATABASE_USER' => :user,
-    'APP_DATABASE_PASSWORD' => :password,
-  }.each do |var, config_key|
-    required_env_vars << var \
-      if Rails.application.credentials.dig(:postgres, config_key).blank?
-  end
-end
+required_env_vars = %w[PORT RAILS_ENV]
 
 unless Rails.env.test?
-  case Rails.env
-  when 'development'
-    required_env_vars += [
-      # Random generated secret for Twenty CRM in development environment
-      'APP_SECRET',
-      # Service port for Twenty CRM in development environment
-      'CRM_SERVICE_PORT',
-      'CRM_REDIS_URL',
-      'CRM_DATABASE_NAME',
-      # The internal local development URL for accessing the Twenty CRM app/admin
-      'SERVER_URL',
-      # The public-accessible proxy URL for accessing the Twenty CRM app/admin
-      'PUBLIC_DOMAIN_URL'
-    ]
-  else
-    # Assumes production-like environment
-    required_env_vars += production_env_vars
-  end
+  required_env_vars +=
+    case Rails.env
+    when 'development'
+      [
+        # Random generated secret for Twenty CRM in development environment
+        'APP_SECRET',
+        # Service port for Twenty CRM in development environment
+        'CRM_SERVICE_PORT',
+        'CRM_REDIS_URL',
+        'CRM_DATABASE_NAME',
+        # The internal local development URL for accessing the Twenty CRM app/admin
+        'SERVER_URL',
+        # The public-accessible proxy URL for accessing the Twenty CRM app/admin
+        'PUBLIC_DOMAIN_URL',
+      ]
+    else
+      # Assumes production-like environment
+      production_env_vars
+    end
 
   {
     'PAYPAL_API_BASE_URL' => :base_url,
