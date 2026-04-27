@@ -96,6 +96,10 @@ module LarCity
             )
         end
 
+        def shared_source_item_id
+          vault_source_items[:shared].id
+        end
+
         def vault_share_id
           vault_credentials.vault_share_id
         end

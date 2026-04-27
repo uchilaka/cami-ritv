@@ -19,7 +19,7 @@ class EnvSetupCmd < Thor::Group
                 type: :array,
                 enum: %w[template cli],
                 desc: 'The source system(s) to use in setting up ENV variables',
-                default: %w[cli]
+                default: %w[template]
   # Partial option
   class_option :section_slug,
                type: :string,
@@ -275,14 +275,6 @@ class EnvSetupCmd < Thor::Group
       raise Thor::Error, "Template file not found at #{template_file_path}"
     end
 
-    def database_env_sets
-      [
-        ['APP_DATABASE_USER', nil],
-        ['APP_DATABASE_PASSWORD', nil],
-        ['APP_DATABASE_PORT', nil],
-      ]
-    end
-
     def platform_env_sets
       [
         ['RENDER_WORKSPACE_ID', 'Render Workspace ID'],
@@ -312,34 +304,18 @@ class EnvSetupCmd < Thor::Group
 
     def item_env_sets
       [
-        #*database_env_sets.map { |env_key, vault_field| [env_key, vault_field, 'database'] },
         *platform_env_sets.map { |env_key, vault_field| [env_key, vault_field, 'platform'] },
-        #['HOSTNAME', nil, 'app'],
-        #['RAILS_MASTER_KEY', nil, 'app'],
-        ['REDIS_URL', nil, 'cache'],
         ['NGROK_AUTH_TOKEN', nil, 'proxy'],
-        #['PAYPAL_BASE_URL', nil, 'paypal'],
-        #['PAYPAL_API_BASE_URL', nil, 'paypal'],
-        #['PAYPAL_CLIENT_ID', nil, 'paypal'],
-        #['PAYPAL_CLIENT_SECRET', nil, 'paypal'],
-        #['ZOHO_CLIENT_ID', nil, 'crm'],
-        #['ZOHO_CLIENT_SECRET', nil, 'crm'],
         ['CRM_ORG_ID', nil, 'crm'],
-        #['BETTERSTACK_SOURCE_TOKEN', nil, 'logging'],
-        #['BETTERSTACK_INGESTION_HOST', nil, 'logging'],
       ]
     end
 
-    def shared_source_item_id
-      vault_source_items[:shared].id
-    end
-
     def output_file_path
-      @output_file_path ||= Rails.root.join(output_filename).to_s
-    end
-
-    def output_filename
-      @output_filename ||= ['.env', detected_environment, 'local'].join('.')
+      @output_file_path ||=
+        begin
+          output_filename = ['.env', detected_environment, 'local'].join('.')
+          Rails.root.join(output_filename).to_s
+        end
     end
 
     def template_file_path
