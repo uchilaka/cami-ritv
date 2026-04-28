@@ -47,10 +47,15 @@ module LarCity
         cmd_args = ['docker compose build', service_name]
         cmd_args << "--dry-run" if pretend?
         cmd_args << "--push" if options[:push]
-        @result = run(*cmd_args, always_run: true, eval: true) { |line| say_info(line) }
+        @result =
+          run(
+            *cmd_args,
+            always_run: true, eval: true,
+            mock_return: "Image #{service_name} Built"
+          ) { |line| say_info(line) }
         say_debug "Build result: #{result.inspect}"
         unless success?
-          say_error I18n.t('commands.images.build.failure_message', name: service_name)
+          say_error I18n.t('commands.images.build.failure_message', name: service_name, error_details: "TBD")
           return
         end
 
@@ -63,7 +68,8 @@ module LarCity
       def success?
         return true if result.is_a?(Process::Status) && result.success?
 
-        %r{Image #{options[:service]} built}.match?(result)
+        # TODO: Make this regex test case-insensitive while using %r
+        %r{Image #{options[:service]} Built}.match?(result)
       end
 
       def has_build_config?(name)
