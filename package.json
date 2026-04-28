@@ -14,6 +14,7 @@
     "build:assets": "bin/rake assets:precompile",
     "build:image": "docker compose --progress plain build",
     "build": "bin/vite build",
+    "deploy": "fly deploy --config .fly/fly.toml",
     "start": "bin/start",
     "bundle": "brew bundle --file Brewfile.$RAILS_ENV",
     "lint": "eslint",
