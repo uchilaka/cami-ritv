@@ -3,6 +3,10 @@
 name: Fly Deploy
 on:
   workflow_dispatch:
+
+permissions:
+  contents: read
+
 jobs:
   deploy:
     name: Deploy app
