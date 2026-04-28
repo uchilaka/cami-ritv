@@ -4,12 +4,24 @@
 
 > The preferred region for this project is `iad` (Ashburn, VA) due to its proximity to the majority of our users. If you choose to deploy to a different region, ensure that you select a region that is geographically close to your user base.
 
-### Managed PostgreSQL
+### Setting up Managed PostgreSQL
 
 LarCity uses the [Fly.io Managed PostgreSQL](https://fly.io/docs/postgres/) service to host the app database in production. To set up a new cluster, run:
 
 ```shell
-fly mpg create <cluster-name> --org larcity-llc --region <region>
+fly mpg create <cluster-name> --org larcity-llc --region iad
+```
+
+### Setting up volumes
+
+```shell
+flyctl volumes create core_storage --count 2 --size 10 --app cami-production --region iad --vm-cpu-kind shared --vm-cpus 1
+```
+
+### Setting up secrets
+
+```shell
+fly secrets set --stage --detach --app=cami-production --access-token="<APP-DEPLOY-API-TOKEN>" NAME="<VALUE>"
 ```
 
 ## Launch the app
