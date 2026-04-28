@@ -44,7 +44,8 @@ module LarCity
                   )
           end
         end
-        cmd_args = ['docker compose build', service_name, "--dry-run=#{pretend?}"]
+        cmd_args = ['docker compose build', service_name]
+        cmd_args << "--dry-run" if pretend?
         cmd_args << "--push" if options[:push]
         @result = run(*cmd_args, always_run: true, eval: true) { |line| say_info(line) }
         say_debug "Build result: #{result.inspect}"

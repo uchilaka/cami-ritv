@@ -7,6 +7,7 @@ RSpec.describe LarCity::CLI::ImagesCmd, type: :command do
   subject(:command) { described_class.new }
 
   let(:service_name) { 'worker' }
+  let(:dry_run) { true }
   let(:docker_compose_config) do
     {
       'services' => {
@@ -27,9 +28,9 @@ RSpec.describe LarCity::CLI::ImagesCmd, type: :command do
     context 'when building an image' do
       it 'succeeds and reports the image_id' do
         expect(command).to receive(:run)
-          .with('docker compose build', service_name, '--dry-run=false')
+          .with('docker compose build', service_name, '--dry-run')
           .and_return(build_output)
-        command.invoke(:build, [], { service: service_name })
+        command.invoke(:build, [], { service: service_name, dry_run: })
         expect(command.result).to eq(build_output)
       end
     end
@@ -37,9 +38,9 @@ RSpec.describe LarCity::CLI::ImagesCmd, type: :command do
     context 'when building and pushing an image' do
       it 'succeeds and reports the image_id from push output' do
         expect(command).to receive(:run)
-          .with('docker compose build', service_name, '--dry-run=false', '--push')
+          .with('docker compose build', service_name, '--dry-run', '--push')
           .and_return(push_output)
-        command.invoke(:build, [], { service: service_name, push: true })
+        command.invoke(:build, [], { service: service_name, dry_run:, push: true })
         expect(command.result).to eq(push_output)
       end
     end
@@ -48,7 +49,7 @@ RSpec.describe LarCity::CLI::ImagesCmd, type: :command do
       let(:unsupported_service) { 'db' }
       it 'raises an error' do
         expect do
-          command.invoke(:build, [], { service: unsupported_service })
+          command.invoke(:build, [], { service: unsupported_service, dry_run: })
         end.to raise_error(LarCity::CLI::Errors::Unsupported)
       end
     end
