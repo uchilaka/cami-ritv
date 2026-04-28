@@ -151,3 +151,5 @@ group :test do
   gem 'shoulda-matchers'
   gem 'vcr', '~> 6.2'
 end
+
+gem "dockerfile-rails", ">= 1.7", group: :development

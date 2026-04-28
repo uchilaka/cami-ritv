@@ -138,6 +138,8 @@ GEM
     diff-lcs (1.6.1)
     discard (1.4.0)
       activerecord (>= 4.2, < 9.0)
+    dockerfile-rails (1.7.10)
+      rails (>= 3.0.0)
     dotenv (3.1.8)
     drb (2.2.1)
     dry-auto_inject (1.1.0)
@@ -659,6 +661,7 @@ DEPENDENCIES
   devise-jwt (~> 0.12)
   devise-passwordless (~> 1.1)
   discard (~> 1.4)
+  dockerfile-rails (>= 1.7)
   dotenv
   dry-types (~> 1.8)
   fabrication

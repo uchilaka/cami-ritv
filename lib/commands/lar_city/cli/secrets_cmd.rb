@@ -132,13 +132,74 @@ module LarCity
         require_authenticated_vault_connection!
 
         say_debug "Fetching list of vault variables from Proton Vault share with ID: #{vault_share_id}"
-        params = env_content_from_source_item_data(structured: true)
+        params_by_section = env_content_from_source_item_data(structured: true)
         # Convert params JSON data to YAML using YAML library for better readability in CLI output
-        yaml_output = YAML.dump(params)
+        yaml_output = YAML.dump(params_by_section)
         say_info yaml_output
       end
 
+      desc 'promote', 'Promote secrets to a higher environment (e.g. from staging to production)'
+      define_vault_store_option self, name: :src, required: true, default: Rails.env.to_s
+      define_vault_store_option self, name: :dest, required: true, default: 'fly.io'
+      def promote
+        require_authenticated_vault_connection!
+
+        unless options[:dest] == 'fly.io'
+          raise Errors::Unsupported, "Unsupported destination vault store: #{options[:dest]}"
+        end
+
+        unless %w[lab staging].include?(options[:src])
+          raise Errors::Unsupported, "Unsupported source vault store: #{options[:src]}"
+        end
+
+        with_interruption_rescue do
+          secrets_to_promote = []
+          params_by_section = env_content_from_source_item_data(structured: true)
+          (params_by_section || {}).entries.each do |section_name, dataset|
+            say_debug "Section: #{section_name}"
+            _header, params = dataset.values_at :header, :params
+            params.each do |(key, value)|
+              confirmation_msg =
+                I18n.t(
+                  'commands.secrets.promote.confirmation_message',
+                  secret_key: key,
+                  secret_value: partially_masked_secret(value),
+                  src: options[:src],
+                  dest: options[:dest]
+                )
+              confirm_execution confirmation_msg do
+                secrets_to_promote << [key, value]
+              end
+            end
+          end
+
+          if secrets_to_promote.blank?
+            say_info "No secrets selected for promotion from #{options[:src]} to #{options[:dest]}. Exiting without making changes."
+          else
+            say_info "Promoting #{secrets_to_promote.size} secrets from #{options[:src]} to #{options[:dest]}..."
+            secrets_data = secrets_to_promote.map { |(key, value)| "#{key}=\"#{value}\"" }
+            # Promoting to Fly.io
+            run 'fly secrets set',
+                '--stage --detach',
+                "--app=#{fly_credentials!.app_name}",
+                "--access-token=#{fly_credentials!.deploy_token}",
+                *secrets_data
+          end
+        end
+      end
+
+      desc 'migrate', 'Migrate secret(s) to other environments'
+      define_vault_store_option self, name: :src, required: true
+      define_vault_store_option self, name: :dest, required: true
+      def migrate
+        raise NotImplementedError, "You must implement #{self.class}##{__method__}"
+      end
+
       private
+
+      def fly_credentials!
+        Rails.application.credentials.fly_io!
+      end
 
       def timestamp(style: :url_safe)
         case style

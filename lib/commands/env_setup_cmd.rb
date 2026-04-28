@@ -323,7 +323,7 @@ class EnvSetupCmd < Thor::Group
     end
 
     def master_key_from_file
-      @master_key_from_file ||= (File.read(master_key_path) if File.exist?(master_key_path))
+      @master_key_from_file ||= (File.read(master_key_path).chomp if File.exist?(master_key_path))
     end
 
     def master_key_path
