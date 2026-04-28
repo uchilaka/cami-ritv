@@ -17,6 +17,7 @@ class EnvSetupCmd < Thor::Group
   # Select the source system to use
   class_option  :source,
                 type: :array,
+                aliases: %w[-s --sources],
                 enum: %w[template cli],
                 desc: 'The source system(s) to use in setting up ENV variables',
                 default: %w[template]
