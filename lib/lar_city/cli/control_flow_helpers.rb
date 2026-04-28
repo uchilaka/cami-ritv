@@ -53,7 +53,11 @@ module LarCity
         def confirm_execution(message = 'Are you sure you want to proceed?', &block)
           return true if pretend? || dry_run?
 
-          yield block if yes?(message, Colors::PROMPT)
+          if yes?(message, Colors::PROMPT)
+            return true unless block_given?
+
+            yield block
+          end
         end
 
         def force?

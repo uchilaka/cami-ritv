@@ -36,7 +36,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.inputs.git_ref || github.ref }}
+          ref: ${{ github.event_name == 'workflow_dispatch' && env.DEPLOY_TARGET_REF || github.ref }}
 
       - name: Setup OpenTofu
         uses: opentofu/setup-opentofu@v1
