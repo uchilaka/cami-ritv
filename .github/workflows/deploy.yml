@@ -15,6 +15,7 @@ on:
         options:
           - 'releases/production'
           - 'releases/staging'
+          - 'main'
 
 permissions:
   contents: read
