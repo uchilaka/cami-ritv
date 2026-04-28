@@ -17,7 +17,7 @@ primary_region = "iad"
   RAILS_SERVE_STATIC_FILES = "true"
   RAILS_LOG_TO_STDOUT = "true"
   APP_CONFIG_CHECK_ENV_VARS = "yes"
-  APP_PRIMARY_DATABASE_NAME = "cami_production"
+  APP_DATABASE_NAME_PRIMARY = "cami_production"
   APP_DATABASE_USER = "postgres"
 
 [processes]

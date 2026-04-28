@@ -19,6 +19,10 @@ primary_region = "iad"
   DISABLE_CRON_JOBS_REGISTRATION = "false"
   STORAGE_TYPE = "local"
 
+[[mounts]]
+  source = "crm_data"
+  destination = "/data"
+
 [processes]
   web = "yarn start:prod"
   worker = "/bin/sh -c 'DISABLE_DB_MIGRATIONS=true DISABLE_CRON_JOBS_REGISTRATION=true yarn worker:prod'"

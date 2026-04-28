@@ -79,7 +79,9 @@ jobs:
         id: tf_outputs
         working-directory: .terraform
         run: |
-          echo "redis_url=$(tofu output -raw redis_url)" >> $GITHUB_OUTPUT
+          redis_url="$(tofu output -raw redis_url)"
+          echo "::add-mask::${redis_url}"
+          echo "redis_url=${redis_url}" >> "$GITHUB_OUTPUT"
 
   deploy:
     name: Deploy Applications
