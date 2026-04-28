@@ -182,7 +182,7 @@ module LarCity
             run 'fly secrets set',
                 '--stage --detach',
                 "--app=#{fly_credentials!.app_name}",
-                "--access-token=#{fly_credentials!.deploy_token}",
+                "--access-token=\"#{fly_credentials!.deploy_token}\"",
                 *secrets_data
           end
         end
