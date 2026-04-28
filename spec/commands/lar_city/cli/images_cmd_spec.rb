@@ -11,49 +11,62 @@ module LarCity
 
       let(:service_name) { 'worker' }
       let(:dry_run) { true }
-      let(:docker_compose_config) do
-        {
-          'services' => {
-            'web' => { 'build' => '.' },
-            'worker' => { 'build' => '.' }
-          }
-        }
-      end
-      let(:build_output) { "Image #{service_name} built" }
-      let(:push_output) { "naming to registry.fly.io/cami-lab-#{service_name}:latest" }
+      # let(:docker_compose_config) do
+      #   {
+      #     'services' => {
+      #       'web' => { 'build' => '.' },
+      #       'worker' => { 'build' => '.' }
+      #     }
+      #   }
+      # end
+      let(:build_output) { %r{Image #{service_name} Built} }
+      let(:push_output) { %r{naming to registry\.fly\.io/cami-test-#{service_name}\:latest} }
 
       before do
-        allow(command).to receive(:docker_compose_config).and_return(docker_compose_config)
-        allow(command).to receive(:run).and_return(build_output)
+        # allow(command).to receive(:docker_compose_config).and_return(docker_compose_config)
+      end
+
+      around do |example|
+        with_modified_env(FLY_APP_NAME_PREFIX: 'cami-test') { example.run }
       end
 
       describe 'build' do
         context 'when building an image' do
+          let(:build_args) { { service: service_name, dry_run: } }
+
           it 'succeeds and reports the image_id' do
-            expect(command).to receive(:run)
-                                 .with('docker compose build', service_name, '--dry-run')
-                                 .and_return(build_output)
-            command.invoke(:build, [], { service: service_name, dry_run: })
-            expect(command.result).to eq(build_output)
+            expect { command.invoke(:build, [], **build_args) }.to \
+              output(build_output).to_stdout_from_any_process
+          end
+
+          it 'reports the image_id' do
+            expect { command.invoke(:build, [], **build_args) }.to \
+              output(push_output).to_stdout_from_any_process
           end
         end
 
         context 'when building and pushing an image' do
-          it 'succeeds and reports the image_id from push output' do
-            expect(command).to receive(:run)
-                                 .with('docker compose build', service_name, '--dry-run', '--push')
-                                 .and_return(push_output)
-            command.invoke(:build, [], { service: service_name, dry_run:, push: true })
-            expect(command.result).to eq(push_output)
+          let(:build_args) { { service: service_name, dry_run:, push: true } }
+
+          it 'succeeds and reports the image_id' do
+            expect { command.invoke(:build, [], **build_args) }.to \
+              output(build_output).to_stdout_from_any_process
+          end
+
+          it 'reports the image_id' do
+            expect { command.invoke(:build, [], **build_args) }.to \
+              output(push_output).to_stdout_from_any_process
           end
         end
 
         context 'with an unsupported service' do
           let(:unsupported_service) { 'db' }
+          let(:build_args) { { service: unsupported_service, dry_run: } }
+
           it 'raises an error' do
             expect do
-              command.invoke(:build, [], { service: unsupported_service, dry_run: })
-            end.to raise_error(LarCity::CLI::Errors::Unsupported)
+              command.invoke(:build, [], **build_args)
+            end.to raise_error(LarCity::Errors::Unsupported)
           end
         end
       end

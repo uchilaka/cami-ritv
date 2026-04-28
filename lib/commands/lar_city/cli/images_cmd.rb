@@ -7,7 +7,7 @@ require 'yaml'
 module LarCity
   module CLI
     class ImagesCmd < BaseCmd
-      attr_accessor :result
+      attr_reader :result
 
       namespace :images
 
@@ -27,7 +27,10 @@ module LarCity
       def build
         service_name = options[:service].to_s
         with_interruption_rescue do
-          supported_services = docker_compose_config["services"].select { |_, config| config.key?("build") }
+          supported_services =
+            docker_compose_config["services"].select do |_, config|
+              config.key?("build")
+            end
           say_debug <<~SUPPORTED_SERVICES
             The following services are available:
             #{YAML.dump(supported_services)}
