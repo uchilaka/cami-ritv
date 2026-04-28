@@ -26,6 +26,18 @@ fly secrets set --stage --detach --app=cami-production --access-token="<APP-DEPL
 
 ### Setup docker image registry 
 
+Create a `docker-compose.override.yml` file in the root of the project with the following content:
+
+```yaml
+services:
+  web:
+    image: registry.fly.io/${FLY_APP_NAME_PREFIX}-web:latest
+  worker:
+    image: registry.fly.io/${FLY_APP_NAME_PREFIX}-worker:latest
+```
+
+Then, complete the following setup steps:
+
 ```shell
 # Authenticate
 fly auth docker

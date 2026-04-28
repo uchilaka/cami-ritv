@@ -207,6 +207,7 @@ class EnvSetupCmd < Thor::Group
       Rails.root.join('config', 'dotenvs', ".env.#{detected_environment}.erb").to_s
     end
 
+    # This method is called within dotenv templates stored at ./config/dotenvs/.env.<environment>.erb
     def build_template_body(*parts)
       erb_template_array = [*parts.map(&:to_s)]
 
