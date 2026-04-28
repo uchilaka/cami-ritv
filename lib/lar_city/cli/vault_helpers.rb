@@ -2,6 +2,7 @@
 
 require 'json'
 require 'concerns/operating_system_detectable'
+require_relative 'control_flow_helpers'
 require_relative 'env_helpers'
 require_relative 'output_helpers'
 require_relative 'utils/class_helpers'
@@ -12,9 +13,32 @@ module LarCity
       extend Utils::ClassHelpers
 
       def self.included(base)
+        base.extend ClassMethods
+        base.include ControlFlowHelpers
         base.include EnvHelpers
         base.include OutputHelpers
         base.include InstanceMethods
+      end
+
+      module ClassMethods
+        def define_vault_store_option(
+          thor_class,
+          name:,
+          default: nil,
+          class_option: false,
+          desc: "A vault store as a source or destination of secrets",
+          required: true,
+          enum: %w[development lab production fly.io digitalocean]
+        )
+          option_method = class_option ? :class_option : :option
+          thor_class
+            .public_send(
+              option_method,
+              name.to_sym,
+              type: :string,
+              default:, desc:, enum:, required:,
+            )
+        end
       end
 
       module InstanceMethods
@@ -78,8 +102,10 @@ module LarCity
                 next
               end
 
+              # Compose variable export content row for provisioning environments with .tpl files
               erb_template_array << "export #{var_name}=\"#{value}\""
-              params << { name: var_name, value: }
+              # Configure params as name, value tuple
+              params << [var_name, value]
             end
             erb_template_array << "\n"
             params_by_section[section_slug] = { header: section_header, params: }

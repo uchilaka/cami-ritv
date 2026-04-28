@@ -1,0 +1,56 @@
+# fly.crm.toml app configuration file generated for cami-crm
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
+
+app = "cami-crm"
+primary_region = "iad"
+
+[build]
+  image = "twentycrm/twenty:2.0.3"
+
+[env]
+  PORT = "3000"
+  NODE_PORT = "3000"
+  CRM_DATABASE_NAME = "twenty_production"
+  CRM_DATABASE_PORT = "5432"
+  APP_DATABASE_USER = "postgres"
+  DISABLE_DB_MIGRATIONS = "false"
+  DISABLE_CRON_JOBS_REGISTRATION = "false"
+  STORAGE_TYPE = "local"
+
+[[mounts]]
+  source = "crm_data"
+  destination = "/data"
+
+[processes]
+  web = "yarn start:prod"
+  worker = "/bin/sh -c 'DISABLE_DB_MIGRATIONS=true DISABLE_CRON_JOBS_REGISTRATION=true yarn worker:prod'"
+
+[[services]]
+  protocol = "tcp"
+  internal_port = 3000
+  processes = ["web"]
+
+  [[services.ports]]
+    port = 80
+    handlers = ["http"]
+    force_https = true
+
+  [[services.ports]]
+    port = 443
+    handlers = ["tls", "http"]
+  [services.concurrency]
+    type = "connections"
+    hard_limit = 25
+    soft_limit = 20
+
+  [[services.tcp_checks]]
+    interval = "15s"
+    timeout = "2s"
+    grace_period = "1s"
+    restart_limit = 0
+
+[mounts]
+  source = "crm_storage"
+  destination = "/app/packages/twenty-server/.local-storage"

@@ -19,6 +19,7 @@ config/credentials.yml.enc diff=rails_credentials
 spec/fixtures/pii/** filter=git-crypt diff=git-crypt
 #db/development/postgres/downloads/**/*.dump filter=git-crypt diff=git-crypt
 #db/development/postgres/downloads/**/*.sql filter=git-crypt diff=git-crypt
+/docker-compose.lab.yml filter=git-crypt diff=git-crypt
 
 # Encrypt database backups
 db/development/postgres/**/*.dump filter=git-crypt diff=git-crypt

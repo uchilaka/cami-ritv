@@ -1,8 +1,6 @@
 # Brewfile.development
 # frozen_string_literal: true
 
-tap 'protonpass/tap'
-
 eval(File.read('Brewfile'))
 
 # Dev-specific CLI

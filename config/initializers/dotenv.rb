@@ -3,7 +3,7 @@
 return if AppUtils.thor_mode?
 
 production_env_vars = []
-if AppUtils.database_url_present?
+if AppUtils.database_url_from_env.present?
   puts <<~MSG
     ⚠️ DATABASE_URL environment variable detected. Skipping individual
     database configuration checks.

@@ -15,6 +15,7 @@
     "build:image": "docker compose --progress plain build",
     "build": "bin/vite build",
     "start": "bin/start",
+    "bundle": "brew bundle --file Brewfile.$RAILS_ENV",
     "lint": "eslint",
     "test:rspec": "RAILS_ENV=test bundle exec rspec",
     "test": "vitest",

@@ -1,0 +1,136 @@
+name: Deploy to Fly.io
+
+on:
+  workflow_dispatch:
+    inputs:
+      deploy_message:
+        description: 'Deployment message'
+        required: true
+        default: 'Ad-hoc deployment to Fly.io'
+      git_ref:
+        type: choice
+        required: true
+        description: 'Git reference (branch, tag, or commit SHA) to deploy'
+        default: 'releases/production'
+        options:
+          - 'releases/production'
+          - 'releases/staging'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: fly-deploy-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  infrastructure:
+    name: Manage Infrastructure
+    runs-on: ubuntu-latest
+    env:
+      FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+      WORKFLOW_REF: ${{ github.ref }}
+      DEPLOY_TARGET_REF: refs/heads/${{ github.event.inputs.git_ref }}
+    outputs:
+      redis_url: ${{ steps.tf_outputs.outputs.redis_url }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.git_ref || github.ref }}
+
+      - name: Setup OpenTofu
+        uses: opentofu/setup-opentofu@v1
+        with:
+          tofu_version: 1.11.6
+
+      - name: OpenTofu Init
+        working-directory: .terraform
+        run: |
+          if [ -n "${{ vars.TF_STATE_ENDPOINT }}" ]; then
+            tofu init \
+              -backend-config="bucket=${{ secrets.TF_STATE_BUCKET }}" \
+              -backend-config="key=cami/fly/terraform.tfstate" \
+              -backend-config="region=${{ vars.TF_STATE_REGION || 'us-east-1' }}" \
+              -backend-config="endpoint=${{ vars.TF_STATE_ENDPOINT }}" \
+              -backend-config="access_key=${{ secrets.AWS_ACCESS_KEY_ID }}" \
+              -backend-config="secret_key=${{ secrets.AWS_SECRET_ACCESS_KEY }}" \
+              -backend-config="skip_credentials_validation=true" \
+              -backend-config="skip_metadata_api_check=true" \
+              -backend-config="skip_region_validation=true" \
+              -backend-config="skip_s3_checksum=true"
+          else
+            tofu init \
+              -backend-config="bucket=${{ secrets.TF_STATE_BUCKET }}" \
+              -backend-config="key=cami/fly/terraform.tfstate" \
+              -backend-config="region=${{ vars.TF_STATE_REGION || 'us-east-1' }}" \
+              -backend-config="access_key=${{ secrets.AWS_ACCESS_KEY_ID }}" \
+              -backend-config="secret_key=${{ secrets.AWS_SECRET_ACCESS_KEY }}"
+          fi
+
+      - name: OpenTofu Apply
+        working-directory: .terraform
+        run: tofu apply -auto-approve
+        env:
+          TF_VAR_fly_org: ${{ vars.FLY_ORG }}
+          TF_VAR_fly_region: ${{ vars.FLY_REGION }}
+          TF_VAR_tf_state_bucket: ${{ secrets.TF_STATE_BUCKET }}
+
+      - name: Get Terraform Outputs
+        id: tf_outputs
+        working-directory: .terraform
+        run: |
+          redis_url="$(tofu output -raw redis_url)"
+          echo "::add-mask::${redis_url}"
+          echo "redis_url=${redis_url}" >> "$GITHUB_OUTPUT"
+
+  deploy:
+    name: Deploy Applications
+    needs: infrastructure
+    runs-on: ubuntu-latest
+    env:
+      FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+      WORKFLOW_REF: ${{ github.ref }}
+      DEPLOY_TARGET_REF: refs/heads/${{ github.event.inputs.git_ref }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.git_ref || github.ref }}
+
+      - name: Setup Flyctl
+        uses: superfly/flyctl-actions/setup-flyctl@v1
+
+      - name: Set Runtime Secrets (Core)
+        env:
+          RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
+          REDIS_URL: ${{ needs.infrastructure.outputs.redis_url }}
+        run: |
+          flyctl secrets set RAILS_MASTER_KEY="${RAILS_MASTER_KEY}" REDIS_URL="${REDIS_URL}" --app ${{ vars.APP_NAME_PREFIX || 'cami' }}-core
+
+      - name: Set Runtime Secrets (CRM)
+        env:
+          APP_SECRET: ${{ secrets.APP_SECRET }}
+          REDIS_URL: ${{ needs.infrastructure.outputs.redis_url }}
+        run: |
+          flyctl secrets set APP_SECRET="${APP_SECRET}" REDIS_URL="${REDIS_URL}" --app ${{ vars.APP_NAME_PREFIX || 'cami' }}-crm
+
+      - name: Deploy Rails Core
+        env:
+          RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
+          GITCRYPT_KEY_BASE64: ${{ secrets.GITCRYPT_KEY_BASE64 }}
+        run: |
+          flyctl deploy \
+            --config .fly/fly.toml \
+            --remote-only \
+            --build-secret production.key="${RAILS_MASTER_KEY}" \
+            --build-secret git-crypt.key="${GITCRYPT_KEY_BASE64}"
+
+      - name: Deploy Twenty CRM
+        env:
+          RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
+          GITCRYPT_KEY_BASE64: ${{ secrets.GITCRYPT_KEY_BASE64 }}
+        run: |
+          flyctl deploy \
+            --config .fly/fly.crm.toml \
+            --remote-only \
+            --build-secret production.key="${RAILS_MASTER_KEY}" \
+            --build-secret git-crypt.key="${GITCRYPT_KEY_BASE64}"
