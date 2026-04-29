@@ -28,9 +28,9 @@ module LarCity
         service_name = options[:service].to_s
         with_interruption_rescue do
           supported_services =
-            docker_compose_config["services"].select do |_, config|
+            docker_compose_config["services"].entries.select do |_name, config|
               config.key?("build")
-            end
+            end.to_h
           say_debug <<~SUPPORTED_SERVICES
             The following services are available:
             #{YAML.dump(supported_services)}
@@ -76,7 +76,7 @@ module LarCity
       end
 
       def has_build_config?(name)
-        docker_compose_config.dig("services", name).key?("build") || false
+        (docker_compose_config.dig("services", name) || {}).key?("build")
       end
     end
   end

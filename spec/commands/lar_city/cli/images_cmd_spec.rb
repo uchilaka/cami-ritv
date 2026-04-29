@@ -59,14 +59,21 @@ module LarCity
           end
         end
 
-        context 'with an unsupported service' do
-          let(:unsupported_service) { 'db' }
+        context 'with an unsupported service',
+                skip: 'TODO: this test with a "TeamCity Rake Runner Plugin isn\'t compatible with this RSpec version" error message' do
+          let(:unsupported_service) { 'redis' }
+          let(:unsupported_message) { %r{The specified service \[#{unsupported_service}\] is not supported} }
           let(:build_args) { { service: unsupported_service, dry_run: } }
 
-          it 'raises an error' do
+          it 'raises the expected error' do
             expect do
               command.invoke(:build, [], **build_args)
-            end.to raise_error(LarCity::Errors::Unsupported)
+            end.to raise_error(SystemExit)
+          end
+
+          it 'outputs the expected message' do
+            expect { command.invoke(:build, [], **build_args) }.to \
+              output(unsupported_message).to_stdout_from_any_process
           end
         end
       end
