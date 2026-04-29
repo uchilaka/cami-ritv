@@ -102,10 +102,22 @@ module LarCity
                 next
               end
 
-              if var_name == 'EDITOR' && ENV.key?(var_name)
-                say_warning <<~WARNING
-                  EDITOR environment variable was detected in the environment and will be skipped.
-                WARNING
+              if var_name == 'EDITOR'
+                if ENV.key?(var_name)
+                  say_warning <<~WARNING
+                    EDITOR environment variable was detected in the environment and will be skipped.
+                  WARNING
+                  next
+                end
+
+                if rubymine?
+                  say_warning <<~WARNING
+                    RubyMine was detected on the system. The EDITOR variable will be set to 'rubymine'
+                    by default, but it is recommended to set it explicitly in your environment or command
+                    options to avoid potential issues with editor detection and selection.
+                  WARNING
+                  next
+                end
               end
 
               # Compose variable export content row for provisioning environments with .tpl files

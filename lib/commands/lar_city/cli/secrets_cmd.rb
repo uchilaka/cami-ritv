@@ -210,34 +210,34 @@ module LarCity
         end
       end
 
-      def rubymine?
-        system('which rubymine')
-      end
-
-      def vscode?
-        system('which code')
-      end
+      # def rubymine?
+      #   system('which rubymine')
+      # end
+      #
+      # def vscode?
+      #   system('which code')
+      # end
 
       def credentials_file
         Rails.root.join('config', 'credentials', "#{detected_environment}.yml.enc")
       end
 
-      def editor
-        @editor ||= selected_or_default_editor
-      end
-
-      def detected_editor
-        @detected_editor ||=
-          if rubymine?
-            'rubymine'
-          else
-            vscode? ? 'code' : nil
-          end
-      end
-
-      def selected_or_default_editor
-        options[:editor] || ENV.fetch('EDITOR', detected_editor)
-      end
+      # def editor
+      #   @editor ||= selected_or_default_editor
+      # end
+      #
+      # def detected_editor
+      #   @detected_editor ||=
+      #     if rubymine?
+      #       'rubymine'
+      #     else
+      #       vscode? ? 'code' : nil
+      #     end
+      # end
+      #
+      # def selected_or_default_editor
+      #   options[:editor] || ENV.fetch('EDITOR', detected_editor)
+      # end
     end
   end
 end
