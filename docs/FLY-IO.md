@@ -32,6 +32,7 @@ Update your `.env.local` file with the following environment variables:
 export HOSTNAME="localhost"
 export CONTAINER_REGISTRY_HOST="registry.fly.io"
 export CONTAINER_NAME_PREFIX="larcity-accounts"
+export FLY_APP_NAME="cami-production"
 ```
 
 Next, create a `docker-compose.override.yml` file in the root of the project with the following content:
@@ -39,9 +40,9 @@ Next, create a `docker-compose.override.yml` file in the root of the project wit
 ```yaml
 services:
   web:
-    image: registry.fly.io/${FLY_APP_NAME_PREFIX}-web:latest
+    image: ${CONTAINER_REGISTRY_HOST}/${CONTAINER_NAME_PREFIX}-web:latest
   worker:
-    image: registry.fly.io/${FLY_APP_NAME_PREFIX}-worker:latest
+    image: ${CONTAINER_REGISTRY_HOST}/${CONTAINER_NAME_PREFIX}-worker:latest
 ```
 
 Then, complete the following setup steps:
@@ -60,7 +61,7 @@ docker push registry.fly.io/your-app-name:latest
 flyctl registry list --org larcity-llc
 
 # Deploy the app using the published image
-fly launch --name <app-name> --org larcity-llc --region iad --image registry.fly.io/your-app-name:latest --now
+fly deploy --app your-app-name --image registry.fly.io/your-app-name:latest --config .fly/fly.toml
 ```
 
 ## Launch the app
