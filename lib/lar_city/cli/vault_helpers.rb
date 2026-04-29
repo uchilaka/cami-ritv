@@ -107,17 +107,22 @@ module LarCity
                   say_warning <<~WARNING
                     EDITOR environment variable was detected in the environment and will be skipped.
                   WARNING
-                  next
+                elsif rubymine?
+                  say_warning <<~WARNING
+                    RubyMine was detected on the system. The EDITOR variable may be set to 'rubymine'
+                    by default for some commands, but it is recommended to set it explicitly in your
+                    environment or command options to avoid potential issues with editor detection
+                    and selection.
+                  WARNING
+                else
+                  say_warning <<~WARNING
+                    No specific editor was detected on the system. The EDITOR variable will not be set by default,
+                    but it is recommended to set it explicitly in your environment or command options to ensure
+                    consistent behavior across different environments and platforms.
+                  WARNING
                 end
 
-                if rubymine?
-                  say_warning <<~WARNING
-                    RubyMine was detected on the system. The EDITOR variable will be set to 'rubymine'
-                    by default, but it is recommended to set it explicitly in your environment or command
-                    options to avoid potential issues with editor detection and selection.
-                  WARNING
-                  next
-                end
+                next
               end
 
               # Compose variable export content row for provisioning environments with .tpl files
