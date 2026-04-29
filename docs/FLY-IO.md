@@ -48,11 +48,11 @@ services:
 Then, complete the following setup steps:
 
 ```shell
-# Authenticate
-fly auth docker
-
 # Prepare a local image to publish
 docker tag your-local-image-name registry.fly.io/your-app-name:latest
+
+# Authenticate
+fly auth docker
 
 # Publish the image to fly.io registry
 docker push registry.fly.io/your-app-name:latest
