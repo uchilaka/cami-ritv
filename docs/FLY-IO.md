@@ -64,6 +64,16 @@ flyctl registry list --org larcity-llc
 fly deploy --app your-app-name --image registry.fly.io/your-app-name:latest --config .fly/fly.toml
 ```
 
+### Managing machine memory 
+
+```shell
+# Scaling memory for the web group
+fly scale memory 1024 --app cami-production --config .fly/fly.toml --process-group web
+
+# Scaling memory for the worker group
+fly scale memory 512 --app cami-production --config .fly/fly.toml --process-group worker
+```
+
 ## Launch the app
 
 ### 1. Install flyctl
