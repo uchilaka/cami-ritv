@@ -26,7 +26,15 @@ fly secrets set --stage --detach --app=cami-production --access-token="<APP-DEPL
 
 ### Setup docker image registry 
 
-Create a `docker-compose.override.yml` file in the root of the project with the following content:
+Update your `.env.local` file with the following environment variables:
+
+```env
+export HOSTNAME="localhost"
+export CONTAINER_REGISTRY_HOST="registry.fly.io"
+export CONTAINER_NAME_PREFIX="larcity-accounts"
+```
+
+Next, create a `docker-compose.override.yml` file in the root of the project with the following content:
 
 ```yaml
 services:

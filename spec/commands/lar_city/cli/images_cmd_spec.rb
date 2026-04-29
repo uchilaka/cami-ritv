@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require 'rails_helper'
-# require 'lar_city/cli/utils'
 require 'commands/lar_city/cli/images_cmd'
 
 module LarCity
@@ -11,23 +10,11 @@ module LarCity
 
       let(:service_name) { 'worker' }
       let(:dry_run) { true }
-      # let(:docker_compose_config) do
-      #   {
-      #     'services' => {
-      #       'web' => { 'build' => '.' },
-      #       'worker' => { 'build' => '.' }
-      #     }
-      #   }
-      # end
-      let(:build_output) { %r{Image #{service_name} Built} }
-      let(:push_output) { %r{naming to registry\.fly\.io/cami-test-#{service_name}\:latest} }
-
-      before do
-        # allow(command).to receive(:docker_compose_config).and_return(docker_compose_config)
-      end
+      let(:build_output) { %r{Image (.*) Built} }
+      let(:push_output) { %r{naming to registry\.test/accounts-#{service_name}\:latest} }
 
       around do |example|
-        with_modified_env(FLY_APP_NAME_PREFIX: 'cami-test') { example.run }
+        with_modified_env(CONTAINER_REGISTRY_HOST: 'registry.test', CONTAINER_NAME_PREFIX: 'accounts') { example.run }
       end
 
       describe 'build' do

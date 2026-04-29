@@ -72,7 +72,7 @@ module LarCity
         return true if result.is_a?(Process::Status) && result.success?
 
         # TODO: Make this regex test case-insensitive while using %r
-        %r{Image #{options[:service]} Built}.match?(result)
+        %r{Image (.*) Built}.match?(result)
       end
 
       def has_build_config?(name)
