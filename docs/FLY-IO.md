@@ -61,7 +61,7 @@ docker push registry.fly.io/your-app-name:latest
 flyctl registry list --org larcity-llc
 
 # Deploy the app using the published image
-fly deploy --app your-app-name --image registry.fly.io/your-app-name:latest --config .fly/fly.toml
+fly deploy --remote-only --app your-app-name --image registry.fly.io/your-app-name:latest --config .fly/fly.toml
 ```
 
 ### Managing machine memory 

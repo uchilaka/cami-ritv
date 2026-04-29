@@ -109,6 +109,9 @@ gem 'highline', '~> 3.1'
 gem 'nokogiri'
 gem 'reverse_markdown'
 
+gem 'strong_migrations'
+gem 'open3'
+
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem 'debug', platforms: %i[mri mingw x64_mingw]
@@ -118,12 +121,10 @@ group :development, :test do
   gem 'fabrication'
   gem 'faker'
   gem 'knapsack_pro'
-  gem 'open3'
   gem 'rspec-rails', '~> 7'
   gem 'rswag-specs'
   gem 'rubocop', require: false
   gem 'rubocop-rails-omakase', require: false
-  gem 'strong_migrations'
   gem 'pry'
 end
 

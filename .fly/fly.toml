@@ -11,6 +11,9 @@ primary_region = "iad"
   [build.args]
     RAILS_ENV = "production"
 
+[deploy]
+  release_command = "bundle exec rails db:migrate:primary data:migrate"
+
 [env]
   PORT = "16006"
   RAILS_ENV = "production"
