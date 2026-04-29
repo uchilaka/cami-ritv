@@ -27,10 +27,6 @@ module LarCity
       def build
         service_name = options[:service].to_s
         with_interruption_rescue do
-          supported_services =
-            docker_compose_config["services"].entries.select do |_name, config|
-              config.key?("build")
-            end.to_h
           say_debug <<~SUPPORTED_SERVICES
             The following services are available:
             #{YAML.dump(supported_services)}
@@ -62,11 +58,64 @@ module LarCity
           return
         end
 
+        version = "latest"
+        result =
+          run "docker tag",
+              [container_name, version].join(':'),
+              [container_tag, version].join(':'),
+              eval: true
+        say_debug "Re-tag result: #{result.inspect}"
+
         # TODO: Extract image_id from this content pattern: naming to registry.fly.io/cami-lab-worker:latest
         say_success I18n.t('commands.images.build.success_message', name: service_name, image_id: "TBD")
       end
 
       private
+
+      def container_tag(service: options[:service])
+        raise ArgumentError, "--service is required" if service.blank?
+
+        unless supported_services.key?(service)
+          raise Errors::Unsupported,
+                I18n.t(
+                  'commands.images.build.unsupported_service_message',
+                  list_of_names: supported_services.keys,
+                  compose_file: docker_compose_config_file,
+                  name: service
+                )
+        end
+
+        Rails.application.config_for('container-registry').dig(:aliases, service.to_sym)
+      end
+
+      def container_name(service: options[:service])
+        raise ArgumentError, "--service is required" if service.blank?
+
+        unless supported_services.key?(service)
+          raise Errors::Unsupported,
+                I18n.t(
+                  'commands.images.build.unsupported_service_message',
+                  list_of_names: supported_services.keys,
+                  compose_file: docker_compose_config_file,
+                  name: service
+                )
+        end
+
+        [
+          ENV.fetch('CONTAINER_REGISTRY_HOST'),
+          '/',
+          ENV.fetch('CONTAINER_NAME_PREFIX'),
+          '-',
+          service
+        ].compact.join('')
+      end
+
+      def supported_services
+        @supported_services ||=
+          docker_compose_config["services"].entries.select do |_name, config|
+            config.key?("build")
+          end.to_h
+      end
 
       def success?
         return true if result.is_a?(Process::Status) && result.success?
