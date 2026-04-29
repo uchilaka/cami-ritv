@@ -102,6 +102,12 @@ module LarCity
                 next
               end
 
+              if var_name == 'EDITOR' && ENV.key?(var_name)
+                say_warning <<~WARNING
+                  EDITOR environment variable was detected in the environment and will be skipped.
+                WARNING
+              end
+
               # Compose variable export content row for provisioning environments with .tpl files
               erb_template_array << "export #{var_name}=\"#{value}\""
               # Configure params as name, value tuple
