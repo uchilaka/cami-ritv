@@ -8,20 +8,23 @@ module LarCity
     RSpec.describe ImagesCmd, type: :command do
       subject(:command) { described_class.new }
 
-      let(:service_name) { 'worker' }
+      let(:service_name) { 'web' }
       let(:dry_run) { true }
       let(:build_output) { %r{Image (.*) Built} }
-      let(:push_output) { %r{naming to registry\.test/accounts-#{service_name}:latest} }
+      let(:push_output) { %r{naming to larcity/accounts-#{service_name}\s} }
 
       around do |example|
-        with_modified_env(CONTAINER_REGISTRY_HOST: 'registry.test', CONTAINER_NAME_PREFIX: 'accounts') { example.run }
+        with_modified_env(
+          CONTAINER_REGISTRY_HOST: 'registry.test',
+          CONTAINER_NAME_PREFIX: 'accounts'
+        ) { example.run }
       end
 
       describe 'build' do
         context 'when building an image' do
           let(:build_args) { { service: service_name, dry_run: } }
 
-          it 'succeeds and reports the image_id' do
+          it do
             expect { command.invoke(:build, [], **build_args) }.to \
               output(build_output).to_stdout_from_any_process
           end
@@ -35,7 +38,52 @@ module LarCity
         context 'when building and pushing an image' do
           let(:build_args) { { service: service_name, dry_run:, push: true } }
 
-          it 'succeeds and reports the image_id' do
+          it do
+            expect { command.invoke(:build, [], **build_args) }.to \
+              output(build_output).to_stdout_from_any_process
+          end
+
+          it 'reports the image_id' do
+            expect { command.invoke(:build, [], **build_args) }.to \
+              output(push_output).to_stdout_from_any_process
+          end
+        end
+
+        context 'when building an image with override composition' do
+          let(:build_args) { { service: service_name, dry_run: } }
+          let(:push_output) { %r{naming to registry\.test/accounts-#{service_name}:latest} }
+          let(:override_compose_file_path) { Rails.root.join('docker-compose.override.yml').to_s }
+          let(:override_content) do
+            <<~YAML
+              version: '3.8'
+              services:
+                web:
+                  image: ${CONTAINER_REGISTRY_HOST}/${CONTAINER_NAME_PREFIX}-web:latest
+                worker:
+                  image: ${CONTAINER_REGISTRY_HOST}/${CONTAINER_NAME_PREFIX}-worker:latest
+            YAML
+          end
+
+          around do |example|
+            if File.exist?(override_compose_file_path)
+              original_content = File.read(override_compose_file_path)
+              begin
+                File.open(override_compose_file_path, 'w') { |f| f.write(override_content) }
+                example.run
+              ensure
+                File.open(override_compose_file_path, 'w') { |f| f.write(original_content) }
+              end
+            else
+              begin
+                File.write(override_compose_file_path, override_content)
+                example.run
+              ensure
+                FileUtils.rm(override_compose_file_path)
+              end
+            end
+          end
+
+          it do
             expect { command.invoke(:build, [], **build_args) }.to \
               output(build_output).to_stdout_from_any_process
           end
@@ -67,5 +115,4 @@ module LarCity
     end
   end
 end
-
 
