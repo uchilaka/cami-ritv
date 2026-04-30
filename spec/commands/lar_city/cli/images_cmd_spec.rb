@@ -11,7 +11,7 @@ module LarCity
       let(:service_name) { 'worker' }
       let(:dry_run) { true }
       let(:build_output) { %r{Image (.*) Built} }
-      let(:push_output) { %r{naming to registry\.test/accounts-#{service_name}\:latest} }
+      let(:push_output) { %r{naming to registry\.test/accounts-#{service_name}:latest} }
 
       around do |example|
         with_modified_env(CONTAINER_REGISTRY_HOST: 'registry.test', CONTAINER_NAME_PREFIX: 'accounts') { example.run }

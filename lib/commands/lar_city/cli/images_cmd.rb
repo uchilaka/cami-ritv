@@ -44,8 +44,8 @@ module LarCity
           end
         end
         cmd_args = ['docker compose build', service_name]
-        cmd_args << "--dry-run" if pretend?
-        cmd_args << "--push" if options[:push]
+        cmd_args << '--dry-run' if pretend?
+        cmd_args << '--push' if options[:push]
         @result =
           run(
             *cmd_args,
@@ -54,26 +54,26 @@ module LarCity
           ) { |line| say_info(line) }
         say_debug "Build result: #{result.inspect}"
         unless success?
-          say_error I18n.t('commands.images.build.failure_message', name: service_name, error_details: "TBD")
+          say_error I18n.t('commands.images.build.failure_message', name: service_name, error_details: 'TBD')
           return
         end
 
-        version = "latest"
+        version = 'latest'
         result =
-          run "docker tag",
+          run 'docker tag',
               [container_name, version].join(':'),
               [container_tag, version].join(':'),
               eval: true
         say_debug "Re-tag result: #{result.inspect}"
 
         # TODO: Extract image_id from this content pattern: naming to registry.fly.io/cami-lab-worker:latest
-        say_success I18n.t('commands.images.build.success_message', name: service_name, image_id: "TBD")
+        say_success I18n.t('commands.images.build.success_message', name: service_name, image_id: 'TBD')
       end
 
       private
 
       def container_tag(service: options[:service])
-        raise ArgumentError, "--service is required" if service.blank?
+        raise ArgumentError, '--service is required' if service.blank?
 
         unless supported_services.key?(service)
           raise Errors::Unsupported,
@@ -89,7 +89,7 @@ module LarCity
       end
 
       def container_name(service: options[:service])
-        raise ArgumentError, "--service is required" if service.blank?
+        raise ArgumentError, '--service is required' if service.blank?
 
         unless supported_services.key?(service)
           raise Errors::Unsupported,
@@ -101,19 +101,16 @@ module LarCity
                 )
         end
 
-        [
-          ENV.fetch('CONTAINER_REGISTRY_HOST'),
-          '/',
-          ENV.fetch('CONTAINER_NAME_PREFIX'),
-          '-',
-          service
-        ].compact.join('')
+        # Build the base image name
+        image_name = [ENV.fetch('CONTAINER_NAME_PREFIX'), service].compact.join('-')
+        # Prepend a namespace or registry hostname
+        [ENV.fetch('CONTAINER_REGISTRY_HOST'), image_name].compact.join('/')
       end
 
       def supported_services
         @supported_services ||=
-          docker_compose_config["services"].entries.select do |_name, config|
-            config.key?("build")
+          docker_compose_config['services'].entries.select do |_name, config|
+            config.key?('build')
           end.to_h
       end
 
@@ -125,7 +122,7 @@ module LarCity
       end
 
       def has_build_config?(name)
-        (docker_compose_config.dig("services", name) || {}).key?("build")
+        (docker_compose_config.dig('services', name) || {}).key?('build')
       end
     end
   end

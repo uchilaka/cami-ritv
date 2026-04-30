@@ -4,6 +4,12 @@ shared: &shared
 development:
   aliases:
 
+test:
+  aliases:
+    crm: <%= ENV.fetch('CONTAINER_REGISTRY_HOST') %>/twenty-crm
+    web: <%= ENV.fetch('CONTAINER_REGISTRY_HOST') %>/cami-web
+    worker: <%= ENV.fetch('CONTAINER_REGISTRY_HOST') %>/cami-worker
+
 lab: &lab
   <<: *shared
   aliases:
