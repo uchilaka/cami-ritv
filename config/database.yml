@@ -71,12 +71,11 @@ development:
   queue:
     <<: *primary_development
     # database: sails_development_queue
-    # migration_paths: db/queue_migrate
 
   crm:
     <<: *primary_development
     database: <%= ENV.fetch("APP_DATABASE_NAME_CRM", "twenty_crm_development") %>
-    migration_paths: db/crm_migrate
+    database_tasks: false
 
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".
@@ -104,7 +103,7 @@ lab:
   crm:
     <<: *primary_lab
     database: <%= ENV.fetch("APP_DATABASE_NAME_CRM", "twenty_crm_lab") %>
-    migration_paths: db/crm_migrate
+    database_tasks: false
 
 staging:
   primary: &primary_staging
@@ -133,7 +132,7 @@ staging:
     <% else %>
     database: <%= ENV.fetch("APP_DATABASE_NAME_CRM", "twenty_crm_staging") %>
     <% end %>
-    migration_paths: db/crm_migrate
+    database_tasks: false
 
 # As with config/credentials.yml, you never want to store sensitive information,
 # like your database password, in your source code. If your source code is
@@ -183,4 +182,4 @@ production:
     <% else %>
     database: <%= ENV["CRM_DATABASE_NAME"].presence || ENV.fetch("APP_DATABASE_NAME_CRM", "twenty_crm_production") %>
     <% end %>
-    migration_paths: db/crm_migrate
+    database_tasks: false

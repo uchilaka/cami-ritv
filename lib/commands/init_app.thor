@@ -2,8 +2,8 @@
 
 require 'lar_city/base_cmd_stack'
 require 'lar_city/cli/services_cmd'
-require_relative 'restore_db'
 require_relative 'features_cmd'
+require_relative 'kick_store'
 
 class InitApp < Thor::Group
   include LarCity::BaseCmdStack
@@ -31,30 +31,43 @@ class InitApp < Thor::Group
     run 'docker-compose up', '--detach app-store'
   end
 
-  def wait_for_primary_database_service_health_check
-    wait_for_db(target: :primary)
+  def kick_stores
+    # @FIXME The primary database should be last until we can explicitly target it
+    #   for subsequent commands
+    %w[crm primary].each do |target|
+      kick_cmd =
+        KickStore.new([], target:, verbose: verbose?, dry_run: pretend?, restore: options[:restore_primary])
+      kick_cmd.invoke_all
+    end
   end
 
-  def create_data_stores_if_not_exists
-    say_info 'Creating data stores if they do not exist...'
-    Rails::Command.invoke('db:create:primary')
-    Rails::Command.invoke('db:create:crm')
-  end
+  # def wait_for_primary_database_service_health_check
+  #   wait_for_db(target: :primary)
+  # end
+  #
+  # def create_data_stores_if_not_exists
+  #   say_info 'Creating data stores if they do not exist...'
+  #   Rails::Command.invoke('db:create:primary')
+  #   Rails::Command.invoke('db:create:crm') if Flipper.enabled?(:feat__require_crm_db_availability)
+  # end
+  #
+  # def maybe_restore_primary_databases_from_backup
+  #   return unless options[:restore_primary]
+  #
+  #   say_info 'Restoring primary database from latest backup...'
+  #   restore_database_from_backup(target: 'primary')
+  # end
+  #
+  # def wait_for_crm_database_service_health_check
+  #   wait_for_db(target: :crm) if Flipper.enabled?(:feat__require_crm_db_availability)
+  # end
+  #
+  # def apply_migrations
+  #   Rails::Command.invoke('db:migrate:primary')
+  #   Rails::Command.invoke('db:migrate:crm') if Flipper.enabled?(:feat__crm_schema_migrations)
+  # end
 
-  def maybe_restore_primary_databases_from_backup
-    return unless options[:restore_primary]
-
-    say_info 'Restoring primary database from latest backup...'
-    restore_database_from_backup(target: 'primary')
-  end
-
-  def wait_for_crm_database_service_health_check
-    wait_for_db(target: :crm)
-  end
-
-  def apply_migrations
-    Rails::Command.invoke('db:migrate:primary')
-    Rails::Command.invoke('db:migrate:crm')
+  def apply_data_migrations
     Rails::Command.invoke('data:migrate')
   end
 

@@ -15,7 +15,8 @@ gem 'mission_control-jobs'
 # IMPORTANT: This should be loaded as early as possible
 gem 'dotenv', require: 'dotenv/load'
 
-gem 'flipper-active_record', '~> 1.3'
+gem 'flipper'
+gem 'flipper-active_record', '~> 1'
 gem 'flipper-api'
 gem 'flipper-ui'
 

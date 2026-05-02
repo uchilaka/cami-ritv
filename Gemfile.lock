@@ -670,7 +670,8 @@ DEPENDENCIES
   faker
   faraday (~> 2.13)
   faraday-retry
-  flipper-active_record (~> 1.3)
+  flipper
+  flipper-active_record (~> 1)
   flipper-api
   flipper-ui
   friendly_id (~> 5.5)
