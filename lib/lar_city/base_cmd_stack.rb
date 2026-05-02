@@ -78,8 +78,8 @@ module LarCity
           database_config[target].values_at(:user, :host, :port, :name)
         result =
           run "pg_isready --port #{port}",
-            "-U #{user}",  "-h #{host}", "-d #{db_name}",
-            inline: true, eval: true
+              "-U #{user}",  "-h #{host}", "-d #{db_name}",
+              inline: true, eval: true
         %r{accepting connections}.match?(result)
       end
 
@@ -89,18 +89,23 @@ module LarCity
             host: ENV.fetch('APP_DATABASE_HOST'),
             port: ENV.fetch('APP_DATABASE_PORT'),
             user: ENV.fetch('APP_DATABASE_USER'),
-            name: ENV.fetch('APP_DATABASE_NAME'),
+            name: ENV.fetch('APP_DATABASE_NAME_PRIMARY', "sails_#{detected_environment}"),
           },
           crm: crm_database_config,
         }
       end
 
+      # @deprecated it seems perhaps the CRM configuration isn't setup properly.
+      #   This is meant to be a database managed by a separate service but accessible
+      #   to the CAMI application with its own distinct schema from that of the CAMI
+      #   database. Currently, the app runs into "duplicate schema" errors because
+      #   the app attempts to replicate the primary database schema to the CRM
       def crm_database_config
         {
           host: ENV.fetch('PG_DATABASE_HOST', 'crm-store'),
           port: ENV.fetch('PG_DATABASE_PORT', '5432'),
           user: ENV.fetch('APP_DATABASE_USER', 'postgres'),
-          name: ENV.fetch('CRM_DATABASE_NAME', 'lar_city_crm_db'),
+          name: ENV.fetch('APP_DATABASE_NAME_CRM', "twenty_crm_#{detected_environment}"),
         }
       end
     end
