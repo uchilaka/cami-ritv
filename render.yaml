@@ -35,7 +35,7 @@ projects:
                 fromDatabase:
                   name: cami-production-db
                   property: host
-              - key: APP_PRIMARY_DATABASE_NAME
+              - key: APP_DATABASE_NAME_PRIMARY
                 fromDatabase:
                   name: cami-production-db
                   property: database
@@ -91,7 +91,7 @@ projects:
                 fromDatabase:
                   name: cami-production-db
                   property: host
-              - key: APP_PRIMARY_DATABASE_NAME
+              - key: APP_DATABASE_NAME_PRIMARY
                 fromDatabase:
                   name: cami-production-db
                   property: database
@@ -149,7 +149,7 @@ projects:
 #                fromDatabase:
 #                  name: cami-staging-db
 #                  property: host
-#              - key: APP_PRIMARY_DATABASE_NAME
+#              - key: APP_DATABASE_NAME_PRIMARY
 #                fromDatabase:
 #                  name: cami-staging-db
 #                  property: database
@@ -187,7 +187,7 @@ projects:
 #                fromDatabase:
 #                  name: cami-staging-db
 #                  property: host
-#              - key: APP_PRIMARY_DATABASE_NAME
+#              - key: APP_DATABASE_NAME_PRIMARY
 #                fromDatabase:
 #                  name: cami-staging-db
 #                  property: database

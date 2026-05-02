@@ -177,3 +177,12 @@ en:
             long_desc: >
               If the tunnel configuration already exists, using this option will
               overwrite the existing configuration and re-initialize it.
+    secrets:
+      promote:
+        short_desc: Promote secrets from the CLI vault to the hosting platform
+        long_desc: >
+          This command promotes secrets from the CLI vault to the hosting platform
+          (e.g. Fly.io, Render or DigitalOcean).
+        confirmation_message: >
+          Are you sure you want to promote (key=%{secret_key}, value=%{secret_value})
+          from the vault for %{src} to the %{dest}? This action cannot be undone.
