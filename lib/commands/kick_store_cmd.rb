@@ -3,7 +3,7 @@
 require 'lar_city/base_cmd_stack'
 require_relative 'restore_db'
 
-class KickStore < Thor::Group
+class KickStoreCmd < Thor::Group
   include LarCity::BaseCmdStack
 
   no_commands do
@@ -31,11 +31,7 @@ class KickStore < Thor::Group
                default: false,
                desc: 'Restore database from latest backup'
 
-  def wait_for_database_service_health_check
-    wait_for_db(target:)
-  end
-
-  def create_data_stores_if_not_exists
+  def create_data_store_if_not_exists
     if skip_database_tasks?
       say_debug "Skipping #{target} store create"
       return
@@ -43,6 +39,10 @@ class KickStore < Thor::Group
 
     say_info "Creating #{target} data store (unless EXISTS)..."
     Rails::Command.invoke("db:create:#{target}")
+  end
+
+  def wait_for_database_service_health_check
+    wait_for_db(target:)
   end
 
   def maybe_restore_database_from_backup

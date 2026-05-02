@@ -3,7 +3,7 @@
 require 'lar_city/base_cmd_stack'
 require 'lar_city/cli/services_cmd'
 require_relative 'features_cmd'
-require_relative 'kick_store'
+require_relative 'kick_store_cmd'
 
 class InitApp < Thor::Group
   include LarCity::BaseCmdStack
@@ -36,7 +36,7 @@ class InitApp < Thor::Group
     #   for subsequent commands
     %w[crm primary].each do |target|
       kick_cmd =
-        KickStore.new([], target:, verbose: verbose?, dry_run: pretend?, restore: options[:restore_primary])
+        KickStoreCmd.new([], target:, verbose: verbose?, dry_run: pretend?, restore: options[:restore_primary])
       kick_cmd.invoke_all
     end
   end
