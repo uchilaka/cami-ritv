@@ -5,8 +5,6 @@ require_relative 'base_cmd'
 module LarCity
   module CLI
     class ServicesCmd < BaseCmd
-      include ControlFlowHelpers
-
       namespace 'services'
 
       class_option :profile,
@@ -25,16 +23,9 @@ module LarCity
                long_desc:, desc:, required:
       end
 
-      def self.add_service_option(
-        desc:,
-        long_desc: nil,
-        required: false
-      )
-        option :service,
-               aliases: '-s',
-               type: :array,
-               enum: %w[web app-store worker mailhog tunnel].sort,
-               desc:, long_desc:, required:
+      no_commands do
+        include ControlFlowHelpers
+        include ServiceHelpers
       end
 
       define_force_option self, class_option: false, desc: 'Force overwrite of existing daemon config'
@@ -313,10 +304,6 @@ module LarCity
 
         def profile_clause
           "--profile #{options[:profile]}"
-        end
-
-        def docker_compose_config_file
-          Rails.root.join('docker-compose.yml').to_s
         end
 
         def configured_ports

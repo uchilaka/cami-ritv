@@ -138,9 +138,11 @@ app*.yaml
 .claude/*
 .gemini/*
 
-
 # Terraform / OpenTofu
 .terraform/.terraform/
 .terraform/*.tfstate
 .terraform/*.tfstate.backup
 .terraform/*.tfvars
+
+# Docker compose
+/docker-compose.override.yml

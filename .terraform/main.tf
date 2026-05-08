@@ -4,7 +4,7 @@ resource "fly_app" "core" {
 }
 
 resource "fly_app" "crm" {
-  name     = "${var.app_name_prefix}-crm"
+  name     = "${var.app_name_prefix}-twenty-crm"
   org_slug = var.fly_org
 }
 

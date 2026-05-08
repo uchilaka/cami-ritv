@@ -2,6 +2,7 @@
 
 require 'rails_helper'
 require 'lib/commands/restore_db'
+require 'lib/commands/kick_store_cmd'
 
 load_thor_command 'lib', 'commands', 'init_app'
 
@@ -9,6 +10,7 @@ RSpec.describe InitApp, type: :command_stack do
   let(:options) { {} }
   let(:instance) { described_class.new([], **options) }
   let(:mock_service_cmd) { instance_double(LarCity::CLI::ServicesCmd, invoke: true) }
+  let(:mock_kick_store_cmd) { instance_double(KickStoreCmd, invoke_all: true) }
 
   before do
     allow(instance).to receive(:say_info)
@@ -16,6 +18,7 @@ RSpec.describe InitApp, type: :command_stack do
     allow(Rails).to receive(:root).and_return(Pathname.new('/tmp/app'))
     allow(Rails::Command).to receive(:invoke)
     allow(LarCity::CLI::ServicesCmd).to receive(:new) { mock_service_cmd }
+    allow(KickStoreCmd).to receive(:new) { mock_kick_store_cmd }
   end
 
   describe '#setup_paths' do
@@ -45,64 +48,6 @@ RSpec.describe InitApp, type: :command_stack do
     it 'runs docker-compose up' do
       expect(instance).to receive(:run).with('docker-compose up', '--detach app-store')
       instance.start_database_service
-    end
-  end
-
-  describe '#wait_for_primary_database_service_health_check' do
-    subject(:health_check) { instance.wait_for_primary_database_service_health_check }
-
-    before do
-      allow(instance).to receive(:run).and_call_original
-    end
-
-    around do |example|
-      with_modified_env(
-        APP_DATABASE_HOST: '127.0.0.1',
-        APP_DATABASE_NAME: 'sails_test'
-      ) do
-        example.run
-      end
-    end
-
-    it { is_expected.to include(healthy: true) }
-  end
-
-  describe '#create_data_stores_if_not_exists' do
-    it 'invokes db:create for primary and crm' do
-      expect(Rails::Command).to receive(:invoke).with('db:create:primary')
-      expect(Rails::Command).to receive(:invoke).with('db:create:crm')
-      instance.create_data_stores_if_not_exists
-    end
-  end
-
-  describe '#apply_migrations' do
-    it 'invokes db:migrate for primary and crm' do
-      expect(Rails::Command).to receive(:invoke).with('db:migrate:primary')
-      expect(Rails::Command).to receive(:invoke).with('db:migrate:crm')
-      expect(Rails::Command).to receive(:invoke).with('data:migrate')
-      instance.apply_migrations
-    end
-  end
-
-  describe '#restore_database_from_backup' do
-    shared_examples 'supported database target' do |target|
-      let(:mock_restore_cmd) { instance_double(RestoreDb, invoke_all: true) }
-
-      before { allow(RestoreDb).to receive(:new).and_return(mock_restore_cmd) }
-
-      it "invokes RestoreDb for #{target}" do
-        expect(RestoreDb).to receive(:new).with([], target:, latest_backup: true, verbose: false, dry_run: false)
-        expect(mock_restore_cmd).to receive(:invoke_all)
-        instance.restore_database_from_backup(target:)
-      end
-    end
-
-    context 'for primary database' do
-      it_should_behave_like 'supported database target', 'primary'
-    end
-
-    context 'for crm database' do
-      it_should_behave_like 'supported database target', 'crm'
     end
   end
 

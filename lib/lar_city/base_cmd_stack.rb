@@ -54,15 +54,15 @@ module LarCity
           return
         end
 
-        say_highlight 'Waiting for database service to become available...'
+        say_highlight "Waiting for #{target} database service to become available..."
 
         attempts = 0
         begin
           healthy = db_health_check?(target:)
-          result = ActiveRecord::Base.connection.execute("SELECT version();")[0]
+          result = ActiveRecord::Base.connection.execute('SELECT version();')[0]
           {
             engine: ActiveRecord::Base.connection.adapter_name,
-            healthy:, version: result['version']
+            healthy:, version: result['version'],
           }
         rescue ActiveRecord::DatabaseConnectionError, ActiveRecord::NoDatabaseError => e
           attempts += 1
@@ -74,33 +74,36 @@ module LarCity
       end
 
       def db_health_check?(target: :primary)
+        say_debug "DB target -> #{database_config_from_env[target].inspect}"
         user, host, port, db_name =
-          database_config[target].values_at(:user, :host, :port, :name)
+          database_config_from_env[target].values_at(:user, :host, :port, :name)
+        raise ArgumentError, 'db_name is required' if db_name.blank?
+
         result =
           run "pg_isready --port #{port}",
-            "-U #{user}",  "-h #{host}", "-d #{db_name}",
-            inline: true, eval: true
+              "-U #{user}", "-h #{host}", "-d #{db_name}",
+              inline: true, eval: true
         %r{accepting connections}.match?(result)
       end
 
-      def database_config
+      def database_config_from_env
         {
           primary: {
             host: ENV.fetch('APP_DATABASE_HOST'),
             port: ENV.fetch('APP_DATABASE_PORT'),
             user: ENV.fetch('APP_DATABASE_USER'),
-            name: ENV.fetch('APP_DATABASE_NAME'),
+            name: ENV.fetch('APP_DATABASE_NAME_PRIMARY', "sails_#{detected_environment}"),
           },
-          crm: crm_database_config,
+          crm: crm_database_config_from_env,
         }
       end
 
-      def crm_database_config
+      def crm_database_config_from_env
         {
           host: ENV.fetch('PG_DATABASE_HOST', 'crm-store'),
           port: ENV.fetch('PG_DATABASE_PORT', '5432'),
           user: ENV.fetch('APP_DATABASE_USER', 'postgres'),
-          name: ENV.fetch('CRM_DATABASE_NAME', 'lar_city_crm_db'),
+          name: ENV.fetch('APP_DATABASE_NAME_CRM', "twenty_crm_#{detected_environment}"),
         }
       end
     end
