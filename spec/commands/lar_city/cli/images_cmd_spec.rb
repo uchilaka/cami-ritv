@@ -68,10 +68,10 @@ module LarCity
             if File.exist?(override_compose_file_path)
               original_content = File.read(override_compose_file_path)
               begin
-                File.open(override_compose_file_path, 'w') { |f| f.write(override_content) }
+                File.write(override_compose_file_path, override_content)
                 example.run
               ensure
-                File.open(override_compose_file_path, 'w') { |f| f.write(original_content) }
+                File.write(override_compose_file_path, original_content)
               end
             else
               begin
