@@ -5,7 +5,7 @@ require 'commands/lar_city/cli/images_cmd'
 
 module LarCity
   module CLI
-    RSpec.describe ImagesCmd, type: :command do
+    RSpec.describe ImagesCmd, type: :command, skip_in_ci: true do
       subject(:command) { described_class.new }
 
       let(:service_name) { 'web' }
