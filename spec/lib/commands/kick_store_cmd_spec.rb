@@ -84,7 +84,8 @@ RSpec.describe KickStoreCmd, type: :command_stack do
     context 'when target is crm' do
       let(:target) { 'crm' }
 
-      it { expect(Rails::Command).to have_received(:invoke).with('db:migrate:crm') }
+      # This happens because the CRM database is configured to disable migration tasks
+      it { expect(Rails::Command).not_to have_received(:invoke).with('db:migrate:crm') }
     end
   end
 
