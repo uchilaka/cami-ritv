@@ -7,6 +7,9 @@ databases:
     engine: PG
     name: db-postgresql-production-larcity
     production: true
+domains:
+  - domain: accounts.larcity.business
+    type: PRIMARY
 envs:
   - key: RAILS_MASTER_KEY
     scope: RUN_AND_BUILD_TIME
@@ -42,10 +45,10 @@ region: nyc
 services:
   - build_command: ./bin/build
     environment_slug: ruby-on-rails
-    #envs:
-    #  - key: DATABASE_URL
-    #    scope: RUN_AND_BUILD_TIME
-    #    value: ${production-database.DATABASE_URL}
+    envs:
+    - key: DATABASE_URL
+      scope: RUN_TIME
+      value: ${db-postgresql-production-larcity.DATABASE_URL}
     github:
       branch: releases/production
       deploy_on_push: true
@@ -61,10 +64,10 @@ vpc:
 workers:
   - build_command: ./bin/worker-build
     environment_slug: ruby-on-rails
-    #envs:
-    #  - key: DATABASE_URL
-    #    scope: RUN_AND_BUILD_TIME
-    #    value: ${production-database.DATABASE_URL}
+    envs:
+    - key: DATABASE_URL
+      scope: RUN_TIME
+      value: ${db-postgresql-production-larcity.DATABASE_URL}
     github:
       branch: releases/production
       deploy_on_push: true
