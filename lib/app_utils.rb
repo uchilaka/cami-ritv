@@ -56,7 +56,7 @@ class AppUtils
     end
 
     def hostname_is_nginx_proxy?
-      /\.ngrok\.(dev|app)/.match?(hostname)
+      %r{\.ngrok\.(dev|app)}.match?(hostname)
     end
 
     def use_secure_protocol?
@@ -83,7 +83,7 @@ class AppUtils
       return true if [true, 1].include?(value)
       return false if value.nil?
 
-      /^Y(es)?|^T(rue)|^On$/i.match?(value.to_s.strip)
+      %r{^Y(es)?|^T(rue)|^On$}i.match?(value.to_s.strip)
     end
 
     def ping?(host)
@@ -166,7 +166,7 @@ class AppUtils
       raise 'Error: .tool-versions file not found' unless File.exist?(file_path)
 
       File.foreach(file_path) do |line|
-        match = line.match(/ruby\s+([\d.]+)/)
+        match = line.match(%r{ruby\s+([\d.]+)})
         return match[1].to_s.strip if match
       end
 
@@ -229,11 +229,32 @@ class AppUtils
       ENV.fetch('APP_CONFIG_JWT_SECRET_KEY', Rails.application.credentials.devise_jwt_secret_key)
     end
 
-    def database_url_present?
-      ENV['DATABASE_URL'].present?
+    # Build PostgreSQL database URL from ENV variables
+    def database_url(config_name = :primary)
+      return database_url_from_env if database_url_from_env.present?
+
+      adapter, host, port, database, username, password =
+        database_config!(config_name)
+          .symbolize_keys
+          .values_at(:adapter, :host, :port, :database, :username, :password)
+
+      "#{adapter}://#{username}:#{password}@#{host}:#{port}/#{database}"
+    end
+
+    def database_url_from_env
+      ENV.fetch('DATABASE_URL', nil)
     end
 
     private
+
+    def database_config!(name = :primary)
+      full_config = Rails.application.config_for(:database)
+      unless full_config.key?(name)
+        raise ArgumentError, I18n.t('exceptions.missing_database_configuration', name:, input_options: full_config.keys)
+      end
+
+      full_config[name]
+    end
 
     def check_credentials?
       return false if Rails.env.test?

@@ -1,3 +1,16 @@
+# TODO: refactor the structure of this file to support shared configurations across environments, e.g.:
+# shared: &shared
+#    hosts:
+#      - <%= ENV.fetch('HOSTNAME', 'accounts.larcity.ngrok.dev') %>
+#  production:
+#    <<: *shared
+#    hosts:
+#      - <%= ENV.fetch('HOSTNAME', 'cami-production.fly.dev') %>
+#      - larcity-production-app-98wcr.ondigitalocean.app
+#      - cami-production.onrender.com
+#      - accounts.larcity.hopto.org
+#      - accounts.madebylar.city
+---
 development:
   - accounts.larcity.ngrok.dev
   - accounts.larcity
@@ -6,9 +19,12 @@ test:
   - accounts.larcity.test
   - www.example.com
 lab:
+  - accounts.larcity.ngrok.dev
   - accounts.lab.larcity.dev
+  - accounts.lab.larcity.tech
   - accounts.lab.larcity.hopto.org
 staging:
+  - accounts.larcity.ngrok.dev
   - cami-staging-app-ghexn.ondigitalocean.app
   - accounts.staging.lar.city
   - accounts.staging.larcity.org
@@ -21,6 +37,7 @@ staging:
   #- accounts.staging.madebylar.city
   #- accounts.staging.larcity.com
 production:
+  - <%= ENV.fetch('HOSTNAME', 'cami-production.fly.dev') %>
   - larcity-production-app-98wcr.ondigitalocean.app
   - cami-production.onrender.com
   - accounts.larcity.hopto.org

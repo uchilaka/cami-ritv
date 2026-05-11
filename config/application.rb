@@ -99,9 +99,6 @@ module Cami
     # Configure allowed hosts. See doc https://guides.rubyonrails.org/configuring.html#actiondispatch-hostauthorization
     config.hosts += config_for(:allowed_hosts)
 
-    # Configure allowed hosts. See doc https://guides.rubyonrails.org/configuring.html#actiondispatch-hostauthorization
-    config.hosts += config_for(:allowed_hosts)
-
     # Doc for jbuilder: https://github.com/rails/jbuilder
     Jbuilder.key_format lambda { |key|
       # Customize key formatting for JBuilder to support a configurable set

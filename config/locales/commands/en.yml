@@ -162,6 +162,32 @@ en:
               names consistent across development and production configurations to ensure
               compatibility as CLI features are updated to support app instances across these
               environments. If no service name is specified, all services will be stopped and removed.
+    images:
+      build:
+        short_desc: Build the container image for a service
+        long_desc: >
+          This command builds the container image for a service. It can be used to
+          build the image for a specific service or all services defined in the app's
+          Docker Compose configuration file or Render blueprint configuration file. For
+          example, you might use this command to build the image for a local database
+          service after making changes to its configuration or dependencies.
+        options:
+          service:
+            short_desc: The name of the service to build
+            long_desc: >
+              The name of the service is a string value e.g. `app-store` or `tunnel`
+              and can be found in the app's Docker Compose configuration file. Engineers should
+              ensure to keep these service names consistent across development and production
+              configurations to ensure compatibility as CLI features are updated to support app
+              instances across these environments.
+        unsupported_service_message: >
+          The specified service [%{name}] is not supported. Please specify a valid service
+          name defined in the app's Docker Compose configuration file with build configurations.
+          The list of supported services (by name in %{compose_file}) are: %{list_of_names}.
+        success_message: >
+          Successfully built the container image for service [%{name}]. The image ID is [%{image_id}].
+        failure_message: >
+          Failed to build the container image for service [%{name}]. %{error_details}.
     tunnel:
       init:
         short_desc: Initialize %{service} proxy tunnel configuration for the CAMI app
@@ -177,3 +203,12 @@ en:
             long_desc: >
               If the tunnel configuration already exists, using this option will
               overwrite the existing configuration and re-initialize it.
+    secrets:
+      promote:
+        short_desc: Promote secrets from the CLI vault to the hosting platform
+        long_desc: >
+          This command promotes secrets from the CLI vault to the hosting platform
+          (e.g. Fly.io, Render or DigitalOcean).
+        confirmation_message: >
+          Are you sure you want to promote (key=%{secret_key}, value=%{secret_value})
+          from the vault for %{src} to the %{dest}? This action cannot be undone.

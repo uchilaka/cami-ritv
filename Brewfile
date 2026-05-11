@@ -3,6 +3,8 @@
 
 cask_args appdir: '~/Applications', require_sha: false
 
+tap 'protonpass/tap'
+
 # Core CLI tools for all environments
 brew 'gh'
 brew 'goreman'
@@ -19,3 +21,5 @@ if OS.mac?
   brew 'pinentry-mac'
   brew 'tree'
 end
+
+brew 'flyctl'

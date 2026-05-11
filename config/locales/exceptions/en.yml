@@ -37,3 +37,6 @@ en:
       The %{cmd} has been deprecated for %{platform}. \
       If you are the application owner, review the codebase on main \
       or check the logs for more information.
+    missing_database_configuration: >
+      The database configuration %{name} provided is invalid. Please ensure it is one of \
+      the supported configurations: %{input_options}.
