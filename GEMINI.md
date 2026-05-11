@@ -52,19 +52,19 @@
 
 ```yaml
 state:
-  pr_number: 265
-  branch: refactor/cli-and-helpers
-  status: updated_and_verified
+  status: homelab_architecture_defined
+  plan_path: ~/project-plans/cami-ritv/HOMELAB_MIGRATION.md
 recent_changes:
-  - Updated PR #265 with a comprehensive description following the project template.
-  - Performed a specialist review of the 'refactor/cli-and-helpers' branch.
-  - Fixed a duplicate line bug in 'app/assets/config/manifest.js'.
-  - Removed redundant 'sassc-rails' gem from Gemfile.
-  - Verified all relevant CLI tests pass in the 'test' environment.
+  - Finalized 'Homelab Migration Plan' (Tailscale + Traefik Hub/Spoke).
+  - Configured Bouncer (DO) wildcard routing for *.lab.larcity.tech and *.beta.larcity.tech.
+  - Implemented Spoke architecture for local nodes (NAS/Mac Mini) using port 9090.
+  - Documented Real-World WordPress example for NAS routing.
+  - Updated global GEMINI.md to prioritize project plans in '~/project-plans/'.
 next_steps:
-  - Review the updated PR #265 on GitHub for final merge.
-  - Monitor the PR #273 (already merged) for any downstream effects.
-  - Address pending tests in 'DDNSCmd' if needed for full coverage.
+  - Phase 4: Establish Tailscale Mesh across all 3 nodes (Droplet, NAS, Mac Mini).
+  - Phase 5: Deploy Spoke Traefiks on NAS and Mac Mini (Port 9090).
+  - Phase 6: Deploy Hub Traefik on Bouncer Droplet.
+  - Review and merge Draft PR #265.
 ```
 
 ---
