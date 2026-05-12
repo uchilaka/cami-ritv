@@ -125,7 +125,7 @@ jobs:
           GITCRYPT_KEY_BASE64: ${{ secrets.GITCRYPT_KEY_BASE64 }}
         run: |
           flyctl deploy \
-            --config .fly/fly.toml \
+            --config fly.toml \
             --remote-only \
             --build-secret production.key="${RAILS_MASTER_KEY}" \
             --build-secret git-crypt.key="${GITCRYPT_KEY_BASE64}"
@@ -136,7 +136,7 @@ jobs:
           GITCRYPT_KEY_BASE64: ${{ secrets.GITCRYPT_KEY_BASE64 }}
         run: |
           flyctl deploy \
-            --config .fly/fly.crm.toml \
+            --config fly.crm.toml \
             --remote-only \
             --build-secret production.key="${RAILS_MASTER_KEY}" \
             --build-secret git-crypt.key="${GITCRYPT_KEY_BASE64}"
