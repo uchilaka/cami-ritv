@@ -52,18 +52,19 @@
 
 ```yaml
 state:
-  pr_number: 284
-  branch: update-gitignore-for-docker-compose-alt-scripts
-  status: draft_pr_created
+  status: homelab_architecture_defined
+  plan_path: ~/project-plans/cami-ritv/HOMELAB_MIGRATION.md
 recent_changes:
-  - Created Draft PR #284 for encrypting docker-compose files and adding lab configuration.
-  - Performed a specialist review (Security/DevOps) of the changes.
-  - Identified hardcoded secrets in 'docker-compose.lab.yml' as a high-priority hardening task.
-  - Verified git-crypt integration for compose files via .gitattributes.
+  - Finalized 'Homelab Migration Plan' (Tailscale + Traefik Hub/Spoke).
+  - Configured Bouncer (DO) wildcard routing for *.lab.larcity.tech and *.beta.larcity.tech.
+  - Implemented Spoke architecture for local nodes (NAS/Mac Mini) using port 9090.
+  - Documented Real-World WordPress example for NAS routing.
+  - Updated global GEMINI.md to prioritize project plans in '~/project-plans/'.
 next_steps:
-  - Review and merge Draft PR #284.
-  - Hardening: Migrate hardcoded secrets in 'docker-compose.lab.yml' to Docker secrets.
-  - Hardening: Update database auth method from 'trust' to a secure alternative.
+  - Phase 4: Establish Tailscale Mesh across all 3 nodes (Droplet, NAS, Mac Mini).
+  - Phase 5: Deploy Spoke Traefiks on NAS and Mac Mini (Port 9090).
+  - Phase 6: Deploy Hub Traefik on Bouncer Droplet.
+  - Review and merge Draft PR #265.
 ```
 
 ---
