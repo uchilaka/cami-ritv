@@ -5,13 +5,18 @@ Rails.application.configure do
   ## For more info, see https://www.flippercloud.io/docs/optimization#memoization
   # config.flipper.memoize = true
 
-  ## Flipper preloads all features before each request, which is recommended if:
-  ##   * you have a limited number of features (< 100?)
-  ##   * most of your requests depend on most of your features
-  ##   * you have limited gate data combined across all features (< 1k enabled gates, like individual actors, across all features)
-  ##
-  ## For more info, see https://www.flippercloud.io/docs/optimization#preloading
+  # Flipper preloads all features before each request, which is recommended if:
+  #   * you have a limited number of features (< 100?)
+  #   * most of your requests depend on most of your features
+  #   * you have limited gate data combined across all features (< 1k enabled gates, like individual actors, across all features)
+  #
+  # For more info, see https://www.flippercloud.io/docs/optimization#preloading
   # config.flipper.preload = true
+  config.flipper.preload =
+    %i[
+      feat__require_crm_db_availability
+      feat__crm_schema_migrations
+    ]
 
   ## Warn or raise an error if an unknown feature is checked
   ## Can be set to `:warn`, `:raise`, or `false`
@@ -38,7 +43,16 @@ Rails.application.config.to_prepare do
     Flipper.configure do |config|
       # Configure other adapters that you want to use here:
       # See http://flippercloud.io/docs/adapters
-      config.adapter { Flipper::Adapters::ActiveRecord.new }
+      config.adapter do
+        require 'flipper/adapters/active_record'
+
+        # Doesn't seem to be working as expected in the docs:
+        # https://www.flippercloud.io/docs/adapters/active-record
+        Flipper::Adapters::ActiveRecord::Model.connects_to database: { writing: :primary, reading: :primary }
+
+        # Initialize the adapter
+        Flipper::Adapters::ActiveRecord.new
+      end
     end
   end
 

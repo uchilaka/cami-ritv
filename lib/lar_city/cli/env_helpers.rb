@@ -74,8 +74,33 @@ module LarCity
       module InstanceMethods
         protected
 
+        def editor
+          @editor ||= selected_or_default_editor
+        end
+
+        def detected_editor
+          @detected_editor ||=
+            if rubymine?
+              'rubymine'
+            else
+              vscode? ? 'code' : nil
+            end
+        end
+
+        def selected_or_default_editor
+          options[:editor] || ENV.fetch('EDITOR', detected_editor)
+        end
+
+        def rubymine?
+          system('which rubymine')
+        end
+
+        def vscode?
+          system('which code')
+        end
+
         def detected_environment
-          @detected_environment ||= (options[:environment] || Rails.env)
+          @detected_environment ||= options[:environment] || Rails.env
         end
 
         # @deprecated This method is deprecated and will be removed in a future release.

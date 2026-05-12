@@ -37,6 +37,11 @@ When invoked, perform the following steps sequentially to ensure the current wor
 7.  **Smoke Test:**
     Run a project-specific smoke test to ensure everything is configured. For example, if `bin/thor` is present, run `bin/thor -T`. If `bin/rails` is present, run `bin/rails about`.
 
+
+8.  **IDE Config Isolation:**
+    If a `.ide-configs` directory exists in the main worktree, copy its contents to `.ide-worktree` in the current worktree.
+    Example: `if [ -d /path/to/main/.ide-configs ]; then mkdir -p .ide-worktree && cp -R /path/to/main/.ide-configs/* .ide-worktree/ 2>/dev/null || true; fi`
+
 ## Troubleshooting
 
 -   **Missing Keys:** If `git-crypt` fails to unlock, ensure you are referencing the key from the *main* `.git` directory, not the `.git` file in the current worktree.

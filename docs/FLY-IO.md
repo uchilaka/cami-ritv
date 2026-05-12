@@ -24,6 +24,56 @@ flyctl volumes create core_storage --count 2 --size 10 --app cami-production --r
 fly secrets set --stage --detach --app=cami-production --access-token="<APP-DEPLOY-API-TOKEN>" NAME="<VALUE>"
 ```
 
+### Setup docker image registry 
+
+Update your `.env.local` file with the following environment variables:
+
+```env
+export HOSTNAME="localhost"
+export CONTAINER_REGISTRY_HOST="registry.fly.io"
+export CONTAINER_NAME_PREFIX="larcity-accounts"
+export FLY_APP_NAME="cami-production"
+```
+
+Next, create a `docker-compose.override.yml` file in the root of the project with the following content:
+
+```yaml
+services:
+  web:
+    image: ${CONTAINER_REGISTRY_HOST}/${CONTAINER_NAME_PREFIX}-web:latest
+  worker:
+    image: ${CONTAINER_REGISTRY_HOST}/${CONTAINER_NAME_PREFIX}-worker:latest
+```
+
+Then, complete the following setup steps:
+
+```shell
+# Prepare a local image to publish
+docker tag your-local-image-name registry.fly.io/your-app-name:latest
+
+# Authenticate
+fly auth docker
+
+# Publish the image to fly.io registry
+docker push registry.fly.io/your-app-name:latest
+
+# Confirm that the image is available in the fly.io registry
+flyctl registry list --org larcity-llc
+
+# Deploy the app using the published image
+fly deploy --remote-only --app your-app-name --image registry.fly.io/your-app-name:latest --config .fly/fly.toml
+```
+
+### Managing machine memory 
+
+```shell
+# Scaling memory for the web group
+fly scale memory 1024 --app cami-production --config .fly/fly.toml --process-group web
+
+# Scaling memory for the worker group
+fly scale memory 512 --app cami-production --config .fly/fly.toml --process-group worker
+```
+
 ## Launch the app
 
 ### 1. Install flyctl

@@ -39,8 +39,6 @@ variable "fly_redis_plan" {
   default     = "free"
 }
 
-
-
 variable "tf_state_bucket" {
   description = "S3 bucket for Terraform state"
   type        = string

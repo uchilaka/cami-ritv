@@ -156,8 +156,8 @@ services:
       context: .
       dockerfile: Dockerfile.worker
       secrets:
-        - source: gitcrypt-key
-          target: gitcrypt.key
+        #- source: gitcrypt-key
+        #  target: gitcrypt.key
         - source: development-key
           target: development.key
         - source: production-key
@@ -177,8 +177,8 @@ services:
       HOSTNAME: ${HOSTNAME}
       SMTP_USER: ${SMTP_USER}
     secrets:
-      - source: gitcrypt-key
-        target: gitcrypt.key
+      #- source: gitcrypt-key
+      #  target: gitcrypt.key
       - source: development-key
         target: development.key
       - source: production-key
@@ -315,8 +315,8 @@ volumes:
   server_local_data:
 
 secrets:
-  gitcrypt-key:
-    file: ./config/credentials/git-crypt.key
+  #gitcrypt-key:
+  #  file: ./config/credentials/git-crypt.key
   development-key:
     file: ./config/credentials/development.key
   staging-key:

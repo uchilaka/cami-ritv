@@ -1,7 +1,10 @@
 # frozen_string_literal: true
 
 if Rails.env.test?
-  puts 'Skipping Brevo (Sendinblue) API initialization in test environment.'
+  puts <<~MSG
+    ******************************************************************
+    * Skipping Brevo (Sendinblue) API initialization in test         *
+  MSG
   return
 end
 
