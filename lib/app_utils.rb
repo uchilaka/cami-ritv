@@ -246,7 +246,7 @@ class AppUtils
     end
 
     def skip_config_check?(integration)
-      skip_env_var = "APP_CONFIG_SKIP_#{integration.upcase}_CHECK"
+      skip_env_var = "APP_CONFIG_SKIP_#{integration.upcase}_INIT_CHECK"
       yes?(ENV.fetch(skip_env_var, 'no'))
     end
 
