@@ -14,7 +14,7 @@
     "build:assets": "bin/rake assets:precompile",
     "build:image": "docker compose --progress plain build",
     "build": "bin/vite build",
-    "deploy:web": "fly deploy --remote-only --app cami-production --image registry.fly.io/cami-production:latest --config .fly/fly.toml",
+    "deploy:web": "fly deploy --remote-only --app cami-production --image registry.fly.io/cami-production:latest --config fly.toml",
     "start": "bin/start",
     "bundle": "brew bundle --file Brewfile.$RAILS_ENV",
     "lint": "eslint",
