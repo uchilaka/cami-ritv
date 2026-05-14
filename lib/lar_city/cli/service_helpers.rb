@@ -18,19 +18,6 @@ module LarCity
         delegate :docker_compose_config_file, to: base
 
         base.include OutputHelpers
-        base.include InstanceMethods
-      end
-
-      module InstanceMethods
-        protected
-
-        # def docker_compose_config(symbolize_names: false)
-        #   @docker_compose_config ||= YAML.load(File.read(docker_compose_config_file), symbolize_names:)
-        # end
-        #
-        # def docker_compose_config_file
-        #   Rails.root.join('docker-compose.yml').to_s
-        # end
       end
 
       module ClassMethods
@@ -45,7 +32,7 @@ module LarCity
         end
 
         def docker_compose_config(symbolize_names: false)
-          @docker_compose_config ||= YAML.load(File.read(docker_compose_config_file), symbolize_names:)
+          @docker_compose_config ||= YAML.load_file(docker_compose_config_file, symbolize_names:)
         end
 
         def docker_compose_config_file

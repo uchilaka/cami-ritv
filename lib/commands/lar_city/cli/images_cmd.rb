@@ -25,6 +25,7 @@ module LarCity
       )
       option :push, type: :boolean, default: false
       def build
+        check_required_env_vars!
         service_name = options[:service].to_s
         with_interruption_rescue do
           say_debug <<~SUPPORTED_SERVICES
@@ -71,6 +72,18 @@ module LarCity
       end
 
       private
+
+      def check_required_env_vars!
+        missing_required_vars = []
+        %w[CONTAINER_REGISTRY_HOST CONTAINER_NAME_PREFIX].each do |var|
+          missing_required_vars << var if ENV[var].blank?
+        end
+        return if missing_required_vars.none?
+
+        raise Thor::Error, <<~MSG
+          The following required environment variables are missing: #{missing_required_vars.inspect}.
+        MSG
+      end
 
       def container_tag(service: options[:service])
         raise ArgumentError, '--service is required' if service.blank?

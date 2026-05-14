@@ -3,6 +3,9 @@ shared: &shared
 
 development:
   aliases:
+    crm: <%= ENV.fetch('CONTAINER_REGISTRY_HOST') %>/twenty-crm-production
+    web: <%= ENV.fetch('CONTAINER_REGISTRY_HOST') %>/cami-production
+    worker: <%= ENV.fetch('CONTAINER_REGISTRY_HOST') %>/cami-production
 
 test:
   aliases:
@@ -15,7 +18,7 @@ lab: &lab
   aliases:
     crm: <%= ENV.fetch('CONTAINER_REGISTRY_HOST') %>/twenty-crm-production
     web: <%= ENV.fetch('CONTAINER_REGISTRY_HOST') %>/cami-production
-    worker: <%= ENV.fetch('CONTAINER_REGISTRY_HOST') %>/cami-production-worker
+    worker: <%= ENV.fetch('CONTAINER_REGISTRY_HOST') %>/cami-production
 
 staging:
   <<: *lab
