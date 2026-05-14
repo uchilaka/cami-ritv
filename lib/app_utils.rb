@@ -245,6 +245,11 @@ class AppUtils
       ENV.fetch('DATABASE_URL', nil)
     end
 
+    def skip_config_check?(integration)
+      skip_env_var = "APP_CONFIG_SKIP_#{integration.upcase}_CHECK"
+      yes?(ENV.fetch(skip_env_var, 'no'))
+    end
+
     private
 
     def database_config!(name = :primary)

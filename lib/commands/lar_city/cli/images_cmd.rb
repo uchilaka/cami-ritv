@@ -69,6 +69,11 @@ module LarCity
 
         # TODO: Extract image_id from this content pattern: naming to registry.fly.io/cami-lab-worker:latest
         say_success I18n.t('commands.images.build.success_message', name: service_name, image_id: 'TBD')
+
+        if options[:push]
+          result = run('fly auth docker', mock_return: true, inline: true)
+          say_debug("Registry login result: #{result.inspect}")
+        end
       end
 
       private
