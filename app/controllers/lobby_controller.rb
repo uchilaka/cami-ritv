@@ -35,6 +35,18 @@ class LobbyController < ApplicationController
     }
   end
 
+  def privacy_policy
+    render inertia: 'PrivacyPolicy', props: {
+      title: 'Privacy Policy',
+    }
+  end
+
+  def terms_of_use
+    render inertia: 'TermsOfUse', props: {
+      title: 'Terms of Use'
+    }
+  end
+
   private
 
   # TODO: This should be a strong params method with an allowed list of
