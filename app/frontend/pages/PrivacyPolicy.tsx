@@ -65,16 +65,9 @@ function PrivacyPolicy(): JSX.Element {
           identifiable information are kept in a secure environment.
         </p>
         <p>
-          If you feel that we are not abiding by this privacy policy, you
-          should contact us immediately via our website or via email @
-          <a
-            href="mailto:support@larcity.com"
-            rel="noopener noreferrer"
-            target="_blank"
-          >
-            support@larcity.com
-          </a>
-          .
+          If you feel that we are not abiding by this privacy policy, you should
+          contact us immediately via our website or via email @
+          <a href="mailto:support@larcity.com">support@larcity.com</a>.
         </p>
       </div>
     </div>

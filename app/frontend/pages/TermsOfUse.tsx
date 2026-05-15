@@ -7,15 +7,15 @@ function TermsOfUse(): JSX.Element {
       <div className="flex min-h-[var(--lc-min-hero-height)] leading-loose flex-col justify-center max-w-7xl mx-auto sm:px-6 py-12 lg:px-8">
         <h1 className="text-3xl font-bold leading-tight text-gray-900 mb-4">
           Terms and Conditions of{' '}
-          <span className="website_url">madebylar.city</span>
+          <span className="website_url">larcity.com</span>
         </h1>
 
         <p>
           The following terms and conditions (collectively, these "Terms and
           Conditions") apply to your use of
-          <span className="website_url">madebylar.city</span>, including any
+          <span className="website_url">larcity.com</span>, including any
           content, functionality and services offered on or via
-          <span className="website_url">madebylar.city</span> (the "Website").
+          <span className="website_url">larcity.com</span> (the "Website").
         </p>
 
         <p>
