@@ -1,5 +1,5 @@
-import React from "react";
-import useLayoutNav from "@/hooks/useLayoutNav";
+import React from 'react';
+import useLayoutNav from '@/hooks/useLayoutNav';
 
 const SiteFooter = () => {
   const { siteLogo, footerCompanyLinks, footerResourceLinks } = useLayoutNav();
@@ -91,7 +91,7 @@ const SiteFooter = () => {
               <ul className="text-gray-600 dark:text-gray-400">
                 <li className="mb-4">
                   <a
-                    href="/app/legal/privacy"
+                    href="/legal/privacy-policy"
                     className="hover:underline me-4 md:me-6"
                   >
                     Privacy
@@ -99,7 +99,7 @@ const SiteFooter = () => {
                 </li>
                 <li className="mb-4">
                   <a
-                    href="/app/legal/terms"
+                    href="/legal/terms-of-use"
                     className="hover:underline me-4 md:me-6"
                   >
                     Legal Terms
@@ -113,7 +113,7 @@ const SiteFooter = () => {
         <div className="sm:flex sm:items-center sm:justify-between">
           {/* Copyright Notice */}
           <span className="block text-sm text-gray-500 sm:text-center dark:text-gray-400">
-            © {copyrightYear}{" "}
+            © {copyrightYear}{' '}
             <a href="https://madebylar.city/" className="hover:underline">
               LarCity LLC
             </a>

@@ -88,6 +88,8 @@ Rails.application.routes.draw do
   end
 
   get '/about-us', to: 'lobby#about_us'
+  get '/legal/privacy-policy', to: 'lobby#privacy_policy'
+  get '/legal/terms-of-use', to: 'lobby#terms_of_use'
   get '/consultation/:subject', to: 'lobby#consultation'
   get '/protego/:code', to: 'errors#render_static_error'
   get '/video', to: 'lobby#background_video'
