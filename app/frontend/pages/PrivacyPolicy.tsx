@@ -9,9 +9,9 @@ function PrivacyPolicy(): JSX.Element {
           Privacy Notice
         </h1>
         <p>
-          This privacy notice discloses the privacy practices for (website
-          address). This privacy notice applies solely to information collected
-          by this website. It will notify you of the following:
+          This privacy notice discloses the privacy practices for larcity.com.
+          This privacy notice applies solely to information collected by this
+          website. It will notify you of the following:
         </p>
         <p>
           What personally identifiable information is collected from you through
@@ -64,16 +64,18 @@ function PrivacyPolicy(): JSX.Element {
           information. The computers/servers in which we store personally
           identifiable information are kept in a secure environment.
         </p>
-        If you feel that we are not abiding by this privacy policy, you should
-        contact us immediately via our website or via email @
-        <a
-          href="mailto:support@larcity.com"
-          rel="noopener noreferrer"
-          target="_blank"
-        >
-          support@larcity.com
-        </a>
-        .
+        <p>
+          If you feel that we are not abiding by this privacy policy, you
+          should contact us immediately via our website or via email @
+          <a
+            href="mailto:support@larcity.com"
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            support@larcity.com
+          </a>
+          .
+        </p>
       </div>
     </div>
   );

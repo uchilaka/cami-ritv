@@ -26,15 +26,15 @@ function TermsOfUse(): JSX.Element {
         </p>
 
         <p>
-          These Terms and Conditions are effective as of
-          <span className="date">[DATE]</span>. We expressly reserve the right
-          to change these Terms and Conditions from time to time without notice
-          to you. You acknowledge and agree that it is your responsibility to
-          review this Website and these Terms and Conditions from time to time
-          and to familiarize yourself with any modifications. Your continued use
-          of this Website after such modifications will constitute
-          acknowledgement of the modified Terms and Conditions and agreement to
-          abide and be bound by the modified Terms and Conditions.
+          These Terms and Conditions are effective upon publication on this
+          Website. We expressly reserve the right to change these Terms and
+          Conditions from time to time without notice to you. You acknowledge
+          and agree that it is your responsibility to review this Website and
+          these Terms and Conditions from time to time and to familiarize
+          yourself with any modifications. Your continued use of this Website
+          after such modifications will constitute acknowledgement of the
+          modified Terms and Conditions and agreement to abide and be bound by
+          the modified Terms and Conditions.
         </p>
 
         <h3>Conduct on Website</h3>
@@ -44,11 +44,19 @@ function TermsOfUse(): JSX.Element {
           regulations, and you are solely responsible for the substance of your
           communications through the Website. These Terms and Conditions were
           created by
-          <a href="https://www.termsconditionstemplate.net">
+          <a
+            href="https://www.termsconditionstemplate.net"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             Terms Conditions Template
           </a>{' '}
           and the
-          <a href="https://www.generateprivacypolicy.com">
+          <a
+            href="https://www.generateprivacypolicy.com"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             Privacy Policy Generator
           </a>
           .
@@ -192,19 +200,20 @@ function TermsOfUse(): JSX.Element {
           We are not liable for damages, direct or consequential, resulting from
           your use of the Website, and you agree to defend, indemnify and hold
           us harmless from any claims, losses, liability costs and expenses
-          (including but not limites to attorney's fees) arising from your
+          (including but not limited to attorney's fees) arising from your
           violation of any third-party's rights. You acknowledge that you have
           only a limited, non-exclusive, nontransferable license to use the
           Website. Because the Website is not error or bug free, you agree that
-          you will use it carefully and avoid using it ways which might result
-          in any loss of your or any third party's property or information.
+          you will use it carefully and avoid using it in ways which might
+          result in any loss of your or any third party's property or
+          information.
         </p>
 
         <h3>Term and termination</h3>
 
         <p>
           This Terms and Conditions will become effective in relation to you
-          when you create a<span className="website_name">larcity.com</span>{' '}
+          when you create a <span className="website_name">larcity.com</span>{' '}
           account or when you start using the
           <span className="website_name">larcity.com</span> and will remain
           effective until terminated by you or by us.{' '}
@@ -236,16 +245,16 @@ function TermsOfUse(): JSX.Element {
         <p>
           These Terms and Conditions and any dispute or claim arising out of, or
           related to them, shall be governed by and construed in accordance with
-          the internal laws of the
-          <span className="country">us</span> without giving effect to any
-          choice or conflict of law provision or rule.
+          the internal laws of the{' '}
+          <span className="country">United States</span> without giving effect
+          to any choice or conflict of law provision or rule.
         </p>
 
         <p>
           Any legal suit, action or proceeding arising out of, or related to,
           these Terms of Service or the Website shall be instituted exclusively
-          in the federal courts of
-          <span className="country">us</span>.
+          in the federal courts of the{' '}
+          <span className="country">United States</span>.
         </p>
       </div>
     </div>
