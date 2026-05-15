@@ -52,15 +52,13 @@
           <h2 class="my-6 text-sm font-semibold text-gray-900 uppercase dark:text-white">Legal</h2>
           <ul class="text-gray-600 dark:text-gray-400">
             <li class="mb-4">
-              <a href="/app/legal/privacy" class="hover:underline me-4 md:me-6"><%= t('accessibility.footer.privacy') %></a>
+              <a href="/legal/privacy-policy" class="hover:underline me-4 md:me-6"><%= t('accessibility.footer.privacy') %></a>
             </li>
-            <% if Flipper.enabled?('feat__legal_terms') %>
             <li class="mb-4">
-              <a href="/app/legal/terms" class="hover:underline me-4 md:me-6">
+              <a href="/legal/terms-of-use" class="hover:underline me-4 md:me-6">
                 <%= t('accessibility.footer.terms') %>
               </a>
             </li>
-            <% end %>
           </ul>
         </div>
       </div>

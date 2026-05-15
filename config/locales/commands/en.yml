@@ -182,12 +182,18 @@ en:
               instances across these environments.
         unsupported_service_message: >
           The specified service [%{name}] is not supported. Please specify a valid service
-          name defined in the app's Docker Compose configuration file with build configurations.
-          The list of supported services (by name in %{compose_file}) are: %{list_of_names}.
+          name defined in the app's Docker Compose configuration file with build configurations
+          The list of supported services (by name in %{compose_file}) are: %{list_of_names}
         success_message: >
-          Successfully built the container image for service [%{name}]. The image ID is [%{image_id}].
+          Successfully built the container image for service [%{name}]. The image ID is [%{image_id}]
         failure_message: >
-          Failed to build the container image for service [%{name}]. %{error_details}.
+          Failed to build the container image for service [%{name}] %{error_details}
+        tag_success_message: >
+          Successfully tagged the container image for service [%{name}] with new tag [%{new_tag}]
+        tag_failure_message: >
+          Failed to tag the container image for service [%{name}] with new tag [%{new_tag}] %{error_details}
+        registry_login_failure_message: >
+          Failed to log in to the container registry [%{registry}] %{error_details}
     tunnel:
       init:
         short_desc: Initialize %{service} proxy tunnel configuration for the CAMI app

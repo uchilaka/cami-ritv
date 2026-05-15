@@ -9,6 +9,7 @@
   "scripts": {
     "caniuse:update": "yarn dlx update-browserslist-db@latest",
     "check": "tsc -p tsconfig.app.json && tsc -p tsconfig.node.json",
+    "check:compose": "docker compose -f docker-compose.yml -f docker-compose.override.yml config",
     "clobber": "bin/clobber-all",
     "build:css": "bin/rake tailwindcss:build",
     "build:assets": "bin/rake assets:precompile",
