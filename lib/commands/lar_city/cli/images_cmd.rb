@@ -7,7 +7,7 @@ require 'yaml'
 module LarCity
   module CLI
     class ImagesCmd < BaseCmd
-      attr_reader :result
+      attr_reader :result, :tag_result, :registry_auth_result, :push_result
 
       namespace :images
 
@@ -25,6 +25,7 @@ module LarCity
       )
       option :push, type: :boolean, default: false
       def build
+        check_required_env_vars!
         service_name = options[:service].to_s
         with_interruption_rescue do
           say_debug <<~SUPPORTED_SERVICES
@@ -57,20 +58,76 @@ module LarCity
           say_error I18n.t('commands.images.build.failure_message', name: service_name, error_details: 'TBD')
           return
         end
+        say_success I18n.t('commands.images.build.success_message', name: service_name, image_id: container_name)
 
         version = 'latest'
-        result =
+        @tag_result =
           run 'docker tag',
               [container_name, version].join(':'),
               [container_tag, version].join(':'),
-              eval: true
-        say_debug "Re-tag result: #{result.inspect}"
+              mock_return: true,
+              inline: true
+        say_debug "Re-tag result: #{tag_result.inspect}"
+
+        unless tag_result
+          say_error(
+            I18n.t(
+              'commands.images.build.tag_failure_message',
+              name: service_name, tag: container_tag, error_detail: 'TBD'
+            )
+          )
+          return
+        end
+
+        say_success(
+          I18n.t('commands.images.build.tag_success_message', name: service_name, new_tag: container_tag)
+        )
+        return unless options[:push]
 
         # TODO: Extract image_id from this content pattern: naming to registry.fly.io/cami-lab-worker:latest
-        say_success I18n.t('commands.images.build.success_message', name: service_name, image_id: 'TBD')
+        check_registry_image_tag!
+        @registry_auth_result = run('fly auth docker', eval: true, always_run: true)
+        say_debug("Registry login result: #{registry_auth_result.inspect}")
+        unless %r{^Authentication successful}.match?(registry_auth_result)
+          say_error(
+            I18n.t(
+              'commands.images.build.registry_login_failure_message',
+              registry: ENV.fetch('CONTAINER_REGISTRY_HOST'),
+              error_details: 'TBD'
+            )
+          )
+          return
+        end
+
+        @push_result =
+          run('docker push', container_tag, eval: true)
+        say_debug("Push result: #{push_result.inspect}")
       end
 
       private
+
+      def check_registry_image_tag!
+        registry_host, image_name, version_tag = %r{(.*)/(.*):(.*)}.match(container_tag)
+        say_debug "Tag match data: #{{ registry_host:, image_name:, version_tag: }.inspect}"
+        unless registry_host.present? && image_name.present? && version_tag.present?
+          raise Thor::Error, <<~MSG
+            The generated registry image tag '#{container_tag}' does not match the \
+            expected format 'registry-host/image-name:version-tag'.
+          MSG
+        end
+      end
+
+      def check_required_env_vars!
+        missing_required_vars = []
+        %w[CONTAINER_REGISTRY_HOST CONTAINER_NAME_PREFIX].each do |var|
+          missing_required_vars << var if ENV[var].blank?
+        end
+        return if missing_required_vars.none?
+
+        raise Thor::Error, <<~MSG
+          The following required environment variables are missing: #{missing_required_vars.inspect}.
+        MSG
+      end
 
       def container_tag(service: options[:service])
         raise ArgumentError, '--service is required' if service.blank?
