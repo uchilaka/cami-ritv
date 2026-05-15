@@ -6,9 +6,11 @@ require 'commands/lar_city/cli/images_cmd'
 module LarCity
   module CLI
     RSpec.describe ImagesCmd, type: :command, skip_in_ci: true do
-      subject(:command) { described_class.new }
+      subject(:command) { described_class.new([], options) }
 
+      let(:options) { { pretend: dry_run } }
       let(:service_name) { 'web' }
+      let(:compose_file_override) { 'docker-compose.yml' }
       let(:dry_run) { true }
       let(:build_output) { %r{Image (.*) Built} }
       let(:push_output) { %r{naming to larcity/accounts-#{service_name}\s} }
@@ -16,11 +18,12 @@ module LarCity
       around do |example|
         with_modified_env(
           CONTAINER_REGISTRY_HOST: 'registry.test',
-          CONTAINER_NAME_PREFIX: 'accounts'
+          CONTAINER_NAME_PREFIX: 'accounts',
+          COMPOSE_FILE: compose_file_override
         ) { example.run }
       end
 
-      describe 'build' do
+      describe '#build' do
         context 'when building an image' do
           let(:build_args) { { service: service_name, dry_run: } }
 
@@ -111,6 +114,62 @@ module LarCity
               output(unsupported_message).to_stdout_from_any_process
           end
         end
+      end
+
+      describe '#container_tag' do
+        subject(:result) { command.send(:container_tag, service: service_name) }
+
+        let(:expected_tag) { "registry.test/accounts-#{service_name}" }
+
+        it { expect(result).to eq(expected_tag) }
+
+        context "with the compose file override" do
+          let(:compose_file_override) { 'docker-compose.yml:compose.override.yml' }
+          let(:override_content) do
+            <<~YAML
+              version: '3.8'
+              services:
+                web:
+                  image: ${CONTAINER_REGISTRY_HOST}/${CONTAINER_NAME_PREFIX}-override-web:latest
+                worker:
+                  image: ${CONTAINER_REGISTRY_HOST}/${CONTAINER_NAME_PREFIX}-override-worker:latest
+            YAML
+          end
+          let(:expected_tag) { "registry.test/accounts-override-#{service_name}" }
+
+          around do |example|
+            override_config = Rails.root.join(compose_file_override.split(':').last).to_s
+            if File.exist?(override_config)
+              original_content = File.read(override_config)
+              begin
+                File.write(override_config, override_content)
+                example.run
+              ensure
+                File.write(override_config, original_content)
+              end
+            else
+              begin
+                File.write(override_config, override_content)
+                example.run
+              ensure
+                FileUtils.rm(override_config)
+              end
+            end
+          end
+
+          it "return the expected registry tag",
+             skip: "TODO: make this pass once docker compose config is working as needed" do
+            expect(result).to eq(expected_tag)
+          end
+        end
+      end
+
+      describe '#container_name' do
+        subject(:result) { command.send(:container_name, service: service_name) }
+
+        let(:expected_name) { "registry.test/accounts-#{service_name}" }
+
+        it { expect(result).to eq(expected_name) }
       end
     end
   end
