@@ -36,9 +36,16 @@ module LarCity
           mock_return: nil,
           &block
         )
-          raise ArgumentError, "Invalid IO mode: MUST be either inline or eval" if eval == true && inline == true
-          @runnable_io_mode = 'eval' if eval == true
-          @runnable_io_mode = 'inline' if inline == true
+          @runnable_io_mode =
+            if eval == true && inline == true
+              'eval_with_result'
+            elsif eval == true
+              'eval_with_result'
+            elsif inline == true
+              'inline_with_result'
+            else
+              'inline'
+            end
           validate_runnable_mode!(mode) if mode.present?
           validate_runnable_io_mode!(io_mode) if io_mode.present?
           with_interruption_rescue do
