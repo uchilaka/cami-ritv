@@ -67,7 +67,7 @@ module LarCity
                 say_info msg
               end
             end
-            return mock_return if mock_runnable_run?
+            return runnable_mock_return if mock_runnable_run?
 
             @runnable_result =
               if block_given?
@@ -103,6 +103,7 @@ module LarCity
             Runnable mode: #{runnable_mode || 'default (<blank>)'}
             Runnable IO mode: #{runnable_io_mode || 'default (inline)'}
             Mock return: #{mock_return.nil? ? 'not set' : mock_return.inspect}
+            Runnable mock return: #{runnable_mock_return.nil? ? 'not set' : runnable_mock_return.inspect}
             Runnable result: #{runnable_result.inspect}
           CMD_CHECKS
           # Return the result if inline, otherwise return nil. This avoids
