@@ -36,6 +36,7 @@ module LarCity
           mock_return: nil,
           &block
         )
+          runnable_reset!
           @runnable_io_mode =
             if eval == true && inline == true
               'eval_with_result'
@@ -89,7 +90,6 @@ module LarCity
               end
           end
         ensure
-          runnable_reset!
           # Return the result if inline, otherwise return nil. This avoids
           # unintended consequences of returning command output in non-inline contexts
           runnable_result if runnable_io_with_result?
