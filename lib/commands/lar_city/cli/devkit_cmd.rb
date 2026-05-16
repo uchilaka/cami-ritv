@@ -489,13 +489,13 @@ module LarCity
           end
           puts
           input = ask('👉🏾 Enter the number of the branch to review:').chomp
-          return current_branch_tuple.last if input.blank?
+          return current_branch_tuple.second if input.blank?
 
           branch_number = branches.map(&:first).map { |i| (i + 1).to_s }
           raise ArgumentError, 'Invalid branch number' unless branch_number.include?(input)
 
           # The user input is 1-based, but the array is 0-based
-          branches[input.to_i - 1].last
+          branches[input.to_i - 1].second
         end
 
         def output_available_branches(branch_list_hr)
@@ -503,7 +503,7 @@ module LarCity
           <<~PROMPT_MSG
             #{branch_list_hr}
             #{'=' * branch_list_hr.size}
-            #{branches.map { |i, b| "#{i + 1}. #{is_current_branch_phrase(b)}#{b}" }.join("\n")}
+            #{branches.map { |i, b, _opts| "#{i + 1}. #{is_current_branch_phrase(b)}#{b}" }.join("\n")}
           PROMPT_MSG
         end
 
