@@ -107,12 +107,12 @@ module LarCity
           runnable_result if runnable_io_with_result?
         end
 
-        def always_run?
-          runnable_mode == 'always_run'
+        def mock_runnable_run?
+          (pretend? && !runnable_always_run?) || runnable_mode == 'always_mock'
         end
 
-        def mock_runnable_run?
-          pretend? || runnable_mode == 'always_mock'
+        def runnable_always_run?
+          runnable_mode == 'always_run'
         end
 
         def runnable_eval?
