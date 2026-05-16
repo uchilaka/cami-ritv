@@ -31,25 +31,28 @@ module LarCity
           inline: nil,
           # @deprecated use io_mode instead
           eval: nil,
+          # @deprecated use mode instead
+          always_run: nil,
           io_mode: nil, # inline | eval | inline_with_result | eval_with_result
           mode: nil, # always_run | always_mock
           mock_return: nil,
           &block
         )
-          runnable_reset!
-          @runnable_io_mode =
-            if eval == true && inline == true
-              'eval_with_result'
-            elsif eval == true
-              'eval_with_result'
-            elsif inline == true
-              'inline_with_result'
-            else
-              'inline'
-            end
-          validate_runnable_mode!(mode) if mode.present?
-          validate_runnable_io_mode!(io_mode) if io_mode.present?
           with_interruption_rescue do
+            runnable_reset!
+            @runnable_mode = 'always_run' if always_run == true
+            @runnable_io_mode =
+              if eval == true && inline == true
+                'eval_with_result'
+              elsif eval == true
+                'eval_with_result'
+              elsif inline == true
+                'inline_with_result'
+              else
+                'inline'
+              end
+            validate_runnable_mode!(mode) if mode.present?
+            validate_runnable_io_mode!(io_mode) if io_mode.present?
             cmd = args.compact.join(' ')
             if verbose? || mock_runnable_run?
               msg = <<~CMD
@@ -90,6 +93,15 @@ module LarCity
               end
           end
         ensure
+          say_debug <<~CMD_CHECKS
+            Always run (deprecated): #{always_run.nil? ? 'not set' : always_run}
+            Eval (deprecated): #{eval.nil? ? 'not set' : eval}
+            Inline (deprecated): #{inline.nil? ? 'not set' : inline}
+            Runnable mode: #{runnable_mode || 'default (<blank>)'}
+            Runnable IO mode: #{runnable_io_mode || 'default (inline)'}
+            Mock return: #{mock_return.nil? ? 'not set' : mock_return.inspect}
+            Runnable result: #{runnable_result.inspect}
+          CMD_CHECKS
           # Return the result if inline, otherwise return nil. This avoids
           # unintended consequences of returning command output in non-inline contexts
           runnable_result if runnable_io_with_result?
@@ -104,7 +116,7 @@ module LarCity
         end
 
         def runnable_eval?
-          runnable_io_mode == 'eval'
+          %w[eval eval_with_result].include?(runnable_io_mode)
         end
 
         def runnable_io_with_result?
