@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'active_support/core_ext/integer/time'
+require 'lib/commands/features_cmd'
 
 Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
@@ -91,4 +92,9 @@ Rails.application.configure do
 
   # Basic auth for mission_control
   config.mission_control.jobs.http_basic_auth_enabled = false
+
+  config.after_initialize do
+    # Initialize features
+    FeaturesCmd.new.invoke(:init, []) unless AppUtils.thor_mode?
+  end
 end

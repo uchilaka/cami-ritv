@@ -39,7 +39,7 @@ module LarCity
                   I18n.t(
                     'commands.images.build.unsupported_service_message',
                     list_of_names: names_of_supported_services,
-                    compose_file: docker_compose_config_file,
+                    compose_file: compose_config_file,
                     name: service_name
                   )
           end
@@ -47,12 +47,7 @@ module LarCity
         cmd_args = ['docker compose build', service_name]
         cmd_args << '--dry-run' if pretend?
         cmd_args << '--push' if options[:push]
-        @result =
-          run(
-            *cmd_args,
-            always_run: true, eval: true,
-            mock_return: "Image #{service_name} Built"
-          ) { |line| say_info(line) }
+        @result = run(*cmd_args, io_mode: :eval_with_result, mode: :always_run) { |line| say_info(line) }
         say_debug "Build result: #{result.inspect}"
         unless success?
           say_error I18n.t('commands.images.build.failure_message', name: service_name, error_details: 'TBD')
@@ -65,7 +60,7 @@ module LarCity
           run 'docker tag',
               [container_name, version].join(':'),
               [container_tag, version].join(':'),
-              mode: 'inline_with_result',
+              io_mode: :inline_with_result,
               mock_return: true
         say_debug "Re-tag result: #{tag_result.inspect}"
 
@@ -99,11 +94,18 @@ module LarCity
           return
         end
 
-        @push_result =
-          run('docker push', "#{container_tag}:#{version}", eval: true) do |progress|
-            say_debug progress
-          end
-        say_debug("Push result: #{push_result.inspect}")
+        push_cmd = ['docker push', "#{container_tag}:#{version}"]
+        if Flipper.enabled?(:feat__pretend_push)
+          say_debug <<~NOTE
+            To push the built image, run: `#{push_cmd.join(' ')}`
+          NOTE
+        else
+          @push_result =
+            run(*push_cmd, eval: true) do |progress|
+              say_debug progress
+            end
+          say_debug("Push result: #{push_result.inspect}")
+        end
       end
 
       no_commands do
@@ -139,7 +141,7 @@ module LarCity
                   I18n.t(
                     'commands.images.build.unsupported_service_message',
                     list_of_names: supported_services.keys,
-                    compose_file: docker_compose_config_file,
+                    compose_file: compose_config_file,
                     name: service
                   )
           end
@@ -155,7 +157,7 @@ module LarCity
                   I18n.t(
                     'commands.images.build.unsupported_service_message',
                     list_of_names: supported_services.keys,
-                    compose_file: docker_compose_config_file,
+                    compose_file: compose_config_file,
                     name: service
                   )
           end
