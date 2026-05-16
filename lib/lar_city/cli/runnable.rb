@@ -19,7 +19,7 @@ module LarCity
       end
 
       module InstanceMethods
-        attr_reader :runnable_mode, :runnable_io_mode, :runnable_result
+        attr_reader :runnable_mode, :runnable_io_mode, :runnable_result, :runnable_mock_return
 
         protected
 
@@ -40,6 +40,7 @@ module LarCity
         )
           with_interruption_rescue do
             runnable_reset!
+            @runnable_mock_return = mock_return
             @runnable_mode = 'always_run' if always_run == true
             @runnable_io_mode =
               if eval == true && inline == true
@@ -51,8 +52,10 @@ module LarCity
               else
                 'inline'
               end
+            validate_mock_return_usage!
             validate_runnable_mode!(mode) if mode.present?
             validate_runnable_io_mode!(io_mode) if io_mode.present?
+
             cmd = args.compact.join(' ')
             if verbose? || mock_runnable_run?
               msg = <<~CMD
@@ -126,15 +129,23 @@ module LarCity
         def runnable_reset!
           @runnable_mode = nil
           @runnable_io_mode = nil
+          @runnable_mock_return = nil
         end
 
         private
+
+        def validate_mock_return_usage!
+          if runnable_always_run? && runnable_mock_return.present?
+            raise ArgumentError, "ONLY use mock_return with IO mode set to 'always_mock'), or leave it blank"
+          end
+        end
 
         def validate_runnable_mode!(value = nil)
           @runnable_mode = value.to_s if value.present?
           unless runnable_mode.blank? || %w[always_run always_mock].include?(runnable_mode)
             raise ArgumentError, "Unsupported mode: '#{runnable_mode}'"
           end
+          validate_mock_return_usage!
         end
 
         def validate_runnable_io_mode!(value = nil)
