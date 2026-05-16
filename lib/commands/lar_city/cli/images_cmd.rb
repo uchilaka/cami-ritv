@@ -101,9 +101,7 @@ module LarCity
           NOTE
         else
           @push_result =
-            run(*push_cmd, eval: true) do |progress|
-              say_debug progress
-            end
+            run(*push_cmd, io_mode: :eval_with_result) { |progress| say_debug progress }
           say_debug("Push result: #{push_result.inspect}")
         end
       end
