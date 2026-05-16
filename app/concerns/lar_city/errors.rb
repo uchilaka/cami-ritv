@@ -16,6 +16,7 @@ module LarCity
     class UnexpectedDataResponseError < StandardError; end
     class MisconfigurationError < StandardError; end
     class AdhocValidationError < StandardError; end
+    class RequiredEnvironmentVariableNotFound < StandardError; end
 
     class IntegrationRequestFailed < StandardError
       attr_reader :status, :vendor
