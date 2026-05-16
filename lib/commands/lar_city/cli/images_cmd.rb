@@ -1,8 +1,10 @@
 # frozen_string_literal: true
 
-require_relative 'base_cmd'
 require 'json'
 require 'yaml'
+require 'lib/lar_city/cli/control_flow_helpers'
+require 'lib/commands/features_cmd'
+require_relative 'base_cmd'
 
 module LarCity
   module CLI
@@ -12,6 +14,7 @@ module LarCity
       namespace :images
 
       no_commands do
+        include ControlFlowHelpers
         include ServiceHelpers
       end
 
@@ -25,6 +28,7 @@ module LarCity
       )
       option :push, type: :boolean, default: false
       def build
+        init_features!
         check_required_env_vars!
         service_name = options[:service].to_s
         with_interruption_rescue do
@@ -46,7 +50,7 @@ module LarCity
         end
         cmd_args = ['docker compose build', service_name]
         cmd_args << '--dry-run' if pretend?
-        cmd_args << '--push' if options[:push]
+        cmd_args << '--push' if options[:push] && Flipper.enabled?(:feat__auto_push_built_images)
         @result = run(*cmd_args, io_mode: :eval_with_result, mode: :always_run) { |line| say_info(line) }
         say_debug "Build result: #{result.inspect}"
         unless success?
@@ -95,14 +99,14 @@ module LarCity
         end
 
         push_cmd = ['docker push', "#{container_tag}:#{version}"]
-        if Flipper.enabled?(:feat__pretend_push)
-          say_debug <<~NOTE
-            To push the built image, run: `#{push_cmd.join(' ')}`
-          NOTE
-        else
+        if Flipper.enabled?(:feat_push_images)
           @push_result =
             run(*push_cmd, io_mode: :eval_with_result) { |progress| say_debug progress }
           say_debug("Push result: #{push_result.inspect}")
+        else
+          say_debug <<~NOTE
+            To push the built image, run: `#{push_cmd.join(' ')}`
+          NOTE
         end
       end
 
@@ -127,8 +131,8 @@ module LarCity
           return if missing_required_vars.none?
 
           raise Thor::Error, <<~MSG
-          The following required environment variables are missing: #{missing_required_vars.inspect}.
-        MSG
+            The following required environment variables are missing: #{missing_required_vars.inspect}.
+          MSG
         end
 
         def container_tag(service: options[:service])

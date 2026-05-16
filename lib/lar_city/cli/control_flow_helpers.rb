@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'config/environment'
 require_relative 'utils/class_helpers'
 require_relative 'output_helpers'
 
@@ -58,6 +59,10 @@ module LarCity
 
             yield block
           end
+        end
+
+        def init_features!
+          FeaturesCmd.new.invoke(:init, [], verbose: verbose?, pretend: pretend?)
         end
 
         def force?

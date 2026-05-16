@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'commands/lar_city/cli/base_cmd'
+require 'lib/commands/lar_city/cli/base_cmd'
 
 class FeaturesCmd < LarCity::CLI::BaseCmd
   namespace 'features'
