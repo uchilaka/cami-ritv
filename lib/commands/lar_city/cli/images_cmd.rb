@@ -100,86 +100,89 @@ module LarCity
         end
 
         @push_result =
-          run('docker push', container_tag, eval: true)
+          run('docker push', "#{container_tag}:#{version}", eval: true) do |progress|
+            say_debug progress
+          end
         say_debug("Push result: #{push_result.inspect}")
       end
 
-      private
+      no_commands do
+        def check_registry_image_tag!
+          registry_host, image_name, version_tag =
+            %r{(.*)\/(.*)(?::(.*))?}.match(container_tag).values_at(1, 2, 3)
+          say_debug "Tag match data: #{{ registry_host:, image_name:, version_tag: }.inspect}"
+          unless registry_host.present? && image_name.present?
+            raise Thor::Error, <<~MSG
+              The generated registry image tag '#{container_tag}' does not match the \
+              expected format 'registry-host/image-name:version-tag'.
+            MSG
+          end
+        end
 
-      def check_registry_image_tag!
-        registry_host, image_name, version_tag = %r{(.*)/(.*):(.*)}.match(container_tag)
-        say_debug "Tag match data: #{{ registry_host:, image_name:, version_tag: }.inspect}"
-        unless registry_host.present? && image_name.present? && version_tag.present?
+        def check_required_env_vars!
+          missing_required_vars = []
+          %w[CONTAINER_REGISTRY_HOST CONTAINER_NAME_PREFIX].each do |var|
+            missing_required_vars << var if ENV[var].blank?
+          end
+          return if missing_required_vars.none?
+
           raise Thor::Error, <<~MSG
-            The generated registry image tag '#{container_tag}' does not match the \
-            expected format 'registry-host/image-name:version-tag'.
-          MSG
-        end
-      end
-
-      def check_required_env_vars!
-        missing_required_vars = []
-        %w[CONTAINER_REGISTRY_HOST CONTAINER_NAME_PREFIX].each do |var|
-          missing_required_vars << var if ENV[var].blank?
-        end
-        return if missing_required_vars.none?
-
-        raise Thor::Error, <<~MSG
           The following required environment variables are missing: #{missing_required_vars.inspect}.
         MSG
-      end
-
-      def container_tag(service: options[:service])
-        raise ArgumentError, '--service is required' if service.blank?
-
-        unless supported_services.key?(service)
-          raise Errors::Unsupported,
-                I18n.t(
-                  'commands.images.build.unsupported_service_message',
-                  list_of_names: supported_services.keys,
-                  compose_file: docker_compose_config_file,
-                  name: service
-                )
         end
 
-        Rails.application.config_for('container-registry').dig(:aliases, service.to_sym)
-      end
+        def container_tag(service: options[:service])
+          raise ArgumentError, '--service is required' if service.blank?
 
-      def container_name(service: options[:service])
-        raise ArgumentError, '--service is required' if service.blank?
+          unless supported_services.key?(service)
+            raise Errors::Unsupported,
+                  I18n.t(
+                    'commands.images.build.unsupported_service_message',
+                    list_of_names: supported_services.keys,
+                    compose_file: docker_compose_config_file,
+                    name: service
+                  )
+          end
 
-        unless supported_services.key?(service)
-          raise Errors::Unsupported,
-                I18n.t(
-                  'commands.images.build.unsupported_service_message',
-                  list_of_names: supported_services.keys,
-                  compose_file: docker_compose_config_file,
-                  name: service
-                )
+          Rails.application.config_for('container-registry').dig(:aliases, service.to_sym)
         end
 
-        # Build the base image name
-        image_name = [ENV.fetch('CONTAINER_NAME_PREFIX'), service].compact.join('-')
-        # Prepend a namespace or registry hostname
-        [ENV.fetch('CONTAINER_REGISTRY_HOST'), image_name].compact.join('/')
-      end
+        def container_name(service: options[:service])
+          raise ArgumentError, '--service is required' if service.blank?
 
-      def supported_services
-        @supported_services ||=
-          docker_compose_config['services'].entries.select do |_name, config|
-            config.key?('build')
-          end.to_h
-      end
+          unless supported_services.key?(service)
+            raise Errors::Unsupported,
+                  I18n.t(
+                    'commands.images.build.unsupported_service_message',
+                    list_of_names: supported_services.keys,
+                    compose_file: docker_compose_config_file,
+                    name: service
+                  )
+          end
 
-      def success?
-        return true if result.is_a?(Process::Status) && result.success?
+          # Build the base image name
+          image_name = [ENV.fetch('CONTAINER_NAME_PREFIX'), service].compact.join('-')
+          # Prepend a namespace or registry hostname
+          [ENV.fetch('CONTAINER_REGISTRY_HOST'), image_name].compact.join('/')
+        end
 
-        # TODO: Make this regex test case-insensitive while using %r
-        %r{Image (.*) Built}.match?(result)
-      end
+        def supported_services
+          @supported_services ||=
+            docker_compose_config(with_override: true)['services'].entries.select do |_name, config|
+              config.key?('build')
+            end.to_h
+        end
 
-      def has_build_config?(name)
-        (docker_compose_config.dig('services', name) || {}).key?('build')
+        def success?
+          return true if result.is_a?(Process::Status) && result.success?
+
+          # TODO: Make this regex test case-insensitive while using %r
+          %r{Image (.*) Built}.match?(result)
+        end
+
+        def has_build_config?(name)
+          (docker_compose_config.dig('services', name) || {}).key?('build')
+        end
       end
     end
   end

@@ -5,13 +5,15 @@ development:
   aliases:
     crm: <%= ENV.fetch('CONTAINER_REGISTRY_HOST') %>/twenty-crm-production
     web: <%= ENV.fetch('CONTAINER_REGISTRY_HOST') %>/cami-production
+    # The web and worker processes are built against the same container image
+    # for compatibility with how deployments to fly.io are currently configured
     worker: <%= ENV.fetch('CONTAINER_REGISTRY_HOST') %>/cami-production
 
 test:
   aliases:
     crm: <%= ENV.fetch('CONTAINER_REGISTRY_HOST') %>/twenty-crm
-    web: <%= ENV.fetch('CONTAINER_REGISTRY_HOST') %>/cami-web
-    worker: <%= ENV.fetch('CONTAINER_REGISTRY_HOST') %>/cami-worker
+    web: <%= ENV.fetch('CONTAINER_REGISTRY_HOST') %>/<%= ENV.fetch('CONTAINER_NAME_PREFIX') %>-web
+    worker: <%= ENV.fetch('CONTAINER_REGISTRY_HOST') %>/<%= ENV.fetch('CONTAINER_NAME_PREFIX') %>-worker
 
 lab: &lab
   <<: *shared

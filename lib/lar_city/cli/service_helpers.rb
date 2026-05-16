@@ -15,7 +15,7 @@ module LarCity
         # Class methods must be extended FIRST, before applying delegations
         base.extend ClassMethods
         delegate :docker_compose_config, to: base
-        delegate :docker_compose_config_file, to: base
+        delegate :compose_config_file, to: base
 
         base.include OutputHelpers
       end
@@ -31,12 +31,42 @@ module LarCity
           option(:service, aliases: '-s', enum:, type:, desc:, long_desc:, required:)
         end
 
-        def docker_compose_config(symbolize_names: false)
-          @docker_compose_config ||= YAML.load_file(docker_compose_config_file, symbolize_names:)
+        def compose_config(with_override: false)
+          if with_override
+            return (compose_base_config || {})
+                     .deep_merge(compose_override_config || {})
+          end
+
+          compose_base_config
         end
 
-        def docker_compose_config_file
-          Rails.root.join('docker-compose.yml').to_s
+        alias :docker_compose_config :compose_config
+
+        def compose_base_config
+          @compose_base_config ||=
+            YAML.load(File.read(compose_config_file), symbolize_names: false)
+        end
+
+        def compose_override_config
+          @compose_override_config ||=
+            YAML.load(File.read(compose_override_config_file), symbolize_names: false)
+        end
+
+        def compose_config_file
+          @compose_config_file ||= %w[compose.yml docker-compose.yml].find do |basename|
+            Rails.root.join(basename).exist?
+          end
+        ensure
+          @compose_config_file ||= Rails.root.join('docker-compose.yml').to_s
+        end
+
+        def compose_override_config_file
+          @compose_override_config_file ||=
+            %w[compose.override.yml docker-compose.override.yml].find do |basename|
+              Rails.root.join(basename).exist?
+            end
+        ensure
+          @compose_override_config_file ||= Rails.root.join('docker-compose.override.yml').to_s
         end
       end
     end
