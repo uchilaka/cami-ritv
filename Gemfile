@@ -2,7 +2,7 @@
 
 source 'https://rubygems.org'
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
-ruby "3.4.4"
+ruby '3.4.4'
 
 # Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
 gem 'rails', '~> 8.0'
@@ -15,7 +15,8 @@ gem 'mission_control-jobs'
 # IMPORTANT: This should be loaded as early as possible
 gem 'dotenv', require: 'dotenv/load'
 
-gem 'flipper-active_record', '~> 1.3'
+gem 'flipper'
+gem 'flipper-active_record', '~> 1'
 gem 'flipper-api'
 gem 'flipper-ui'
 
@@ -107,7 +108,9 @@ gem 'terminal-table'
 gem 'dry-types', '~> 1.8'
 gem 'highline', '~> 3.1'
 gem 'nokogiri'
+gem 'open3'
 gem 'reverse_markdown'
+gem 'strong_migrations'
 
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
@@ -118,13 +121,11 @@ group :development, :test do
   gem 'fabrication'
   gem 'faker'
   gem 'knapsack_pro'
-  gem 'open3'
+  gem 'pry'
   gem 'rspec-rails', '~> 7'
   gem 'rswag-specs'
   gem 'rubocop', require: false
   gem 'rubocop-rails-omakase', require: false
-  gem 'strong_migrations'
-  gem 'pry'
 end
 
 group :development do
@@ -138,10 +139,13 @@ group :development do
   gem 'annotaterb'
   # Preview mail in browser instead of sending https://github.com/ryanb/letter_opener
   gem 'letter_opener'
+
+  gem 'dockerfile-rails', '>= 1.7'
 end
 
 group :test do
   gem 'database_cleaner-active_record'
+  gem 'fakefs', require: 'fakefs/safe'
   gem 'rails-controller-testing'
   gem 'rubocop-capybara', require: false
   gem 'rubocop-performance'
@@ -151,5 +155,3 @@ group :test do
   gem 'shoulda-matchers'
   gem 'vcr', '~> 6.2'
 end
-
-gem "dockerfile-rails", ">= 1.7", group: :development

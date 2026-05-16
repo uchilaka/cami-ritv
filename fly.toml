@@ -2,54 +2,54 @@
 #
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
+
 app = "cami-production"
 primary_region = "iad"
 
 [build]
-dockerfile = "Dockerfile.web"
-
+  dockerfile = "Dockerfile.web"
   [build.args]
-  RAILS_ENV = "production"
+    RAILS_ENV = "production"
 
 [deploy]
-release_command = "bundle exec rails db:migrate:primary data:migrate"
+  release_command = "bundle exec rails db:migrate:primary data:migrate"
 
 [env]
-APP_CONFIG_CHECK_ENV_VARS = "yes"
-HOSTNAME = "cami-production.fly.dev"
-PORT = "16006"
-RAILS_ENV = "production"
-RAILS_LOG_TO_STDOUT = "true"
-RAILS_SERVE_STATIC_FILES = "true"
-
-[[mounts]]
-destination = "/opt/project/src/storage"
-source = "core_storage"
+  PORT = "16006"
+  RAILS_ENV = "production"
+  RAILS_SERVE_STATIC_FILES = "true"
+  RAILS_LOG_TO_STDOUT = "true"
+  APP_CONFIG_CHECK_ENV_VARS = "yes"
+  HOSTNAME = "cami-production.fly.dev"
 
 [processes]
-web = "bin/rails server --binding 0.0.0.0 --port 16006"
-worker = "bin/rails solid_queue:start"
+  web = "bin/rails server --binding 0.0.0.0 --port 16006"
+  worker = "bin/rails solid_queue:start"
 
 [[services]]
-internal_port = 16_006
-processes = [ "web" ]
-protocol = "tcp"
+  protocol = "tcp"
+  internal_port = 16006
+  processes = ["web"]
 
+  [[services.ports]]
+    port = 80
+    handlers = ["http"]
+    force_https = true
+
+  [[services.ports]]
+    port = 443
+    handlers = ["tls", "http"]
   [services.concurrency]
-  hard_limit = 25
-  soft_limit = 20
-  type = "connections"
-
-  [[services.ports]]
-  force_https = true
-  handlers = [ "http" ]
-  port = 80
-
-  [[services.ports]]
-  handlers = [ "tls", "http" ]
-  port = 443
+    type = "connections"
+    hard_limit = 25
+    soft_limit = 20
 
   [[services.tcp_checks]]
-  grace_period = "1s"
-  interval = "15s"
-  timeout = "2s"
+    interval = "15s"
+    timeout = "2s"
+    grace_period = "1s"
+    restart_limit = 0
+
+[mounts]
+  source = "core_storage"
+  destination = "/opt/project/src/storage"

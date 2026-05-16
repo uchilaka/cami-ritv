@@ -92,31 +92,53 @@ RSpec.describe LarCity::CLI::GitOpsHelpers do
     end
 
     describe '#branches' do
-      it 'returns an array of indexed branches' do
-        git_output = "  branch-1\n* main\n  feature/xyz"
-        allow(dummy_instance).to receive(:`).with('git branch --list').and_return(git_output)
-        expect(dummy_instance.branches).to eq([
-                                                [0, 'branch-1'],
-                                                [1, 'main'],
-                                                [2, 'feature/xyz'],
-                                              ])
+      let(:git_output) { nil }
+
+      context "with an array of indexed branches" do
+        let(:git_output) { "  branch-1\n* main\n  feature/xyz" }
+
+        before do
+          allow(dummy_instance).to receive(:`).with('git branch --list').and_return(git_output)
+        end
+
+        it "returns an array of arrays with signature: [index, branch_name, branch_opts]" do
+          expect(dummy_instance.branches).to \
+            eq([
+              [0, 'branch-1', {}],
+              [1, 'main', {current: true}],
+              [2, 'feature/xyz', {}],
+            ])
+        end
       end
 
-      it 'handles empty branch list' do
-        allow(dummy_instance).to receive(:`).with('git branch --list').and_return('')
-        expect(dummy_instance.branches).to eq([])
+      context "with an empty branch list" do
+        let(:git_output) { '' }
+
+        before do
+          allow(dummy_instance).to receive(:`).with('git branch --list').and_return(git_output)
+        end
+
+        it { expect(dummy_instance.branches).to eq([]) }
       end
 
-      it 'handles a single branch' do
-        allow(dummy_instance).to receive(:`).with('git branch --list').and_return('* main')
-        expect(dummy_instance.branches).to eq([[0, 'main']])
+      context "with a single branch" do
+        let(:git_output) { '* main' }
+
+        before do
+          allow(dummy_instance).to receive(:`).with('git branch --list').and_return(git_output)
+        end
+
+        it { expect(dummy_instance.branches).to eq([[0, 'main', {current: true}]]) }
       end
 
-      it 'caches the result' do
-        git_output = "  branch-1\n* main\n  feature/xyz"
-        expect(dummy_instance).to receive(:`).with('git branch --list').once.and_return(git_output)
-        dummy_instance.branches
-        dummy_instance.branches
+      context "with multiple calls" do
+        let(:git_output) { "  branch-1\n* main\n  feature/xyz" }
+
+        it 'caches the result' do
+          expect(dummy_instance).to receive(:`).with('git branch --list').once.and_return(git_output)
+          dummy_instance.branches
+          dummy_instance.branches
+        end
       end
     end
   end

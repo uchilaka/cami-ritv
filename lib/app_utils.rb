@@ -56,7 +56,7 @@ class AppUtils
     end
 
     def hostname_is_nginx_proxy?
-      /\.ngrok\.(dev|app)/.match?(hostname)
+      %r{\.ngrok\.(dev|app)}.match?(hostname)
     end
 
     def use_secure_protocol?
@@ -83,7 +83,7 @@ class AppUtils
       return true if [true, 1].include?(value)
       return false if value.nil?
 
-      /^Y(es)?|^T(rue)|^On$/i.match?(value.to_s.strip)
+      %r{^Y(es)?|^T(rue)|^On$}i.match?(value.to_s.strip)
     end
 
     def ping?(host)
@@ -166,7 +166,7 @@ class AppUtils
       raise 'Error: .tool-versions file not found' unless File.exist?(file_path)
 
       File.foreach(file_path) do |line|
-        match = line.match(/ruby\s+([\d.]+)/)
+        match = line.match(%r{ruby\s+([\d.]+)})
         return match[1].to_s.strip if match
       end
 

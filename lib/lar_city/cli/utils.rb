@@ -11,6 +11,7 @@ require 'lar_city/cli/runnable'
 require 'lar_city/cli/env_helpers'
 require 'lar_city/cli/vault_helpers'
 require 'lar_city/cli/control_flow_helpers'
+require 'lar_city/cli/service_helpers'
 require 'lar_city/cli/git_ops_helpers'
 require 'lar_city/cli/integration_helpers'
 
