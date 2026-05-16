@@ -23,7 +23,8 @@ module LarCity
           run(
             'pass-cli item list',
             "--share-id=#{vault_share_id}",
-            "--output=json", inline: true, eval: true
+            "--output=json",
+            io_mode: :eval_with_result
           )
         return if pretend?
 
