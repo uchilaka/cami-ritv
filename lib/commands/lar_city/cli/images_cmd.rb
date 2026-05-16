@@ -65,8 +65,8 @@ module LarCity
           run 'docker tag',
               [container_name, version].join(':'),
               [container_tag, version].join(':'),
-              mock_return: true,
-              inline: true
+              mode: 'inline_with_result',
+              mock_return: true
         say_debug "Re-tag result: #{tag_result.inspect}"
 
         unless tag_result
