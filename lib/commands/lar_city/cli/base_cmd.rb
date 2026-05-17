@@ -6,6 +6,8 @@ $LOAD_PATH.unshift(app_path) unless $LOAD_PATH.include?(app_path)
 
 require 'thor'
 require 'awesome_print'
+require 'flipper'
+require 'flipper/adapters/active_record'
 require 'concerns/operating_system_detectable'
 require 'lar_city/cli/utils'
 

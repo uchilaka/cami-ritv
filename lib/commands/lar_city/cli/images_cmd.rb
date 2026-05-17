@@ -1,8 +1,10 @@
 # frozen_string_literal: true
 
-require_relative 'base_cmd'
 require 'json'
 require 'yaml'
+require 'lib/lar_city/cli/control_flow_helpers'
+require 'lib/commands/features_cmd'
+require_relative 'base_cmd'
 
 module LarCity
   module CLI
@@ -12,6 +14,7 @@ module LarCity
       namespace :images
 
       no_commands do
+        include ControlFlowHelpers
         include ServiceHelpers
       end
 
@@ -25,6 +28,7 @@ module LarCity
       )
       option :push, type: :boolean, default: false
       def build
+        init_features!
         check_required_env_vars!
         service_name = options[:service].to_s
         with_interruption_rescue do
@@ -39,20 +43,15 @@ module LarCity
                   I18n.t(
                     'commands.images.build.unsupported_service_message',
                     list_of_names: names_of_supported_services,
-                    compose_file: docker_compose_config_file,
+                    compose_file: compose_config_file,
                     name: service_name
                   )
           end
         end
         cmd_args = ['docker compose build', service_name]
         cmd_args << '--dry-run' if pretend?
-        cmd_args << '--push' if options[:push]
-        @result =
-          run(
-            *cmd_args,
-            always_run: true, eval: true,
-            mock_return: "Image #{service_name} Built"
-          ) { |line| say_info(line) }
+        cmd_args << '--push' if options[:push] && Flipper.enabled?(:feat__auto_push_built_images)
+        @result = run(*cmd_args, io_mode: :eval_with_result, mode: :always_run) { |line| say_info(line) }
         say_debug "Build result: #{result.inspect}"
         unless success?
           say_error I18n.t('commands.images.build.failure_message', name: service_name, error_details: 'TBD')
@@ -65,8 +64,8 @@ module LarCity
           run 'docker tag',
               [container_name, version].join(':'),
               [container_tag, version].join(':'),
-              mock_return: true,
-              inline: true
+              io_mode: :inline_with_result,
+              mock_return: true
         say_debug "Re-tag result: #{tag_result.inspect}"
 
         unless tag_result
@@ -99,11 +98,16 @@ module LarCity
           return
         end
 
-        @push_result =
-          run('docker push', "#{container_tag}:#{version}", eval: true) do |progress|
-            say_debug progress
-          end
-        say_debug("Push result: #{push_result.inspect}")
+        push_cmd = ['docker push', "#{container_tag}:#{version}"]
+        if Flipper.enabled?(:feat_push_images)
+          @push_result =
+            run(*push_cmd, io_mode: :eval_with_result) { |progress| say_debug progress }
+          say_debug("Push result: #{push_result.inspect}")
+        else
+          say_debug <<~NOTE
+            To push the built image, run: `#{push_cmd.join(' ')}`
+          NOTE
+        end
       end
 
       no_commands do
@@ -127,8 +131,8 @@ module LarCity
           return if missing_required_vars.none?
 
           raise Thor::Error, <<~MSG
-          The following required environment variables are missing: #{missing_required_vars.inspect}.
-        MSG
+            The following required environment variables are missing: #{missing_required_vars.inspect}.
+          MSG
         end
 
         def container_tag(service: options[:service])
@@ -139,7 +143,7 @@ module LarCity
                   I18n.t(
                     'commands.images.build.unsupported_service_message',
                     list_of_names: supported_services.keys,
-                    compose_file: docker_compose_config_file,
+                    compose_file: compose_config_file,
                     name: service
                   )
           end
@@ -155,7 +159,7 @@ module LarCity
                   I18n.t(
                     'commands.images.build.unsupported_service_message',
                     list_of_names: supported_services.keys,
-                    compose_file: docker_compose_config_file,
+                    compose_file: compose_config_file,
                     name: service
                   )
           end

@@ -37,7 +37,12 @@ module LarCity
 
         def branches
           @branches ||= `git branch --list`.split("\n").map.with_index do |b, i|
-            [i, b.gsub('*', '').strip]
+            branch_opts = {}
+            # The current branch will have the "*" prefix
+            branch_opts[:current] = true if b.start_with?('*')
+            # A branch with a worktree will have a "+" prefix
+            branch_opts[:worktree] = true if b.start_with?('+')
+            [i, b.gsub(/^[*+]\s+/, '').strip, branch_opts]
           end
         end
       end
