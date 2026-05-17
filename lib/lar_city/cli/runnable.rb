@@ -137,7 +137,7 @@ module LarCity
 
         def validate_mock_return_usage!
           if runnable_always_run? && runnable_mock_return.present?
-            raise ArgumentError, "ONLY use mock_return with IO mode set to 'always_mock'), or leave it blank"
+            raise ArgumentError, "ONLY use mock_return with IO mode set to 'always_mock', or leave it blank"
           end
         end
 

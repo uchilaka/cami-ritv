@@ -22,7 +22,11 @@ default: &default
     enabled: false
   feat__sortable_invoice_index:
     enabled: false
-development: &development
+  feat__auto_push_built_images:
+    enabled: false
+  feat_push_images:
+    enabled: false
+development:
   <<: *default
   feat__dashboard:
     enabled: false
@@ -50,9 +54,9 @@ development: &development
     enabled: true
 test:
   <<: *default
-lab:
+lab: &lab
   <<: *default
 staging:
-  <<: *default
+  <<: *lab
 production:
   <<: *default
