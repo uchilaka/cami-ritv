@@ -16,7 +16,9 @@ release_command = "bundle exec rails db:migrate:primary data:migrate"
 
 [env]
 APP_CONFIG_CHECK_ENV_VARS = "yes"
-HOSTNAME = "cami-production.fly.dev"
+#HOSTNAME = "cami-production.fly.dev"
+HOSTNAME = "accounts.lar.city"
+LOG_LEVEL = "info"
 PORT = "16006"
 RAILS_ENV = "production"
 RAILS_LOG_TO_STDOUT = "true"
