@@ -1,7 +1,9 @@
 <%- if devise_mapping.omniauthable? %>
   <%- resource_class.omniauth_providers.each do |provider| %>
-    <%= link_to render("users/shared/omniauth/button", provider:),
+    <%= button_to render("users/shared/omniauth/button", provider:),
                 omniauth_authorize_path(resource_name, provider),
-                class: primary_btn_classes, method: :post %><br>
+                class: primary_btn_classes(append_classes: 'block w-full'),
+                method: :post, data: { turbo: false } %>
+    <br>
   <% end %>
 <% end %>
