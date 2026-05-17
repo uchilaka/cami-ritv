@@ -5,8 +5,8 @@ return unless AppUtils.omniauth_enabled?
 Rails.application.config.middleware.use OmniAuth::Builder do
   # Accessible at /auth/google
   provider :google_oauth2,
-           ENV.fetch('OMNI_AUTH_GOOGLE_CLIENT_ID', Rails.application.credentials.google.client_id),
-           ENV.fetch('OMNI_AUTH_GOOGLE_CLIENT_SECRET', Rails.application.credentials.google.client_secret),
+           ENV.fetch('OMNIAUTH_GOOGLE_CLIENT_ID', Rails.application.credentials.google.client_id),
+           ENV.fetch('OMNIAUTH_GOOGLE_CLIENT_SECRET', Rails.application.credentials.google.client_secret),
            prompt: 'select_account',
            image_aspect_ratio: 'square',
            name: :google,
