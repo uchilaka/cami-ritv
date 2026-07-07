@@ -72,7 +72,7 @@ module LarCity
           say_error(
             I18n.t(
               'commands.images.build.tag_failure_message',
-              name: service_name, tag: container_tag, error_detail: 'TBD'
+              name: service_name, new_tag: container_tag, error_details: 'TBD'
             )
           )
           return
@@ -185,7 +185,7 @@ module LarCity
         end
 
         def has_build_config?(name)
-          (docker_compose_config.dig('services', name) || {}).key?('build')
+          (docker_compose_config(with_override: true).dig('services', name) || {}).key?('build')
         end
       end
     end
