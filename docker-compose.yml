@@ -78,6 +78,10 @@ services:
     profiles:
       - batteries-included
       - crm
+      # @deprecated This profile mapping for the app-store is deprecated and will be
+      # removed in a future release, since a platform postgres database server is now
+      # managed via the platform-monorepo project but is kept to help with discovery/refactoring
+      # of existing scripts that may reference it
       - essential
       - standalone
       - all
