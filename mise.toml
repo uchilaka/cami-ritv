@@ -47,19 +47,6 @@ alias         = "logs:data"
 description   = "Tail the flagship service logs with data volumes"
 run           = "docker compose --profile $COMPOSE_PROFILE logs --follow app-store"
 
-[tasks."start:services"]
-description   = "Start the flagship service and dependencies"
-run           = "docker compose --profile $COMPOSE_PROFILE up --detach"
-
-[tasks."start:rails"]
-alias         = "rails"
-description   = "Start the flagship service and dependencies with Rails"
-run           = "./bin/start"
-
-[tasks."start:data"]
-description   = "Start the flagship service and dependencies with data volumes"
-run           = "docker compose --profile $COMPOSE_PROFILE up --detach app-store"
-
 [tasks."build:web"]
 description   = "Build the flagship service web image"
 run           = "docker compose --profile $COMPOSE_PROFILE build web"
@@ -67,6 +54,24 @@ run           = "docker compose --profile $COMPOSE_PROFILE build web"
 [tasks."build:worker"]
 description   = "Build the flagship service worker image"
 run           = "docker compose --profile $COMPOSE_PROFILE build worker"
+
+[tasks."start:services"]
+description   = "Start the flagship service and dependencies"
+run           = "docker compose --profile $COMPOSE_PROFILE up --detach"
+
+[tasks."start:worker"]
+description   = "Start the flagship service and dependencies with worker"
+depends       = ["build:worker"]
+run           = "docker compose --profile $COMPOSE_PROFILE up --detach worker"
+
+[tasks."start:web"]
+description   = "Start the flagship service and dependencies with web"
+depends       = ["build:web", "start:worker"]
+run           = "docker compose --profile $COMPOSE_PROFILE up --detach web"
+
+[tasks."start:data"]
+description   = "Start the flagship service and dependencies with data volumes"
+run           = "docker compose --profile $COMPOSE_PROFILE up --detach app-store"
 
 ##################################################################
 # Tasks below this line are intended to be developer-friendly for
@@ -76,6 +81,11 @@ run           = "docker compose --profile $COMPOSE_PROFILE build worker"
 [tasks.doctor]
 description   = "Run flagship service checks"
 depends       = ["check:*"]
+
+[tasks.dev]
+alias         = "rails"
+description   = "Start the flagship service and dependencies with Rails"
+run           = "./bin/start"
 
 [tasks.start]
 description   = "Start the flagship service and tail the logs"

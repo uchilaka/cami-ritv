@@ -147,7 +147,7 @@ services:
         target: lab.key
     volumes:
       - ./config/credentials/git-crypt.key:/opt/project/src/.git/git-crypt/keys/default:ro
-      - ./config/credentials/$RAILS_ENV.yml.enc:/opt/project/src/config/credentials.yml.enc:ro
+      - ./config/credentials/${RAILS_ENV:?RAILS_ENV must be set}.yml.enc:/opt/project/src/config/credentials.yml.enc:ro
     ports:
       - "16006:3000"
     depends_on:
@@ -199,7 +199,7 @@ services:
         target: lab.key
     volumes:
       - ./config/credentials/git-crypt.key:/opt/project/src/.git/git-crypt/keys/default:ro
-      - ./config/credentials/$RAILS_ENV.yml.enc:/opt/project/src/config/credentials.yml.enc:ro
+      - ./config/credentials/${RAILS_ENV:?RAILS_ENV must be set}.yml.enc:/opt/project/src/config/credentials.yml.enc:ro
     depends_on:
       - app-store
     profiles:
