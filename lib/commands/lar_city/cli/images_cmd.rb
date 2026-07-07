@@ -125,7 +125,7 @@ module LarCity
 
         def check_required_env_vars!
           missing_required_vars = []
-          %w[CONTAINER_REGISTRY_HOST CONTAINER_NAME_PREFIX].each do |var|
+          %w[COMPOSE_PROFILE CONTAINER_REGISTRY_HOST CONTAINER_NAME_PREFIX].each do |var|
             missing_required_vars << var if ENV[var].blank?
           end
           return if missing_required_vars.none?

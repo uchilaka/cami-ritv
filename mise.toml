@@ -8,12 +8,11 @@ _.file = "{{config_root}}/.env"
 _.file = "{{config_root}}/.env.local"
 
 [[env]]
-_.source          = ".env.$PLATFORM_ENV"
-PLATFORM_ENV      = { required = true }
-COMPOSE_PROFILE   = { required = true }
+_.source = "{{config_root}}/.envrc"
 
 [[env]]
-_.source = "{{config_root}}/.envrc"
+NODE_ENV          = { required = true }
+COMPOSE_PROFILE   = { required = true }
 
 [tools]
 ruby = "3.4.4"
@@ -60,6 +59,14 @@ run           = "./bin/start"
 [tasks."start:data"]
 description   = "Start the flagship service and dependencies with data volumes"
 run           = "docker compose --profile $COMPOSE_PROFILE up --detach app-store"
+
+[tasks."build:web"]
+description   = "Build the flagship service web image"
+run           = "docker compose --profile $COMPOSE_PROFILE build web"
+
+[tasks."build:worker"]
+description   = "Build the flagship service worker image"
+run           = "docker compose --profile $COMPOSE_PROFILE build worker"
 
 ##################################################################
 # Tasks below this line are intended to be developer-friendly for
