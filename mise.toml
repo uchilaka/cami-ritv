@@ -38,22 +38,26 @@ run             = "docker compose --profile $COMPOSE_PROFILE ps"
 description   = "Check the resolved docker compose configuration (see $COMPOSE_FILE)"
 run           = "docker compose --profile $COMPOSE_PROFILE config"
 
-[tasks."svcs:logs"]
+[tasks."logs:services"]
 alias         = "logs"
 description   = "Tail the flagship service logs"
 run           = "docker compose --profile $COMPOSE_PROFILE logs --follow"
 
-[tasks."svcs:logs:data"]
+[tasks."logs:data"]
 alias         = "logs:data"
 description   = "Tail the flagship service logs with data volumes"
 run           = "docker compose --profile $COMPOSE_PROFILE logs --follow app-store"
 
-[tasks."svcs:start"]
+[tasks."start:services"]
 description   = "Start the flagship service and dependencies"
 run           = "docker compose --profile $COMPOSE_PROFILE up --detach"
 
-[tasks."svcs:data:start"]
-alias         = "start:data"
+[tasks."start:rails"]
+alias         = "rails"
+description   = "Start the flagship service and dependencies with Rails"
+run           = "./bin/start"
+
+[tasks."start:data"]
 description   = "Start the flagship service and dependencies with data volumes"
 run           = "docker compose --profile $COMPOSE_PROFILE up --detach app-store"
 
@@ -70,7 +74,8 @@ depends       = ["check:*"]
 description   = "Start the flagship service and tail the logs"
 run           = [
   { task = "svcs:start" },
-  { task = "svcs:logs" }
+  { task = "svcs:logs" },
+  "./bin/start"
 ]
 
 [tasks.down]
