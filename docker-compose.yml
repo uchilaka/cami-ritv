@@ -1,3 +1,4 @@
+name: cami-${NODE_ENV:-development}
 # TODO: [LWS-309] Templatize this file and have `lx-cli env-setup` handle generating it for different environments
 #   based on a template and environment-specific .env files that are the source of truth for environment
 #   variables. This would help reduce duplication and make it easier to manage environment variables
@@ -30,6 +31,7 @@ services:
     profiles:
       - all
       - batteries-included
+      - crm
       - essential
 
   # Doc: https://ngrok.com/docs/using-ngrok-with/docker/#:~:text=Using%20ngrok%20with%20Docker%20Compose
@@ -57,10 +59,10 @@ services:
     image: postgres:17
     restart: unless-stopped
     environment:
-      POSTGRES_DB: ${APP_DATABASE_NAME_PRIMARY}
+      POSTGRES_DB: ${APP_DATABASE_NAME_PRIMARY:?APP_DATABASE_NAME_PRIMARY must be set}
       POSTGRES_USER: ${APP_DATABASE_USER}
       POSTGRES_PASSWORD: ${APP_DATABASE_PASSWORD}
-      APP_DATABASE_NAME_CRM: ${APP_DATABASE_NAME_CRM}
+      APP_DATABASE_NAME_CRM: ${APP_DATABASE_NAME_CRM:?DEFAULT_APP_DATABASE_NAME_CRM must be set}
       POSTGRES_HOST_AUTH_METHOD: trust # IMPORTANT allows all connections without a password - experimental only!
     ports:
       - "16032:5432"
@@ -69,12 +71,13 @@ services:
       - ./db/shared/postgres/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d:ro
       - ./db/${RAILS_ENV:-development}/postgres/downloads:/usr/local/downloads:ro
     healthcheck:
-      test: pg_isready -U ${APP_DATABASE_USER} -h localhost -d ${APP_DATABASE_NAME_PRIMARY}
+      test: pg_isready -U ${APP_DATABASE_USER} -h localhost -d ${APP_DATABASE_NAME_PRIMARY:?APP_DATABASE_NAME_PRIMARY must be set}
       interval: 5s
       timeout: 5s
       retries: 10
     profiles:
       - batteries-included
+      - crm
       - essential
       - standalone
       - all
@@ -91,8 +94,8 @@ services:
         - REDIS_URL=${REDIS_URL}
         - APP_DATABASE_USER=${APP_DATABASE_USER}
         - APP_DATABASE_PASSWORD=${APP_DATABASE_PASSWORD}
-        - APP_DATABASE_NAME_PRIMARY=${APP_DATABASE_NAME_PRIMARY}
-        - APP_DATABASE_NAME_CRM=${APP_DATABASE_NAME_CRM}
+        - APP_DATABASE_NAME_PRIMARY=${APP_DATABASE_NAME_PRIMARY:?APP_DATABASE_NAME_PRIMARY must be set}
+        - APP_DATABASE_NAME_CRM=${APP_DATABASE_NAME_CRM:?APP_DATABASE_NAME_CRM must be set}
         - APP_DATABASE_HOST=${APP_DATABASE_HOST:-db.cami.larcity}
         - APP_DATABASE_PORT=${APP_DATABASE_PORT:-5432}
         - GITCRYPT_KEY_BASE64=${GITCRYPT_KEY_BASE64}
@@ -125,7 +128,8 @@ services:
       APP_CONFIG_SKIP_TWENTY_CRM_INIT_CHECK: yes
       APP_DATABASE_HOST: ${APP_DATABASE_HOST:-db.cami.larcity}
       APP_DATABASE_PORT: ${APP_DATABASE_PORT:-5432}
-      APP_DATABASE_NAME_PRIMARY: ${APP_DATABASE_NAME_PRIMARY}
+      APP_DATABASE_NAME_PRIMARY: ${APP_DATABASE_NAME_PRIMARY:?APP_DATABASE_NAME_PRIMARY must be set}
+      APP_DATABASE_NAME_CRM: ${APP_DATABASE_NAME_CRM:?APP_DATABASE_NAME_CRM must be set}
       APP_DATABASE_USER: ${APP_DATABASE_USER}
       APP_DATABASE_PASSWORD: ${APP_DATABASE_PASSWORD}
       GITCRYPT_KEY_BASE64: ${GITCRYPT_KEY_BASE64}
@@ -177,7 +181,8 @@ services:
       APP_CONFIG_SKIP_ZOHO_INIT_CHECK: yes
       APP_CONFIG_SKIP_TWENTY_CRM_INIT_CHECK: yes
       APP_DATABASE_HOST: db.cami.larcity
-      APP_DATABASE_NAME_PRIMARY: ${APP_DATABASE_NAME_PRIMARY}
+      APP_DATABASE_NAME_PRIMARY: ${APP_DATABASE_NAME_PRIMARY:?APP_DATABASE_NAME_PRIMARY must be set}
+      APP_DATABASE_NAME_CRM: ${APP_DATABASE_NAME_CRM:-$DEFAULT_APP_DATABASE_NAME_CRM}
       APP_DATABASE_USER: ${APP_DATABASE_USER}
       APP_DATABASE_PASSWORD: ${APP_DATABASE_PASSWORD}
       GITCRYPT_KEY_BASE64: ${GITCRYPT_KEY_BASE64}
@@ -211,7 +216,7 @@ services:
       - "${CRM_SERVICE_PORT:-16016}:3000"
     environment:
       NODE_PORT: 3000
-      PG_DATABASE_URL: postgres://${APP_DATABASE_USER:-postgres}:${APP_DATABASE_PASSWORD:-postgres}@db.cami.larcity:${CRM_DATABASE_PORT:-5432}/${APP_DATABASE_NAME_CRM:-default}
+      PG_DATABASE_URL: postgres://${APP_DATABASE_USER:-postgres}:${APP_DATABASE_PASSWORD:-postgres}@db.cami.larcity:${CRM_DATABASE_PORT:-5432}/${APP_DATABASE_NAME_CRM:?APP_DATABASE_NAME_CRM must be set}
       SERVER_URL: ${SERVER_URL}
       REDIS_URL: ${CRM_REDIS_URL:-redis://redis:6379}
       DISABLE_DB_MIGRATIONS: ${DISABLE_DB_MIGRATIONS}
@@ -222,7 +227,7 @@ services:
       STORAGE_S3_NAME: ${STORAGE_S3_NAME}
       STORAGE_S3_ENDPOINT: ${STORAGE_S3_ENDPOINT}
 
-      APP_SECRET: ${APP_SECRET:-replace_me_with_a_random_string}
+      APP_SECRET: ${APP_SECRET:?APP_SECRET must be set}
       # MESSAGING_PROVIDER_GMAIL_ENABLED: ${MESSAGING_PROVIDER_GMAIL_ENABLED}
       # CALENDAR_PROVIDER_GOOGLE_ENABLED: ${CALENDAR_PROVIDER_GOOGLE_ENABLED}
       # AUTH_GOOGLE_CLIENT_ID: ${AUTH_GOOGLE_CLIENT_ID}
@@ -261,6 +266,7 @@ services:
     profiles:
       - all
       - batteries-included
+      - crm
       - essential
 
   crm-worker:
@@ -270,7 +276,7 @@ services:
       - server_local_data:/app/packages/twenty-server/.local-storage
     command: ["yarn", "worker:prod"]
     environment:
-      PG_DATABASE_URL: postgres://${APP_DATABASE_USER:-postgres}:${APP_DATABASE_PASSWORD:-postgres}@db.cami.larcity:${CRM_DATABASE_PORT:-5432}/${APP_DATABASE_NAME_CRM:-default}
+      PG_DATABASE_URL: postgres://${APP_DATABASE_USER:-postgres}:${APP_DATABASE_PASSWORD:-postgres}@db.cami.larcity:${CRM_DATABASE_PORT:-5432}/${APP_DATABASE_NAME_CRM:?APP_DATABASE_NAME_CRM must be set}
       SERVER_URL: ${SERVER_URL}
       REDIS_URL: ${CRM_REDIS_URL:-redis://redis:6379}
       DISABLE_DB_MIGRATIONS: "true" # it already runs on the server
@@ -281,7 +287,7 @@ services:
       STORAGE_S3_NAME: ${STORAGE_S3_NAME}
       STORAGE_S3_ENDPOINT: ${STORAGE_S3_ENDPOINT}
 
-      APP_SECRET: ${APP_SECRET:-replace_me_with_a_random_string}
+      APP_SECRET: ${APP_SECRET:?APP_SECRET must be set}
       # MESSAGING_PROVIDER_GMAIL_ENABLED: ${MESSAGING_PROVIDER_GMAIL_ENABLED}
       # CALENDAR_PROVIDER_GOOGLE_ENABLED: ${CALENDAR_PROVIDER_GOOGLE_ENABLED}
       # AUTH_GOOGLE_CLIENT_ID: ${AUTH_GOOGLE_CLIENT_ID}
@@ -315,6 +321,7 @@ services:
     profiles:
       - all
       - batteries-included
+      - crm
       - essential
 
 volumes:

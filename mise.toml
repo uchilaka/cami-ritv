@@ -1,9 +1,88 @@
+[settings]
+env_shell_expand  = true
+
 [[env]]
 _.file = "{{config_root}}/.env"
+
 [[env]]
 _.file = "{{config_root}}/.env.local"
+
+[[env]]
+_.source          = ".env.$PLATFORM_ENV"
+PLATFORM_ENV      = { required = true }
+COMPOSE_PROFILE   = { required = true }
+
 [[env]]
 _.source = "{{config_root}}/.envrc"
 
 [tools]
 ruby = "3.4.4"
+
+[tasks."check:images"]
+description   = "Check docker hub images used by the flagship service and it's dependencies"
+run           = "docker compose --profile $COMPOSE_PROFILE images"
+
+[tasks."check:network"]
+description   = "Check the network info for the docker engine of flagship service"
+run           = "docker network ls"
+
+[tasks."check:volumes"]
+description   = "Check the volumes info for the docker engine of the flagship service"
+run           = "docker compose --profile $COMPOSE_PROFILE volumes"
+
+[tasks."check:status"]
+description   = "Check the status of the flagship service and dependencies"
+run             = "docker compose --profile $COMPOSE_PROFILE ps"
+
+[tasks."check:config"]
+description   = "Check the resolved docker compose configuration (see $COMPOSE_FILE)"
+run           = "docker compose --profile $COMPOSE_PROFILE config"
+
+[tasks."svcs:logs"]
+alias         = "logs"
+description   = "Tail the flagship service logs"
+run           = "docker compose --profile $COMPOSE_PROFILE logs --follow"
+
+[tasks."svcs:logs:data"]
+alias         = "logs:data"
+description   = "Tail the flagship service logs with data volumes"
+run           = "docker compose --profile $COMPOSE_PROFILE logs --follow app-store"
+
+[tasks."svcs:start"]
+description   = "Start the flagship service and dependencies"
+run           = "docker compose --profile $COMPOSE_PROFILE up --detach"
+
+[tasks."svcs:data:start"]
+alias         = "start:data"
+description   = "Start the flagship service and dependencies with data volumes"
+run           = "docker compose --profile $COMPOSE_PROFILE up --detach app-store"
+
+##################################################################
+# Tasks below this line are intended to be developer-friendly for
+# operating the flagship service.
+##################################################################
+
+[tasks.doctor]
+description   = "Run flagship service checks"
+depends       = ["check:*"]
+
+[tasks.start]
+description   = "Start the flagship service and tail the logs"
+run           = [
+  { task = "svcs:start" },
+  { task = "svcs:logs" }
+]
+
+[tasks.down]
+description   = "Stop and remove all containers for the flagship service"
+run           = "docker compose --profile $COMPOSE_PROFILE down --remove-orphans"
+
+[tasks.destroy]
+description   = "Destroy the flagship service (including volumes and dependencies)"
+run           = [
+  "docker compose --profile $COMPOSE_PROFILE down --volumes --remove-orphans"
+]
+
+[tasks.unlock]
+description   = "Unlock repository secrets (see ./bin/unlock-repo)"
+run           = "./bin/unlock-repo"
