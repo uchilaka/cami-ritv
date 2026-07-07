@@ -86,9 +86,13 @@ module LarCity
         puts "Error setting up daemon: #{e.message}"
       end
 
-      add_port_option(desc: I18n.t('commands.services.lookup.options.port.short_desc'))
       desc 'lookup', I18n.t('commands.services.lookup.short_desc')
       long_desc I18n.t('commands.services.lookup.long_desc')
+      add_port_option(desc: I18n.t('commands.services.lookup.options.port.short_desc'))
+      option :name,
+             type: :string,
+             desc: "A human-friendly name to filter the lookup results (e.g., 'node' or 'python')",
+             required: false
       def lookup
         # Listening TCP ports: sudo lsof -nP -iTCP -sTCP:LISTEN
         # Specific TCP port: sudo lsof -i tcp:<port-number>
