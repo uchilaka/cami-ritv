@@ -49,7 +49,11 @@ module LarCity
 
         def compose_override_config
           @compose_override_config ||=
-            YAML.load(File.read(compose_override_config_file), symbolize_names: false)
+            if File.exist?(compose_override_config_file)
+              YAML.load(File.read(compose_override_config_file), symbolize_names: false)
+            else
+              {}
+            end
         end
 
         def compose_config_file

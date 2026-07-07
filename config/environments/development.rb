@@ -94,7 +94,20 @@ Rails.application.configure do
   config.mission_control.jobs.http_basic_auth_enabled = false
 
   config.after_initialize do
-    # Initialize features
-    FeaturesCmd.new.invoke(:init, []) unless AppUtils.thor_mode?
+    next if AppUtils.thor_mode?
+
+    flipper_tables_available =
+      begin
+        connection = ActiveRecord::Base.connection
+        connection.data_source_exists?('flipper_features') &&
+          connection.data_source_exists?('flipper_gates')
+      rescue ActiveRecord::NoDatabaseError,
+             ActiveRecord::ConnectionNotEstablished,
+             ActiveRecord::StatementInvalid
+        false
+      end
+
+    # Initialize features only when Flipper's tables are available.
+    FeaturesCmd.new.invoke(:init, []) if flipper_tables_available
   end
 end
