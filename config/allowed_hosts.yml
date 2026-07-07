@@ -13,6 +13,7 @@
 ---
 development:
   - accounts.larcity.ngrok.dev
+  - accounts.tunnel.larcity.dev
   - accounts.larcity
 test:
   - accounts.larcity.ngrok.test
