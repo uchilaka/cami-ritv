@@ -68,12 +68,21 @@ run           = "docker compose --profile $COMPOSE_PROFILE up --detach"
 
 [tasks."start:worker"]
 description   = "Start the flagship service and dependencies with worker"
-depends       = ["build:worker"]
 run           = "docker compose --profile $COMPOSE_PROFILE up --detach worker"
+
+[tasks."migrate:web"]
+description   = "Run migrations for the flagship service and dependencies with web"
+depends       = ["start:web"]
+run           = "docker compose --profile $COMPOSE_PROFILE exec web bin/rails db:migrate"
+
+[tasks."migrate:data:web"]
+description   = "Run data migrations for the flagship service and dependencies with web"
+depends       = ["start:web"]
+run           = "docker compose --profile $COMPOSE_PROFILE exec web bin/rails data:migrate"
 
 [tasks."start:web"]
 description   = "Start the flagship service and dependencies with web"
-depends       = ["build:web", "start:worker"]
+depends       = ["start:worker", "migrate:web", "migrate:data:web"]
 run           = "docker compose --profile $COMPOSE_PROFILE up --detach web"
 
 [tasks."start:data"]

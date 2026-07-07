@@ -165,6 +165,9 @@ services:
       - batteries-included
       - standalone
       - all
+    networks:
+      - default
+      - larcity-beta-net
 
   worker:
     container_name: worker.cami.larcity
@@ -278,6 +281,9 @@ services:
       - batteries-included
       - crm
       - essential
+    networks:
+      - default
+      - larcity-beta-net
 
   crm-worker:
     container_name: twenty-worker.cami.larcity
@@ -355,3 +361,6 @@ networks:
     name: larcity_apps
     enable_ipv6: false
     driver: bridge
+  larcity-beta-net:
+    name: larcity-beta-net
+    external: true
