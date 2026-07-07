@@ -38,7 +38,6 @@ description   = "Check the resolved docker compose configuration (see $COMPOSE_F
 run           = "docker compose --profile $COMPOSE_PROFILE config"
 
 [tasks."logs:services"]
-alias         = "logs"
 description   = "Tail the flagship service logs"
 run           = "docker compose --profile $COMPOSE_PROFILE logs --follow"
 
@@ -46,6 +45,14 @@ run           = "docker compose --profile $COMPOSE_PROFILE logs --follow"
 alias         = "logs:data"
 description   = "Tail the flagship service logs with data volumes"
 run           = "docker compose --profile $COMPOSE_PROFILE logs --follow app-store"
+
+[tasks."logs:web"]
+description   = "Tail the flagship service logs with web"
+run           = "docker compose --profile $COMPOSE_PROFILE logs --follow web"
+
+[tasks."logs:worker"]
+description   = "Tail the flagship service logs with worker"
+run           = "docker compose --profile $COMPOSE_PROFILE logs --follow worker"
 
 [tasks."build:web"]
 description   = "Build the flagship service web image"
@@ -81,6 +88,10 @@ run           = "docker compose --profile $COMPOSE_PROFILE up --detach app-store
 [tasks.doctor]
 description   = "Run flagship service checks"
 depends       = ["check:*"]
+
+[tasks.logs]
+description   = "Tail the logs for the flagship service and dependencies"
+depends       = ["logs:*"]
 
 [tasks.dev]
 alias         = "rails"
