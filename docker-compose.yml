@@ -140,6 +140,10 @@ services:
       HOSTNAME: ${HOSTNAME}
       SMTP_USER: ${SMTP_USER}
       # "APP_SECRET", "CRM_REDIS_URL", "CRM_DATABASE_NAME", "SERVER_URL", "PUBLIC_DOMAIN_URL"
+    labels: !override
+      - "traefik.enable=true"
+      - "traefik.http.routers.twenty-crm.rule=Host(`crm.${PLATFORM_SUBDOMAIN:?PLATFORM_SUBDOMAIN must be set}`)"
+      - "traefik.http.services.twenty-crm.loadbalancer.server.port=3000"
     secrets:
       - source: gitcrypt-key
         target: gitcrypt.key
