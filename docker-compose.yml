@@ -113,8 +113,8 @@ services:
         - ZOHO_CLIENT_SECRET=${ZOHO_CLIENT_SECRET}
         - CRM_ORG_ID=${CRM_ORG_ID}
       secrets:
-        - source: gitcrypt-key
-          target: gitcrypt.key
+        # - source: gitcrypt-key
+        #   target: gitcrypt.key
         - source: development-key
           target: development.key
         - source: production-key
@@ -146,8 +146,8 @@ services:
       - "traefik.http.routers.twenty-crm.rule=Host(`crm.${PLATFORM_SUBDOMAIN:?PLATFORM_SUBDOMAIN must be set}`)"
       - "traefik.http.services.twenty-crm.loadbalancer.server.port=3000"
     secrets:
-      - source: gitcrypt-key
-        target: gitcrypt.key
+      # - source: gitcrypt-key
+      #   target: gitcrypt.key
       - source: development-key
         target: development.key
       - source: production-key
