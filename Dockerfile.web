@@ -60,6 +60,12 @@ ARG ZOHO_CLIENT_ID
 ARG ZOHO_CLIENT_SECRET
 ARG CRM_ORG_ID
 ARG SMTP_USER
+ARG APP_CONFIG_OMNIAUTH_ENABLED
+ARG APP_CONFIG_OMNIAUTH_GOOGLE_CLIENT_ID
+ARG APP_CONFIG_OMNIAUTH_GOOGLE_CLIENT_SECRET
+ARG SEMANTIC_LOGGER_STREAMING_ENABLED
+ARG SEND_EMAILS_ENABLED
+ARG WEB_CONSOLE_ENABLED
 
 # Decrypt credentials and git-crypt files during build ensuring that all sensitive
 # information is available for the build process without being included in the
@@ -105,6 +111,10 @@ ENV APP_CONFIG_OMNIAUTH_ENABLED="${APP_CONFIG_OMNIAUTH_ENABLED:-no}"
 ENV SEMANTIC_LOGGER_STREAMING_ENABLED="${SEMANTIC_LOGGER_STREAMING_ENABLED:-no}"
 ENV SEND_EMAILS_ENABLED="${SEND_EMAILS_ENABLED:-no}"
 ENV WEB_CONSOLE_ENABLED="${WEB_CONSOLE_ENABLED:-no}"
+# @TODO: Review if we need to set these ENV variables here and explore a deep understanding of how
+#   they are used in the application - specifically the differences between ENV and ARG in the build
+#   and runtime contexts. This is important to ensure that sensitive information is handled securely
+#   and appropriately.
 
 RUN --mount=type=secret,id=${RAILS_ENV}.key,dst=${WORKDIR}/config/credentials/${RAILS_ENV}.key \
    echo "🔑 Secrets mounted successfully"
