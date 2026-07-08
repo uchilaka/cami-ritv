@@ -76,7 +76,6 @@ run           = "docker compose --profile $COMPOSE_PROFILE exec web bin/rails db
 
 [tasks."migrate:data:web"]
 description   = "Run data migrations for the flagship service and dependencies with web"
-depends       = ["start:web"]
 run           = "docker compose --profile $COMPOSE_PROFILE exec web bin/rails data:migrate"
 
 [tasks."start:web"]
