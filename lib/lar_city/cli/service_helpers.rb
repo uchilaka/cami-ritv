@@ -57,18 +57,19 @@ module LarCity
         end
 
         def compose_config_file
-          @compose_config_file ||= %w[compose.yml docker-compose.yml].find do |basename|
-            Rails.root.join(basename).exist?
-          end
+          @compose_config_file ||= 
+            %w[compose.yml docker-compose.yml]
+              .map { |basename| Rails.root.join(basename).to_s }
+              .find { |path| File.exist?(path) }
         ensure
           @compose_config_file ||= Rails.root.join('docker-compose.yml').to_s
         end
 
         def compose_override_config_file
-          @compose_override_config_file ||=
-            %w[compose.override.yml docker-compose.override.yml].find do |basename|
-              Rails.root.join(basename).exist?
-            end
+          @compose_override_config_file ||= 
+            %w[compose.override.yml docker-compose.override.yml]
+              .map { |basename| Rails.root.join(basename).to_s }
+              .find { |path| File.exist?(path) }
         ensure
           @compose_override_config_file ||= Rails.root.join('docker-compose.override.yml').to_s
         end

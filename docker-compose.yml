@@ -362,5 +362,5 @@ networks:
     enable_ipv6: false
     driver: bridge
   larcity-beta-net:
+    # NOTE: This is an external network and must already exist (e.g. `docker network create larcity-beta-net`).
     name: larcity-beta-net
-    external: true

@@ -8,7 +8,7 @@ module LarCity
     RSpec.describe ImagesCmd, type: :command, skip_in_ci: true do
       subject(:command) { described_class.new([], options) }
 
-      let(:options) { { pretend: dry_run } }
+let(:options) { { dry_run: dry_run } }
       let(:service_name) { 'web' }
       let(:compose_file_override) { 'docker-compose.yml' }
       let(:dry_run) { true }

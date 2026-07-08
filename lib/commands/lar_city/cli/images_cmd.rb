@@ -85,7 +85,7 @@ module LarCity
 
         # TODO: Extract image_id from this content pattern: naming to registry.fly.io/cami-lab-worker:latest
         check_registry_image_tag!
-        @registry_auth_result = run('fly auth docker', eval: true, always_run: true)
+@registry_auth_result = run('fly auth docker', io_mode: :eval_with_result, mode: :always_run)
         say_debug("Registry login result: #{registry_auth_result.inspect}")
         unless %r{^Authentication successful}.match?(registry_auth_result)
           say_error(
@@ -99,7 +99,7 @@ module LarCity
         end
 
         push_cmd = ['docker push', "#{container_tag}:#{version}"]
-        if Flipper.enabled?(:feat_push_images)
+        if Flipper.enabled?(:feat__push_images)
           @push_result =
             run(*push_cmd, io_mode: :eval_with_result) { |progress| say_debug progress }
           say_debug("Push result: #{push_result.inspect}")
@@ -112,8 +112,8 @@ module LarCity
 
       no_commands do
         def check_registry_image_tag!
-          registry_host, image_name, version_tag =
-            %r{(.*)\/(.*)(?::(.*))?}.match(container_tag).values_at(1, 2, 3)
+          match = %r{(.*)\/(.*)(?::(.*))?}.match(container_tag.to_s)
+          registry_host, image_name, version_tag = match&.values_at(1, 2, 3)
           say_debug "Tag match data: #{{ registry_host:, image_name:, version_tag: }.inspect}"
           unless registry_host.present? && image_name.present?
             raise Thor::Error, <<~MSG

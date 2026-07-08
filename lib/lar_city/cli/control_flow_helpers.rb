@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'config/environment'
+require 'config/environment' unless defined?(Rails) && Rails.respond_to?(:application)
 require_relative 'utils/class_helpers'
 require_relative 'output_helpers'
 
@@ -61,9 +61,9 @@ module LarCity
           end
         end
 
-        def init_features!
-          FeaturesCmd.new.invoke(:init, [], verbose: verbose?, pretend: pretend?)
-        end
+def init_features!
+  FeaturesCmd.new.invoke(:init, [], verbose: verbose?, dry_run: dry_run?)
+end
 
         def force?
           options[:force] == true
