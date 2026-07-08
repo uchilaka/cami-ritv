@@ -143,8 +143,8 @@ services:
       # "APP_SECRET", "CRM_REDIS_URL", "CRM_DATABASE_NAME", "SERVER_URL", "PUBLIC_DOMAIN_URL"
     labels: !override
       - "traefik.enable=true"
-      - "traefik.http.routers.twenty-crm.rule=Host(`crm.${PLATFORM_SUBDOMAIN:?PLATFORM_SUBDOMAIN must be set}`)"
-      - "traefik.http.services.twenty-crm.loadbalancer.server.port=3000"
+      - "traefik.http.routers.accounts.rule=Host(`accounts.${PLATFORM_SUBDOMAIN:?PLATFORM_SUBDOMAIN must be set}`)"
+      - "traefik.http.services.accounts.loadbalancer.server.port=16006"
     secrets:
       # - source: gitcrypt-key
       #   target: gitcrypt.key
@@ -158,7 +158,7 @@ services:
       #- ./config/credentials/git-crypt.key:/opt/project/src/.git/git-crypt/keys/default:ro
       - ./config/credentials/${RAILS_ENV:?RAILS_ENV must be set}.yml.enc:/opt/project/src/config/credentials.yml.enc:ro
     ports:
-      - "16006:3000"
+      - "16006:16006"
     depends_on:
       - app-store
     profiles:
@@ -235,6 +235,10 @@ services:
       - server_local_data:/app/packages/twenty-server/.local-storage
     ports:
       - "${CRM_SERVICE_PORT:-16016}:3000"
+    labels: !override
+      - "traefik.enable=true"
+      - "traefik.http.routers.accounts-crm.rule=Host(`accounts-crm.${PLATFORM_SUBDOMAIN:?PLATFORM_SUBDOMAIN must be set}`)"
+      - "traefik.http.services.accounts-crm.loadbalancer.server.port=3000"
     environment:
       NODE_PORT: 3000
       PG_DATABASE_URL: postgres://${APP_DATABASE_USER:-postgres}:${APP_DATABASE_PASSWORD:-postgres}@db.cami.larcity:${CRM_DATABASE_PORT:-5432}/${APP_DATABASE_NAME_CRM:?APP_DATABASE_NAME_CRM must be set}

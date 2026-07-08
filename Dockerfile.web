@@ -128,7 +128,7 @@ RUN --mount="type=secret,id=${RAILS_ENV}.key,dst=${WORKDIR}/config/credentials/$
 # Review your deployment provider docs on building from a Dockerfile, for example:
 # Render:       https://render.com/docs/docker#building-from-a-dockerfile
 # DigitalOcean: https://docs.digitalocean.com/products/app-platform/how-to/deploy-from-container-images/
-EXPOSE 3000
+EXPOSE 16006
 
 # Specify the entrypoint command to run your Rails server
 CMD ["bundle", "exec", "rails", "server", "--binding", "0.0.0.0"]
