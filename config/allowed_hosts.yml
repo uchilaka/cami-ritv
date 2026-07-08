@@ -29,6 +29,7 @@ staging:
   - cami-staging-app-ghexn.ondigitalocean.app
   - accounts.staging.lar.city
   - accounts.staging.larcity.org
+  - accounts.staging.larcity.tech
   - accounts.beta.larcity.tech
   - accounts.staging.larcity.business
   - accounts.staging.larcity.hopto.org
