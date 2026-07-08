@@ -9,7 +9,22 @@ RUN apt-get update -qq && \
   pkg-config \
   libvips \
   libpq-dev \
+  zsh \
   && rm -rf /var/lib/apt/lists/*
+
+# Set zsh as the default shell with a minimal .zshrc (dev/debug ergonomics).
+# oh-my-zsh is layered on top in the `dev` stage.
+ENV SHELL=/usr/bin/zsh
+RUN chsh -s /usr/bin/zsh root && \
+  printf '%s\n' \
+  'autoload -Uz compinit && compinit' \
+  'setopt AUTO_CD' \
+  'HISTFILE=~/.zsh_history' \
+  'HISTSIZE=10000' \
+  'SAVEHIST=10000' \
+  'setopt SHARE_HISTORY' \
+  "PROMPT='%n@%m %~ %# '" \
+  > /root/.zshrc
 
 FROM base AS src
 ENV WORKDIR="/opt/project/src"
@@ -26,6 +41,7 @@ FROM src AS web
 
 ARG RAILS_ENV
 ARG RAILS_MASTER_KEY
+ARG APP_CONFIG_JWT_SECRET_KEY
 ARG REDIS_URL
 ARG APP_DATABASE_NAME_PRIMARY
 ARG APP_DATABASE_NAME_REPLICA
@@ -78,8 +94,8 @@ ENV APP_CONFIG_SKIP_ZOHO_INIT_CHECK=${APP_CONFIG_SKIP_ZOHO_INIT_CHECK:-no}
 ENV APP_CONFIG_SKIP_TWENTY_CRM_INIT_CHECK=${APP_CONFIG_SKIP_TWENTY_CRM_INIT_CHECK:-no}
 
 # Omniauth ENV variables
-ENV OMNIAUTH_GOOGLE_CLIENT_ID="${OMNIAUTH_GOOGLE_CLIENT_ID:-}"
-ENV OMNIAUTH_GOOGLE_CLIENT_SECRET="${OMNIAUTH_GOOGLE_CLIENT_SECRET:-}"
+#ENV OMNIAUTH_GOOGLE_CLIENT_ID="${OMNIAUTH_GOOGLE_CLIENT_ID:-}"
+#ENV OMNIAUTH_GOOGLE_CLIENT_SECRET="${OMNIAUTH_GOOGLE_CLIENT_SECRET:-}"
 
 # Default to production environment, but allow override at runtime
 ENV RAILS_ENV="${RAILS_ENV:-production}"
@@ -116,3 +132,21 @@ EXPOSE 3000
 
 # Specify the entrypoint command to run your Rails server
 CMD ["bundle", "exec", "rails", "server", "--binding", "0.0.0.0"]
+
+# ---------------------------------------------------------------------------
+# Dev/debug image: layers oh-my-zsh on top of the runtime image.
+# zsh itself is already installed and configured in the `base` stage.
+# Build with: docker build --target dev -f Dockerfile.web .
+# ---------------------------------------------------------------------------
+FROM web AS dev
+
+# Install oh-my-zsh and point .zshrc at it (git is available from the base ruby image)
+RUN git clone --depth=1 https://github.com/ohmyzsh/ohmyzsh.git /root/.oh-my-zsh && \
+  printf '%s\n' \
+  'export ZSH="$HOME/.oh-my-zsh"' \
+  'ZSH_THEME="robbyrussell"' \
+  'plugins=(git)' \
+  'source $ZSH/oh-my-zsh.sh' \
+  > /root/.zshrc
+
+# Inherits EXPOSE and CMD from the `web` stage

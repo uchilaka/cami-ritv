@@ -66,26 +66,46 @@ run           = "docker compose --profile $COMPOSE_PROFILE build worker"
 description   = "Start the flagship service and dependencies"
 run           = "docker compose --profile $COMPOSE_PROFILE up --detach"
 
+[tasks."start:data"]
+description   = "Start the flagship service and dependencies with data volumes"
+run           = "docker compose --profile $COMPOSE_PROFILE up --detach app-store"
+
+[tasks."setup:data"]
+description   = "Setup the flagship service and dependencies with data volumes"
+depends       = ["start:data"]
+run           = "docker compose --profile $COMPOSE_PROFILE run --rm web bin/rails db:create db:create:queue"
+
 [tasks."start:worker"]
 description   = "Start the flagship service and dependencies with worker"
+depends       = ["setup:data"]
 run           = "docker compose --profile $COMPOSE_PROFILE up --detach worker"
 
 [tasks."migrate:web"]
 description   = "Run migrations for the flagship service and dependencies with web"
-run           = "docker compose --profile $COMPOSE_PROFILE run --rm web bin/rails db:setup db:setup:queue db:migrate"
+depends       = ["setup:data"]
+run           = "docker compose --profile $COMPOSE_PROFILE run --rm web bin/rails db:migrate"
 
 [tasks."migrate:data:web"]
 description   = "Run data migrations for the flagship service and dependencies with web"
+depends       = ["migrate:web"]
 run           = "docker compose --profile $COMPOSE_PROFILE run --rm web bin/rails data:migrate"
+
+[tasks."debug:web"]
+description   = "Execute a command in the flagship service web container"
+run           = "docker compose --profile $COMPOSE_PROFILE run -it web zsh"
+
+[tasks."debug:worker"]
+description   = "Execute a command in the flagship service worker container"
+run           = "docker compose --profile $COMPOSE_PROFILE run -it worker zsh"
 
 [tasks."start:web"]
 description   = "Start the flagship service and dependencies with web"
 depends       = ["start:worker", "migrate:web", "migrate:data:web"]
 run           = "docker compose --profile $COMPOSE_PROFILE up --detach web"
 
-[tasks."start:data"]
-description   = "Start the flagship service and dependencies with data volumes"
-run           = "docker compose --profile $COMPOSE_PROFILE up --detach app-store"
+[tasks."dev:seed"]
+description   = "Seed the web service data store"
+run           = "docker compose --profile $COMPOSE_PROFILE run --rm web bin/rails db:seed"
 
 ##################################################################
 # Tasks below this line are intended to be developer-friendly for
