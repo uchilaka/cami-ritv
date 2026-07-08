@@ -10,7 +10,8 @@ class VirtualOfficeManager
     delegate :hostname,
              :use_secure_protocol?,
              :hostname_is_proxied?,
-             :hostname_is_nginx_proxy?, to: AppUtils
+             :hostname_is_nginx_proxy?,
+             :web_console_enabled?, to: AppUtils
 
     def default_url_options
       # Only run this in the context of a job
@@ -59,6 +60,7 @@ class VirtualOfficeManager
 
     def web_console_permissions
       return nil if Rails.env.test?
+      return nil unless web_console_enabled?
 
       ENV.fetch('LAN_SUBNET_MASK', Rails.application.credentials.web_console.permissions)
     end

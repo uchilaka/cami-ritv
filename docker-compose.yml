@@ -194,6 +194,12 @@ services:
       APP_CONFIG_SKIP_PAYPAL_INIT_CHECK: yes
       APP_CONFIG_SKIP_ZOHO_INIT_CHECK: yes
       APP_CONFIG_SKIP_TWENTY_CRM_INIT_CHECK: yes
+      # @TODO Refactor this ENV variable to adhere to the naming convention of other ENV variables in this file.
+      #   It should be renamed to `APP_CONFIG_WEB_CONSOLE_ENABLED` and the codebase should be updated accordingly.
+      WEB_CONSOLE_ENABLED: no
+      # @TODO Semantic logger streaming to betterstack is not yet implemented in the worker container,
+      #   so disable it for now
+      SEMANTIC_LOGGER_STREAMING_ENABLED: no
       APP_DATABASE_HOST: ${APP_DATABASE_HOST:-db.cami.larcity}
       APP_DATABASE_PORT: ${APP_DATABASE_PORT:-5432}
       APP_DATABASE_NAME_PRIMARY: ${APP_DATABASE_NAME_PRIMARY:?APP_DATABASE_NAME_PRIMARY must be set}
