@@ -1,4 +1,4 @@
-name: cami-${NODE_ENV:-development}
+name: cami-${RAILS_ENV:?RAILS_ENV must be set}
 # TODO: [LWS-309] Templatize this file and have `lx-cli env-setup` handle generating it for different environments
 #   based on a template and environment-specific .env files that are the source of truth for environment
 #   variables. This would help reduce duplication and make it easier to manage environment variables
@@ -60,10 +60,9 @@ services:
     restart: unless-stopped
     environment:
       POSTGRES_DB: ${APP_DATABASE_NAME_PRIMARY:?APP_DATABASE_NAME_PRIMARY must be set}
-      POSTGRES_USER: ${APP_DATABASE_USER}
-      POSTGRES_PASSWORD: ${APP_DATABASE_PASSWORD}
-      APP_DATABASE_NAME_CRM: ${APP_DATABASE_NAME_CRM:?DEFAULT_APP_DATABASE_NAME_CRM must be set}
-      POSTGRES_HOST_AUTH_METHOD: trust # IMPORTANT allows all connections without a password - experimental only!
+      POSTGRES_USER: ${APP_DATABASE_USER:?APP_DATABASE_USER must be set}
+      POSTGRES_PASSWORD: ${APP_DATABASE_PASSWORD:?APP_DATABASE_PASSWORD must be set}
+      APP_DATABASE_NAME_CRM: ${APP_DATABASE_NAME_CRM:?APP_DATABASE_NAME_CRM must be set}
     ports:
       - "16032:5432"
     volumes:
@@ -93,7 +92,7 @@ services:
       context: .
       dockerfile: Dockerfile.web
       args:
-        - RAILS_ENV=${RAILS_ENV:-development}
+        - RAILS_ENV=${RAILS_ENV:?RAILS_ENV must be set}
         - RAILS_MASTER_KEY=${RAILS_MASTER_KEY}
         - REDIS_URL=${REDIS_URL}
         - APP_DATABASE_USER=${APP_DATABASE_USER}
@@ -123,7 +122,7 @@ services:
           target: lab.key
     restart: unless-stopped
     environment:
-      RAILS_ENV: ${RAILS_ENV:-development}
+      RAILS_ENV: ${RAILS_ENV:?RAILS_ENV must be set}
       RAILS_MASTER_KEY: ${RAILS_MASTER_KEY}
       REDIS_URL: ${REDIS_URL}
       APP_CONFIG_JWT_SECRET_KEY: ${APP_CONFIG_JWT_SECRET_KEY:?APP_CONFIG_JWT_SECRET_KEY must be set}
@@ -135,9 +134,9 @@ services:
       APP_DATABASE_PORT: ${APP_DATABASE_PORT:-5432}
       APP_DATABASE_NAME_PRIMARY: ${APP_DATABASE_NAME_PRIMARY:?APP_DATABASE_NAME_PRIMARY must be set}
       APP_DATABASE_NAME_CRM: ${APP_DATABASE_NAME_CRM:?APP_DATABASE_NAME_CRM must be set}
-      APP_DATABASE_USER: ${APP_DATABASE_USER}
-      APP_DATABASE_PASSWORD: ${APP_DATABASE_PASSWORD}
-      GITCRYPT_KEY_BASE64: ${GITCRYPT_KEY_BASE64}
+      APP_DATABASE_USER: ${APP_DATABASE_USER:?APP_DATABASE_USER must be set}
+      APP_DATABASE_PASSWORD: ${APP_DATABASE_PASSWORD:?APP_DATABASE_PASSWORD must be set}
+      GITCRYPT_KEY_BASE64: ${GITCRYPT_KEY_BASE64:?GITCRYPT_KEY_BASE64 must be set}
       HOSTNAME: ${HOSTNAME}
       SMTP_USER: ${SMTP_USER}
       # "APP_SECRET", "CRM_REDIS_URL", "CRM_DATABASE_NAME", "SERVER_URL", "PUBLIC_DOMAIN_URL"
@@ -186,19 +185,20 @@ services:
           target: lab.key
     restart: unless-stopped
     environment:
-      RAILS_ENV: ${RAILS_ENV:-development}
+      RAILS_ENV: ${RAILS_ENV:?RAILS_ENV must be set}
       RAILS_MASTER_KEY: ${RAILS_MASTER_KEY}
       APP_CONFIG_JWT_SECRET_KEY: ${APP_CONFIG_JWT_SECRET_KEY:?APP_CONFIG_JWT_SECRET_KEY must be set}
       APP_CONFIG_CHECK_ENV_VARS: yes
       APP_CONFIG_SKIP_PAYPAL_INIT_CHECK: yes
       APP_CONFIG_SKIP_ZOHO_INIT_CHECK: yes
       APP_CONFIG_SKIP_TWENTY_CRM_INIT_CHECK: yes
-      APP_DATABASE_HOST: db.cami.larcity
+      APP_DATABASE_HOST: ${APP_DATABASE_HOST:-db.cami.larcity}
+      APP_DATABASE_PORT: ${APP_DATABASE_PORT:-5432}
       APP_DATABASE_NAME_PRIMARY: ${APP_DATABASE_NAME_PRIMARY:?APP_DATABASE_NAME_PRIMARY must be set}
-      APP_DATABASE_NAME_CRM: ${APP_DATABASE_NAME_CRM:-$DEFAULT_APP_DATABASE_NAME_CRM}
-      APP_DATABASE_USER: ${APP_DATABASE_USER}
-      APP_DATABASE_PASSWORD: ${APP_DATABASE_PASSWORD}
-      GITCRYPT_KEY_BASE64: ${GITCRYPT_KEY_BASE64}
+      APP_DATABASE_NAME_CRM: ${APP_DATABASE_NAME_CRM:?APP_DATABASE_NAME_CRM must be set}
+      APP_DATABASE_USER: ${APP_DATABASE_USER:?APP_DATABASE_USER must be set}
+      APP_DATABASE_PASSWORD: ${APP_DATABASE_PASSWORD:?APP_DATABASE_PASSWORD must be set}
+      GITCRYPT_KEY_BASE64: ${GITCRYPT_KEY_BASE64:?GITCRYPT_KEY_BASE64 must be set}
       HOSTNAME: ${HOSTNAME}
       SMTP_USER: ${SMTP_USER}
     secrets:
