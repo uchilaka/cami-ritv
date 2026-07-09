@@ -38,7 +38,7 @@ en:
       check_blueprint:
         short_desc: Check the app's YAML blueprint configuration for errors
         long_desc: >
-          🚧 @TODO: This command should be moved to a new namespace e.g. `blueprint:check`
+          🚧 @TODO: [LAR-334] This command should be moved to a new namespace e.g. `blueprint:check`
           or `blueprint:validate` to better reflect its purpose and scope. The `devkit`
           namespace should be reserved for commands that are specifically related to
           the development environment and workflow, while blueprint validation is a more
@@ -50,7 +50,7 @@ en:
       get_blueprint:
         short_desc: Get the app's YAML blueprint configuration (currently only supports DigitalOcean)
         long_desc: >
-          🚧 @TODO: This command should be moved to a new namespace e.g. `blueprint:update`
+          🚧 @TODO: [LAR-334] This command should be moved to a new namespace e.g. `blueprint:update`
           or `blueprint:validate` to better reflect its purpose and scope. The `devkit`
           namespace should be reserved for commands that are specifically related to
           the development environment and workflow, while blueprint validation is a more
@@ -189,11 +189,11 @@ en:
         failure_message: >
           Failed to build the container image for service [%{name}] %{error_details}
         tag_success_message: >
-          Successfully tagged the container image for service [%{name}] with new tag [%{new_tag}]
+          Successfully tagged the container image for service [%{name}] with new tag [%{new_tag}].
         tag_failure_message: >
-          Failed to tag the container image for service [%{name}] with new tag [%{new_tag}] %{error_details}
+          Failed to tag the container image for service [%{name}] with new tag [%{new_tag}]. %{error_details}.
         registry_login_failure_message: >
-          Failed to log in to the container registry [%{registry}] %{error_details}
+          Failed to log in to the container registry [%{registry}]. %{error_details}.
     tunnel:
       init:
         short_desc: Initialize %{service} proxy tunnel configuration for the CAMI app

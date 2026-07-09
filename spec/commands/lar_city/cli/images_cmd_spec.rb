@@ -8,7 +8,7 @@ module LarCity
     RSpec.describe ImagesCmd, type: :command, skip_in_ci: true do
       subject(:command) { described_class.new([], options) }
 
-      let(:options) { { pretend: dry_run } }
+let(:options) { { dry_run: dry_run } }
       let(:service_name) { 'web' }
       let(:compose_file_override) { 'docker-compose.yml' }
       let(:dry_run) { true }
@@ -91,14 +91,14 @@ module LarCity
               output(build_output).to_stdout_from_any_process
           end
 
-          it 'reports the image_id', skip: "TODO: Look into why this is failing" do
+          it 'reports the image_id', skip: "TODO: [LAR-341] Look into why this is failing" do
             expect { command.invoke(:build, [], **build_args) }.to \
               output(push_output).to_stdout_from_any_process
           end
         end
 
         context 'with an unsupported service',
-                skip: 'TODO: this test with a "TeamCity Rake Runner Plugin isn\'t compatible with this RSpec version" error message' do
+                skip: 'TODO: [LAR-343] this test with a "TeamCity Rake Runner Plugin isn\'t compatible with this RSpec version" error message' do
           let(:unsupported_service) { 'redis' }
           let(:unsupported_message) { %r{The specified service \[#{unsupported_service}\] is not supported} }
           let(:build_args) { { service: unsupported_service, dry_run: } }
@@ -158,7 +158,7 @@ module LarCity
           end
 
           it "return the expected registry tag",
-             skip: "TODO: make this pass once docker compose config is working as needed" do
+             skip: "TODO: [LAR-344] make this pass once docker compose config is working as needed" do
             expect(result).to eq(expected_tag)
           end
         end

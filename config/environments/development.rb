@@ -30,7 +30,7 @@ Rails.application.configure do
 
   # Async jobs are run in the background using SolidQueue.
   config.active_job.queue_adapter = :solid_queue
-  # TODO: Will explore migrating jobs to adopt SolidQueue incrementally
+  # TODO: [LAR-332] Will explore migrating jobs to adopt SolidQueue incrementally
   #   See https://github.com/rails/solid_queue?tab=readme-ov-file#incremental-adoption
   # config.active_job.connects_to = { database: { writing: :queue } }
 
@@ -69,7 +69,7 @@ Rails.application.configure do
   # Configure logging for the app's mail service.
   config.action_mailer.logger = Rails.logger
   # IMPORTANT: This will affect whether letter_opener can open the email in the browser or not
-  # TODO: Spec this config across development, staging and production
+  # TODO: [LAR-333] Spec this config across development, staging and production
   config.action_mailer.default_url_options = VirtualOfficeManager.initial_default_url_options
 
   # Print deprecation notices to the Rails logger.

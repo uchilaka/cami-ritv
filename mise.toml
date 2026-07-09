@@ -18,7 +18,7 @@ COMPOSE_PROFILE   = { required = true }
 ruby = "3.4.4"
 
 [tasks."check:images"]
-description   = "Check docker hub images used by the flagship service and it's dependencies"
+description   = "Check docker hub images used by the flagship service and its dependencies"
 run           = "docker compose --profile $COMPOSE_PROFILE images"
 
 [tasks."check:network"]
@@ -128,8 +128,8 @@ run           = "./bin/start"
 [tasks.start]
 description   = "Start the flagship service and tail the logs"
 run           = [
-  { task = "svcs:start" },
-  { task = "svcs:logs" },
+  { task = "start:services" },
+  { task = "logs:services" },
   "./bin/start"
 ]
 

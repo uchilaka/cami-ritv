@@ -24,7 +24,7 @@ default: &default
     enabled: false
   feat__auto_push_built_images:
     enabled: false
-  feat_push_images:
+  feat__push_images:
     enabled: false
 development:
   <<: *default
