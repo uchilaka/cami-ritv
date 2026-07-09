@@ -16,7 +16,16 @@ release_command = "bundle exec rails db:migrate:primary data:migrate"
 
 [env]
 APP_CONFIG_CHECK_ENV_VARS = "yes"
+# This is temporary to turn off initialization via ./config/initializers/omniauth.rb
+# until we can get the omniauth initializer working in production for Devise - there's
+# a different implementation pattern we need:
+# https://github.com/zquestz/omniauth-google-oauth2#devise
+# For now, the omniauth initializer is currently set to only run in development
+# and test environments, but we want to be able to turn it on in production when
+# we get it working without having to redeploy the app.
+APP_CONFIG_OMNIAUTH_ENABLED = "no"
 HOSTNAME = "cami-production.fly.dev"
+LOG_LEVEL = "info"
 PORT = "16006"
 RAILS_ENV = "production"
 RAILS_LOG_TO_STDOUT = "true"

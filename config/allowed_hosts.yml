@@ -1,4 +1,4 @@
-# TODO: refactor the structure of this file to support shared configurations across environments, e.g.:
+# TODO: [LAR-331] refactor the structure of this file to support shared configurations across environments, e.g.:
 # shared: &shared
 #    hosts:
 #      - <%= ENV.fetch('HOSTNAME', 'accounts.larcity.ngrok.dev') %>
@@ -13,6 +13,7 @@
 ---
 development:
   - accounts.larcity.ngrok.dev
+  - accounts.tunnel.larcity.dev
   - accounts.larcity
 test:
   - accounts.larcity.ngrok.test

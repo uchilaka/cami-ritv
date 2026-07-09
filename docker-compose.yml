@@ -1,3 +1,4 @@
+name: cami-${RAILS_ENV:?RAILS_ENV must be set}
 # TODO: [LWS-309] Templatize this file and have `lx-cli env-setup` handle generating it for different environments
 #   based on a template and environment-specific .env files that are the source of truth for environment
 #   variables. This would help reduce duplication and make it easier to manage environment variables
@@ -30,6 +31,7 @@ services:
     profiles:
       - all
       - batteries-included
+      - crm
       - essential
 
   # Doc: https://ngrok.com/docs/using-ngrok-with/docker/#:~:text=Using%20ngrok%20with%20Docker%20Compose
@@ -57,11 +59,10 @@ services:
     image: postgres:17
     restart: unless-stopped
     environment:
-      POSTGRES_DB: ${APP_DATABASE_NAME_PRIMARY}
-      POSTGRES_USER: ${APP_DATABASE_USER}
-      POSTGRES_PASSWORD: ${APP_DATABASE_PASSWORD}
-      APP_DATABASE_NAME_CRM: ${APP_DATABASE_NAME_CRM}
-      POSTGRES_HOST_AUTH_METHOD: trust # IMPORTANT allows all connections without a password - experimental only!
+      POSTGRES_DB: ${APP_DATABASE_NAME_PRIMARY:?APP_DATABASE_NAME_PRIMARY must be set}
+      POSTGRES_USER: ${APP_DATABASE_USER:?APP_DATABASE_USER must be set}
+      POSTGRES_PASSWORD: ${APP_DATABASE_PASSWORD:?APP_DATABASE_PASSWORD must be set}
+      APP_DATABASE_NAME_CRM: ${APP_DATABASE_NAME_CRM:?APP_DATABASE_NAME_CRM must be set}
     ports:
       - "16032:5432"
     volumes:
@@ -69,12 +70,17 @@ services:
       - ./db/shared/postgres/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d:ro
       - ./db/${RAILS_ENV:-development}/postgres/downloads:/usr/local/downloads:ro
     healthcheck:
-      test: pg_isready -U ${APP_DATABASE_USER} -h localhost -d ${APP_DATABASE_NAME_PRIMARY}
+      test: pg_isready -U ${APP_DATABASE_USER} -h localhost -d ${APP_DATABASE_NAME_PRIMARY:?APP_DATABASE_NAME_PRIMARY must be set}
       interval: 5s
       timeout: 5s
       retries: 10
     profiles:
       - batteries-included
+      - crm
+      # @deprecated This profile mapping for the app-store is deprecated and will be
+      # removed in a future release, since a platform postgres database server is now
+      # managed via the platform-monorepo project but is kept to help with discovery/refactoring
+      # of existing scripts that may reference it
       - essential
       - standalone
       - all
@@ -86,13 +92,13 @@ services:
       context: .
       dockerfile: Dockerfile.web
       args:
-        - RAILS_ENV=${RAILS_ENV:-development}
+        - RAILS_ENV=${RAILS_ENV:?RAILS_ENV must be set}
         - RAILS_MASTER_KEY=${RAILS_MASTER_KEY}
         - REDIS_URL=${REDIS_URL}
         - APP_DATABASE_USER=${APP_DATABASE_USER}
         - APP_DATABASE_PASSWORD=${APP_DATABASE_PASSWORD}
-        - APP_DATABASE_NAME_PRIMARY=${APP_DATABASE_NAME_PRIMARY}
-        - APP_DATABASE_NAME_CRM=${APP_DATABASE_NAME_CRM}
+        - APP_DATABASE_NAME_PRIMARY=${APP_DATABASE_NAME_PRIMARY:?APP_DATABASE_NAME_PRIMARY must be set}
+        - APP_DATABASE_NAME_CRM=${APP_DATABASE_NAME_CRM:?APP_DATABASE_NAME_CRM must be set}
         - APP_DATABASE_HOST=${APP_DATABASE_HOST:-db.cami.larcity}
         - APP_DATABASE_PORT=${APP_DATABASE_PORT:-5432}
         - GITCRYPT_KEY_BASE64=${GITCRYPT_KEY_BASE64}
@@ -106,8 +112,8 @@ services:
         - ZOHO_CLIENT_SECRET=${ZOHO_CLIENT_SECRET}
         - CRM_ORG_ID=${CRM_ORG_ID}
       secrets:
-        - source: gitcrypt-key
-          target: gitcrypt.key
+        # - source: gitcrypt-key
+        #   target: gitcrypt.key
         - source: development-key
           target: development.key
         - source: production-key
@@ -116,25 +122,31 @@ services:
           target: lab.key
     restart: unless-stopped
     environment:
-      RAILS_ENV: ${RAILS_ENV:-development}
+      RAILS_ENV: ${RAILS_ENV:?RAILS_ENV must be set}
       RAILS_MASTER_KEY: ${RAILS_MASTER_KEY}
       REDIS_URL: ${REDIS_URL}
+      APP_CONFIG_JWT_SECRET_KEY: ${APP_CONFIG_JWT_SECRET_KEY:?APP_CONFIG_JWT_SECRET_KEY must be set}
       APP_CONFIG_CHECK_ENV_VARS: yes
       APP_CONFIG_SKIP_PAYPAL_INIT_CHECK: yes
       APP_CONFIG_SKIP_ZOHO_INIT_CHECK: yes
       APP_CONFIG_SKIP_TWENTY_CRM_INIT_CHECK: yes
       APP_DATABASE_HOST: ${APP_DATABASE_HOST:-db.cami.larcity}
       APP_DATABASE_PORT: ${APP_DATABASE_PORT:-5432}
-      APP_DATABASE_NAME_PRIMARY: ${APP_DATABASE_NAME_PRIMARY}
-      APP_DATABASE_USER: ${APP_DATABASE_USER}
-      APP_DATABASE_PASSWORD: ${APP_DATABASE_PASSWORD}
-      GITCRYPT_KEY_BASE64: ${GITCRYPT_KEY_BASE64}
+      APP_DATABASE_NAME_PRIMARY: ${APP_DATABASE_NAME_PRIMARY:?APP_DATABASE_NAME_PRIMARY must be set}
+      APP_DATABASE_NAME_CRM: ${APP_DATABASE_NAME_CRM:?APP_DATABASE_NAME_CRM must be set}
+      APP_DATABASE_USER: ${APP_DATABASE_USER:?APP_DATABASE_USER must be set}
+      APP_DATABASE_PASSWORD: ${APP_DATABASE_PASSWORD:?APP_DATABASE_PASSWORD must be set}
+      GITCRYPT_KEY_BASE64: ${GITCRYPT_KEY_BASE64:?GITCRYPT_KEY_BASE64 must be set}
       HOSTNAME: ${HOSTNAME}
       SMTP_USER: ${SMTP_USER}
       # "APP_SECRET", "CRM_REDIS_URL", "CRM_DATABASE_NAME", "SERVER_URL", "PUBLIC_DOMAIN_URL"
+    labels: !override
+      - "traefik.enable=true"
+      - "traefik.http.routers.twenty-crm.rule=Host(`crm.${PLATFORM_SUBDOMAIN:?PLATFORM_SUBDOMAIN must be set}`)"
+      - "traefik.http.services.twenty-crm.loadbalancer.server.port=3000"
     secrets:
-      - source: gitcrypt-key
-        target: gitcrypt.key
+      # - source: gitcrypt-key
+      #   target: gitcrypt.key
       - source: development-key
         target: development.key
       - source: production-key
@@ -142,8 +154,8 @@ services:
       - source: lab-key
         target: lab.key
     volumes:
-      - ./config/credentials/git-crypt.key:/opt/project/src/.git/git-crypt/keys/default:ro
-      - ./config/credentials/$RAILS_ENV.yml.enc:/opt/project/src/config/credentials.yml.enc:ro
+      #- ./config/credentials/git-crypt.key:/opt/project/src/.git/git-crypt/keys/default:ro
+      - ./config/credentials/${RAILS_ENV:?RAILS_ENV must be set}.yml.enc:/opt/project/src/config/credentials.yml.enc:ro
     ports:
       - "16006:3000"
     depends_on:
@@ -152,6 +164,9 @@ services:
       - batteries-included
       - standalone
       - all
+    networks:
+      - default
+      - larcity-beta-net
 
   worker:
     container_name: worker.cami.larcity
@@ -170,17 +185,20 @@ services:
           target: lab.key
     restart: unless-stopped
     environment:
-      RAILS_ENV: ${RAILS_ENV:-development}
+      RAILS_ENV: ${RAILS_ENV:?RAILS_ENV must be set}
       RAILS_MASTER_KEY: ${RAILS_MASTER_KEY}
+      APP_CONFIG_JWT_SECRET_KEY: ${APP_CONFIG_JWT_SECRET_KEY:?APP_CONFIG_JWT_SECRET_KEY must be set}
       APP_CONFIG_CHECK_ENV_VARS: yes
       APP_CONFIG_SKIP_PAYPAL_INIT_CHECK: yes
       APP_CONFIG_SKIP_ZOHO_INIT_CHECK: yes
       APP_CONFIG_SKIP_TWENTY_CRM_INIT_CHECK: yes
-      APP_DATABASE_HOST: db.cami.larcity
-      APP_DATABASE_NAME_PRIMARY: ${APP_DATABASE_NAME_PRIMARY}
-      APP_DATABASE_USER: ${APP_DATABASE_USER}
-      APP_DATABASE_PASSWORD: ${APP_DATABASE_PASSWORD}
-      GITCRYPT_KEY_BASE64: ${GITCRYPT_KEY_BASE64}
+      APP_DATABASE_HOST: ${APP_DATABASE_HOST:-db.cami.larcity}
+      APP_DATABASE_PORT: ${APP_DATABASE_PORT:-5432}
+      APP_DATABASE_NAME_PRIMARY: ${APP_DATABASE_NAME_PRIMARY:?APP_DATABASE_NAME_PRIMARY must be set}
+      APP_DATABASE_NAME_CRM: ${APP_DATABASE_NAME_CRM:?APP_DATABASE_NAME_CRM must be set}
+      APP_DATABASE_USER: ${APP_DATABASE_USER:?APP_DATABASE_USER must be set}
+      APP_DATABASE_PASSWORD: ${APP_DATABASE_PASSWORD:?APP_DATABASE_PASSWORD must be set}
+      GITCRYPT_KEY_BASE64: ${GITCRYPT_KEY_BASE64:?GITCRYPT_KEY_BASE64 must be set}
       HOSTNAME: ${HOSTNAME}
       SMTP_USER: ${SMTP_USER}
     secrets:
@@ -193,8 +211,8 @@ services:
       - source: lab-key
         target: lab.key
     volumes:
-      - ./config/credentials/git-crypt.key:/opt/project/src/.git/git-crypt/keys/default:ro
-      - ./config/credentials/$RAILS_ENV.yml.enc:/opt/project/src/config/credentials.yml.enc:ro
+      #- ./config/credentials/git-crypt.key:/opt/project/src/.git/git-crypt/keys/default:ro
+      - ./config/credentials/${RAILS_ENV:?RAILS_ENV must be set}.yml.enc:/opt/project/src/config/credentials.yml.enc:ro
     depends_on:
       - app-store
     profiles:
@@ -211,7 +229,7 @@ services:
       - "${CRM_SERVICE_PORT:-16016}:3000"
     environment:
       NODE_PORT: 3000
-      PG_DATABASE_URL: postgres://${APP_DATABASE_USER:-postgres}:${APP_DATABASE_PASSWORD:-postgres}@db.cami.larcity:${CRM_DATABASE_PORT:-5432}/${APP_DATABASE_NAME_CRM:-default}
+      PG_DATABASE_URL: postgres://${APP_DATABASE_USER:-postgres}:${APP_DATABASE_PASSWORD:-postgres}@db.cami.larcity:${CRM_DATABASE_PORT:-5432}/${APP_DATABASE_NAME_CRM:?APP_DATABASE_NAME_CRM must be set}
       SERVER_URL: ${SERVER_URL}
       REDIS_URL: ${CRM_REDIS_URL:-redis://redis:6379}
       DISABLE_DB_MIGRATIONS: ${DISABLE_DB_MIGRATIONS}
@@ -222,7 +240,7 @@ services:
       STORAGE_S3_NAME: ${STORAGE_S3_NAME}
       STORAGE_S3_ENDPOINT: ${STORAGE_S3_ENDPOINT}
 
-      APP_SECRET: ${APP_SECRET:-replace_me_with_a_random_string}
+      APP_SECRET: ${APP_SECRET:?APP_SECRET must be set}
       # MESSAGING_PROVIDER_GMAIL_ENABLED: ${MESSAGING_PROVIDER_GMAIL_ENABLED}
       # CALENDAR_PROVIDER_GOOGLE_ENABLED: ${CALENDAR_PROVIDER_GOOGLE_ENABLED}
       # AUTH_GOOGLE_CLIENT_ID: ${AUTH_GOOGLE_CLIENT_ID}
@@ -261,7 +279,11 @@ services:
     profiles:
       - all
       - batteries-included
+      - crm
       - essential
+    networks:
+      - default
+      - larcity-beta-net
 
   crm-worker:
     container_name: twenty-worker.cami.larcity
@@ -270,7 +292,7 @@ services:
       - server_local_data:/app/packages/twenty-server/.local-storage
     command: ["yarn", "worker:prod"]
     environment:
-      PG_DATABASE_URL: postgres://${APP_DATABASE_USER:-postgres}:${APP_DATABASE_PASSWORD:-postgres}@db.cami.larcity:${CRM_DATABASE_PORT:-5432}/${APP_DATABASE_NAME_CRM:-default}
+      PG_DATABASE_URL: postgres://${APP_DATABASE_USER:-postgres}:${APP_DATABASE_PASSWORD:-postgres}@db.cami.larcity:${CRM_DATABASE_PORT:-5432}/${APP_DATABASE_NAME_CRM:?APP_DATABASE_NAME_CRM must be set}
       SERVER_URL: ${SERVER_URL}
       REDIS_URL: ${CRM_REDIS_URL:-redis://redis:6379}
       DISABLE_DB_MIGRATIONS: "true" # it already runs on the server
@@ -281,7 +303,7 @@ services:
       STORAGE_S3_NAME: ${STORAGE_S3_NAME}
       STORAGE_S3_ENDPOINT: ${STORAGE_S3_ENDPOINT}
 
-      APP_SECRET: ${APP_SECRET:-replace_me_with_a_random_string}
+      APP_SECRET: ${APP_SECRET:?APP_SECRET must be set}
       # MESSAGING_PROVIDER_GMAIL_ENABLED: ${MESSAGING_PROVIDER_GMAIL_ENABLED}
       # CALENDAR_PROVIDER_GOOGLE_ENABLED: ${CALENDAR_PROVIDER_GOOGLE_ENABLED}
       # AUTH_GOOGLE_CLIENT_ID: ${AUTH_GOOGLE_CLIENT_ID}
@@ -315,6 +337,7 @@ services:
     profiles:
       - all
       - batteries-included
+      - crm
       - essential
 
 volumes:
@@ -338,3 +361,6 @@ networks:
     name: larcity_apps
     enable_ipv6: false
     driver: bridge
+  larcity-beta-net:
+    # NOTE: This is an external network and must already exist (e.g. `docker network create larcity-beta-net`).
+    name: larcity-beta-net

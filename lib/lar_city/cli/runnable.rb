@@ -77,7 +77,7 @@ module LarCity
                     reader_thread =
                       Thread.new do
                         stdout_stderr.each do |line|
-                          # TODO: There was a condition on eval for this line - review later.
+                          # TODO: [LAR-340] There was a condition on eval for this line - review later.
                           output_buffer << line
                           block.call(line)
                         end
@@ -137,7 +137,7 @@ module LarCity
 
         def validate_mock_return_usage!
           if runnable_always_run? && runnable_mock_return.present?
-            raise ArgumentError, "ONLY use mock_return with IO mode set to 'always_mock'), or leave it blank"
+            raise ArgumentError, "ONLY use mock_return with mode set to 'always_mock', or leave it blank"
           end
         end
 

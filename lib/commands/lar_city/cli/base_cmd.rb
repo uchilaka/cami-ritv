@@ -6,6 +6,8 @@ $LOAD_PATH.unshift(app_path) unless $LOAD_PATH.include?(app_path)
 
 require 'thor'
 require 'awesome_print'
+require 'flipper'
+require 'flipper/adapters/active_record'
 require 'concerns/operating_system_detectable'
 require 'lar_city/cli/utils'
 
@@ -17,7 +19,7 @@ require 'lar_city/cli/utils'
 # - All text verbose output should be in Thor::Shell::Color::MAGENTA.
 module LarCity
   module CLI
-    # TODO: Refactor to LarCity::BaseCmd and move to lib/lar_city/base_cmd.rb
+    # TODO: [LAR-337] Refactor to LarCity::BaseCmd and move to lib/lar_city/base_cmd.rb
     class BaseCmd < Thor
       def self.exit_on_failure?
         true

@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'active_support/core_ext/integer/time'
+require 'lib/commands/features_cmd'
 
 Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
@@ -29,7 +30,7 @@ Rails.application.configure do
 
   # Async jobs are run in the background using SolidQueue.
   config.active_job.queue_adapter = :solid_queue
-  # TODO: Will explore migrating jobs to adopt SolidQueue incrementally
+  # TODO: [LAR-332] Will explore migrating jobs to adopt SolidQueue incrementally
   #   See https://github.com/rails/solid_queue?tab=readme-ov-file#incremental-adoption
   # config.active_job.connects_to = { database: { writing: :queue } }
 
@@ -68,7 +69,7 @@ Rails.application.configure do
   # Configure logging for the app's mail service.
   config.action_mailer.logger = Rails.logger
   # IMPORTANT: This will affect whether letter_opener can open the email in the browser or not
-  # TODO: Spec this config across development, staging and production
+  # TODO: [LAR-333] Spec this config across development, staging and production
   config.action_mailer.default_url_options = VirtualOfficeManager.initial_default_url_options
 
   # Print deprecation notices to the Rails logger.
@@ -91,4 +92,22 @@ Rails.application.configure do
 
   # Basic auth for mission_control
   config.mission_control.jobs.http_basic_auth_enabled = false
+
+  config.after_initialize do
+    next if AppUtils.thor_mode?
+
+    flipper_tables_available =
+      begin
+        connection = ActiveRecord::Base.connection
+        connection.data_source_exists?('flipper_features') &&
+          connection.data_source_exists?('flipper_gates')
+      rescue ActiveRecord::NoDatabaseError,
+             ActiveRecord::ConnectionNotEstablished,
+             ActiveRecord::StatementInvalid
+        false
+      end
+
+    # Initialize features only when Flipper's tables are available.
+    FeaturesCmd.new.invoke(:init, []) if flipper_tables_available
+  end
 end
