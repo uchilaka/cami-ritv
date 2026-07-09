@@ -52,11 +52,15 @@ class AppUtils
     end
 
     def hostname_is_proxied?
-      Rails.env.staging? || hostname_is_nginx_proxy?
+      Rails.env.staging? || hostname_is_nginx_proxy? || hostname_is_tailscale_proxy?
     end
 
     def hostname_is_nginx_proxy?
       %r{\.ngrok\.(dev|app)}.match?(hostname)
+    end
+
+    def hostname_is_tailscale_proxy?
+      %r{\.(tunnel|beta)\.larcity\.(dev|tech)$}.match?(hostname)
     end
 
     def use_secure_protocol?

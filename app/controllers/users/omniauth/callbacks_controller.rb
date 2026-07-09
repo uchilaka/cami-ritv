@@ -3,7 +3,7 @@
 module Users
   module Omniauth
     class CallbacksController < Devise::OmniauthCallbacksController
-      skip_before_action :verify_authenticity_token, only: :google
+      skip_before_action :verify_authenticity_token, only: %i[google passthru]
       before_action :set_auth_provider
 
       def google

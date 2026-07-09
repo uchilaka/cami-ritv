@@ -125,6 +125,10 @@ alias         = "rails"
 description   = "Start the flagship service and dependencies with Rails"
 run           = "./bin/start"
 
+[tasks.build]
+description   = "Build the flagship service and worker images"
+depends       = ["build:web", "build:worker"]
+
 [tasks.start]
 description   = "Start the flagship service and tail the logs"
 run           = [
