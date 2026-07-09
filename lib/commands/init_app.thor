@@ -32,7 +32,7 @@ class InitApp < Thor::Group
   end
 
   def kick_stores
-    # @FIXME The primary database should be last until we can explicitly target it
+    # @FIXME [LAR-335] The primary database should be last until we can explicitly target it
     #   for subsequent commands
     %w[crm primary].each do |target|
       restore = target.to_s == 'crm' ? options[:restore_crm] : options[:restore_primary]
@@ -70,7 +70,7 @@ class InitApp < Thor::Group
 
   no_commands do
 
-    # @TODO Explore refactoring to use `rails db:seed:primary` and `rails db:seed:crm` instead
+    # @TODO [LAR-336] Explore refactoring to use `rails db:seed:primary` and `rails db:seed:crm` instead
     def restore_database_from_backup(target: 'primary')
       restore_cmd = RestoreDb.new([], target:, latest_backup: true, verbose: verbose?, dry_run: pretend?)
       restore_cmd.invoke_all

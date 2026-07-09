@@ -83,7 +83,7 @@ module LarCity
         )
         return unless options[:push]
 
-        # TODO: Extract image_id from this content pattern: naming to registry.fly.io/cami-lab-worker:latest
+        # TODO: [LAR-338] Extract image_id from this content pattern: naming to registry.fly.io/cami-lab-worker:latest
         check_registry_image_tag!
 @registry_auth_result = run('fly auth docker', io_mode: :eval_with_result, mode: :always_run)
         say_debug("Registry login result: #{registry_auth_result.inspect}")
@@ -180,7 +180,7 @@ module LarCity
         def success?
           return true if result.is_a?(Process::Status) && result.success?
 
-          # TODO: Make this regex test case-insensitive while using %r
+          # TODO: [LAR-339] Make this regex test case-insensitive while using %r
           %r{Image (.*) Built}.match?(result)
         end
 
