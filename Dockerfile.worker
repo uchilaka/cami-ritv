@@ -8,7 +8,22 @@ RUN apt-get update -qq && \
   pkg-config \
   libvips \
   libpq-dev \
+  zsh \
   && rm -rf /var/lib/apt/lists/*
+
+# Set zsh as the default shell with a minimal .zshrc (dev/debug ergonomics).
+# oh-my-zsh is layered on top in the `dev` stage.
+ENV SHELL=/usr/bin/zsh
+RUN chsh -s /usr/bin/zsh root && \
+  printf '%s\n' \
+  'autoload -Uz compinit && compinit' \
+  'setopt AUTO_CD' \
+  'HISTFILE=~/.zsh_history' \
+  'HISTSIZE=10000' \
+  'SAVEHIST=10000' \
+  'setopt SHARE_HISTORY' \
+  "PROMPT='%n@%m %~ %# '" \
+  > /root/.zshrc
 
 FROM base AS src
 ENV WORKDIR="/opt/project/src"
@@ -23,6 +38,7 @@ FROM src AS worker
 ARG RAILS_ENV
 ARG RAILS_MASTER_KEY
 ARG DATABASE_URL
+ARG APP_CONFIG_JWT_SECRET_KEY
 
 # Default to production environment, but allow override at runtime
 ENV RAILS_ENV="${RAILS_ENV:-production}"
@@ -30,12 +46,15 @@ ENV RAILS_ENV="${RAILS_ENV:-production}"
 # See documentation on accessing secret files at runtime on Render:
 # https://render.com/docs/docker-secrets#accessing-secret-files-at-runtime
 
+RUN --mount="type=secret,id=${RAILS_ENV}.key,dst=${WORKDIR}/config/credentials/${RAILS_ENV}.key" \
+   echo "🔑 Secrets mounted successfully"
+
 # Decrypt credentials and git-crypt files during build ensuring that all sensitive
 # information is available for the build process without being included in the
 # image layers. This allows you to keep your secrets secure while still enabling
 # a successful build.
 RUN --mount=type=secret,id=git-crypt.key,dst=${WORKDIR}/.git/git-crypt/keys/default \
-  ./bin/unlock-repo
+ ./bin/unlock-repo
 
 # Handle secrets during build by mounting them as files, and ensure they are available
 # for the build steps that need them, such as installing dependencies and precompiling
@@ -43,11 +62,8 @@ RUN --mount=type=secret,id=git-crypt.key,dst=${WORKDIR}/.git/git-crypt/keys/defa
 # still enabling a successful build.
 RUN ./bin/link-key-file
 
-RUN --mount="type=secret,id=${RAILS_ENV}.key,dst=${WORKDIR}/config/credentials/${RAILS_ENV}.key" \
-   echo "🔑 Secrets mounted successfully"
-
 # Temporarily disable environment variable checks during build, as some may not be set until runtime on Render
-ENV APP_CONFIG_CHECK_REQUIRED_VARS=no
+ENV APP_CONFIG_CHECK_REQUIRED_VARS=${APP_CONFIG_CHECK_REQUIRED_VARS:-no}
 
 ENV APP_CONFIG_CHECK_ENV_VARS=${APP_CONFIG_CHECK_ENV_VARS:-no}
 ENV APP_CONFIG_SKIP_PAYPAL_INIT_CHECK=${APP_CONFIG_SKIP_PAYPAL_INIT_CHECK:-yes}
@@ -61,3 +77,21 @@ RUN --mount="type=secret,id=${RAILS_ENV}.key,dst=${WORKDIR}/config/credentials/$
 
 # Specify the entrypoint command to run your Rails worker
 CMD ["bundle", "exec", "rails", "solid_queue:start"]
+
+# ---------------------------------------------------------------------------
+# Dev/debug image: layers oh-my-zsh on top of the runtime image.
+# zsh itself is already installed and configured in the `base` stage.
+# Build with: docker build --target dev -f Dockerfile.worker .
+# ---------------------------------------------------------------------------
+FROM worker AS dev
+
+# Install oh-my-zsh and point .zshrc at it (git is available from the base ruby image)
+RUN git clone --depth=1 https://github.com/ohmyzsh/ohmyzsh.git /root/.oh-my-zsh && \
+  printf '%s\n' \
+  'export ZSH="$HOME/.oh-my-zsh"' \
+  'ZSH_THEME="robbyrussell"' \
+  'plugins=(git)' \
+  'source $ZSH/oh-my-zsh.sh' \
+  > /root/.zshrc
+
+# Inherits CMD from the `worker` stage

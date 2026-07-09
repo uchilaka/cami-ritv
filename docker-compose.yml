@@ -126,6 +126,7 @@ services:
       RAILS_MASTER_KEY: ${RAILS_MASTER_KEY}
       REDIS_URL: ${REDIS_URL}
       APP_CONFIG_JWT_SECRET_KEY: ${APP_CONFIG_JWT_SECRET_KEY:?APP_CONFIG_JWT_SECRET_KEY must be set}
+      APP_CONFIG_OMNIAUTH_ENABLED: ${APP_CONFIG_OMNIAUTH_ENABLED:-no}
       APP_CONFIG_CHECK_ENV_VARS: yes
       APP_CONFIG_SKIP_PAYPAL_INIT_CHECK: yes
       APP_CONFIG_SKIP_ZOHO_INIT_CHECK: yes
@@ -139,11 +140,12 @@ services:
       GITCRYPT_KEY_BASE64: ${GITCRYPT_KEY_BASE64:?GITCRYPT_KEY_BASE64 must be set}
       HOSTNAME: ${HOSTNAME}
       SMTP_USER: ${SMTP_USER}
+      DEBUG_LEVEL: ${DEBUG_LEVEL:-warn}
       # "APP_SECRET", "CRM_REDIS_URL", "CRM_DATABASE_NAME", "SERVER_URL", "PUBLIC_DOMAIN_URL"
     labels: !override
       - "traefik.enable=true"
-      - "traefik.http.routers.twenty-crm.rule=Host(`crm.${PLATFORM_SUBDOMAIN:?PLATFORM_SUBDOMAIN must be set}`)"
-      - "traefik.http.services.twenty-crm.loadbalancer.server.port=3000"
+      - "traefik.http.routers.accounts.rule=Host(`accounts.${PLATFORM_SUBDOMAIN:?PLATFORM_SUBDOMAIN must be set}`)"
+      - "traefik.http.services.accounts.loadbalancer.server.port=16006"
     secrets:
       # - source: gitcrypt-key
       #   target: gitcrypt.key
@@ -157,7 +159,7 @@ services:
       #- ./config/credentials/git-crypt.key:/opt/project/src/.git/git-crypt/keys/default:ro
       - ./config/credentials/${RAILS_ENV:?RAILS_ENV must be set}.yml.enc:/opt/project/src/config/credentials.yml.enc:ro
     ports:
-      - "16006:3000"
+      - "16006:16006"
     depends_on:
       - app-store
     profiles:
@@ -189,9 +191,16 @@ services:
       RAILS_MASTER_KEY: ${RAILS_MASTER_KEY}
       APP_CONFIG_JWT_SECRET_KEY: ${APP_CONFIG_JWT_SECRET_KEY:?APP_CONFIG_JWT_SECRET_KEY must be set}
       APP_CONFIG_CHECK_ENV_VARS: yes
+      APP_CONFIG_CHECK_REQUIRED_VARS: no
       APP_CONFIG_SKIP_PAYPAL_INIT_CHECK: yes
       APP_CONFIG_SKIP_ZOHO_INIT_CHECK: yes
       APP_CONFIG_SKIP_TWENTY_CRM_INIT_CHECK: yes
+      # @TODO Refactor this ENV variable to adhere to the naming convention of other ENV variables in this file.
+      #   It should be renamed to `APP_CONFIG_WEB_CONSOLE_ENABLED` and the codebase should be updated accordingly.
+      WEB_CONSOLE_ENABLED: no
+      # @TODO Semantic logger streaming to betterstack is not yet implemented in the worker container,
+      #   so disable it for now
+      SEMANTIC_LOGGER_STREAMING_ENABLED: no
       APP_DATABASE_HOST: ${APP_DATABASE_HOST:-db.cami.larcity}
       APP_DATABASE_PORT: ${APP_DATABASE_PORT:-5432}
       APP_DATABASE_NAME_PRIMARY: ${APP_DATABASE_NAME_PRIMARY:?APP_DATABASE_NAME_PRIMARY must be set}
@@ -227,6 +236,10 @@ services:
       - server_local_data:/app/packages/twenty-server/.local-storage
     ports:
       - "${CRM_SERVICE_PORT:-16016}:3000"
+    labels: !override
+      - "traefik.enable=true"
+      - "traefik.http.routers.accounts-crm.rule=Host(`accounts-crm.${PLATFORM_SUBDOMAIN:?PLATFORM_SUBDOMAIN must be set}`)"
+      - "traefik.http.services.accounts-crm.loadbalancer.server.port=3000"
     environment:
       NODE_PORT: 3000
       PG_DATABASE_URL: postgres://${APP_DATABASE_USER:-postgres}:${APP_DATABASE_PASSWORD:-postgres}@db.cami.larcity:${CRM_DATABASE_PORT:-5432}/${APP_DATABASE_NAME_CRM:?APP_DATABASE_NAME_CRM must be set}
@@ -364,3 +377,5 @@ networks:
   larcity-beta-net:
     # NOTE: This is an external network and must already exist (e.g. `docker network create larcity-beta-net`).
     name: larcity-beta-net
+    enable_ipv6: false
+    driver: bridge

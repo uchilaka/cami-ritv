@@ -51,12 +51,29 @@ class AppUtils
       send_emails? && !letter_opener_enabled? && !mailhog_enabled?
     end
 
+    def mounted_master_key_file
+      key_file = ENV.fetch('APP_CONFIG_MASTER_KEY_FILE', "/run/secrets/#{Rails.env}.key")
+      return key_file if File.exist?(key_file)
+
+      nil
+    end
+
+    def assume_ssl?
+      return @assume_ssl if defined?(@assume_ssl)
+
+      @assume_ssl = yes?(ENV.fetch('APP_CONFIG_ASSUME_SSL_ENABLED', use_secure_protocol? ? 'yes' : 'no'))
+    end
+
     def hostname_is_proxied?
-      Rails.env.staging? || hostname_is_nginx_proxy?
+      Rails.env.staging? || hostname_is_nginx_proxy? || hostname_is_tailscale_proxy?
     end
 
     def hostname_is_nginx_proxy?
       %r{\.ngrok\.(dev|app)}.match?(hostname)
+    end
+
+    def hostname_is_tailscale_proxy?
+      %r{\.(tunnel|beta)\.larcity\.(dev|tech)$}.match?(hostname)
     end
 
     def use_secure_protocol?
