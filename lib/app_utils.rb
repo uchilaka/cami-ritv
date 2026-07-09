@@ -51,18 +51,11 @@ class AppUtils
       send_emails? && !letter_opener_enabled? && !mailhog_enabled?
     end
 
-    def master_key_file_exists?
-      master_key_file.present?
-    end
+    def mounted_master_key_file
+      key_file = ENV.fetch('APP_CONFIG_MASTER_KEY_FILE', "/run/secrets/#{Rails.env}.key")
+      return key_file if File.exist?(key_file)
 
-    def master_key_file
-      @master_key_file ||= [
-        "/run/secrets/#{Rails.env}.key",
-        Rails.root.join("config/credentials/#{Rails.env}.key").to_s,
-        Rails.root.join('config/master.key').to_s,
-      ].find do |file_path|
-        File.exist? file_path
-      end
+      nil
     end
 
     def assume_ssl?

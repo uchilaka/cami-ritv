@@ -42,13 +42,11 @@ module Cami
     }
 
     # key_path must point at the key file itself - Rails reads it with
-    # File.binread, so a directory here raises EISDIR.
-    config.credentials.key_path =
-      if AppUtils.master_key_file_exists?
-        AppUtils.master_key_file
-      else
-        Rails.root.join('config', 'credentials', "#{Rails.env}.key")
-      end
+    # File.binread, so a directory here raises EISDIR. Only override when a
+    # docker secret is mounted; otherwise leave Rails' default lookup
+    # (config/credentials/<env>.key, then config/master.key) untouched so
+    # `credentials:edit --environment <env>` keeps its per-env key fallback.
+    config.credentials.key_path = AppUtils.mounted_master_key_file if AppUtils.mounted_master_key_file.present?
 
     # Please, add to the `ignore` list any other `lib` subdirectories that do
     # not contain `.rb` files, or that should not be reloaded or eager loaded.
