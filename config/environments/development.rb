@@ -34,6 +34,9 @@ Rails.application.configure do
   #   See https://github.com/rails/solid_queue?tab=readme-ov-file#incremental-adoption
   # config.active_job.connects_to = { database: { writing: :queue } }
 
+  # Assume all access to the app is happening through a SSL-terminating reverse proxy.
+  config.assume_ssl = AppUtils.assume_ssl?
+
   # Store uploaded files on the local file system (see config/storage.yml for options).
   config.active_storage.service = :local
 
