@@ -92,11 +92,11 @@ run           = "docker compose --profile $COMPOSE_PROFILE run --rm web bin/rail
 
 [tasks."debug:web"]
 description   = "Execute a command in the flagship service web container"
-run           = "docker compose --profile $COMPOSE_PROFILE run -it web zsh"
+run           = "docker compose --profile $COMPOSE_PROFILE run --rm -it web zsh"
 
 [tasks."debug:worker"]
 description   = "Execute a command in the flagship service worker container"
-run           = "docker compose --profile $COMPOSE_PROFILE run -it worker zsh"
+run           = "docker compose --profile $COMPOSE_PROFILE run --rm -it worker zsh"
 
 [tasks."start:web"]
 description   = "Start the flagship service and dependencies with web"

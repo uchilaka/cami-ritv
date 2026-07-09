@@ -41,6 +41,15 @@ module Cami
       ErrorsController.action(:show).call(env)
     }
 
+    # key_path must point at the key file itself - Rails reads it with
+    # File.binread, so a directory here raises EISDIR.
+    config.credentials.key_path =
+      if AppUtils.master_key_file_exists?
+        AppUtils.master_key_file
+      else
+        Rails.root.join('config', 'credentials', "#{Rails.env}.key")
+      end
+
     # Please, add to the `ignore` list any other `lib` subdirectories that do
     # not contain `.rb` files, or that should not be reloaded or eager loaded.
     # Common ones are `templates`, `generators`, or `middleware`, for example.
