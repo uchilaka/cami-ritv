@@ -144,7 +144,7 @@ services:
       # "APP_SECRET", "CRM_REDIS_URL", "CRM_DATABASE_NAME", "SERVER_URL", "PUBLIC_DOMAIN_URL"
     labels: !override
       - "traefik.enable=true"
-      - "traefik.http.routers.accounts.rule=Host(`accounts.${PLATFORM_SUBDOMAIN:?PLATFORM_SUBDOMAIN must be set}`)"
+      - "traefik.http.routers.accounts.rule=Host(`accounts.${PLATFORM_DOMAIN:?PLATFORM_DOMAIN must be set}`)"
       - "traefik.http.services.accounts.loadbalancer.server.port=16006"
     secrets:
       # - source: gitcrypt-key
@@ -238,7 +238,7 @@ services:
       - "${CRM_SERVICE_PORT:-16016}:3000"
     labels: !override
       - "traefik.enable=true"
-      - "traefik.http.routers.accounts-crm.rule=Host(`accounts-crm.${PLATFORM_SUBDOMAIN:?PLATFORM_SUBDOMAIN must be set}`)"
+      - "traefik.http.routers.accounts-crm.rule=Host(`accounts-crm.${PLATFORM_DOMAIN:?PLATFORM_DOMAIN must be set}`)"
       - "traefik.http.services.accounts-crm.loadbalancer.server.port=3000"
     environment:
       NODE_PORT: 3000
