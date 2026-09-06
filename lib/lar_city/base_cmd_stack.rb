@@ -106,6 +106,10 @@ module LarCity
           name: ENV.fetch('APP_DATABASE_NAME_CRM', "twenty_crm_#{detected_environment}"),
         }
       end
+
+      def list_of_networks
+        `docker network ls --format '{{.Name}}'`.split("\n")
+      end
     end
   end
 end

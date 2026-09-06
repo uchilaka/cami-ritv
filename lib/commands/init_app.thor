@@ -63,6 +63,16 @@ class InitApp < Thor::Group
     restore_database_from_backup(target: 'crm')
   end
 
+  def maybe_setup_service_network
+    network_names = ['larcity-beta-net', "larcity-#{Rails.env}-net"]
+    return if network_names.any? { |network_name| service_network_exists?(network_name) }
+
+    network_names.each do |network_name|
+      say_info "Setting up '#{network_name}' network..."
+      run "docker network create #{network_name}"
+    end
+  end
+
   def start_all_services
     svc = LarCity::CLI::ServicesCmd.new
     svc.invoke(:start, [], dry_run: pretend?, verbose: verbose?)
@@ -78,6 +88,10 @@ class InitApp < Thor::Group
 
     def app_store_resource_path
       Rails.root.join('db', Rails.env, 'postgres', 'downloads')
+    end
+
+    def service_network_exists?(network_name)
+      list_of_networks.include?(network_name)
     end
   end
 end
