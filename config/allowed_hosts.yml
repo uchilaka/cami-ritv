@@ -21,18 +21,17 @@ test:
   - www.example.com
 lab:
   - accounts.larcity.ngrok.dev
-  - accounts.lab.larcity.dev
+  - accounts.beta.larcity.tech
   - accounts.lab.larcity.tech
   - accounts.lab.larcity.hopto.org
 staging:
-  - accounts.larcity.ngrok.dev
+  - accounts.beta.larcity.tech
   - cami-staging-app-ghexn.ondigitalocean.app
   - accounts.staging.lar.city
   - accounts.staging.larcity.org
   - accounts.staging.larcity.tech
   - accounts.staging.larcity.business
   - accounts.staging.larcity.hopto.org
-  - accounts.larcity.dev
   - uches-m4-home-mini
   - uches-m4-home-mini.tail83bfcb.ts.net
   #- accounts.staging.madebylar.city
@@ -42,9 +41,7 @@ production:
   - larcity-production-app-98wcr.ondigitalocean.app
   - cami-production.onrender.com
   - accounts.larcity.hopto.org
-  #- accounts.ho.lar.city
   - accounts.madebylar.city
-#  - accounts.ho.larcity.business
   - accounts.larcity.com
   - accounts.larcity.tech
   - accounts.lar.city

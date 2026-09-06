@@ -10,6 +10,7 @@ class InitApp < Thor::Group
 
   desc 'Command to initialize the application'
 
+  class_option :skip_migrations, type: :boolean, default: false, desc: 'Skip running database migrations'
   class_option :restore_primary, type: :boolean, default: false, desc: 'Restore primary database from latest backup'
   class_option :restore_crm, type: :boolean, default: false, desc: 'Restore CRM database from latest backup'
 
@@ -48,6 +49,12 @@ class InitApp < Thor::Group
   end
 
   def apply_data_migrations
+    if options[:skip_migrations]
+      say_info 'Skipping data migrations as per user request.'
+      return
+    end
+
+    say_info 'Applying data migrations...'
     Rails::Command.invoke('data:migrate')
   end
 
@@ -61,6 +68,14 @@ class InitApp < Thor::Group
 
     say_info 'Restoring CRM database from latest backup...'
     restore_database_from_backup(target: 'crm')
+  end
+
+  def maybe_setup_service_network
+    network_name = 'larcity-beta-net'
+    return if service_network_exists?(network_name)
+
+    say_info "Setting up '#{network_name}' network..."
+    run "docker network create #{network_name}"
   end
 
   def start_all_services
@@ -78,6 +93,10 @@ class InitApp < Thor::Group
 
     def app_store_resource_path
       Rails.root.join('db', Rails.env, 'postgres', 'downloads')
+    end
+
+    def service_network_exists?(network_name)
+      list_of_networks.include?(network_name)
     end
   end
 end

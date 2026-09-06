@@ -146,6 +146,7 @@ module LarCity
           unless runnable_mode.blank? || %w[always_run always_mock].include?(runnable_mode)
             raise ArgumentError, "Unsupported mode: '#{runnable_mode}'"
           end
+
           validate_mock_return_usage!
         end
 
