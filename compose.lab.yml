@@ -1,0 +1,126 @@
+services:
+  redis:
+    container_name: redis.twenty-crm.larcity
+    image: redis
+    restart: unless-stopped
+    command: ["--maxmemory-policy", "noeviction"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  db:
+    container_name: db.twenty-crm.larcity
+    # TODO: To upgrade to v18, the use of a mounted volume for persistent
+    # database storage will need to handle potential migration issues with
+    # the existing volume
+    image: postgres:17
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: twenty_crm_lab
+      POSTGRES_USER: application_user
+      POSTGRES_PASSWORD: L1fIiuQhEKTVMUeZ
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    #ports:
+    #  - "16032:5432"
+    healthcheck:
+      test: "pg_isready -U application_user -h localhost -d twenty_crm_lab"
+      interval: 5s
+      timeout: 5s
+      retries: 10
+  #
+  # https://docs.twenty.com/developers/self-host/capabilities/docker-compose
+  web:
+    build:
+      context: ./packages/twenty-crm
+    image: larcity/twenty-crm:latest
+    container_name: web.twenty-crm.larcity
+    environment:
+      NODE_PORT: 3000
+      PG_DATABASE_URL: postgresql://application_user:L1fIiuQhEKTVMUeZ@db.twenty-crm.larcity:5432/twenty_crm_lab
+      #PG_DATABASE_URL_FILE: /run/secrets/crm_database_url
+      SERVER_URL: http://larcity-nas-ii.tail83bfcb.ts.net:16016
+      REDIS_URL: redis://redis.twenty-crm.larcity:6379/1
+      DISABLE_DB_MIGRATIONS: ${DISABLE_DB_MIGRATIONS}
+      DISABLE_CRON_JOBS_REGISTRATION: ${DISABLE_CRON_JOBS_REGISTRATION}
+      #IS_CONFIG_VARIABLES_IN_DB_ENABLED: false
+      STORAGE_TYPE: ${STORAGE_TYPE:-local}
+      #STORAGE_S3_REGION: ${STORAGE_S3_REGION}
+      #STORAGE_S3_NAME: ${STORAGE_S3_NAME}
+      #STORAGE_S3_ENDPOINT: ${STORAGE_S3_ENDPOINT}
+      APP_SECRET: PDAKRNMAkCpMGnzRFenep8HNR5FUFdBRNRdpjEY4v7rvJ4ouPjacGj2RvaFY6e0R
+      #APP_SECRET_FILE: /run/secrets/app_secret
+    volumes:
+      - server_local_data:/app/packages/twenty-server/.local-storage
+    secrets:
+      - crm_database_url
+      - app_secret
+    ports:
+      - "16016:3000"
+    healthcheck:
+      test: curl --fail http://172.17.0.1:16016/healthz
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    depends_on:
+      redis:
+        condition: service_healthy
+      db:
+        condition: service_healthy
+
+  worker:
+    build:
+      context: ./packages/twenty-crm
+    image: larcity/twenty-crm:latest
+    container_name: worker.twenty-crm.larcity
+    environment:
+      PG_DATABASE_URL: postgresql://application_user:L1fIiuQhEKTVMUeZ@db.twenty-crm.larcity:5432/twenty_crm_lab
+      #PG_DATABASE_URL_FILE: /run/secrets/crm_database_url
+      SERVER_URL: http://larcity-nas-ii.tail83bfcb.ts.net:16016
+      REDIS_URL: redis://redis.twenty-crm.larcity:6379/1
+      DISABLE_DB_MIGRATIONS: "true" # it already runs on the server
+      DISABLE_CRON_JOBS_REGISTRATION: "true" # it already runs on the server
+      #IS_CONFIG_VARIABLES_IN_DB_ENABLED: false
+      STORAGE_TYPE: ${STORAGE_TYPE:-local}
+      #STORAGE_S3_REGION: ${STORAGE_S3_REGION}
+      #STORAGE_S3_NAME: ${STORAGE_S3_NAME}
+      #STORAGE_S3_ENDPOINT: ${STORAGE_S3_ENDPOINT}
+      APP_SECRET: PDAKRNMAkCpMGnzRFenep8HNR5FUFdBRNRdpjEY4v7rvJ4ouPjacGj2RvaFY6e0R
+      #APP_SECRET_FILE: /run/secrets/app_secret
+    volumes:
+      - server_local_data:/app/packages/twenty-server/.local-storage
+    secrets:
+      - crm_database_url
+      - app_secret
+    command: ["yarn", "worker:prod"]
+    depends_on:
+      web:
+        condition: service_healthy
+
+volumes:
+  postgres_data:
+  server_local_data:
+
+secrets:
+  app_database_host:
+    file: ./secrets/app_database_host.txt
+  app_database_port:
+    file: ./secrets/app_database_port.txt
+  app_database_name:
+    file: ./secrets/app_database_name.txt
+  app_database_user:
+    file: ./secrets/app_database_user.txt
+  app_database_password:
+    file: ./secrets/app_database_password.txt
+  app_secret:
+    file: ./secrets/app_secret.txt
+  crm_database_url:
+    file: ./secrets/crm_database_url.txt
+
+networks:
+  default:
+    name: larcity_lab_crm_network
+    enable_ipv6: false
+    driver: bridge
