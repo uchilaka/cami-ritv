@@ -293,7 +293,7 @@ module LarCity
               'psql -h db.cami.larcity',
               '--port 5432',
               "-U #{ENV.fetch('APP_DATABASE_USER')}",
-              ENV.fetch('APP_DATABASE_NAME'),
+              ENV.fetch('APP_DATABASE_NAME_PRIMARY'),
             ].join(' ')
           end
 

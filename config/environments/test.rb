@@ -12,6 +12,31 @@ Rails.application.configure do
     File.exist?(file)
   end)
 
+  # Force the test database NAMES, which must never be inherited from a dev shell.
+  #
+  # .envrc derives APP_DATABASE_NAME_* from NODE_ENV rather than RAILS_ENV, so a shell
+  # sitting in "development" exports sails_development even for `RAILS_ENV=test`, and
+  # Dotenv.load deliberately does not overwrite already-set variables -- so .env.test.local
+  # cannot correct it. spec/rails_helper.rb truncates whatever this resolves to.
+  #
+  # Only the NAMES are forced. Host, port, user and password are left to the shell so the
+  # suite runs against whichever Postgres the developer actually has up; a blanket
+  # `Dotenv.load(overwrite: true)` would also impose .env.test.local's compose-oriented
+  # host/port/credentials and break local runs against a host Postgres.
+  #
+  # `overwrite: true` below applies to the PARSE only -- Dotenv.parse never mutates ENV.
+  # Without it the parser echoes back the value already in ENV for any key ENV holds
+  # (dotenv/parser.rb:59), i.e. the very dev-shell value being corrected here.
+  test_env_values = File.exist?('.env.test.local') ? Dotenv.parse('.env.test.local', overwrite: true) : {}
+  {
+    'APP_DATABASE_NAME_PRIMARY' => 'sails_test',
+    'APP_DATABASE_NAME_CRM' => 'twenty_crm_test',
+  }.each do |var, fallback|
+    next if ENV[var].to_s.end_with?('_test')
+
+    ENV[var] = test_env_values[var].presence || fallback
+  end
+
   # https://github.com/heartcombo/devise?tab=readme-ov-file#testing
   config.middleware.insert_before Warden::Manager, ActionDispatch::Cookies
   config.middleware.insert_before Warden::Manager, ActionDispatch::Session::CookieStore

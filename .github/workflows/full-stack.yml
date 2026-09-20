@@ -33,7 +33,11 @@ jobs:
       RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
       PROJECT_ROOT: .
       APP_DATABASE_HOST: localhost
-      APP_DATABASE_NAME: sails_test
+      # NOTE: config/database.yml reads APP_DATABASE_NAME_PRIMARY, not APP_DATABASE_NAME.
+      # The old name was a no-op here: CI passed only because database.yml's test block
+      # defaults to 'sails_test'. Naming it correctly makes CI assert the database rather
+      # than rely on that default.
+      APP_DATABASE_NAME_PRIMARY: sails_test
       APP_DATABASE_USER: ${{ secrets.APP_DATABASE_USER }}
       APP_DATABASE_PASSWORD: ${{ secrets.APP_DATABASE_PASSWORD }}
       APP_DATABASE_PORT: 5432
@@ -43,7 +47,7 @@ jobs:
         # https://hub.docker.com/_/postgres
         image: postgres:17
         env:
-          POSTGRES_DB: ${{env.APP_DATABASE_NAME}}
+          POSTGRES_DB: ${{env.APP_DATABASE_NAME_PRIMARY}}
           POSTGRES_USER: ${{env.APP_DATABASE_USER}}
           POSTGRES_PASSWORD: ${{env.APP_DATABASE_PASSWORD}}
           #POSTGRES_HOST_AUTH_METHOD: trust # IMPORTANT allows all connections without a password - experimental only!
