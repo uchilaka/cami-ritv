@@ -236,27 +236,43 @@ one worth catching.
 Quoted forms — `"api_key": "sk-..."` in JSON, `token: 'abc123'` in YAML — put a
 quote between the keyword and the separator, and another between the separator
 and the value. A pattern that requires the keyword to be followed directly by
-`[:=]` never reaches either quoted case, so both the grep and the redacting sed
-allow one optional `"` or `'` on each side. The value side cannot just drop the
-`<`-exclusion after the optional quote, either: `[^<[:space:]]` alone is
-satisfied by the quote character itself, which would flag a quoted placeholder
-like `"token": "<placeholder>"` as a hit. The alternation below requires the
-character *after* an optional opening quote to be the real, non-`<` value.
+`[:=]` never reaches either quoted case, so every stage below allows one
+optional `"` or `'` on each side.
+
+**The placeholder exemption is a named list, not "anything in angle brackets."**
+Excluding every value that opens with `<` is the tempting one-character version
+and it is wrong: `<` is a perfectly ordinary first character for a real
+credential, so `password: <actual-secret>` would be waved through in silence by
+the wiki's highest-severity gate. Exempting by shape cannot distinguish a
+placeholder from a secret that happens to look like one; only a vocabulary can.
+
+So the match runs in two stages. Stage 1 matches every non-empty value, `<`
+included. Stage 2 removes only the spellings we actually use to *mean* "no value
+here". Anything else in angle brackets is reported, which is the intended
+direction to fail in — a false positive costs someone a glance at the file, a
+false negative ships a credential.
 
 ```bash
 # Location + keyword only. The sed stage rewrites the value away before it is
-# ever printed, so no pipeline downstream of here can see it.
-grep -rnIiE "(secret|password|token|api[_-]?key|master[_-]?key)[\"']?[[:space:]]*[:=][[:space:]]*([\"'][^<]|[^<[:space:]\"'])" \
+# ever printed, so no pipeline downstream of here can see it. The stage-2 grep
+# sees whole lines but never prints one: it only ever removes lines, and the
+# first thing written to the terminal is the sed's already-redacted output.
+grep -rnIiE "(secret|password|token|api[_-]?key|master[_-]?key)[\"']?[[:space:]]*[:=][[:space:]]*[\"']?[^[:space:]\"']" \
      wiki/ \
+  | grep -viE "(secret|password|token|api[_-]?key|master[_-]?key)[\"']?[[:space:]]*[:=][[:space:]]*[\"']?<(redacted|placeholder|example|value|\.\.\.)>" \
   | sed -E "s/^([^:]*:[0-9]*:).*[^a-z_]?(secret|password|token|api[_-]?key|master[_-]?key)[\"']?[[:space:]]*[:=].*\$/\1 \2 = <redacted>/I"
 
 # Already filename-only (-l): never prints key material.
 grep -rlE 'BEGIN [A-Z ]*PRIVATE KEY' wiki/
 ```
 
-Verified against a scratch fixture covering both quoted secret forms, an
-unquoted secret, an unquoted placeholder, and a quoted placeholder, before
-trusting this as the wiki-wide gate — the placeholder cases must stay silent:
+Widen that vocabulary only by adding a spelling you have decided means "no value
+here" — never by loosening it back toward `<[^>]*>`, which reinstates exactly
+the false negative it exists to prevent.
+
+Verified against a scratch fixture before trusting this as the wiki-wide gate.
+Lines 6 and 7 are the ones that matter most: an angle-bracketed value that is
+*not* in the vocabulary is a secret, and must be flagged like any other.
 
 ```bash
 tmp=$(mktemp)
@@ -266,10 +282,15 @@ printf '%s\n' \
   '  password: plainvalue' \
   '  api_key: <REDACTED>' \
   '  "token": "<placeholder>"' \
+  '  password: <actual-secret>' \
+  '  "secret": "<sk-live-nested>"' \
+  '  password:' \
   > "$tmp"
-grep -rnIiE "(secret|password|token|api[_-]?key|master[_-]?key)[\"']?[[:space:]]*[:=][[:space:]]*([\"'][^<]|[^<[:space:]\"'])" "$tmp" \
+grep -rnIiE "(secret|password|token|api[_-]?key|master[_-]?key)[\"']?[[:space:]]*[:=][[:space:]]*[\"']?[^[:space:]\"']" "$tmp" \
+  | grep -viE "(secret|password|token|api[_-]?key|master[_-]?key)[\"']?[[:space:]]*[:=][[:space:]]*[\"']?<(redacted|placeholder|example|value|\.\.\.)>" \
   | sed -E "s/^([^:]*:[0-9]*:).*[^a-z_]?(secret|password|token|api[_-]?key|master[_-]?key)[\"']?[[:space:]]*[:=].*\$/\1 \2 = <redacted>/I"
-# expect: lines 1-3 flagged (redacted), lines 4-5 silent
+# expect flagged: 1, 2, 3 (real values), 6, 7 (angle-bracketed but not placeholders)
+# expect silent:  4, 5 (named placeholders), 8 (no value at all)
 rm -f "$tmp"
 ```
 
