@@ -8,4 +8,14 @@ fi
 # Default to port 3000 if not specified
 export PORT="${PORT:-3000}"
 
-exec foreman start -f "Procfile.${RAILS_ENV:-development}" --env /dev/null "$@"
+# The Procfile is selected by RAILS_ENV. Fail with the reason rather than letting
+# foreman report a missing file for an environment the caller never named explicitly.
+PROCFILE="Procfile.${RAILS_ENV:-development}"
+if [ ! -f "$PROCFILE" ]; then
+  echo "ERROR: ⛔ $PROCFILE not found (RAILS_ENV=${RAILS_ENV:-development})." >&2
+  echo "       bin/dev picks its Procfile by RAILS_ENV. Available:" >&2
+  ls Procfile.* 2>/dev/null | sed 's/^/         /' >&2
+  exit 1
+fi
+
+exec foreman start -f "$PROCFILE" --env /dev/null "$@"

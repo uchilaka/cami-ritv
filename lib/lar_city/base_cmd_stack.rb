@@ -4,6 +4,7 @@
 app_path = File.join(Dir.pwd, 'app')
 $LOAD_PATH.unshift(app_path) unless $LOAD_PATH.include?(app_path)
 
+require 'English' # for $CHILD_STATUS
 require 'thor/group'
 require 'awesome_print'
 require 'concerns/operating_system_detectable'
@@ -107,8 +108,14 @@ module LarCity
         }
       end
 
+      # NOTE: an empty result here is indistinguishable from "docker is not running",
+      # and callers use it to decide whether to CREATE a network — so check the exit
+      # status rather than letting a dead daemon look like an empty network list.
       def list_of_networks
-        `docker network ls --format '{{.Name}}'`.split("\n")
+        output = `docker network ls --format '{{.Name}}'`
+        raise 'Unable to list docker networks. Is the Docker daemon running?' unless $CHILD_STATUS.success?
+
+        output.split("\n")
       end
     end
   end

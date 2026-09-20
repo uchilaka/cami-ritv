@@ -51,6 +51,61 @@ RSpec.describe InitApp, type: :command_stack do
     end
   end
 
+  describe '#maybe_setup_service_networks' do
+    before { allow(instance).to receive(:list_of_networks).and_return(existing_networks) }
+
+    context 'when neither network exists' do
+      let(:existing_networks) { %w[bridge host none] }
+
+      it 'creates both networks compose.yml declares external' do
+        expect(instance).to receive(:run)
+                              .with('docker network create larcity_apps', '--driver bridge', '--ipv6=false')
+        expect(instance).to receive(:run)
+                              .with('docker network create larcity-beta-net', '--driver bridge', '--ipv6=false')
+        instance.maybe_setup_service_networks
+      end
+    end
+
+    context 'when only the platform network exists' do
+      let(:existing_networks) { %w[bridge larcity-beta-net] }
+
+      it 'creates only the missing one' do
+        expect(instance).to receive(:run)
+                              .with('docker network create larcity_apps', '--driver bridge', '--ipv6=false')
+        expect(instance).not_to receive(:run)
+                                  .with('docker network create larcity-beta-net', any_args)
+        instance.maybe_setup_service_networks
+      end
+    end
+
+    context 'when both networks exist' do
+      let(:existing_networks) { %w[larcity_apps larcity-beta-net] }
+
+      it 'creates nothing' do
+        expect(instance).not_to receive(:run)
+        instance.maybe_setup_service_networks
+      end
+    end
+  end
+
+  describe '#apply_data_migrations' do
+    context 'with --skip-migrations' do
+      let(:options) { { skip_migrations: true } }
+
+      it 'does not invoke the data migration command' do
+        expect(Rails::Command).not_to receive(:invoke)
+        instance.apply_data_migrations
+      end
+    end
+
+    context 'without --skip-migrations' do
+      it 'invokes the data migration command' do
+        expect(Rails::Command).to receive(:invoke).with('data:migrate')
+        instance.apply_data_migrations
+      end
+    end
+  end
+
   describe '#start_all_services' do
     let(:mock_service_cmd) { instance_double(LarCity::CLI::ServicesCmd, invoke: true) }
 
