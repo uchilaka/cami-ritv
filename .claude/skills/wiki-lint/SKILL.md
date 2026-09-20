@@ -189,14 +189,28 @@ done
 The wiki is committed to a shared repository. A page must never contain a
 credential value.
 
+**The output of this check must never contain the value it found.** A bare
+`grep -rni` prints the whole matching line, which copies the secret into your
+terminal, this session's context, and anywhere the run gets pasted or logged —
+the detector becomes a second exposure. Report the location and the matched
+keyword; redact the value.
+
 ```bash
-grep -rniE '(secret|password|token|api[_-]?key|master[_-]?key)[[:space:]]*[:=][[:space:]]*[^<[:space:]]' wiki/pages/ wiki/sources/
+# Location + keyword only. The sed stage rewrites the value away before it is
+# ever printed, so no pipeline downstream of here can see it.
+grep -rniE '(secret|password|token|api[_-]?key|master[_-]?key)[[:space:]]*[:=][[:space:]]*[^<[:space:]]' \
+     wiki/pages/ wiki/sources/ \
+  | sed -E 's/^([^:]*:[0-9]*:).*[^a-z_]?(secret|password|token|api[_-]?key|master[_-]?key)[[:space:]]*[:=].*$/\1 \2 = <redacted>/I'
+
+# Already filename-only (-l): never prints key material.
 grep -rlE 'BEGIN [A-Z ]*PRIVATE KEY' wiki/
 ```
 
-Any hit: stop, report it to the user immediately, and do not commit. Treat a
-matched credential as compromised and needing rotation — removing it from the
-working tree is not enough if it was ever committed.
+Any hit: stop, and do not commit. Tell the user the **file and line** and what
+kind of credential it looks like — never the value, not even when they ask to see
+it; they can open the file themselves, and repeating it here would put it in one
+more place. Treat a matched credential as compromised and needing rotation —
+removing it from the working tree is not enough if it was ever committed.
 
 ## Reporting
 
