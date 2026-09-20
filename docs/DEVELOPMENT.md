@@ -162,6 +162,12 @@ fatal: .env.development: smudge filter git-crypt failed
 
 The script is idempotent — re-run it on a half-created worktree and it installs whatever is missing.
 
+**Repairing an existing worktree.** Re-run it with the worktree's name and it will adopt that worktree's real path, even if it does not sit at `../cami-ritv-worktrees/<name>` (some older worktrees are nested inside other worktrees). If the working tree holds ciphertext — the state a worktree lands in when it was checked out while the key was missing — it re-smudges just the git-crypt'd paths, which `git checkout` alone will not do, since those files already exist. It refuses if any encrypted path has **staged** changes, rather than discarding them. Unstaged modifications on those paths are expected and are the symptom being fixed: the clean filter re-encrypts ciphertext differently, so every affected file reads as modified.
+
+```shell
+bin/worktree-init pr-245-phase2 pr-245-phase2/docker-consistency
+```
+
 **Where your key lives.** `GITCRYPT_KEY_FILE` defaults to `config/credentials/git-crypt.key`, resolved against the *main checkout*. If you work in worktrees regularly, point it at a machine-local path outside every checkout instead:
 
 ```shell

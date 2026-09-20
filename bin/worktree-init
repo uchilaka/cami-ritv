@@ -67,6 +67,26 @@ REPO_NAME="$(basename "$REPO_ROOT")"
 WORKTREE_PARENT="$(dirname "$REPO_ROOT")/${REPO_NAME}-worktrees"
 WORKTREE="$WORKTREE_PARENT/$WORKTREE_NAME"
 
+# If a worktree by this name is already registered somewhere else on disk, adopt
+# its real path instead of the conventional one. Without this, re-running against
+# an existing worktree that does not sit at ../<repo>-worktrees/<name> would try
+# to create a second one and fail on "branch already checked out" — which also
+# means such a worktree could never be repaired by this script. Some older
+# worktrees are nested inside other worktrees rather than being flat siblings.
+ADOPTED_PATH=""
+while IFS= read -r registered; do
+  if [[ "$(basename "$registered")" == "$WORKTREE_NAME" ]]; then
+    ADOPTED_PATH="$registered"
+    break
+  fi
+done <<< "$(git -C "$REPO_ROOT" worktree list --porcelain | sed -n 's/^worktree //p')"
+
+if [[ -n "$ADOPTED_PATH" && "$ADOPTED_PATH" != "$WORKTREE" ]]; then
+  echo "WARNING: ⚠️ ${WORKTREE_NAME} is registered at ${ADOPTED_PATH},"
+  echo "         not the conventional ${WORKTREE}. Repairing it in place."
+  WORKTREE="$ADOPTED_PATH"
+fi
+
 if [[ $# -ge 3 ]]; then
   BASE_REF="$3"
 elif BASE_REF="$(git -C "$REPO_ROOT" symbolic-ref --short refs/remotes/origin/HEAD 2>/dev/null)"; then
@@ -121,6 +141,38 @@ fi
 # 3. Check out — the smudge filter now has its key.
 echo "🛠️ Checking out working tree"
 git -C "$WORKTREE" checkout
+
+# 3b. Repair case. A worktree that was checked out while the key was missing has
+# ciphertext sitting in its working tree. Step 3 will not fix that on its own:
+# those files exist, so checkout leaves them alone. They have to be re-smudged
+# explicitly, and only they — a blanket `checkout --force` would discard real
+# work elsewhere in the tree.
+if [[ -n "$(git -C "$WORKTREE" ls-files -- '.env.*' | head -1)" ]]; then
+  FIRST_ENV="$(git -C "$WORKTREE" ls-files -- '.env.*' | head -1)"
+  if [[ -f "${WORKTREE}/${FIRST_ENV}" ]] && head -c 10 "${WORKTREE}/${FIRST_ENV}" | grep -qa GITCRYPT; then
+    echo "🛠️ Working tree holds ciphertext — re-smudging git-crypt'd paths"
+
+    ENCRYPTED_PATHS="$(cd "$WORKTREE" && git-crypt status -e 2>/dev/null | sed 's/^ *encrypted: *//' | sed '/^$/d')"
+    if [[ -z "$ENCRYPTED_PATHS" ]]; then
+      die "could not determine which paths git-crypt manages (is the key valid?)"
+    fi
+
+    # Refuse if any encrypted path has STAGED changes — that is deliberate work
+    # we would destroy. Unstaged "modifications" are expected here: the clean
+    # filter re-encrypts the ciphertext differently, so every affected file looks
+    # modified. That is the symptom, not a reason to stop.
+    while IFS= read -r path; do
+      if [[ -n "$(git -C "$WORKTREE" diff --cached --name-only -- "$path")" ]]; then
+        die "${path} has staged changes in ${WORKTREE}.
+  Commit or reset them before repairing — re-smudging would discard them."
+      fi
+    done <<< "$ENCRYPTED_PATHS"
+
+    while IFS= read -r path; do
+      git -C "$WORKTREE" checkout --force -- "$path" && echo "   re-smudged ${path}"
+    done <<< "$ENCRYPTED_PATHS"
+  fi
+fi
 
 # 4. Verify decryption actually happened. git-crypt prefixes encrypted blobs
 # with a \0GITCRYPT\0 magic header; if a filtered file still carries it, the
