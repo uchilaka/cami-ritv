@@ -233,15 +233,44 @@ writing to. Scanning the working tree rather than `git ls-files` is deliberate:
 this runs *before* a commit, so a secret that is still untracked is exactly the
 one worth catching.
 
+Quoted forms — `"api_key": "sk-..."` in JSON, `token: 'abc123'` in YAML — put a
+quote between the keyword and the separator, and another between the separator
+and the value. A pattern that requires the keyword to be followed directly by
+`[:=]` never reaches either quoted case, so both the grep and the redacting sed
+allow one optional `"` or `'` on each side. The value side cannot just drop the
+`<`-exclusion after the optional quote, either: `[^<[:space:]]` alone is
+satisfied by the quote character itself, which would flag a quoted placeholder
+like `"token": "<placeholder>"` as a hit. The alternation below requires the
+character *after* an optional opening quote to be the real, non-`<` value.
+
 ```bash
 # Location + keyword only. The sed stage rewrites the value away before it is
 # ever printed, so no pipeline downstream of here can see it.
-grep -rnIiE '(secret|password|token|api[_-]?key|master[_-]?key)[[:space:]]*[:=][[:space:]]*[^<[:space:]]' \
+grep -rnIiE "(secret|password|token|api[_-]?key|master[_-]?key)[\"']?[[:space:]]*[:=][[:space:]]*([\"'][^<]|[^<[:space:]\"'])" \
      wiki/ \
-  | sed -E 's/^([^:]*:[0-9]*:).*[^a-z_]?(secret|password|token|api[_-]?key|master[_-]?key)[[:space:]]*[:=].*$/\1 \2 = <redacted>/I'
+  | sed -E "s/^([^:]*:[0-9]*:).*[^a-z_]?(secret|password|token|api[_-]?key|master[_-]?key)[\"']?[[:space:]]*[:=].*\$/\1 \2 = <redacted>/I"
 
 # Already filename-only (-l): never prints key material.
 grep -rlE 'BEGIN [A-Z ]*PRIVATE KEY' wiki/
+```
+
+Verified against a scratch fixture covering both quoted secret forms, an
+unquoted secret, an unquoted placeholder, and a quoted placeholder, before
+trusting this as the wiki-wide gate — the placeholder cases must stay silent:
+
+```bash
+tmp=$(mktemp)
+printf '%s\n' \
+  '  "api_key": "sk-live-abc123def456"' \
+  "  token: 'abc123plain'" \
+  '  password: plainvalue' \
+  '  api_key: <REDACTED>' \
+  '  "token": "<placeholder>"' \
+  > "$tmp"
+grep -rnIiE "(secret|password|token|api[_-]?key|master[_-]?key)[\"']?[[:space:]]*[:=][[:space:]]*([\"'][^<]|[^<[:space:]\"'])" "$tmp" \
+  | sed -E "s/^([^:]*:[0-9]*:).*[^a-z_]?(secret|password|token|api[_-]?key|master[_-]?key)[\"']?[[:space:]]*[:=].*\$/\1 \2 = <redacted>/I"
+# expect: lines 1-3 flagged (redacted), lines 4-5 silent
+rm -f "$tmp"
 ```
 
 Any hit: stop, and do not commit. Tell the user the **file and line** and what
