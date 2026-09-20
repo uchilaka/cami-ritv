@@ -41,14 +41,22 @@ wrong.
 >
 > - `config/credentials/` — holds `*.key` material and, on an unlocked checkout,
 >   decryptable `*.yml.enc`
-> - any `.env*` file, and anything git-crypt manages (`git-crypt status -e` lists
->   them)
+> - `.env` and `.env.*` — every dotenv **value** file, `.local` variants included
+> - anything git-crypt manages (`git-crypt status -e` lists it)
 > - `config/secrets/`, `config/httpd/auth/`, `spec/fixtures/pii/`
+>
+> **`.envrc` is explicitly allowed** — note it is `.envrc`, not `.env.rc`, so it is
+> not one of the `.env.*` value files above. It is tracked, is *not* git-crypt
+> managed (`git check-attr filter -- .envrc` → `unspecified`), and holds
+> precedence logic rather than values. It is also the first suggested source in
+> `wiki/sources/manifest.md`, so forbidding it would rule out the
+> highest-value ingest.
 >
 > Configuration *resolution* is a legitimate and valuable subject: cite the
 > precedence logic by `path:line` (`.envrc`, `config/initializers/dotenv.rb`,
 > `config/application.rb`) and name *which* keys exist. Never record what any of
-> them resolves to.
+> them resolves to — and note that `.envrc` computes `GITCRYPT_KEY_BASE64` at
+> runtime, so quote the line, never its evaluated result.
 
 ### 3. Decide what it touches — before editing
 
