@@ -1,11 +1,15 @@
 shared: &shared
   aliases:
 
-development:
+lab: &lab
+  <<: *shared
   aliases:
-    crm: <%= ENV.fetch('CONTAINER_REGISTRY_HOST') %>/twenty-crm-production
-    web: <%= ENV.fetch('CONTAINER_REGISTRY_HOST') %>/cami-web-production
-    worker: <%= ENV.fetch('CONTAINER_REGISTRY_HOST') %>/cami-worker-production
+    crm: <%= ENV.fetch('CONTAINER_REGISTRY_HOST') %>/twenty-crm-<%= ENV.fetch('RAILS_ENV') %>
+    web: <%= ENV.fetch('CONTAINER_REGISTRY_HOST') %>/cami-web-<%= ENV.fetch('RAILS_ENV') %>
+    worker: <%= ENV.fetch('CONTAINER_REGISTRY_HOST') %>/cami-worker-<%= ENV.fetch('RAILS_ENV') %>
+
+development:
+  <<: *lab
 
 test:
   aliases:
@@ -13,12 +17,8 @@ test:
     web: <%= ENV.fetch('CONTAINER_REGISTRY_HOST') %>/<%= ENV.fetch('CONTAINER_NAME_PREFIX') %>-web
     worker: <%= ENV.fetch('CONTAINER_REGISTRY_HOST') %>/<%= ENV.fetch('CONTAINER_NAME_PREFIX') %>-worker
 
-lab: &lab
-  <<: *shared
-  aliases:
-    crm: <%= ENV.fetch('CONTAINER_REGISTRY_HOST') %>/twenty-crm-lab
-    web: <%= ENV.fetch('CONTAINER_REGISTRY_HOST') %>/cami-web-lab
-    worker: <%= ENV.fetch('CONTAINER_REGISTRY_HOST') %>/cami-worker-lab
+beta:
+  <<: *lab
 
 # Staging deliberately shares the lab images: both front the same beta environment
 # (accounts.beta.larcity.tech) and are promoted together.
