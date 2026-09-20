@@ -8,9 +8,8 @@ require 'active_support/core_ext/integer/time'
 
 Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
-  Dotenv.load(*%w[.env.test.local .env.test .env].select do |file|
-    File.exist?(file)
-  end)
+  dotenv_files = %w[.env.test.local .env.test .env].select { |file| File.exist?(file) }
+  Dotenv.load(*dotenv_files)
 
   # Force the test database NAMES, which must never be inherited from a dev shell.
   #
@@ -27,7 +26,13 @@ Rails.application.configure do
   # `overwrite: true` below applies to the PARSE only -- Dotenv.parse never mutates ENV.
   # Without it the parser echoes back the value already in ENV for any key ENV holds
   # (dotenv/parser.rb:59), i.e. the very dev-shell value being corrected here.
-  test_env_values = File.exist?('.env.test.local') ? Dotenv.parse('.env.test.local', overwrite: true) : {}
+  #
+  # Parse the SAME chain Dotenv.load just used, at the same precedence (earlier files win),
+  # rather than .env.test.local alone -- otherwise a custom *_test name configured in
+  # .env.test or .env is ignored in favour of the fallbacks below.
+  test_env_values = dotenv_files.reduce({}) do |values, file|
+    values.reverse_merge(Dotenv.parse(file, overwrite: true))
+  end
   {
     'APP_DATABASE_NAME_PRIMARY' => 'sails_test',
     'APP_DATABASE_NAME_CRM' => 'twenty_crm_test',

@@ -93,6 +93,32 @@ RSpec.describe LarCity::CLI::ServicesCmd do
         expect(args).to eq(['docker compose', 'exec', 'app-store', 'psql command'])
       end
     end
+
+    # Guards the APP_DATABASE_NAME -> APP_DATABASE_NAME_PRIMARY rename. APP_DATABASE_NAME is
+    # unset here on purpose: reverting the name makes ENV.fetch raise KeyError, #connect
+    # swallows it in its StandardError rescue, and #run is never called -- so asserting on
+    # the generated command is what catches the regression.
+    it 'builds the psql command from the primary database name' do
+      allow(command).to receive(:options).and_return({ database: true })
+
+      with_modified_env(
+        APP_DATABASE_NAME: nil,
+        APP_DATABASE_NAME_PRIMARY: 'sails_test',
+        APP_DATABASE_USER: 'sails'
+      ) do
+        command.connect
+      end
+
+      expect(command).to have_received(:run) do |*args|
+        expect(args).to \
+          eq(
+            [
+              'docker compose', 'exec', 'app-store',
+              'psql -h db.cami.larcity --port 5432 -U sails sails_test',
+            ]
+          )
+      end
+    end
   end
 
   describe '#start' do
