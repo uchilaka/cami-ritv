@@ -377,13 +377,11 @@ secrets:
 networks:
   default:
     name: larcity_apps
-    enable_ipv6: false
-    driver: bridge
+    external: true
   larcity-beta-net:
     # NOTE: This is an external network and must already exist (e.g. `docker network create larcity-beta-net`).
     # TODO: [LAR-354] This block says "external" but is not declared `external: true`, so Compose
     #   manages it as a project network and the `driver`/`enable_ipv6` settings below are moot.
     #   Decide which is true and make the config match.
     name: larcity-beta-net
-    enable_ipv6: false
-    driver: bridge
+    external: true
