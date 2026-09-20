@@ -27,8 +27,8 @@ git rev-parse --short HEAD
 ```
 
 For a non-repo source, copy `wiki/templates/source.md` to
-`wiki/sources/external/<id>.md` and capture it **verbatim** before interpreting.
-A ticket can be edited under you; a URL can 404.
+`wiki/sources/external/<id>.md` and capture a **redacted** copy after checking it
+for secrets; never commit credential values from a ticket, URL, or pasted text.
 
 ### 2. Read it properly
 
