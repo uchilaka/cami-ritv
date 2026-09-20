@@ -75,7 +75,9 @@ class InitApp < Thor::Group
     return if service_network_exists?(network_name)
 
     say_info "Setting up '#{network_name}' network..."
-    run "docker network create #{network_name}", '--driver bridge', '--ipv6 false'
+    # NOTE: --ipv6 is a boolean flag. `--ipv6 false` is parsed as a second positional
+    # argument and docker rejects the whole command with "requires 1 argument".
+    run "docker network create #{network_name}", '--driver bridge', '--ipv6=false'
   end
 
   def start_all_services
