@@ -31,8 +31,10 @@ only a few people.
    > ⛔ **Read the resolution *logic*, never the credential *values*.** Do not
    > open `config/credentials/` — on an unlocked checkout it holds `*.key`
    > material and decrypted `*.yml.enc` contents, and the schema forbids both
-   > from reaching a page. The same goes for any `.env*` file: cite
-   > `.envrc`'s precedence logic by `path:line`, never a value it resolves to.
+   > from reaching a page. The same goes for `.env` and `.env.*` — the dotenv
+   > **value** files — though `.envrc` itself is fine: it is tracked, not
+   > git-crypt managed, and holds precedence logic rather than values. Cite that
+   > logic by `path:line`, never a value it resolves to.
    > Describing *which* keys exist and *how* they are resolved is the goal;
    > their contents are never part of it.
 2. **`docs/decisions/`** — existing ADRs. Ingesting these seeds the Decisions
