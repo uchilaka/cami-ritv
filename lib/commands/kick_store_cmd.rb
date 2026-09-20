@@ -38,7 +38,9 @@ class KickStoreCmd < Thor::Group
     end
 
     say_info "Creating #{target} data store (unless EXISTS)..."
-    Rails::Command.invoke("db:create:#{target}")
+    # Wrapped so the maintenance-database binding `db:create` leaves behind on a
+    # re-run doesn't leak into the rest of the process. See LAR-335.
+    with_database(target:) { Rails::Command.invoke("db:create:#{target}") }
   end
 
   def wait_for_database_service_health_check
@@ -59,7 +61,7 @@ class KickStoreCmd < Thor::Group
   def apply_migrations
     return if skip_database_tasks?
 
-    Rails::Command.invoke("db:migrate:#{target}")
+    with_database(target:) { Rails::Command.invoke("db:migrate:#{target}") }
   end
 
   private
