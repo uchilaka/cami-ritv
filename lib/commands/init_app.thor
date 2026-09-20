@@ -75,7 +75,7 @@ class InitApp < Thor::Group
     return if service_network_exists?(network_name)
 
     say_info "Setting up '#{network_name}' network..."
-    run "docker network create #{network_name}"
+    run "docker network create #{network_name}", '--driver bridge', '--ipv6 false'
   end
 
   def start_all_services
