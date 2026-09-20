@@ -48,7 +48,10 @@ class InitApp < Thor::Group
   end
 
   def apply_data_migrations
-    Rails::Command.invoke('data:migrate')
+    # `data:migrate` takes no target — it runs against whatever ActiveRecord::Base
+    # is bound to when it's invoked. Pin it to primary so an earlier in-process
+    # `db:*` task can't redirect it. See LAR-335.
+    with_database(target: :primary) { Rails::Command.invoke('data:migrate') }
   end
 
   def setup_feature_flags

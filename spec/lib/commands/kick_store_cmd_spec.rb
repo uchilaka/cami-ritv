@@ -72,6 +72,29 @@ RSpec.describe KickStoreCmd, type: :command_stack do
     end
   end
 
+  # Regression: LAR-335. `db:create:*` binds ActiveRecord::Base to the postgres
+  # maintenance database and only rebinds to the target when the CREATE actually
+  # runs. On a re-run the CREATE raises DatabaseAlreadyExists, Rails swallows it
+  # before that rebind, and every task invoked later in the same process (notably
+  # `data:migrate`, which has no target of its own) inherits the wrong database.
+  describe '#create_data_store_if_not_exists connection binding' do
+    let(:target) { 'primary' }
+
+    it 'restores the original database binding when db:create leaks one' do
+      original_db_config = ActiveRecord::Base.connection_db_config
+
+      allow(Rails::Command).to receive(:invoke).with('db:create:primary') do
+        ActiveRecord::Base.establish_connection(
+          original_db_config.configuration_hash.merge(database: 'postgres')
+        )
+      end
+
+      instance.create_data_store_if_not_exists
+
+      expect(ActiveRecord::Base.connection_db_config.database).to eq(original_db_config.database)
+    end
+  end
+
   describe '#apply_migrations' do
     before { instance.apply_migrations }
 
