@@ -1,39 +1,58 @@
+<% registry = ENV.fetch('CONTAINER_REGISTRY_HOST') %>
+# Image repositories, one set per environment.
+#
+# These are spelled out per environment rather than inherited from a shared anchor that
+# interpolates RAILS_ENV. `config_for` renders this ENTIRE file through ERB before it
+# selects a section, so an anchor containing <%%= ENV['RAILS_ENV'] %> resolves EVERY
+# section to whatever environment happens to be loading — the per-environment keys stop
+# meaning anything you can read off the page, and `ENV.fetch` with no default turns any
+# caller without RAILS_ENV set into a KeyError. Repetition is the cheaper trade here.
 shared: &shared
   aliases:
 
-lab: &lab
+development:
   <<: *shared
   aliases:
-    crm: <%= ENV.fetch('CONTAINER_REGISTRY_HOST') %>/twenty-crm-<%= ENV.fetch('RAILS_ENV') %>
-    web: <%= ENV.fetch('CONTAINER_REGISTRY_HOST') %>/cami-web-<%= ENV.fetch('RAILS_ENV') %>
-    worker: <%= ENV.fetch('CONTAINER_REGISTRY_HOST') %>/cami-worker-<%= ENV.fetch('RAILS_ENV') %>
+    crm: <%= registry %>/twenty-crm-development
+    web: <%= registry %>/cami-web-development
+    worker: <%= registry %>/cami-worker-development
 
-development:
-  <<: *lab
-
+# Test images are named from CONTAINER_NAME_PREFIX rather than the environment, so that a
+# throwaway build can be namespaced per run.
 test:
   aliases:
-    crm: <%= ENV.fetch('CONTAINER_REGISTRY_HOST') %>/twenty-crm
-    web: <%= ENV.fetch('CONTAINER_REGISTRY_HOST') %>/<%= ENV.fetch('CONTAINER_NAME_PREFIX') %>-web
-    worker: <%= ENV.fetch('CONTAINER_REGISTRY_HOST') %>/<%= ENV.fetch('CONTAINER_NAME_PREFIX') %>-worker
+    crm: <%= registry %>/<%= ENV.fetch('CONTAINER_NAME_PREFIX') %>-crm
+    web: <%= registry %>/<%= ENV.fetch('CONTAINER_NAME_PREFIX') %>-web
+    worker: <%= registry %>/<%= ENV.fetch('CONTAINER_NAME_PREFIX') %>-worker
 
+lab:
+  <<: *shared
+  aliases:
+    crm: <%= registry %>/twenty-crm-lab
+    web: <%= registry %>/cami-web-lab
+    worker: <%= registry %>/cami-worker-lab
+
+# Beta fronts accounts.beta.larcity.tech and is promoted independently of lab.
 beta:
-  <<: *lab
+  <<: *shared
+  aliases:
+    crm: <%= registry %>/twenty-crm-beta
+    web: <%= registry %>/cami-web-beta
+    worker: <%= registry %>/cami-worker-beta
 
-# Staging deliberately shares the lab images: both front the same beta environment
-# (accounts.beta.larcity.tech) and are promoted together.
 staging:
-  <<: *lab
+  <<: *shared
+  aliases:
+    crm: <%= registry %>/twenty-crm-staging
+    web: <%= registry %>/cami-web-staging
+    worker: <%= registry %>/cami-worker-staging
 
-# Aliases MUST be declared explicitly here. Inheriting `<<: *lab` would silently
-# resolve production to the *-lab repositories and deploy lab images to production.
-#
 # NOTE: fly.toml builds a single image (Dockerfile.web) and runs both the `web` and
 # `worker` process groups from it, so the worker alias is only used by deploy targets
 # that build Dockerfile.worker separately. See LAR-325.
 production:
   <<: *shared
   aliases:
-    crm: <%= ENV.fetch('CONTAINER_REGISTRY_HOST') %>/twenty-crm-production
-    web: <%= ENV.fetch('CONTAINER_REGISTRY_HOST') %>/cami-web-production
-    worker: <%= ENV.fetch('CONTAINER_REGISTRY_HOST') %>/cami-worker-production
+    crm: <%= registry %>/twenty-crm-production
+    web: <%= registry %>/cami-web-production
+    worker: <%= registry %>/cami-worker-production
