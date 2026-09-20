@@ -14,6 +14,9 @@ RUN apt-get update -qq && \
 
 # Set zsh as the default shell with a minimal .zshrc (dev/debug ergonomics).
 # oh-my-zsh is layered on top in the `dev` stage.
+# TODO: [LAR-355] This belongs in the `dev` stage -- installing zsh and running chsh in the
+#   shared `base` stage leaks dev tooling into the runtime image (and chsh comes from
+#   `passwd`, which is not explicitly installed).
 ENV SHELL=/usr/bin/zsh
 RUN chsh -s /usr/bin/zsh root && \
   printf '%s\n' \
@@ -41,7 +44,9 @@ FROM src AS web
 
 ARG RAILS_ENV
 ARG RAILS_MASTER_KEY
-ARG APP_CONFIG_JWT_SECRET_KEY
+# Passed through by docker-compose (see the `web` build args). Without this ARG the
+# value never reaches the build environment and ./bin/unlock-repo no-ops.
+ARG GITCRYPT_KEY_BASE64
 ARG REDIS_URL
 ARG APP_DATABASE_NAME_PRIMARY
 ARG APP_DATABASE_NAME_REPLICA
@@ -61,8 +66,10 @@ ARG ZOHO_CLIENT_SECRET
 ARG CRM_ORG_ID
 ARG SMTP_USER
 ARG APP_CONFIG_OMNIAUTH_ENABLED
-ARG APP_CONFIG_OMNIAUTH_GOOGLE_CLIENT_ID
-ARG APP_CONFIG_OMNIAUTH_GOOGLE_CLIENT_SECRET
+# NOTE: the Google client id/secret are deliberately NOT build args. Devise reads
+# OMNIAUTH_GOOGLE_CLIENT_ID / OMNIAUTH_GOOGLE_CLIENT_SECRET (or encrypted
+# credentials) at runtime; passing them at build time would bake them into the
+# image history. Supply them via your platform's runtime secrets instead.
 ARG SEMANTIC_LOGGER_STREAMING_ENABLED
 ARG SEND_EMAILS_ENABLED
 ARG WEB_CONSOLE_ENABLED
@@ -71,12 +78,15 @@ ARG WEB_CONSOLE_ENABLED
 # information is available for the build process without being included in the
 # image layers. This allows you to keep your secrets secure while still enabling
 # a successful build.
-RUN ./bin/unlock-repo
+# ./bin/unlock-repo reads GITCRYPT_KEY_BASE64 (above) or the mounted key file.
+RUN --mount=type=secret,id=git-crypt.key,dst=/run/secrets/git-crypt.key \
+  ./bin/unlock-repo
 
-# Handle secrets during build by mounting them as files, and ensure they are available
-# for the build steps that need them, such as installing dependencies and precompiling
-# assets. This allows you to keep sensitive information out of the image layers while
-# still enabling a successful build.
+# Symlink /etc/secrets/<env>.key into config/credentials. This only does anything on
+# Render, which populates /etc/secrets during the build; elsewhere the script warns
+# and exits cleanly. Deliberately NOT given a BuildKit secret mount: doing so would
+# bake a symlink into the image pointing at a path that exists only while the mount
+# is live, which breaks Rails' credentials fallback everywhere else.
 RUN ./bin/link-key-file
 
 # Setup Node.js LTS and install it
@@ -99,10 +109,6 @@ ENV APP_CONFIG_SKIP_PAYPAL_INIT_CHECK=${APP_CONFIG_SKIP_PAYPAL_INIT_CHECK:-no}
 ENV APP_CONFIG_SKIP_ZOHO_INIT_CHECK=${APP_CONFIG_SKIP_ZOHO_INIT_CHECK:-no}
 ENV APP_CONFIG_SKIP_TWENTY_CRM_INIT_CHECK=${APP_CONFIG_SKIP_TWENTY_CRM_INIT_CHECK:-no}
 
-# Omniauth ENV variables
-#ENV OMNIAUTH_GOOGLE_CLIENT_ID="${OMNIAUTH_GOOGLE_CLIENT_ID:-}"
-#ENV OMNIAUTH_GOOGLE_CLIENT_SECRET="${OMNIAUTH_GOOGLE_CLIENT_SECRET:-}"
-
 # Default to production environment, but allow override at runtime
 ENV RAILS_ENV="${RAILS_ENV:-production}"
 
@@ -116,12 +122,6 @@ ENV WEB_CONSOLE_ENABLED="${WEB_CONSOLE_ENABLED:-no}"
 #   and runtime contexts. This is important to ensure that sensitive information is handled securely
 #   and appropriately.
 
-RUN --mount=type=secret,id=${RAILS_ENV}.key,dst=${WORKDIR}/config/credentials/${RAILS_ENV}.key \
-   echo "🔑 Secrets mounted successfully"
-
-# Unlock the repository to access encrypted files during build
-RUN --mount=type=secret,id=git-crypt.key,dst=${WORKDIR}/.git/git-crypt/keys/default \
-  ./bin/unlock-repo
 # Setup frontend package dependencies
 RUN --mount=type=secret,id=${RAILS_ENV}.key,dst=${WORKDIR}/config/credentials/${RAILS_ENV}.key \
   yarn install --immutable
@@ -151,6 +151,8 @@ CMD ["bundle", "exec", "rails", "server", "--binding", "0.0.0.0", "--port", "160
 FROM web AS dev
 
 # Install oh-my-zsh and point .zshrc at it (git is available from the base ruby image)
+# TODO: [LAR-355] Pin this clone to a tag/commit SHA -- an unpinned clone makes the dev image
+#   non-reproducible. Lower risk now that `dev` is no longer the default build target.
 RUN git clone --depth=1 https://github.com/ohmyzsh/ohmyzsh.git /root/.oh-my-zsh && \
   printf '%s\n' \
   'export ZSH="$HOME/.oh-my-zsh"' \
@@ -160,3 +162,10 @@ RUN git clone --depth=1 https://github.com/ohmyzsh/ohmyzsh.git /root/.oh-my-zsh 
   > /root/.zshrc
 
 # Inherits EXPOSE and CMD from the `web` stage
+
+# ---------------------------------------------------------------------------
+# Default build target. `dev` above must not be the last stage in this file, or a
+# bare `docker build -f Dockerfile.web .` (and any compose build without an
+# explicit `target:`) would produce the dev image instead of the runtime one.
+# ---------------------------------------------------------------------------
+FROM web AS runtime

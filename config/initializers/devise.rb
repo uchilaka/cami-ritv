@@ -285,7 +285,26 @@ Devise.setup do |config|
                       prompt: 'select_account',
                       image_aspect_ratio: 'square',
                       name: :google,
-                      access_type: 'offline'
+                      access_type: 'offline',
+                      # Explicit even though it is the default. Users::Omniauth::CallbacksController
+                      # skips Rails' CSRF check on the callback leg (Google cannot round-trip a Rails
+                      # authenticity token), and OmniAuth's `state` parameter is what replaces it.
+                      # Flipping this to true would silently remove that protection.
+                      provider_ignores_state: false
+    else
+      # Failing silently here leaves the app "half enabled": the User model still declares
+      # `omniauth_providers: %i[google]`, so routes and (without the guard in
+      # users/shared/omniauth/_links) sign-in buttons exist while the strategy does not.
+      message = 'OmniAuth is enabled (APP_CONFIG_OMNIAUTH_ENABLED) but the Google client ' \
+                'id/secret are missing. Set OMNIAUTH_GOOGLE_CLIENT_ID and ' \
+                'OMNIAUTH_GOOGLE_CLIENT_SECRET, or add credentials.google.client_id / ' \
+                'credentials.google.client_secret.'
+
+      # Fail fast on production so a misconfigured deploy never serves a broken sign-in
+      # button; warn everywhere else so local and CI boots are not blocked.
+      raise message if Rails.env.production?
+
+      Rails.logger.warn "[devise] #{message}"
     end
   end
 

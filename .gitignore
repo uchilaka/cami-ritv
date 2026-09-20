@@ -131,12 +131,16 @@ chromatic.log
 .do/*
 app*.yaml
 
-# Agentic exceptions
-!.gemini/skills/*
-
 # Agents
 .claude/*
 .gemini/*
+
+# Agentic exceptions — these MUST come after the ignores above: the last
+# matching pattern wins, and a negation cannot re-include anything whose parent
+# directory is itself excluded, which is why these name the directory rather
+# than its contents.
+!.claude/skills/
+!.gemini/skills/
 
 # Terraform / OpenTofu
 .terraform/.terraform/

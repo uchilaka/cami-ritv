@@ -80,6 +80,8 @@ Alternatively, you can follow [the new GPG user setup guide](./docs/NEW_GPG_USER
 
 Once you have the file setup, run `yarn keys:unlock` to decrypt the repository's encrypted files.
 
+> **Working in git worktrees?** Use `bin/worktree-init <name> [branch]` — a plain `git worktree add` fails, because a worktree does not inherit the `git-crypt` key. See [Working with git worktrees](./docs/DEVELOPMENT.md#working-with-git-worktrees).
+
 ### 4. Set `RAILS_MASTER_KEY` for your environment
 
 > Avoid using the encrypted credentials other than in the environments explicitly listed in the table below. In other environments, implement/use `ENV` variables to set secrets instead.

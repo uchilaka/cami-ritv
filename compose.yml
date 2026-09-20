@@ -140,6 +140,8 @@ services:
       GITCRYPT_KEY_BASE64: ${GITCRYPT_KEY_BASE64:?GITCRYPT_KEY_BASE64 must be set}
       HOSTNAME: ${HOSTNAME}
       SMTP_USER: ${SMTP_USER}
+      # TODO: [LAR-356] Nothing reads DEBUG_LEVEL; Rails log level comes from RAILS_LOG_LEVEL
+      #   (see config/application.rb). Remove this or map it to RAILS_LOG_LEVEL.
       DEBUG_LEVEL: ${DEBUG_LEVEL:-warn}
       # "APP_SECRET", "CRM_REDIS_URL", "CRM_DATABASE_NAME", "SERVER_URL", "PUBLIC_DOMAIN_URL"
     labels: !override
@@ -176,9 +178,12 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.worker
+      args:
+        # ./bin/unlock-repo needs this to decrypt git-crypt files during the build.
+        # Without it the build proceeds against an encrypted working tree.
+        - GITCRYPT_KEY_BASE64=${GITCRYPT_KEY_BASE64}
+        - RAILS_ENV=${RAILS_ENV:?RAILS_ENV must be set}
       secrets:
-        #- source: gitcrypt-key
-        #  target: gitcrypt.key
         - source: development-key
           target: development.key
         - source: production-key
@@ -376,6 +381,9 @@ networks:
     driver: bridge
   larcity-beta-net:
     # NOTE: This is an external network and must already exist (e.g. `docker network create larcity-beta-net`).
+    # TODO: [LAR-354] This block says "external" but is not declared `external: true`, so Compose
+    #   manages it as a project network and the `driver`/`enable_ipv6` settings below are moot.
+    #   Decide which is true and make the config match.
     name: larcity-beta-net
     enable_ipv6: false
     driver: bridge

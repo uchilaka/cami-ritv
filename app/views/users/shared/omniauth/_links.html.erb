@@ -1,5 +1,13 @@
-<%- if devise_mapping.omniauthable? && AppUtils.omniauth_enabled? && Devise.omniauth_configs.any? %>
-  <%- resource_class.omniauth_providers.each do |provider| %>
+<%#
+  Render a sign-in button only for providers that are BOTH declared on the model
+  (`omniauth_providers`) and actually registered with Devise. When the toggle is on but
+  the provider's client id/secret are missing, config/initializers/devise.rb skips
+  `config.omniauth`, so `omniauth_authorize_path` would point at a strategy that the
+  middleware never mounted.
+%>
+<%- if devise_mapping.omniauthable? && AppUtils.omniauth_enabled? %>
+  <%- providers = resource_class.omniauth_providers & Devise.omniauth_configs.keys %>
+  <%- providers.each do |provider| %>
     <%= button_to render("users/shared/omniauth/button", provider:),
                 omniauth_authorize_path(resource_name, provider),
                 class: primary_btn_classes(append_classes: 'block w-full'),

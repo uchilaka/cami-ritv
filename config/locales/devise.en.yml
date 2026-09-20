@@ -36,6 +36,7 @@ en:
       magic_link:
         subject: "Here's your magic login link ✨"
     omniauth_callbacks:
+      csrf_reason: "the sign-in request could not be verified"
       failure: "Could not authenticate you from %{kind} because \"%{reason}\"."
       success: "Successfully authenticated from %{kind} account."
     passwords:

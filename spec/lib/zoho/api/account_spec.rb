@@ -6,7 +6,7 @@ module Zoho
   module API
     RSpec.describe Account do
       before do
-        Fixtures::Zoho::Serverinfo.new.invoke(:load, [], region_alpha2: 'US')
+        load_zoho_serverinfo
       end
 
       describe '.auth_endpoint_url' do
