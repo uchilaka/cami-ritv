@@ -51,12 +51,22 @@ RSpec.configure do |config|
   # link), and Ferrum raises PendingConnectionsError when those hang, so specs would go red
   # on unrelated third-party availability. Allow the app under test and inline resources;
   # abort everything else.
+  #
+  # This compares parsed origins rather than matching a URL prefix. A prefix check is not
+  # an origin check: in `http://127.0.0.1:80@evil.example/`, `127.0.0.1:80` is *userinfo*
+  # and the real host is evil.example, so `start_with?('http://127.0.0.1:')` would let it
+  # through. The app serves its own built Vite assets in test (config/vite.json sets
+  # autoBuild for the test env), so no separate asset origin needs allowing.
   config.before(:each, type: :system, js: true) do
     browser = page.driver.browser
     browser.network.intercept
+
     browser.on(:request) do |request|
-      local = request.url.start_with?("http://#{Capybara.server_host}:", 'data:', 'about:')
-      local ? request.continue : request.abort
+      if SystemSpecNetwork.allowed?(request.url, Capybara.current_session.server)
+        request.continue
+      else
+        request.abort
+      end
     end
   end
 
