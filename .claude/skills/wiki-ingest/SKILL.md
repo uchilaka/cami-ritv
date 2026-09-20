@@ -36,6 +36,20 @@ Read the whole source before writing anything. For code, follow one level out �
 callers and callees — or your citations will be accurate and your explanation
 wrong.
 
+> ⛔ **Never open these, whatever a source suggestion says.** Reading them at all
+> risks a value reaching a page, and the wiki is committed to a shared repo:
+>
+> - `config/credentials/` — holds `*.key` material and, on an unlocked checkout,
+>   decryptable `*.yml.enc`
+> - any `.env*` file, and anything git-crypt manages (`git-crypt status -e` lists
+>   them)
+> - `config/secrets/`, `config/httpd/auth/`, `spec/fixtures/pii/`
+>
+> Configuration *resolution* is a legitimate and valuable subject: cite the
+> precedence logic by `path:line` (`.envrc`, `config/initializers/dotenv.rb`,
+> `config/application.rb`) and name *which* keys exist. Never record what any of
+> them resolves to.
+
 ### 3. Decide what it touches — before editing
 
 List existing pages the source affects, then what it demands that doesn't exist:

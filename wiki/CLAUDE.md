@@ -47,6 +47,20 @@ paths, so recategorising a page never breaks a `[[link]]`. Slugs are therefore
 globally unique and must read as nouns: `job-queue`, `omniauth-flow`,
 `credentials-resolution`.
 
+### Index entry format
+
+Every page gets exactly one line in `index.md`, in exactly this shape:
+
+```markdown
+- [Job queue](./pages/job-queue.md) — Solid Queue on the primary database, one pool per queue
+```
+
+The format is part of the contract, not cosmetic: `/wiki-lint` matches
+`](./pages/<slug>.md)` **literally** in both directions. Matching a bare slug
+instead would be wrong both ways — an entry for `oauth-flow` would satisfy a page
+slugged `auth`, and an entry for `job-queueing` would satisfy `job-queue`. So a
+page linked any other way reads as unindexed even when a human can see it listed.
+
 ## Page contract
 
 Every page in `pages/` opens with this frontmatter:
@@ -124,8 +138,16 @@ A page is **stale** when any of:
 
 - a path in `cites:` no longer exists at `HEAD`;
 - a cited path has changed since `verified_at`;
-- `verified_at` is more than ~200 commits behind `HEAD`.
+- `verified_at` is more than 200 commits behind `HEAD` (`STALE_AFTER` in
+  `/wiki-lint`).
 
-`/wiki-lint` checks the first two mechanically. Stale is not wrong — it means
-"unverified since". Mark `status: stale` rather than deleting; a stale page with
-a marker is more useful than a gap.
+`/wiki-lint` checks all three mechanically. The third matters on its own: without
+it, a page whose cited files happen not to have changed stays `current`
+indefinitely, however far behind it is.
+
+`cites:` must be non-empty. A page with no citations passes the other two checks
+trivially and can make unverifiable claims forever, which is the one gap that
+defeats the whole scheme.
+
+Stale is not wrong — it means "unverified since". Mark `status: stale` rather than
+deleting; a stale page with a marker is more useful than a gap.

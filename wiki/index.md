@@ -4,8 +4,15 @@ The map of this wiki. Every page in `pages/` gets exactly one line here, grouped
 by theme. Categories live here rather than in directory paths so that
 recategorising a page never breaks a `[[link]]`.
 
+Entries use exactly this format, which `/wiki-lint` matches literally — a page
+linked any other way reads as unindexed:
+
+```markdown
+- [Job queue](./pages/job-queue.md) — Solid Queue on the primary database, one pool per queue
+```
+
 Maintained by `/wiki-ingest` and audited by `/wiki-lint`. See
-[CLAUDE.md](./CLAUDE.md) for the page contract.
+[CLAUDE.md](./CLAUDE.md) for the page contract and the index entry format.
 
 **Pages: 0.** Nothing ingested yet — run `/wiki-ingest` against a source to
 start. Suggested first sources are listed in
@@ -60,7 +67,11 @@ question page is then replaced by a `[[link]]` to it.
 
 ## Wanted pages
 
-`[[links]]` that point at pages which don't exist yet — the wiki's own backlog.
-Populated by `/wiki-lint`; do not edit by hand.
+`[[links]]` that point at pages which don't exist yet — the wiki's own backlog,
+ranked by how many pages want each one.
+
+**Rewritten by `/wiki-lint`** from its `WANTED` output — it is stored state, not
+just report output, so a lint run that leaves this stale makes the committed index
+lie. Do not edit by hand.
 
 *(none — no pages to link from yet)*

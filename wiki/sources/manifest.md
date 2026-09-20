@@ -1,8 +1,13 @@
 # Ingested sources
 
-What the wiki has read, and the commit it read it at. `/wiki-lint` uses the
-**Commit** column to decide whether a source needs re-reading: if a source's
-paths have changed since, its pages are unverified.
+What the wiki has read, and the commit it read it at. `/wiki-lint` reads the
+**Commit** column and reports any row whose commit is far behind `HEAD`, as a
+prompt to re-read that source.
+
+It reports distance rather than deciding: the **Source** column is free text, not
+a path, so a markdown manifest cannot diff per-source automatically. Page-level
+staleness *is* mechanical — that comes from each page's `cites:` and
+`verified_at`, which is why pages carry them.
 
 For repository sources the content is *not* copied here — git already holds it
 immutably. Only non-repo sources (ticket exports, articles, meeting notes) get a
@@ -17,11 +22,19 @@ file, under `external/`, recorded with `templates/source.md`.
 Ordered by payoff — each is dense, load-bearing, and currently understood by
 only a few people.
 
-1. **`docs/CONFIG.md` + `.envrc` + `config/credentials/`** — the three-way
+1. **`docs/CONFIG.md` + `.envrc` + `config/initializers/dotenv.rb` + `config/application.rb`** — the three-way
    interaction between `.env.<environment>`, git-crypt and Rails encrypted
    credentials, including which wins when they disagree. Highest-value first
    ingest: it is the thing newcomers get wrong, and it is currently spread across
    a README section, `docs/DEVELOPMENT.md` and shell config.
+
+   > ⛔ **Read the resolution *logic*, never the credential *values*.** Do not
+   > open `config/credentials/` — on an unlocked checkout it holds `*.key`
+   > material and decrypted `*.yml.enc` contents, and the schema forbids both
+   > from reaching a page. The same goes for any `.env*` file: cite
+   > `.envrc`'s precedence logic by `path:line`, never a value it resolves to.
+   > Describing *which* keys exist and *how* they are resolved is the goal;
+   > their contents are never part of it.
 2. **`docs/decisions/`** — existing ADRs. Ingesting these seeds the Decisions
    section and immediately reveals which decisions were never written down.
 3. **`docs/DATABASE.md` + `db/`** — schema shape and migration conventions.
