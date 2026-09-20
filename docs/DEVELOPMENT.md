@@ -6,6 +6,7 @@
   - [Working with Render deployments](#working-with-render-deployments)
   - [Managing application secrets](#managing-application-secrets)
     - [Managing `git-crypt` secrets](#managing-git-crypt-secrets)
+    - [Working with git worktrees](#working-with-git-worktrees)
     - [Using the `secrets` CLI command](#using-the-secrets-cli-command)
     - [Using the Rails credentials command](#using-the-rails-credentials-command)
     - [Configuring basic auth for `mission_control`](#configuring-basic-auth-for-mission_control)
@@ -119,7 +120,10 @@ git-crypt keygen config/credentials/git-crypt.key
 # To list GPG keys on your system, run the following command in your console:
 gpg --list-secret-keys --keyid-format LONG
 
-# To unlock the git-crypt repository, run the following command in your console:
+# To unlock the git-crypt repository with the shared symmetric key, run the following command in your console:
+yarn keys:unlock # runs: git-crypt unlock $GITCRYPT_KEY_FILE
+
+# To unlock it with your own GPG key instead (once someone has run add-gpg-user for you), run:
 git-crypt unlock
 
 # To lock the git-crypt repository, run the following command in your console:
@@ -132,6 +136,76 @@ git-crypt status -e
 git-crypt add-gpg-user USERID
 
 ```
+
+### Working with git worktrees
+
+Use `bin/worktree-init` to create a worktree. **A plain `git worktree add` will fail on this repository.**
+
+```shell
+# bin/worktree-init <name> [branch] [base-ref]
+bin/worktree-init llm-wiki spike/llm-wiki
+
+# Branch defaults to <name>; base-ref defaults to origin's default branch
+bin/worktree-init LAR-412 LAR-412/add-widget origin/main
+```
+
+Worktrees are created at `../cami-ritv-worktrees/<name>`, as a sibling of the main checkout.
+
+**Why the wrapper is needed.** `git-crypt` stores its symmetric key at `$GIT_DIR/git-crypt/keys/default`. A worktree gets its own `$GIT_DIR` (`.git/worktrees/<name>`) and does *not* inherit that key. Since `.gitattributes` marks the encrypted paths `filter=git-crypt` and `filter.git-crypt.required` is `true`, the checkout hard-fails on the first encrypted file and git rolls the entire worktree back:
+
+```text
+git-crypt: Error: Unable to open key file - have you unlocked/initialized this repository yet?
+fatal: .env.development: smudge filter git-crypt failed
+```
+
+`yarn keys:unlock` cannot repair this after the fact — `git-crypt unlock` refuses to run unless the working tree is already clean, and a worktree created with `--no-checkout` reads as "every file deleted". So `bin/worktree-init` orders the steps the only way that works: register with `--no-checkout`, install the key into the new gitdir (`0600`, in a `0700` directory), then check out. It finishes by confirming a `.env.*` file no longer carries git-crypt's `\0GITCRYPT\0` header, so a silent ciphertext passthrough fails loudly here rather than confusingly at runtime.
+
+The script is idempotent — re-run it on a half-created worktree and it installs whatever is missing.
+
+**Where your key lives.** `GITCRYPT_KEY_FILE` defaults to `config/credentials/git-crypt.key`, resolved against the *main checkout*. If you work in worktrees regularly, point it at a machine-local path outside every checkout instead:
+
+```shell
+# ~/.zshrc
+export GITCRYPT_KEY_FILE="$HOME/.config/git-crypt/cami-ritv.key" # chmod 600
+```
+
+One canonical key then serves the main checkout and every worktree, it cannot be committed or removed by `git clean -xfd`, and `yarn keys:unlock` starts working inside worktrees too. `.envrc` already honours an existing value, so nothing in the repository needs to change.
+
+> Each worktree still ends up with its own copy of the key in its gitdir — that is git-crypt's design, not a choice this script makes. Removing a worktree removes its copy along with the gitdir.
+
+### Finishing a new worktree
+
+`bin/worktree-init` deliberately stops at a decrypted checkout. A worktree shares git history but nothing else, so finish it in this order:
+
+```shell
+cd ../cami-ritv-worktrees/<name>
+
+# 1. Trust the toolchain config AT THIS PATH. mise trusts by path, so every new
+#    worktree is untrusted — and an untrusted mise.toml breaks PATH badly enough
+#    that coreutils (sort, basename, head) stop resolving.
+mise trust
+
+# 2. Allow direnv AT THIS PATH, for the same reason. .envrc runs under `set -e`,
+#    so if it aborts partway you get a half-built environment rather than an
+#    error, which is harder to spot.
+direnv allow
+
+# 3. Dependencies — shared history, but not shared installs
+bundle install
+yarn install
+```
+
+Then copy the gitignored files that are not in git and so cannot be checked out: `.env.*.local`, `.env.tpl`, and the Rails credential keys you actually need from `config/credentials/*.key`.
+
+> Copy only the credential keys the worktree needs — `development.key` and `test.key` for ordinary work. There is no reason for `production.key` or `staging.key` to exist in a feature worktree.
+
+Verify the worktree with:
+
+```shell
+bundle exec thor -T # loads the full Rails environment and lists Thor tasks
+```
+
+If that fails with `InvalidMessage` or `MissingKeys`, a credential key is missing. If it fails with `Gem::LoadError: You have already activated <gem> X, but your Gemfile requires Y`, worktrees on the same Ruby share one gemset and a stray build is shadowing the locked one — uninstall the stray version, keeping the one `bundle show <gem>` reports.
 
 ### Using the `secrets` CLI command
 
