@@ -4,10 +4,8 @@ shared: &shared
 development:
   aliases:
     crm: <%= ENV.fetch('CONTAINER_REGISTRY_HOST') %>/twenty-crm-production
-    web: <%= ENV.fetch('CONTAINER_REGISTRY_HOST') %>/cami-production
-    # The web and worker processes are built against the same container image
-    # for compatibility with how deployments to fly.io are currently configured
-    worker: <%= ENV.fetch('CONTAINER_REGISTRY_HOST') %>/cami-production
+    web: <%= ENV.fetch('CONTAINER_REGISTRY_HOST') %>/cami-web-production
+    worker: <%= ENV.fetch('CONTAINER_REGISTRY_HOST') %>/cami-worker-production
 
 test:
   aliases:
@@ -18,12 +16,24 @@ test:
 lab: &lab
   <<: *shared
   aliases:
-    crm: <%= ENV.fetch('CONTAINER_REGISTRY_HOST') %>/twenty-crm-production
-    web: <%= ENV.fetch('CONTAINER_REGISTRY_HOST') %>/cami-production
-    worker: <%= ENV.fetch('CONTAINER_REGISTRY_HOST') %>/cami-production-worker
+    crm: <%= ENV.fetch('CONTAINER_REGISTRY_HOST') %>/twenty-crm-lab
+    web: <%= ENV.fetch('CONTAINER_REGISTRY_HOST') %>/cami-web-lab
+    worker: <%= ENV.fetch('CONTAINER_REGISTRY_HOST') %>/cami-worker-lab
 
+# Staging deliberately shares the lab images: both front the same beta environment
+# (accounts.beta.larcity.tech) and are promoted together.
 staging:
   <<: *lab
 
+# Aliases MUST be declared explicitly here. Inheriting `<<: *lab` would silently
+# resolve production to the *-lab repositories and deploy lab images to production.
+#
+# NOTE: fly.toml builds a single image (Dockerfile.web) and runs both the `web` and
+# `worker` process groups from it, so the worker alias is only used by deploy targets
+# that build Dockerfile.worker separately. See LAR-325.
 production:
-  <<: *lab
+  <<: *shared
+  aliases:
+    crm: <%= ENV.fetch('CONTAINER_REGISTRY_HOST') %>/twenty-crm-production
+    web: <%= ENV.fetch('CONTAINER_REGISTRY_HOST') %>/cami-web-production
+    worker: <%= ENV.fetch('CONTAINER_REGISTRY_HOST') %>/cami-worker-production

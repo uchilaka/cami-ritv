@@ -10,20 +10,39 @@ fi
 # Ensure the temporary directory exists
 mkdir -pv ./tmp
 
-# Process the GITCRYPT_KEY_BASE64 environment variable.
-# It should contain the base64-encoded git-crypt key if set
+# Two supported channels for the git-crypt key, in priority order:
+#
+#   1. GITCRYPT_KEY_BASE64 - a base64-encoded key in the environment. This is what
+#      docker-compose passes through as a build arg (see the `web`/`worker` build
+#      args in docker-compose.yml).
+#   2. GITCRYPT_KEY_FILE   - a path to the raw key, defaulting to the location
+#      BuildKit mounts it at (`--mount=type=secret,id=git-crypt.key,dst=...`).
+#      Platforms like Fly pass the key as a build secret rather than an env var,
+#      so without this branch the mounted secret would be silently ignored.
+#
+# Note the key is always copied to a scratch file before `git crypt unlock` runs:
+# git-crypt installs the key at .git/git-crypt/keys/default itself, and handing it
+# a path it is about to overwrite (or a read-only BuildKit mount) fails.
+GITCRYPT_KEY_FILE="${GITCRYPT_KEY_FILE:-/run/secrets/git-crypt.key}"
+
+unlock_with() {
+  local key_file="$1"
+  git crypt unlock "$key_file"
+  rm -v "$key_file"
+}
+
 if [[ -n "$GITCRYPT_KEY_BASE64" ]]; then
   echo "INFO: GITCRYPT_KEY_BASE64 environment variable is set. Attempting to unlock the repository with git-crypt."
-
-  # Decode the key from the environment variable into a temporary file
   echo "$GITCRYPT_KEY_BASE64" | base64 -d > ./tmp/git-crypt-key.key
-
-  # Unlock the repository
-  git crypt unlock ./tmp/git-crypt-key.key
-
-  # Discard the crypt file
-  rm -v ./tmp/git-crypt-key.key
+  unlock_with ./tmp/git-crypt-key.key
   exit 0
 fi
 
-echo "WARNING: Neither $SECRET_FILE nor GITCRYPT_KEY_BASE64 is set. Repository might not be unlocked."
+if [[ -f "$GITCRYPT_KEY_FILE" ]]; then
+  echo "INFO: git-crypt key found at ${GITCRYPT_KEY_FILE}. Attempting to unlock the repository with git-crypt."
+  cp "$GITCRYPT_KEY_FILE" ./tmp/git-crypt-key.key
+  unlock_with ./tmp/git-crypt-key.key
+  exit 0
+fi
+
+echo "WARNING: Neither GITCRYPT_KEY_BASE64 nor a key file at ${GITCRYPT_KEY_FILE} is set. Repository might not be unlocked."

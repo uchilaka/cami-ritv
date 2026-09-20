@@ -99,9 +99,9 @@ en:
             sudo launchctl load -w %{plist_file_path}
             sudo launchctl bootout system %{plist_file_path}
       lookup:
-        short_desc: Lookup a service by its name
+        short_desc: Lookup a service process
         long_desc: >
-          This command allows you to lookup services for the CAMI app,
+          This command allows you to lookup service processes,
           listing resources like the port number and PID file.
         no_port_specified_msg: >
           No port number was specified. Please specify a port number

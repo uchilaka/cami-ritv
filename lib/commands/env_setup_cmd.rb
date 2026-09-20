@@ -307,6 +307,7 @@ class EnvSetupCmd < Thor::Group
     def item_env_sets
       [
         *platform_env_sets.map { |env_key, vault_field| [env_key, vault_field, 'platform'] },
+        ['RAILS_MASTER_KEY', nil, 'app'],
         # ['NGROK_AUTH_TOKEN', nil, 'proxy'],
         # ['CRM_ORG_ID', nil, 'crm'],
       ]
