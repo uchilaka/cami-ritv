@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe AppUtils, utility: true, skip_in_ci: true do
+RSpec.describe AppUtils, utility: true, skip_in_ci: true, stubs_http: true do
   describe '.healthy?' do
     context 'when the resource is healthy' do
       let(:stubs) { Faraday::Adapter::Test::Stubs.new }

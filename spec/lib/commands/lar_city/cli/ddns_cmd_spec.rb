@@ -4,7 +4,7 @@ require 'rails_helper'
 require 'faraday'
 require 'faraday/adapter/test'
 
-RSpec.describe LarCity::CLI::DDNSCmd do
+RSpec.describe LarCity::CLI::DDNSCmd, stubs_http: true do
   let(:instance) { described_class.new }
   let(:access_token) { 'test_token' }
   let(:domain) { 'larcity.test' }

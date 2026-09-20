@@ -5,10 +5,25 @@ require 'rails_helper'
 module Zoho
   RSpec.describe AccessToken do
     before do
-      Fixtures::Zoho::Serverinfo.new.invoke(:load, [], region_alpha2: 'US')
+      load_zoho_serverinfo
     end
 
     describe '#generate' do
+      # VCR configuration -- replays the recorded POST /oauth/v2/token. Without it this
+      # example performs a live token grant and goes red whenever Zoho rate-limits.
+      let(:cassette) { vcr_cassettes[:zoho] }
+      let(:cassette_options) do
+        cassette[:options].deep_merge(
+          match_requests_on: %i[method uri],
+          record: :none
+        )
+      end
+
+      around do |example|
+        VCR.use_cassette('zoho/access_token', cassette_options) { example.run }
+      end
+      # End VCR configuration
+
       subject { described_class.generate }
 
       it 'returns a hash with the access token' do

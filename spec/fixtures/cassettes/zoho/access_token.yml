@@ -1,0 +1,56 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://accounts.zoho.com/oauth/v2/token
+    body:
+      encoding: UTF-8
+      string: client_id=<ZOHO_CLIENT_ID>&client_secret=<ZOHO_CLIENT_SECRET>&grant_type=client_credentials&scope=ZohoCRM.modules.accounts.ALL%2CZohoCRM.modules.appointments.ALL%2CZohoCRM.modules.contacts.ALL%2CZohoCRM.modules.deals.ALL%2CZohoCRM.modules.invoices.ALL%2CZohoCRM.modules.leads.ALL%2CZohoCRM.modules.notes.ALL%2CZohoCRM.modules.products.ALL%2CZohoCRM.modules.tasks.ALL%2CZohoCRM.modules.vendors.ALL&soid=ZohoCRM.877691058
+    headers:
+      User-Agent:
+      - Faraday v2.12.0
+      Content-Type:
+      - application/x-www-form-urlencoded
+  response:
+    status:
+      code: 200
+      message: ''
+    headers:
+      server:
+      - ZGS
+      date:
+      - Sat, 01 Feb 2025 12:34:32 GMT
+      content-type:
+      - application/json;charset=UTF-8
+      content-length:
+      - '460'
+      connection:
+      - keep-alive
+      set-cookie:
+      - zalb_b266a5bf57=a711b6da0e6cbadb5e254290f114a026; Path=/; Secure; HttpOnly,
+        iamcsr=2dd3b5da-9088-4ab0-bab4-f2e069151f27;path=/;SameSite=None;Secure;priority=high,
+        _zcsr_tmp=2dd3b5da-9088-4ab0-bab4-f2e069151f27;path=/;SameSite=Strict;Secure;priority=high
+      cache-control:
+      - no-store
+      x-content-type-options:
+      - nosniff
+      pragma:
+      - no-cache
+      x-frame-options:
+      - SAMEORIGIN
+      content-language:
+      - en-US
+      strict-transport-security:
+      - max-age=63072000
+    body:
+      encoding: UTF-8
+      string: |-
+        {
+          "access_token": "<ZOHO_ACCESS_TOKEN>",
+          "scope": "ZohoCRM.modules.accounts.ALL ZohoCRM.modules.appointments.ALL ZohoCRM.modules.contacts.ALL ZohoCRM.modules.deals.ALL ZohoCRM.modules.invoices.ALL ZohoCRM.modules.leads.ALL ZohoCRM.modules.notes.ALL ZohoCRM.modules.products.ALL ZohoCRM.modules.tasks.ALL ZohoCRM.modules.vendors.ALL",
+          "api_domain": "https://www.zohoapis.com",
+          "token_type": "Bearer",
+          "expires_in": 3600
+        }
+  recorded_at: Sat, 01 Feb 2025 12:34:32 GMT
+recorded_with: VCR 6.3.1
