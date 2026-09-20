@@ -7,7 +7,7 @@ require 'fugit'
 module Zoho
   RSpec.describe UpsertAccountJob, type: :job do
     before do
-      Fixtures::Zoho::Serverinfo.new.invoke(:load, [], region_alpha2: 'US')
+      load_zoho_serverinfo
     end
 
     shared_examples 'a valid job schedule' do |schedule, expected_tz|
@@ -22,6 +22,21 @@ module Zoho
 
     context 'for business accounts' do
       let(:record) { Fabricate :business }
+
+      # VCR configuration -- the job calls Zoho::API::Account.upsert, which performs a
+      # token grant followed by the upsert call. Both are in this cassette.
+      let(:cassette) { vcr_cassettes[:zoho] }
+      let(:cassette_options) do
+        cassette[:options].deep_merge(
+          match_requests_on: %i[method uri],
+          record: :none
+        )
+      end
+
+      around do |example|
+        VCR.use_cassette('zoho/upsert_accounts', cassette_options) { example.run }
+      end
+      # End VCR configuration
 
       context 'when a record is created' do
         it do

@@ -72,7 +72,18 @@ end
 VCR.configure do |vcr_config|
   vcr_config.cassette_library_dir = 'spec/fixtures/cassettes'
   vcr_config.hook_into :faraday
-  vcr_config.allow_http_connections_when_no_cassette = true
+  # Unrecorded HTTP raises instead of hitting the network.
+  #
+  # This was `true`, which let any spec without a cassette perform live calls. In practice
+  # the Zoho specs did: every example in them issued a real
+  # GET https://accounts.zoho.com/oauth/serverinfo, so the suite went red whenever Zoho
+  # rate-limited the account and silently required network access in CI.
+  #
+  # Specs that stub HTTP themselves (rather than via VCR) must opt out explicitly with
+  # `VCR.turned_off` -- `hook_into :faraday` inserts VCR middleware into every Faraday
+  # connection, including ones built with Faraday's test adapter. See the `around` hook in
+  # spec/lib/commands/lar_city/cli/ddns_cmd_spec.rb.
+  vcr_config.allow_http_connections_when_no_cassette = false
 
   # IMPORTANT: Enables automatic cassette naming based on tags
   vcr_config.configure_rspec_metadata!
@@ -165,6 +176,9 @@ RSpec.configure do |config|
   # Testing Jobs
   config.include ActiveJob::TestHelper, type: :job
   config.include ActiveJob::TestHelper, feature: :invoicing
+
+  # Specs that stub HTTP themselves rather than via a VCR cassette
+  config.include_context 'with self-stubbed http', stubs_http: true
 
   # Sample phone numbers
   config.include_context 'for phone number testing', real_world_data: true
