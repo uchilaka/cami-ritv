@@ -177,9 +177,9 @@ export GITCRYPT_KEY_FILE="$HOME/.config/git-crypt/cami-ritv.key" # chmod 600
 
 One canonical key would then serve the main checkout and every worktree, it could not be committed or removed by `git clean -xfd`, and `yarn keys:unlock` would start working inside worktrees too.
 
-> ⚠️ **This does not currently take effect.** `.env:1` sets `export GITCRYPT_KEY_FILE="config/credentials/git-crypt.key"`, and `.envrc` loads the `.env` files *after* applying its own default — so the tracked value wins and any shell export is ignored. To adopt a machine-local key, that line has to come out of `.env` first, which is a team decision since `.env` is tracked and shared. `.envrc` itself now handles absolute and `~/`-prefixed paths correctly, so it is ready for that change.
+> ⚠️ **This does not currently take effect** ([LAR-357](https://linear.app/larcity-and-affiliates/issue/LAR-357)). `.env:1` sets `export GITCRYPT_KEY_FILE="config/credentials/git-crypt.key"`, and `.envrc` sources the `.env` files with `set -a` *after* applying its own default — so the tracked value clobbers any shell export. To adopt a machine-local key, that line has to come out of `.env` first, which is a team decision since `.env` is tracked and shared. `.envrc` itself now handles absolute and `~/`-prefixed paths correctly, so it is ready for that change.
 
-### ⚠️ `PROJECT_ROOT` is wrong inside worktrees
+### ⚠️ `PROJECT_ROOT` is wrong inside worktrees ([LAR-358](https://linear.app/larcity-and-affiliates/issue/LAR-358))
 
 `.envrc:17` derives it correctly — `git rev-parse --show-toplevel` resolves worktrees, and the comment there says so. But the `.env` files load afterwards and overwrite it:
 
