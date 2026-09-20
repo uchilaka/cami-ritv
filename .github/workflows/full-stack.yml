@@ -130,11 +130,15 @@ jobs:
           # See https://docs.knapsackpro.com/ruby/rspec/
         if: ${{ env.RUN_MODE == 'parallel' }}
         run: |
-          # Run all specs except those with the option skip_in_ci: true
-          bundle exec rake "knapsack_pro:rspec[--tag ~skip_in_ci:true]"
+          # Run all specs except those tagged skip_in_ci or browser.
+          # Browser specs need headless Chrome, which this job does not install yet --
+          # they get their own lane (see the e2e tooling plan, phase 3).
+          bundle exec rake "knapsack_pro:rspec[--tag ~skip_in_ci:true --tag ~browser:true]"
 
       - name: RSpec tests
         if: ${{ env.RUN_MODE != 'parallel' }}
         run: |
-          # Run all specs except those with the option skip_in_ci: true
-          bundle exec rspec --tag ~skip_in_ci:true
+          # Run all specs except those tagged skip_in_ci or browser.
+          # Browser specs need headless Chrome, which this job does not install yet --
+          # they get their own lane (see the e2e tooling plan, phase 3).
+          bundle exec rspec --tag ~skip_in_ci:true --tag ~browser:true

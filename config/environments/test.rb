@@ -42,6 +42,11 @@ Rails.application.configure do
     ENV[var] = test_env_values[var].presence || fallback
   end
 
+  # System specs run the app on 127.0.0.1 with a port Capybara picks at random, which
+  # config/allowed_hosts.yml cannot enumerate. Permit loopback rather than clearing
+  # config.hosts, so the configured test hostnames still mean something.
+  config.host_authorization = { exclude: :local?.to_proc }
+
   # https://github.com/heartcombo/devise?tab=readme-ov-file#testing
   config.middleware.insert_before Warden::Manager, ActionDispatch::Cookies
   config.middleware.insert_before Warden::Manager, ActionDispatch::Session::CookieStore

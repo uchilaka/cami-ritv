@@ -144,6 +144,10 @@ group :development do
 end
 
 group :test do
+  gem 'capybara'
+  # Headless Chrome over CDP. Preferred over selenium-webdriver (which this replaces):
+  # no chromedriver binary to keep in sync with the installed Chrome version.
+  gem 'cuprite'
   gem 'database_cleaner-active_record'
   gem 'fakefs', require: 'fakefs/safe'
   gem 'rails-controller-testing'
@@ -151,7 +155,6 @@ group :test do
   gem 'rubocop-performance'
   gem 'rubocop-rails'
   gem 'rubocop-rspec'
-  gem 'selenium-webdriver'
   gem 'shoulda-matchers'
   gem 'vcr', '~> 6.2'
 end

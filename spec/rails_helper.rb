@@ -211,9 +211,14 @@ RSpec.configure do |config|
 
   # Review example of RSpec with Capybara configuration:
   # https://github.com/DatabaseCleaner/database_cleaner?tab=readme-ov-file#rspec-with-capybara-example
-  config.before(:each) do
+  config.before(:each) do |example|
     # Database cleaner setup: https://github.com/DatabaseCleaner/database_cleaner?tab=readme-ov-file#rspec-example
-    DatabaseCleaner.strategy = :transaction
+    #
+    # JS-driven specs need :truncation. The app-under-test that the browser connects to
+    # runs in a separate thread with its own database connection, which cannot see data
+    # written inside this spec's uncommitted transaction -- the exact situation the
+    # `before(:suite)` guard above describes.
+    DatabaseCleaner.strategy = example.metadata[:js] ? :truncation : :transaction
   end
 
   config.before(:each) do
