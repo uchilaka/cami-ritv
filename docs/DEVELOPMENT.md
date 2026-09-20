@@ -175,7 +175,25 @@ bin/worktree-init pr-245-phase2 pr-245-phase2/docker-consistency
 export GITCRYPT_KEY_FILE="$HOME/.config/git-crypt/cami-ritv.key" # chmod 600
 ```
 
-One canonical key then serves the main checkout and every worktree, it cannot be committed or removed by `git clean -xfd`, and `yarn keys:unlock` starts working inside worktrees too. `.envrc` already honours an existing value, so nothing in the repository needs to change.
+One canonical key would then serve the main checkout and every worktree, it could not be committed or removed by `git clean -xfd`, and `yarn keys:unlock` would start working inside worktrees too.
+
+> ⚠️ **This does not currently take effect.** `.env:1` sets `export GITCRYPT_KEY_FILE="config/credentials/git-crypt.key"`, and `.envrc` loads the `.env` files *after* applying its own default — so the tracked value wins and any shell export is ignored. To adopt a machine-local key, that line has to come out of `.env` first, which is a team decision since `.env` is tracked and shared. `.envrc` itself now handles absolute and `~/`-prefixed paths correctly, so it is ready for that change.
+
+### ⚠️ `PROJECT_ROOT` is wrong inside worktrees
+
+`.envrc:17` derives it correctly — `git rev-parse --show-toplevel` resolves worktrees, and the comment there says so. But the `.env` files load afterwards and overwrite it:
+
+| File | Sets `PROJECT_ROOT` to |
+|---|---|
+| `.env.development:31` | `${HOME}/repos/@larcity/cami` — a layout that may not exist on your machine |
+| `.env.development.local:46` | a hardcoded absolute path to the **main checkout** |
+
+So in a worktree, anything derived from `PROJECT_ROOT` — compose file paths, key lookups — silently resolves against the main checkout instead. You can see it in `direnv`'s output as `Compose file not found: <main-checkout>/compose.yml` while standing in a worktree.
+
+Two consequences worth knowing:
+
+- Copying `.env.development.local` from the main checkout into a new worktree, as bootstrapping requires, **carries that hardcoded path with it**. Override `PROJECT_ROOT` in the worktree's own `.env.development.local` if anything you run depends on it.
+- The fix at `.envrc:17` is effectively dead while the `.env` files set this. Making it authoritative means removing `PROJECT_ROOT` from those files, or re-deriving it after they load.
 
 > Each worktree still ends up with its own copy of the key in its gitdir — that is git-crypt's design, not a choice this script makes. Removing a worktree removes its copy along with the gitdir.
 
