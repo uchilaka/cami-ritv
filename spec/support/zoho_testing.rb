@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-CASSETTE_ZOHO_SERVERINFO = 'zoho/serverinfo'
-
 # Replays Zoho serverinfo from its recorded cassette instead of the live API.
 #
 # Zoho::API.serverinfo is a prerequisite for nearly every Zoho code path, so the Zoho specs
@@ -10,17 +8,18 @@ CASSETTE_ZOHO_SERVERINFO = 'zoho/serverinfo'
 # makes the suite non-hermetic: it fails whenever Zoho rate-limits the account, and it
 # silently depends on network access in CI.
 def load_zoho_serverinfo(region_alpha2: 'US')
+  cassette_name = 'zoho/serverinfo'
   load_fixture = -> { Fixtures::Zoho::Serverinfo.new.invoke(:load, [], region_alpha2:) }
 
   # Some describe blocks already open this cassette in an `around` hook (see
   # `.serverinfo` in spec/lib/zoho/api/account_spec.rb). VCR raises on nesting two
   # cassettes of the same name, so replay through the open one rather than opening a second.
-  return load_fixture.call if VCR.cassettes.any? { |cassette| cassette.name == CASSETTE_ZOHO_SERVERINFO }
+  return load_fixture.call if VCR.cassettes.any? { |cassette| cassette.name == cassette_name }
 
   options = vcr_cassettes[:zoho][:options].deep_merge(
     match_requests_on: %i[method uri],
     record: :none
   )
 
-  VCR.use_cassette(CASSETTE_ZOHO_SERVERINFO, options, &load_fixture)
+  VCR.use_cassette(cassette_name, options, &load_fixture)
 end
