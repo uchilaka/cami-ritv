@@ -81,8 +81,8 @@ VCR.configure do |vcr_config|
   #
   # Specs that stub HTTP themselves (rather than via VCR) must opt out explicitly with
   # `VCR.turned_off` -- `hook_into :faraday` inserts VCR middleware into every Faraday
-  # connection, including ones built with Faraday's test adapter. See the `around` hook in
-  # spec/lib/commands/lar_city/cli/ddns_cmd_spec.rb.
+  # connection, including ones built with Faraday's test adapter. Use `stubs_http: true`
+  # metadata to apply spec/support/self_stubbed_http.rb's `around` hook.
   vcr_config.allow_http_connections_when_no_cassette = false
 
   # IMPORTANT: Enables automatic cassette naming based on tags
