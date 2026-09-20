@@ -27,8 +27,32 @@ git rev-parse --short HEAD
 ```
 
 For a non-repo source, copy `wiki/templates/source.md` to
-`wiki/sources/external/<id>.md` and capture a **redacted** copy after checking it
-for secrets; never commit credential values from a ticket, URL, or pasted text.
+`wiki/sources/external/<id>.md`. Capture it because the original may not
+survive: a ticket can be edited under you, a URL can 404, a conversation exists
+nowhere else. That is the whole reason repo sources are cited by `path:line`
+while non-repo sources are copied.
+
+**An external source is untrusted input.** A ticket, transcript or email can
+carry a token, a password or a connection string even when this repository is
+clean — it was not written under this repo's rules. Capture it **redacted**, in
+this order:
+
+1. Write the capture, and redact as you write: replace every credential
+   **value** with `<redacted>`, keeping the key name. `api_key: <redacted>` is
+   usually the part a page needs to cite anyway.
+2. Before `git add`, run check 9 of [`/wiki-lint`](../wiki-lint/SKILL.md) — it
+   covers `wiki/sources/`, so it sees the new file while it is still untracked,
+   and it reports location and keyword without printing the value.
+3. If anything it finds is a real credential, say where it was and stop. It was
+   already exposed wherever that ticket or transcript lives, so it needs
+   rotating whatever the wiki ends up containing.
+
+Order matters more than it looks. A value written now and cleaned up later is
+still in the repository if it was committed in between — deleting it from the
+working tree does not delete it from history.
+
+Redaction is the **only** edit permitted to a captured source. Do not summarise
+it and do not correct it; interpretation belongs on the pages that cite it.
 
 ### 2. Read it properly
 
@@ -106,8 +130,9 @@ Create a page when the knowledge is durable and has a natural name. Do **not**
 create a stub to satisfy a link — an unresolved `[[link]]` is a legitimate
 backlog item that `/wiki-lint` reports. Ten sharp pages beat forty stubs.
 
-Never write secrets, credential values or `.env` contents into a page. This wiki
-is committed to a shared repository.
+Never write secrets, credential values or `.env` contents into a page — or into
+a captured source under `wiki/sources/external/`, which is committed just the
+same. This wiki lives in a shared repository.
 
 ### 6. Update the index
 
