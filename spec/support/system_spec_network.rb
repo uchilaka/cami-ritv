@@ -21,7 +21,7 @@ module SystemSpecNetwork
     uri = parse(url)
     return false if uri.nil?
     # data:, about: and blob: carry no host and reach no network.
-    return true if uri.host.nil?
+return true if %w[data about blob].include?(uri.scheme) && uri.host.nil?
 
     # Compare parsed origin, never a URL prefix. In `http://127.0.0.1:80@evil.example/`,
     # `127.0.0.1:80` is userinfo and the real host is evil.example, so a prefix check on
