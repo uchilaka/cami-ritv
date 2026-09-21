@@ -37,6 +37,13 @@ run             = "docker compose --profile $COMPOSE_PROFILE ps"
 description   = "Check the resolved docker compose configuration (see $COMPOSE_FILE)"
 run           = "docker compose --profile $COMPOSE_PROFILE config"
 
+[tasks."check:secret-files"]
+description   = "Inventory of encrypted files"
+run           = "git-crypt status -e"
+
+[tasks."check:secrets"]
+depends       = ["check:secret-files"]
+
 [tasks."logs:services"]
 description   = "Tail the flagship service logs"
 run           = "docker compose --profile $COMPOSE_PROFILE logs --follow"
