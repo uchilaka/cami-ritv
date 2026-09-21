@@ -82,6 +82,7 @@
 !/.env.test
 !/.envrc
 !/.env.example
+!/.env.*.example
 /.node-version
 /.ruby-version
 

@@ -127,7 +127,12 @@ RSpec.describe 'environment isolation' do
       path.read.scan(%r{^[ \t]*(?:export[ \t]+)?([A-Z_][A-Z0-9_]*)=}).flatten
     end
 
-    Dir.glob(Rails.root.join('.env.*')).reject { |file| file.end_with?('.local') }.sort.each do |file|
+    # `.example` templates are documentation, not environments -- they hold placeholder
+    # values and must not be held to R3.
+    env_specific_files =
+      Dir.glob(Rails.root.join('.env.*')).reject { |f| f.end_with?('.local', '.example') }.sort
+
+    env_specific_files.each do |file|
       environment = File.basename(file).delete_prefix('.env.')
 
       context File.basename(file) do
@@ -146,7 +151,15 @@ RSpec.describe 'environment isolation' do
       end
     end
 
-    %w[.env .env.local].each do |file|
+    # `.env` is committed and shared, so a selector there is a cross-environment default --
+    # every machine would claim the same environment. `.env.local` is untracked and loads
+    # in phase 1, BEFORE the selector is used, so it is the one legitimate place for a
+    # machine to declare which environment it is. RAILS_ENV/NODE_ENV stay out of both:
+    # they are declared by .env.<env>, per R3.
+    {
+      '.env' => %w[RAILS_ENV RUBY_ENV NODE_ENV],
+      '.env.local' => %w[RAILS_ENV NODE_ENV],
+    }.each do |file, forbidden|
       context file do
         let(:path) { Rails.root.join(file) }
 
@@ -156,9 +169,9 @@ RSpec.describe 'environment isolation' do
         end
 
         # Intersection, not `not_to include(a, b, c)` -- that form only fails when ALL
-        # three are present, so it would pass with two of them sitting there.
-        it 'declares no environment selector' do
-          expect(declared_variables(path) & %w[RAILS_ENV RUBY_ENV NODE_ENV]).to be_empty
+        # of them are present, so it would pass with two of the three sitting there.
+        it "declares none of #{forbidden.join(', ')}" do
+          expect(declared_variables(path) & forbidden).to be_empty
         end
       end
     end

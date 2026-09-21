@@ -28,9 +28,14 @@ rest development-shaped. That is how a test boot ends up holding the development
 
 ### R1 — One selector, and it comes from outside the repo
 
-`RUBY_ENV` names the environment. It is set by your shell, your machine, or the deploy
-platform. **No file in the repo sets it**, because a file cannot define the variable that
-chooses it. `.envrc` validates `RUBY_ENV` before using it to build any path.
+`RUBY_ENV` names the environment. No **tracked** file sets it, because a file cannot
+define the variable that selects it. It comes from your shell, the deploy platform, or
+`.env.local` — which is untracked and loads in phase 1, *before* the selector is used, and
+is therefore the one legitimate place for a machine to declare which environment it is.
+
+`.env` is explicitly not that place: it is committed and shared, so a default there would
+make every machine claim the same environment. `.envrc` validates `RUBY_ENV` before using
+it to build any path.
 
 ### R2 — `.env` and `.env.local` hold nothing environment-shaped
 
@@ -38,6 +43,10 @@ Anything that varies per environment — database names, master keys, hosts, por
 lives *only* in `.env.<RUBY_ENV>`. `.env` holds what is identical everywhere; `.env.local`
 holds machine-local overrides. A cross-environment default in either is exactly how the
 wrong environment comes to look right.
+
+Selectors specifically: `.env` may declare **none** of `RAILS_ENV`, `RUBY_ENV`,
+`NODE_ENV`. `.env.local` may declare `RUBY_ENV` only (see R1); `RAILS_ENV` and `NODE_ENV`
+are declared by `.env.<env>`, per R3.
 
 ### R3 — Each `.env.<env>` declares `RAILS_ENV`, and it agrees with the filename
 
@@ -75,6 +84,7 @@ are kept so that when someone bypasses R5, it is loud rather than silent.
 | `.env.<env>` | yes | yes (git-crypt) | that environment's payload + `RAILS_ENV`/`NODE_ENV` |
 | `.env.test` | yes | **no** | test selectors and database names — no secrets |
 | `.env.<env>.local` | no | — | secrets and machine-specific values (master keys, DB host/port) |
+| `.env*.example` | yes | no | commented templates for the untracked files above |
 
 Load order is set by `.envrc`, in two phases. The environment-specific paths interpolate
 `RUBY_ENV`, so they cannot be built until it is known:
@@ -85,6 +95,31 @@ Load order is set by `.envrc`, in two phases. The environment-specific paths int
 
 Building all four paths up front expands `${RUBY_ENV}` while still empty, silently turning
 `.env.${RUBY_ENV}` into `.env.` and skipping it.
+
+## Setting up a fresh clone
+
+The tracked files arrive with the repo. The untracked ones you create from the committed
+templates, which are deliberately unencrypted so a clone with no git-crypt key can still
+read them:
+
+```shell
+cp .env.local.example             .env.local
+cp .env.development.local.example .env.development.local
+cp .env.test.local.example        .env.test.local
+```
+
+Then fill in the blanks. Two things are worth knowing first:
+
+- **Leave `RAILS_MASTER_KEY` blank** in both `.local` files if the matching
+  `config/credentials/<env>.key` exists. Rails reads the key file when the variable is
+  empty, and an exported key takes precedence over *every* environment key file — which is
+  how a development key ends up breaking a test boot.
+- **`.envrc` will refuse to load** until `RUBY_ENV`, `CONTAINER_REGISTRY_HOST` and
+  `CONTAINER_NAME_PREFIX` are set. The first belongs in `.env.local` (R1); the other two
+  are in `.env.local.example`.
+
+Credentials keys (`config/credentials/*.key`) are gitignored and appear in no template.
+Fetch them from the vault — see `bin/thor lx-cli:secrets:help`.
 
 ## Running the test suite
 
