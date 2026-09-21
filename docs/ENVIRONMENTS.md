@@ -62,11 +62,22 @@ this whole document exists to prevent. Secrets stay in `.env.test.local`, never 
 
 ### R5 — Switching environments is an act, not a command prefix
 
-Do not reach for `RAILS_ENV=test <cmd>` from a development shell. Enter the environment, or
-use an entry point that clears what the current one exported and lets the test chain
-repopulate it. `config/environments/test.rb` already loads `.env.test.local`, `.env.test`,
-`.env`; it only fails to correct an inherited value because Dotenv will not overwrite a
-variable that is still set.
+Do not reach for `RAILS_ENV=test <cmd>` from a development shell: that swaps one variable
+and leaves the master key and database connection pointing at development. Use
+`bin/with-env` instead:
+
+```shell
+bin/with-env test bundle exec rspec
+bin/with-env test bundle exec thor lx-cli:secrets:edit
+```
+
+It unsets everything `.env.$RUBY_ENV` and `.env.$RUBY_ENV.local` declare, then runs the
+command with `RUBY_ENV`/`RAILS_ENV` set to the target. `config/environments/test.rb`
+already loads `.env.test.local`, `.env.test`, `.env` — it simply could not correct an
+inherited value before, because Dotenv never overwrites a variable that is still set.
+
+On a git-crypt-locked clone it cannot read what those files declare, so it warns loudly
+and continues with degraded isolation rather than refusing to run.
 
 ### R6 — The runtime corrections stay, as assertions
 
@@ -139,6 +150,20 @@ supplies the key through that variable, which is why the correction is condition
 For RubyMine, see [RUBYMINE.md](./RUBYMINE.md); the committed run template at
 `.ide-configs/Template RSpec.run.xml` presets `RAILS_ENV=test`.
 
+### Specs that depend on a leaked development environment
+
+Running the suite under `bin/with-env` currently surfaces six failures that pass when the
+development environment leaks in. Both files are `skip_in_ci: true`, so CI never ran them
+either way — this is a local-only gap, not a regression:
+
+| Spec | Depends on | Declared in |
+| --- | --- | --- |
+| `spec/commands/lar_city/cli/images_cmd_spec.rb` (5) | `APP_SECRET` for `docker compose build` | `.env.development` |
+| `spec/requests/errors_spec.rb` (1) | `APP_DEBUG_MODE` / `consider_all_requests_local` | `.env.development.local` |
+
+They should declare what they need rather than inherit it. Until then, run those two files
+with `bundle exec rspec` directly.
+
 ## How the rules are enforced
 
 `spec/environment_isolation_spec.rb` covers the config-level regressions that no unit test
@@ -150,6 +175,7 @@ goes red:
 | R1, R3 | each `.env.<env>` declares a matching `RAILS_ENV` and no `RUBY_ENV` |
 | R2 | `.env` / `.env.local` declare no selector at all |
 | R1 (ordering) | `.envrc` validates `RUBY_ENV` before interpolating it, and refuses to load without it |
+| R2 (payload) | `.env.local` declares no `APP_DATABASE_*` — the role differs per environment, so the connection belongs in `.env.<env>.local` |
 | R6 | `config/database.yml` test defaults end in `_test`; the RubyMine template presets `RAILS_ENV=test` and pins no checkout-specific module |
 
 The dotenv convention checks **skip when git-crypt is locked**, so they guard you locally

@@ -1,0 +1,68 @@
+#!/usr/bin/env bash
+#
+# bin/with-env <environment> <command...>
+#
+# Run a command in a named environment instead of in the current one wearing a different
+# RAILS_ENV hat. See docs/ENVIRONMENTS.md (R5).
+#
+#   bin/with-env test bundle exec rspec
+#   bin/with-env test bundle exec thor lx-cli:secrets:edit
+#   bin/with-env test bin/rails runner 'puts Rails.env'
+#
+# Why this exists: direnv exports a whole environment's worth of variables into your shell.
+# Prefixing a command with RAILS_ENV=test swaps exactly one of them and leaves the rest --
+# the master key, the database connection -- pointing at development. Dotenv then refuses
+# to correct them, because it never overwrites a variable that is already set.
+#
+# So: unset everything the CURRENT environment's dotenv files declare, and let the target
+# environment's chain repopulate it. config/environments/<env>.rb already loads that chain.
+set -euo pipefail
+
+if [[ $# -lt 2 ]]; then
+  echo "usage: bin/with-env <environment> <command...>" >&2
+  exit 64
+fi
+
+target_env="$1"
+shift
+
+: "${RUBY_ENV:?RUBY_ENV is not set -- see docs/ENVIRONMENTS.md}"
+
+project_root="$(git rev-parse --show-toplevel)"
+
+# git-crypt leaves locked files starting with "\0GITCRYPT". We cannot read the variable
+# names out of one, so isolation degrades to whatever the shell already had. Warn loudly
+# rather than failing: a locked clone should still be able to run things.
+locked() {
+  [[ -f "$1" ]] && [[ "$(head -c 9 "$1")" == $'\0GITCRYPT' ]]
+}
+
+declared_in() {
+  [[ -f "$1" ]] || return 0
+  grep -oE '^[ \t]*(export[ \t]+)?[A-Z_][A-Z0-9_]*=' "$1" 2>/dev/null \
+    | sed -E 's/^[ \t]*(export[ \t]+)?//; s/=$//'
+}
+
+unset_args=()
+degraded=0
+for file in "${project_root}/.env.${RUBY_ENV}" "${project_root}/.env.${RUBY_ENV}.local"; do
+  if locked "$file"; then
+    echo "⚠️  $(basename "$file") is git-crypt locked -- cannot determine what it exports." >&2
+    degraded=1
+    continue
+  fi
+  while IFS= read -r var; do
+    [[ -n "$var" ]] && unset_args+=(-u "$var")
+  done < <(declared_in "$file" | sort -u)
+done
+
+if (( degraded )); then
+  echo "⚠️  Environment isolation is DEGRADED: values from ${RUBY_ENV} may leak into ${target_env}." >&2
+  echo "⚠️  Unlock git-crypt to restore it (bin/thor lx-cli:secrets:help)." >&2
+fi
+
+# RUBY_ENV itself must survive -- it is the selector, and .envrc/this script need it.
+exec env "${unset_args[@]}" \
+  RUBY_ENV="$target_env" \
+  RAILS_ENV="$target_env" \
+  "$@"

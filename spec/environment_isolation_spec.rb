@@ -175,5 +175,22 @@ RSpec.describe 'environment isolation' do
         end
       end
     end
+
+    # R2, payload half. The database ROLE differs per environment here, which makes the
+    # whole connection environment-shaped -- it belongs in .env.<env>.local. It sat in
+    # .env.local declaring port 5432, which is postgres.development.larcity: a different
+    # project's server that rejects this project's user.
+    context '.env.local (database connection)' do
+      let(:path) { Rails.root.join('.env.local') }
+
+      before do
+        skip '.env.local is not present' unless path.exist?
+        skip '.env.local is git-crypt locked' if locked?(path)
+      end
+
+      it 'does not declare a database connection' do
+        expect(declared_variables(path).grep(%r{\AAPP_DATABASE_})).to be_empty
+      end
+    end
   end
 end
