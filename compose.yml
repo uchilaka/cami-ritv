@@ -374,16 +374,19 @@ secrets:
   lab-key:
     file: ./config/credentials/lab.key
 
+# Both networks are external: Compose will not create either one, and `docker compose up`
+# fails outright if they are missing. `bin/thor init_app` and `services:start` create
+# whichever is absent -- see LarCity::CLI::ServiceNetworks::SERVICE_NETWORKS.
 networks:
+  # This project's own network. platform-monorepo declares it external in every package
+  # and names cami-ritv's `.docker/bin/start` as the thing that brings it up, so it is
+  # external on both sides and owned here.
   default:
     name: larcity_apps
-    enable_ipv6: false
-    driver: bridge
+    external: true
+  # Owned by platform-monorepo's Traefik spoke, which creates it as a bridge network with
+  # IPv6 off. Declared external here so a cami-ritv `compose down` can never remove a
+  # network the rest of the platform is attached to.
   larcity-beta-net:
-    # NOTE: This is an external network and must already exist (e.g. `docker network create larcity-beta-net`).
-    # TODO: [LAR-354] This block says "external" but is not declared `external: true`, so Compose
-    #   manages it as a project network and the `driver`/`enable_ipv6` settings below are moot.
-    #   Decide which is true and make the config match.
     name: larcity-beta-net
-    enable_ipv6: false
-    driver: bridge
+    external: true
