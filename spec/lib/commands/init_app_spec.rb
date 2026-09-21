@@ -64,16 +64,17 @@ RSpec.describe InitApp, type: :command_stack do
       allow(instance).to receive(:run) { |*args| commands << args.compact.join(' ') }
     end
 
-    context 'when neither network exists' do
+    context 'when no service network exists' do
       let(:existing_networks) { %w[bridge host none] }
 
-      it 'creates both networks compose.yml declares external' do
+      it 'creates every network in SERVICE_NETWORKS, in order' do
         instance.maybe_setup_service_networks
 
         expect(commands).to eq(
           [
             'docker network create larcity_apps --driver bridge --ipv6=false',
             'docker network create larcity-beta-net --driver bridge --ipv6=false',
+            'docker network create larcity-apps-net --driver bridge --ipv6=false',
           ]
         )
       end
@@ -82,15 +83,20 @@ RSpec.describe InitApp, type: :command_stack do
     context 'when only the platform network exists' do
       let(:existing_networks) { %w[bridge larcity-beta-net] }
 
-      it 'creates only the missing one' do
+      it 'creates only the missing ones' do
         instance.maybe_setup_service_networks
 
-        expect(commands).to eq(['docker network create larcity_apps --driver bridge --ipv6=false'])
+        expect(commands).to eq(
+          [
+            'docker network create larcity_apps --driver bridge --ipv6=false',
+            'docker network create larcity-apps-net --driver bridge --ipv6=false',
+          ]
+        )
       end
     end
 
-    context 'when both networks exist' do
-      let(:existing_networks) { %w[larcity_apps larcity-beta-net] }
+    context 'when every network already exists' do
+      let(:existing_networks) { %w[larcity_apps larcity-beta-net larcity-apps-net] }
 
       it 'creates nothing' do
         instance.maybe_setup_service_networks

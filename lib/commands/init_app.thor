@@ -1,17 +1,16 @@
 # frozen_string_literal: true
 
 require 'lar_city/base_cmd_stack'
+require 'lar_city/cli/service_networks'
 require 'lar_city/cli/services_cmd'
 require_relative 'features_cmd'
 require_relative 'kick_store_cmd'
 
 class InitApp < Thor::Group
   include LarCity::BaseCmdStack
+  include LarCity::CLI::ServiceNetworks
 
   desc 'Command to initialize the application'
-
-  # Both are declared `external: true` in compose.yml. Order matters only for output.
-  SERVICE_NETWORKS = %w[larcity_apps larcity-beta-net].freeze
 
   class_option :skip_migrations, type: :boolean, default: false, desc: 'Skip running database migrations'
   class_option :restore_primary, type: :boolean, default: false, desc: 'Restore primary database from latest backup'
@@ -31,26 +30,10 @@ class InitApp < Thor::Group
     FileUtils.touch(File.join(app_store_resource_path, '.keep'), verbose: verbose?, noop: pretend?)
   end
 
-  # compose.yml declares BOTH of its networks `external: true`, so Compose refuses to
-  # start anything unless they already exist.
-  #
-  # `larcity_apps` is this project's network. platform-monorepo declares it external in
-  # every package and points at "`.docker/bin/start` in the cami-ritv project" — which
-  # runs this command — to bring it up, so creating it here is the contract that project
-  # already documents.
-  #
-  # `larcity-beta-net` belongs to platform-monorepo's Traefik spoke, which creates it
-  # with these same settings. We create it only when it is absent, so this project can
-  # still boot standalone with the platform down.
+  # Provisioning lives in LarCity::CLI::ServiceNetworks so every entrypoint that starts
+  # containers shares one list -- see that module for why each network is here.
   def maybe_setup_service_networks
-    SERVICE_NETWORKS.each do |network_name|
-      next if service_network_exists?(network_name)
-
-      say_info "Setting up '#{network_name}' network..."
-      # NOTE: --ipv6 is a boolean flag. `--ipv6 false` is parsed as a second positional
-      # argument and docker rejects the whole command with "requires 1 argument".
-      run 'docker network create', network_name, '--driver bridge', '--ipv6=false'
-    end
+    ensure_service_networks!
   end
 
   def start_database_service
@@ -110,10 +93,6 @@ class InitApp < Thor::Group
 
     def app_store_resource_path
       Rails.root.join('db', Rails.env, 'postgres', 'downloads')
-    end
-
-    def service_network_exists?(network_name)
-      list_of_networks.include?(network_name)
     end
   end
 end
