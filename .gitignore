@@ -74,7 +74,12 @@
 
 # Environment variable files
 /.env.*
+# Every environment gets a tracked definition (docs/ENVIRONMENTS.md, R4). These are
+# git-crypt encrypted except .env.test, which holds no secrets -- see .gitattributes.
 !/.env.development
+!/.env.lab
+!/.env.beta
+!/.env.test
 !/.envrc
 !/.env.example
 /.node-version

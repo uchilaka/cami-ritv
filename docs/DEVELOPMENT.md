@@ -91,6 +91,13 @@ Run the following code from the project root:
 bin/thor entrypoint:setup
 ```
 
+## Environments
+
+How this project decides which environment it is in -- and why `RAILS_ENV=test` on its own
+is not enough to make a test run a test run -- is documented in
+[ENVIRONMENTS.md](./ENVIRONMENTS.md). Read it before adding an environment variable or a
+new `.env` file.
+
 ## Setting up your IDE
 
 Review the following setup notes for your respective IDE:

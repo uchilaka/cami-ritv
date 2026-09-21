@@ -110,4 +110,57 @@ RSpec.describe 'environment isolation' do
       end
     end
   end
+
+  # R1 the selector (RUBY_ENV) is set by the shell, never by a file it selects.
+  # R2 .env / .env.local hold nothing environment-shaped -- a default there is exactly how
+  #    the wrong environment comes to look right.
+  # R3 each .env.<env> declares RAILS_ENV, and it agrees with the filename.
+  describe 'dotenv file conventions' do
+    # git-crypt leaves locked files starting with "\0GITCRYPT". CI never unlocks, so skip
+    # rather than assert against ciphertext. .env.test is deliberately exempt from
+    # encryption so at least one environment stays legible everywhere.
+    def locked?(path)
+      path.binread(9) == "\x00GITCRYPT".b
+    end
+
+    def declared_variables(path)
+      path.read.scan(%r{^[ \t]*(?:export[ \t]+)?([A-Z_][A-Z0-9_]*)=}).flatten
+    end
+
+    Dir.glob(Rails.root.join('.env.*')).reject { |file| file.end_with?('.local') }.sort.each do |file|
+      environment = File.basename(file).delete_prefix('.env.')
+
+      context File.basename(file) do
+        let(:path) { Pathname.new(file) }
+
+        before { skip "#{File.basename(file)} is git-crypt locked" if locked?(path) }
+
+        it "declares RAILS_ENV=#{environment}" do
+          expect(path.read)
+            .to match(%r{^[ \t]*(?:export[ \t]+)?RAILS_ENV=["']?#{Regexp.escape(environment)}["']?[ \t]*$})
+        end
+
+        it 'leaves RUBY_ENV to the shell' do
+          expect(declared_variables(path)).not_to include('RUBY_ENV')
+        end
+      end
+    end
+
+    %w[.env .env.local].each do |file|
+      context file do
+        let(:path) { Rails.root.join(file) }
+
+        before do
+          skip "#{file} is not present" unless path.exist?
+          skip "#{file} is git-crypt locked" if locked?(path)
+        end
+
+        # Intersection, not `not_to include(a, b, c)` -- that form only fails when ALL
+        # three are present, so it would pass with two of them sitting there.
+        it 'declares no environment selector' do
+          expect(declared_variables(path) & %w[RAILS_ENV RUBY_ENV NODE_ENV]).to be_empty
+        end
+      end
+    end
+  end
 end
