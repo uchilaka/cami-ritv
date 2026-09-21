@@ -8,9 +8,11 @@ abort("The Rails environment is running in production mode!") if Rails.env.produ
 # Prevent the suite from operating on a non-test database.
 #
 # `Rails.env == "test"` does NOT guarantee the *database* is a test database. `.envrc`
-# exports APP_DATABASE_NAME_PRIMARY derived from NODE_ENV (not RAILS_ENV), and
-# config/database.yml reads that variable, so a value inherited from a development shell
-# can win over the one in .env.test.local. The `before(:suite)` hook below runs
+# loads .env.${RUBY_ENV} into the shell, .env.development sets APP_DATABASE_NAME_PRIMARY
+# to a development name, and config/database.yml reads that variable -- so a value
+# inherited from a development shell can win over the one in .env.test.local. RAILS_ENV
+# does not select which .env files load, so `RAILS_ENV=test` alone does not correct it.
+# The `before(:suite)` hook below runs
 # DatabaseCleaner.clean_with(:truncation) gated only on `Rails.env.test?`, so without this
 # guard a normal `RAILS_ENV=test bundle exec rspec` would truncate the development database.
 db_config = ActiveRecord::Base.configurations.configs_for(env_name: Rails.env, name: 'primary')
@@ -22,7 +24,7 @@ unless resolved_db.to_s.end_with?('_test')
     which is not a test database (expected a name ending in "_test").
 
     This usually means APP_DATABASE_NAME_PRIMARY was inherited from your shell
-    (direnv/mise load .envrc, which derives it from NODE_ENV). Check with:
+    (direnv/mise load .envrc, which loads .env.$RUBY_ENV). Check with:
 
         RAILS_ENV=test bundle exec rails runner 'puts ActiveRecord::Base.configurations.configs_for(env_name: "test", name: "primary").database'
 
