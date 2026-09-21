@@ -39,7 +39,8 @@ RSpec.describe InitApp, type: :command_stack do
     before { allow(FileUtils).to receive(:touch) }
 
     it 'touches .keep file' do
-      expect(FileUtils).to receive(:touch).with('/tmp/app/db/test/postgres/downloads/.keep')
+      expect(FileUtils).to receive(:touch)
+                             .with('/tmp/app/db/test/postgres/downloads/.keep', verbose: false, noop: false)
       instance.touch_keep_file_for_app_store_downloads
     end
   end
@@ -52,17 +53,29 @@ RSpec.describe InitApp, type: :command_stack do
   end
 
   describe '#maybe_setup_service_networks' do
-    before { allow(instance).to receive(:list_of_networks).and_return(existing_networks) }
+    # Assert the COMMAND, not the argument list. LarCity::CLI::Runnable#run takes *args
+    # and joins them, so `run 'docker network create', name` and
+    # `run "docker network create #{name}"` are the same command — a spec that pins the
+    # split is testing how the string was assembled, not what gets executed.
+    let(:commands) { [] }
+
+    before do
+      allow(instance).to receive(:list_of_networks).and_return(existing_networks)
+      allow(instance).to receive(:run) { |*args| commands << args.compact.join(' ') }
+    end
 
     context 'when neither network exists' do
       let(:existing_networks) { %w[bridge host none] }
 
       it 'creates both networks compose.yml declares external' do
-        expect(instance).to receive(:run)
-                              .with('docker network create larcity_apps', '--driver bridge', '--ipv6=false')
-        expect(instance).to receive(:run)
-                              .with('docker network create larcity-beta-net', '--driver bridge', '--ipv6=false')
         instance.maybe_setup_service_networks
+
+        expect(commands).to eq(
+          [
+            'docker network create larcity_apps --driver bridge --ipv6=false',
+            'docker network create larcity-beta-net --driver bridge --ipv6=false',
+          ]
+        )
       end
     end
 
@@ -70,11 +83,9 @@ RSpec.describe InitApp, type: :command_stack do
       let(:existing_networks) { %w[bridge larcity-beta-net] }
 
       it 'creates only the missing one' do
-        expect(instance).to receive(:run)
-                              .with('docker network create larcity_apps', '--driver bridge', '--ipv6=false')
-        expect(instance).not_to receive(:run)
-                                  .with('docker network create larcity-beta-net', any_args)
         instance.maybe_setup_service_networks
+
+        expect(commands).to eq(['docker network create larcity_apps --driver bridge --ipv6=false'])
       end
     end
 
@@ -82,8 +93,9 @@ RSpec.describe InitApp, type: :command_stack do
       let(:existing_networks) { %w[larcity_apps larcity-beta-net] }
 
       it 'creates nothing' do
-        expect(instance).not_to receive(:run)
         instance.maybe_setup_service_networks
+
+        expect(commands).to be_empty
       end
     end
   end
