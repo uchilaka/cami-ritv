@@ -11,6 +11,22 @@ Rails.application.configure do
   dotenv_files = %w[.env.test.local .env.test .env].select { |file| File.exist?(file) }
   Dotenv.load(*dotenv_files)
 
+  # Do not let a dev shell hand the test boot the DEVELOPMENT master key.
+  #
+  # ActiveSupport::EncryptedFile#key reads ENV["RAILS_MASTER_KEY"].presence BEFORE
+  # config/credentials/test.key, so a shell sitting in "development" makes Rails try to
+  # decrypt test.yml.enc with the development key and die in
+  # ActiveSupport::MessageEncryptor::InvalidMessage -- during boot, before a single
+  # example runs. RAILS_ENV=test does not unset it: direnv exported it from
+  # .env.${RUBY_ENV}.local, and Dotenv.load above never overwrites an already-set value.
+  #
+  # Only drop the inherited value when there is a key FILE to fall back to. CI has no
+  # *.key (they are gitignored) and passes the key through this very variable, so
+  # clearing it unconditionally would break the pipeline.
+  if ENV['RAILS_MASTER_KEY'].present? && Rails.root.join('config/credentials/test.key').exist?
+    ENV['RAILS_MASTER_KEY'] = nil
+  end
+
   # Force the test database NAMES, which must never be inherited from a dev shell.
   #
   # .envrc loads .env.${RUBY_ENV} into the shell and .env.development sets
