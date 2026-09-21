@@ -31,6 +31,28 @@ class InitApp < Thor::Group
     FileUtils.touch(File.join(app_store_resource_path, '.keep'), verbose: verbose?, noop: pretend?)
   end
 
+  # compose.yml declares BOTH of its networks `external: true`, so Compose refuses to
+  # start anything unless they already exist.
+  #
+  # `larcity_apps` is this project's network. platform-monorepo declares it external in
+  # every package and points at "`.docker/bin/start` in the cami-ritv project" — which
+  # runs this command — to bring it up, so creating it here is the contract that project
+  # already documents.
+  #
+  # `larcity-beta-net` belongs to platform-monorepo's Traefik spoke, which creates it
+  # with these same settings. We create it only when it is absent, so this project can
+  # still boot standalone with the platform down.
+  def maybe_setup_service_networks
+    SERVICE_NETWORKS.each do |network_name|
+      next if service_network_exists?(network_name)
+
+      say_info "Setting up '#{network_name}' network..."
+      # NOTE: --ipv6 is a boolean flag. `--ipv6 false` is parsed as a second positional
+      # argument and docker rejects the whole command with "requires 1 argument".
+      run 'docker network create', network_name, '--driver bridge', '--ipv6=false'
+    end
+  end
+
   def start_database_service
     run 'docker-compose up', '--detach app-store'
   end
@@ -71,28 +93,6 @@ class InitApp < Thor::Group
 
     say_info 'Restoring CRM database from latest backup...'
     restore_database_from_backup(target: 'crm')
-  end
-
-  # compose.yml declares BOTH of its networks `external: true`, so Compose refuses to
-  # start anything unless they already exist.
-  #
-  # `larcity_apps` is this project's network. platform-monorepo declares it external in
-  # every package and points at "`.docker/bin/start` in the cami-ritv project" — which
-  # runs this command — to bring it up, so creating it here is the contract that project
-  # already documents.
-  #
-  # `larcity-beta-net` belongs to platform-monorepo's Traefik spoke, which creates it
-  # with these same settings. We create it only when it is absent, so this project can
-  # still boot standalone with the platform down.
-  def maybe_setup_service_networks
-    SERVICE_NETWORKS.each do |network_name|
-      next if service_network_exists?(network_name)
-
-      say_info "Setting up '#{network_name}' network..."
-      # NOTE: --ipv6 is a boolean flag. `--ipv6 false` is parsed as a second positional
-      # argument and docker rejects the whole command with "requires 1 argument".
-      run "docker network create #{network_name}", '--driver bridge', '--ipv6=false'
-    end
   end
 
   def start_all_services
