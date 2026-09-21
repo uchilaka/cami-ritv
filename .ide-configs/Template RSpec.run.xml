@@ -1,6 +1,5 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="true" type="RSpecRunConfigurationType" factoryName="RSpec">
-    <module name="pr-293" />
     <predefined_log_file enabled="true" id="RUBY_RSPEC" />
     <RSPEC_RUN_CONFIG_SETTINGS_ID NAME="RUBY_ARGS" VALUE="" />
     <RSPEC_RUN_CONFIG_SETTINGS_ID NAME="WORK DIR" VALUE="" />

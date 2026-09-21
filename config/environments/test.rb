@@ -13,10 +13,11 @@ Rails.application.configure do
 
   # Force the test database NAMES, which must never be inherited from a dev shell.
   #
-  # .envrc derives APP_DATABASE_NAME_* from NODE_ENV rather than RAILS_ENV, so a shell
-  # sitting in "development" exports sails_development even for `RAILS_ENV=test`, and
-  # Dotenv.load deliberately does not overwrite already-set variables -- so .env.test.local
-  # cannot correct it. spec/rails_helper.rb truncates whatever this resolves to.
+  # .envrc loads .env.${RUBY_ENV} into the shell and .env.development sets
+  # APP_DATABASE_NAME_PRIMARY to a development name, so a shell sitting in "development"
+  # exports sails_development even for an inline `RAILS_ENV=test`. Dotenv.load deliberately
+  # does not overwrite already-set variables -- so .env.test.local cannot correct it.
+  # spec/rails_helper.rb truncates whatever this resolves to.
   #
   # Only the NAMES are forced. Host, port, user and password are left to the shell so the
   # suite runs against whichever Postgres the developer actually has up; a blanket

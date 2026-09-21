@@ -91,6 +91,11 @@ Run the following code from the project root:
 bin/thor entrypoint:setup
 ```
 
+## Setting up your IDE
+
+Review the following setup notes for your respective IDE:
+- [RubyMine](./RUBYMINE.md)
+
 ## Working with Render deployments 
 
 ### Validating blueprints
