@@ -63,7 +63,7 @@ module LarCity
               .find { |path| File.exist?(path) }
 
         ensure
-          @compose_config_file ||= Rails.root.join('docker-compose.yml').to_s
+          @compose_config_file ||= Rails.root.join('compose.yml').to_s
         end
 
         def compose_override_config_file

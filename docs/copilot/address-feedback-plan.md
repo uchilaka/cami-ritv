@@ -3,13 +3,13 @@
 This plan covers resolving the code review feedback provided by Copilot on PR #245 (`spike/twenty-crm`).
 
 ## 1. Security & Credentials
-- [ ] Fix `APP_SECRET` defaults in `docker-compose.yml` and `.env` (avoid insecure default values like `replace_me_with_a_random_string`, and provide better documentation/failure behaviors).
+- [ ] Fix `APP_SECRET` defaults in `compose.yml` and `.env` (avoid insecure default values like `replace_me_with_a_random_string`, and provide better documentation/failure behaviors).
 - [ ] Fix command injection vulnerabilities in `lib/commands/init_app.thor` (around `createdb`) and `lib/commands/restore_db.rb` (around `pg_restore` and `password` interpolation). Use secure execution mechanisms instead of shell interpolation.
 
 ## 2. Docker & Infrastructure Consistency
 - [ ] Reconcile database host inconsistency: The CRM database host `CRM_DATABASE_HOST` defaults to `app-store` in some places but the new service is `crm-store`. Standardize to one or fix the service dependencies.
-- [ ] Expose ports for `redis` and `crm-store` services in `docker-compose.yml` so they are accessible for development debugging (e.g. `16379:6379`).
-- [ ] Fix inconsistent use of `NODE_ENV` vs `RAILS_ENV` in `docker-compose.yml` (specifically for volume mappings).
+- [ ] Expose ports for `redis` and `crm-store` services in `compose.yml` so they are accessible for development debugging (e.g. `16379:6379`).
+- [ ] Fix inconsistent use of `NODE_ENV` vs `RAILS_ENV` in `compose.yml` (specifically for volume mappings).
 - [ ] Clarify `CRM_SERVICE_PORT` discrepancies (`16016` vs `16026`).
 
 ## 3. Code Cleanup & Refactoring
