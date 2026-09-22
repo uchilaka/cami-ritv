@@ -26,7 +26,6 @@ lab:
   - accounts.lab.larcity.tech
   - accounts.lab.larcity.hopto.org
 staging:
-  - accounts.beta.larcity.tech
   - cami-staging-app-ghexn.ondigitalocean.app
   - accounts.staging.lar.city
   - accounts.staging.larcity.org

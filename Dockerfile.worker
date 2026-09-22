@@ -39,7 +39,6 @@ COPY . .
 FROM src AS worker
 
 ARG RAILS_ENV
-ARG RAILS_MASTER_KEY
 ARG DATABASE_URL
 # Passed through by docker-compose (see the `worker` build args). Without this ARG
 # the value never reaches the build environment and ./bin/unlock-repo no-ops.
