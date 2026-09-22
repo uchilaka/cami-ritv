@@ -10,9 +10,9 @@
 #     -> compose.override.yml -> docker-compose.override.yml
 #
 # Later files win, so this is the last word on every service. `docker compose` then reads
-# COMPOSE_FILE from the environment and no `-f` flag is needed -- which is also why
-# `docker compose` outside a direnv-loaded shell sees only compose.yml and behaves
-# differently. See docs/DOCKER_COMPOSE.md.
+# `docker compose` normally auto-discovers `compose.override.yml` when this copied file exists.
+# Direnv's `COMPOSE_FILE` is still needed to add the environment-specific files and make the
+# file set explicit; without it, Compose uses its default discovery rules instead. See docs/DOCKER_COMPOSE.md.
 #
 # Two merge tags do the work here. Both need Compose v2.24+ (`docker compose version`):
 #
