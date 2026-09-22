@@ -114,12 +114,8 @@ services:
       secrets:
         # - source: gitcrypt-key
         #   target: gitcrypt.key
-        - source: development-key
-          target: development.key
-        - source: production-key
-          target: production.key
-        - source: lab-key
-          target: lab.key
+        - source: env-master-key
+          target: ${RAILS_ENV:?RAILS_ENV must be set}.key
     restart: unless-stopped
     environment:
       RAILS_ENV: ${RAILS_ENV:?RAILS_ENV must be set}
@@ -146,17 +142,13 @@ services:
       # "APP_SECRET", "CRM_REDIS_URL", "CRM_DATABASE_NAME", "SERVER_URL", "PUBLIC_DOMAIN_URL"
     labels: !override
       - "traefik.enable=true"
-      - "traefik.http.routers.accounts.rule=Host(`accounts.${PLATFORM_SUBDOMAIN:?PLATFORM_SUBDOMAIN must be set}`)"
+      - "traefik.http.routers.accounts.rule=Host(`accounts.${PLATFORM_DOMAIN:?PLATFORM_DOMAIN must be set}`)"
       - "traefik.http.services.accounts.loadbalancer.server.port=16006"
     secrets:
       # - source: gitcrypt-key
       #   target: gitcrypt.key
-      - source: development-key
-        target: development.key
-      - source: production-key
-        target: production.key
-      - source: lab-key
-        target: lab.key
+      - source: env-master-key
+        target: ${RAILS_ENV:?RAILS_ENV must be set}.key
     volumes:
       #- ./config/credentials/git-crypt.key:/opt/project/src/.git/git-crypt/keys/default:ro
       - ./config/credentials/${RAILS_ENV:?RAILS_ENV must be set}.yml.enc:/opt/project/src/config/credentials.yml.enc:ro
@@ -184,12 +176,8 @@ services:
         - GITCRYPT_KEY_BASE64=${GITCRYPT_KEY_BASE64}
         - RAILS_ENV=${RAILS_ENV:?RAILS_ENV must be set}
       secrets:
-        - source: development-key
-          target: development.key
-        - source: production-key
-          target: production.key
-        - source: lab-key
-          target: lab.key
+        - source: env-master-key
+          target: ${RAILS_ENV:?RAILS_ENV must be set}.key
     restart: unless-stopped
     environment:
       RAILS_ENV: ${RAILS_ENV:?RAILS_ENV must be set}
@@ -218,12 +206,8 @@ services:
     secrets:
       #- source: gitcrypt-key
       #  target: gitcrypt.key
-      - source: development-key
-        target: development.key
-      - source: production-key
-        target: production.key
-      - source: lab-key
-        target: lab.key
+      - source: env-master-key
+        target: ${RAILS_ENV:?RAILS_ENV must be set}.key
     volumes:
       #- ./config/credentials/git-crypt.key:/opt/project/src/.git/git-crypt/keys/default:ro
       - ./config/credentials/${RAILS_ENV:?RAILS_ENV must be set}.yml.enc:/opt/project/src/config/credentials.yml.enc:ro
@@ -243,7 +227,7 @@ services:
       - "${CRM_SERVICE_PORT:-16016}:3000"
     labels: !override
       - "traefik.enable=true"
-      - "traefik.http.routers.accounts-crm.rule=Host(`accounts-crm.${PLATFORM_SUBDOMAIN:?PLATFORM_SUBDOMAIN must be set}`)"
+      - "traefik.http.routers.accounts-crm.rule=Host(`accounts-crm.${PLATFORM_DOMAIN:?PLATFORM_DOMAIN must be set}`)"
       - "traefik.http.services.accounts-crm.loadbalancer.server.port=3000"
     environment:
       NODE_PORT: 3000
@@ -365,14 +349,16 @@ volumes:
 secrets:
   #gitcrypt-key:
   #  file: ./config/credentials/git-crypt.key
-  development-key:
-    file: ./config/credentials/development.key
-  staging-key:
-    file: ./config/credentials/staging.key
-  production-key:
-    file: ./config/credentials/production.key
-  lab-key:
-    file: ./config/credentials/lab.key
+  # One secret, resolved from RAILS_ENV, rather than one entry per environment.
+  #
+  # Nothing ever reads a key other than the current environment's: the Dockerfiles
+  # mount it as BuildKit secret id `${RAILS_ENV}.key`, and at runtime
+  # AppUtils.mounted_master_key_file reads /run/secrets/<Rails.env>.key. Enumerating
+  # the environments meant every new one (beta) had to be added in five places and
+  # silently failed to build if it wasn't, while forcing every operator to hold the
+  # production and lab keys just to run development.
+  env-master-key:
+    file: ./config/credentials/${RAILS_ENV:?RAILS_ENV must be set}.key
 
 # Both networks are external: Compose will not create either one, and `docker compose up`
 # fails outright if they are missing. `bin/thor init_app` and `services:start` create

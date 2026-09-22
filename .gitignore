@@ -75,6 +75,8 @@
 # Environment variable files
 /.env.*
 !/.env.development
+!/.env.lab
+!/.env.beta
 !/.envrc
 # .env.test is tracked and unencrypted on purpose -- it holds only the names that make a
 # test run a test run. See .gitattributes and docs/ENVIRONMENTS.md (R4).
