@@ -132,9 +132,9 @@ Then fill in the blanks. Two things are worth knowing first:
   are in `.env.local.example`.
 - **A blank is not a default for Compose.** `${VAR:?...}` rejects an empty value exactly as
   it rejects an unset one, so the blanks you leave in `.env.development.local` —
-  `APP_DATABASE_USER`, `APP_DATABASE_PASSWORD`, `APP_CONFIG_JWT_SECRET_KEY` — abort every
-  `docker compose` command until they are filled. The full list of hard-required names is
-  in [DOCKER_COMPOSE.md](./DOCKER_COMPOSE.md#environment-variables-compose-hard-requires).
+  `APP_DATABASE_USER`, `APP_DATABASE_PASSWORD` — and in `.env.local` —
+  `APP_CONFIG_JWT_SECRET_KEY` — abort every `docker compose` command until they are filled.
+  The full list of hard-required names is in [DOCKER_COMPOSE.md](./DOCKER_COMPOSE.md#environment-variables-compose-hard-requires).
 
 Credentials keys (`config/credentials/*.key`) are gitignored and appear in no template.
 Fetch them from the vault — see `bin/thor lx-cli:secrets:help`.
