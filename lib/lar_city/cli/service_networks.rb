@@ -49,6 +49,8 @@ module LarCity
       # and callers use it to decide whether to CREATE a network -- so check the exit
       # status rather than letting a dead daemon look like an empty network list.
       def list_of_networks
+        return [] if pretend?
+
         output = `docker network ls --format '{{.Name}}'`
         raise 'Unable to list docker networks. Is the Docker daemon running?' unless $CHILD_STATUS.success?
 
