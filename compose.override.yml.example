@@ -1,0 +1,77 @@
+# compose.override.yml -- YOUR machine's local-development compose layer. Never tracked.
+#
+# Copy to compose.override.yml and edit if you need to:
+#   cp compose.override.yml.example compose.override.yml
+#
+# Nothing picks this file up by path. `.envrc` walks a fixed list and appends each file
+# that exists to COMPOSE_FILE, in this order:
+#
+#   compose.yml -> docker-compose.yml -> compose.${RUBY_ENV}.yml
+#     -> compose.override.yml -> docker-compose.override.yml
+#
+# Later files win, so this is the last word on every service. `docker compose` then reads
+# COMPOSE_FILE from the environment and no `-f` flag is needed -- which is also why
+# `docker compose` outside a direnv-loaded shell sees only compose.yml and behaves
+# differently. See docs/DOCKER_COMPOSE.md.
+#
+# Two merge tags do the work here. Both need Compose v2.24+ (`docker compose version`):
+#
+#   !reset null   drop a key the base file set, so the container never receives it
+#   !override     replace a mapping or list wholesale instead of merging into it
+#
+# IMPORTANT: interpolation runs BEFORE merging. `!reset null` on a value that compose.yml
+# writes as ${VAR:?...} does NOT excuse you from setting VAR -- Compose still resolves the
+# base file's expression first and still aborts on an empty one. APP_DATABASE_PASSWORD
+# below is exactly that case: reset here, yet it must hold a non-empty value in
+# .env.development.local or every compose command fails.
+
+services:
+  web:
+    # Run the published image instead of building from Dockerfile.web. Both variables are
+    # hard-required by .envrc and live in .env.local (see .env.local.example).
+    image: ${CONTAINER_REGISTRY_HOST}/${CONTAINER_NAME_PREFIX}-web:latest
+    environment:
+      # The app reaches Postgres through the app-store's "trust" auth (below), so the
+      # password never needs to enter the container environment.
+      APP_DATABASE_PASSWORD: !reset null
+    # !override, not a merge: keeping the base healthcheck's keys alongside these would
+    # leave whichever ones this block omits in force.
+    healthcheck: !override
+      test: curl --fail http://localhost:16006/healthz
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  worker:
+    image: ${CONTAINER_REGISTRY_HOST}/${CONTAINER_NAME_PREFIX}-worker:latest
+    environment:
+      APP_DATABASE_PASSWORD: !reset null
+
+  app-store:
+    environment: !override
+      POSTGRES_DB: ${APP_DATABASE_NAME_PRIMARY:?APP_DATABASE_NAME_PRIMARY must be set}
+      POSTGRES_USER: ${APP_DATABASE_USER:?APP_DATABASE_USER must be set}
+      # Unset the next environment variable to avoid exposing the password in the
+      # container environment. The app-store will connect to the database using
+      # the "trust" authentication method.
+      POSTGRES_PASSWORD: !reset null
+      APP_DATABASE_NAME_CRM: ${APP_DATABASE_NAME_CRM:?APP_DATABASE_NAME_CRM must be set}
+      # Set authentication method to "trust" for local development, so that the app-store
+      # can connect to the database without a password. In production, this should be
+      # set to "md5" or another secure method.
+      POSTGRES_HOST_AUTH_METHOD: trust
+    healthcheck: !override
+      test: pg_isready -U ${APP_DATABASE_USER} -h localhost -d ${APP_DATABASE_NAME_PRIMARY:?APP_DATABASE_NAME_PRIMARY must be set}
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+# Vestigial as of compose.yml's current networks block, which already declares this
+# network `external: true` under the same name. Dropping `name:` via !override leaves
+# Compose to use the key as the network name, which resolves to the same thing --
+# `docker compose config` is byte-identical with and without this block. Left here,
+# commented, because it becomes load-bearing the moment compose.yml stops declaring it.
+#
+#networks:
+#  larcity-beta-net: !override
+#    external: true

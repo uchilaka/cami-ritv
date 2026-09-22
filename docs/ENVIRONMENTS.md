@@ -114,6 +114,13 @@ cp .env.development.local.example .env.development.local
 cp .env.test.local.example        .env.test.local
 ```
 
+`compose.override.yml` is gitignored for the same reason and has the same kind of template.
+It is not an `.env` file, but a clone without it runs a different stack than everyone else:
+
+```shell
+cp compose.override.yml.example compose.override.yml
+```
+
 Then fill in the blanks. Two things are worth knowing first:
 
 - **Leave `RAILS_MASTER_KEY` blank** in both `.local` files if the matching
@@ -123,6 +130,11 @@ Then fill in the blanks. Two things are worth knowing first:
 - **`.envrc` will refuse to load** until `RUBY_ENV`, `CONTAINER_REGISTRY_HOST` and
   `CONTAINER_NAME_PREFIX` are set. The first belongs in `.env.local` (R1); the other two
   are in `.env.local.example`.
+- **A blank is not a default for Compose.** `${VAR:?...}` rejects an empty value exactly as
+  it rejects an unset one, so the blanks you leave in `.env.development.local` —
+  `APP_DATABASE_USER`, `APP_DATABASE_PASSWORD`, `APP_CONFIG_JWT_SECRET_KEY` — abort every
+  `docker compose` command until they are filled. The full list of hard-required names is
+  in [DOCKER_COMPOSE.md](./DOCKER_COMPOSE.md#environment-variables-compose-hard-requires).
 
 Credentials keys (`config/credentials/*.key`) are gitignored and appear in no template.
 Fetch them from the vault — see `bin/thor lx-cli:secrets:help`.
