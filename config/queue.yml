@@ -23,5 +23,15 @@ test:
 staging:
   <<: *default
 
+beta:
+  <<: *default
+
+# lab had no section either, so it has been running on Solid Queue's own defaults --
+# queues: "*", threads: 3 -- rather than this file's ordered queue list and the
+# RAILS_QUEUE_THREADS / JOB_CONCURRENCY tuning. Pre-existing; corrected here because
+# beta would otherwise have quietly joined it.
+lab:
+  <<: *default
+
 production:
   <<: *default
