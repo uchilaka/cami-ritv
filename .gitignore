@@ -76,7 +76,12 @@
 /.env.*
 !/.env.development
 !/.envrc
+# .env.test is tracked and unencrypted on purpose -- it holds only the names that make a
+# test run a test run. See .gitattributes and docs/ENVIRONMENTS.md (R4).
+!/.env.test
+# ...as are the templates, whose only audience is a clone with no git-crypt key.
 !/.env.example
+!/.env.*.example
 /.node-version
 /.ruby-version
 

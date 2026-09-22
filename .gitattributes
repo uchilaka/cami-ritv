@@ -16,13 +16,22 @@ config/credentials.yml.enc diff=rails_credentials
 
 # Encrypt sensitive files using git-crypt
 /.env.* filter=git-crypt diff=git-crypt
+# ...except .env.test, which holds no secrets -- only the names that make a test run a
+# test run. Encrypting it would make Dotenv.parse silently return {} in CI and in any
+# fresh clone, which is the precise failure the file exists to prevent.
+/.env.test !filter !diff
+# Nor the *.example templates: they contain placeholders, and a fresh clone -- the only
+# audience they have -- has no git-crypt key to read them with.
+/.env.example !filter !diff
+/.env.*.example !filter !diff
 spec/fixtures/pii/** filter=git-crypt diff=git-crypt
 #db/development/postgres/downloads/**/*.dump filter=git-crypt diff=git-crypt
 #db/development/postgres/downloads/**/*.sql filter=git-crypt diff=git-crypt
-/*compose.lab.yml filter=git-crypt diff=git-crypt
-/*compose.beta.yml filter=git-crypt diff=git-crypt
-/*compose.staging.yml filter=git-crypt diff=git-crypt
-/*compose.production.yml filter=git-crypt diff=git-crypt
+# Environment-specific compose files hold real hostnames/credentials and must never
+# land in plaintext. The glob deliberately does NOT match /compose.yml (no second
+# dot), which is the committed, unencrypted base file. Covers the old
+# docker-compose.<env>.yml spelling too.
+/*compose.*.yml filter=git-crypt diff=git-crypt
 
 # Encrypt database backups
 db/development/postgres/**/*.dump filter=git-crypt diff=git-crypt
