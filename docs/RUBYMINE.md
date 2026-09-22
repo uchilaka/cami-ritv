@@ -21,10 +21,10 @@ direnv already loaded into your shell — that is `RUBY_ENV`. So a shell sitting
 `development` hands the test run a development-flavoured environment, and RubyMine inherits
 it. Two variables in particular will break the run:
 
-| Variable | Symptom when it leaks in from a development shell |
+| Variable | Behavior when inherited from a development shell |
 | --- | --- |
-| `RAILS_MASTER_KEY` | `ActiveSupport::MessageEncryptor::InvalidMessage` during boot. Rails prefers this variable over `config/credentials/test.key`, so it tries to decrypt `test.yml.enc` with the development key. |
-| `APP_DATABASE_NAME_PRIMARY` | `spec/rails_helper.rb` aborts with "resolved primary database is not a test database" — or, without that guard, the suite truncates your development database. |
+| `RAILS_MASTER_KEY` | If `config/credentials/test.key` is absent, Rails uses this value instead of a key file and may fail to decrypt `test.yml.enc`; when the file exists, `config/environments/test.rb` clears the inherited value. |
+| `APP_DATABASE_NAME_PRIMARY` | `config/environments/test.rb` replaces a non-`_test` value with the test database name before `spec/rails_helper.rb` checks it. |
 
 `config/environments/test.rb` force-corrects the database *names*, but nothing corrects
 `RAILS_MASTER_KEY`.
