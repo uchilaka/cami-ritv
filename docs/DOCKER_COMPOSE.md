@@ -114,8 +114,8 @@ aborts — even though no container will ever see it. Two related facts:
 
 ## Environment variables compose hard-requires
 
-Every name below is written `${VAR:?...}` somewhere in `compose.yml` or
-`compose.override.yml`. A missing **or empty** value aborts the command.
+The Compose files and `.envrc` have separate hard requirements. Every name below is required
+by either Compose interpolation or the `.envrc` loader; a missing or empty value aborts the relevant command.
 
 | Variable | Belongs in | Notes |
 |---|---|---|
