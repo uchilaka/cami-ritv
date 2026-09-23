@@ -194,21 +194,24 @@ One canonical key would then serve the main checkout and every worktree, it coul
 
 > ⚠️ **This does not currently take effect** ([LAR-357](https://linear.app/larcity-and-affiliates/issue/LAR-357)). `.env:1` sets `export GITCRYPT_KEY_FILE="config/credentials/git-crypt.key"`, and `.envrc` sources the `.env` files with `set -a` *after* applying its own default — so the tracked value clobbers any shell export. To adopt a machine-local key, that line has to come out of `.env` first, which is a team decision since `.env` is tracked and shared. `.envrc` itself now handles absolute and `~/`-prefixed paths correctly, so it is ready for that change.
 
-### ⚠️ `PROJECT_ROOT` is wrong inside worktrees ([LAR-358](https://linear.app/larcity-and-affiliates/issue/LAR-358))
+### `PROJECT_ROOT` in worktrees ([LAR-358](https://linear.app/larcity-and-affiliates/issue/LAR-358))
 
-`.envrc:17` derives it correctly — `git rev-parse --show-toplevel` resolves worktrees, and the comment there says so. But the `.env` files load afterwards and overwrite it:
+`.envrc` derives `PROJECT_ROOT` from `git rev-parse --show-toplevel`, which resolves worktrees correctly. Everything path-shaped is built from it — the compose file list, `DATABASE_ROOT_DIR`, the git-crypt key lookup — so getting it right matters more than it looks.
 
-| File | Sets `PROJECT_ROOT` to |
-|---|---|
-| `.env.development:31` | `${HOME}/repos/@larcity/cami` — a layout that may not exist on your machine |
-| `.env.development.local:46` | a hardcoded absolute path to the **main checkout** |
+**Do not set `PROJECT_ROOT` in any `.env` file.** The dotenv files are sourced under `set -a` *after* that derivation, so an assignment in one silently overrides it for everything downstream. A worktree then runs against the main checkout's configuration — or, if a `.env.<env>.local` is missing and a tracked default wins, against some unrelated checkout entirely. Neither fails loudly; commands appear to work while reading another tree's files.
 
-So in a worktree, anything derived from `PROJECT_ROOT` — compose file paths, key lookups — silently resolves against the main checkout instead. You can see it in `direnv`'s output as `Compose file not found: <main-checkout>/compose.yml` while standing in a worktree.
+This is guarded in two places, because one alone is not enough:
 
-Two consequences worth knowing:
+- **`.envrc` re-derives `PROJECT_ROOT` after the dotenv loops** and prints a warning naming both values if a file had overridden it. This is the load-bearing half: `.env.<env>.local` files are gitignored, so a stale one on your machine — or one copied in during worktree bootstrap — cannot be fixed by anything shipped from this repo.
+- **`spec/environment_isolation_spec.rb` asserts the ordering** in `.envrc` and that no `.env*` file declares `PROJECT_ROOT`, so the assignment does not come back.
 
-- Copying `.env.development.local` from the main checkout into a new worktree, as bootstrapping requires, **carries that hardcoded path with it**. Override `PROJECT_ROOT` in the worktree's own `.env.development.local` if anything you run depends on it.
-- The fix at `.envrc:17` is effectively dead while the `.env` files set this. Making it authoritative means removing `PROJECT_ROOT` from those files, or re-deriving it after they load.
+If you see this while a shell loads, a dotenv file on your machine is setting it and should have the line removed:
+
+```text
+⚠️ PROJECT_ROOT was set to /opt/Developer/00-larcity-llc/cami-ritv by a dotenv file; re-deriving as /opt/Developer/00-larcity-llc/cami-ritv-worktrees/LAR-358 (LAR-358)
+```
+
+The environment still resolves correctly when that warning appears — it is telling you about redundant configuration, not a broken tree.
 
 > Each worktree still ends up with its own copy of the key in its gitdir — that is git-crypt's design, not a choice this script makes. Removing a worktree removes its copy along with the gitdir.
 

@@ -10,6 +10,8 @@ require 'open3'
 #
 #   1. config/database.yml defaulting the TEST database to a development name
 #   2. .envrc validating RUBY_ENV only AFTER interpolating it into env file paths
+#   3. a dotenv file clobbering the git-derived PROJECT_ROOT, so a worktree reads the
+#      main checkout's configuration (LAR-358)
 RSpec.describe 'environment isolation' do
   describe 'config/database.yml' do
     # The `test:` defaults are the last line of defence. spec/rails_helper.rb aborts on a
@@ -88,6 +90,31 @@ RSpec.describe 'environment isolation' do
         expect(output).to include('RUBY_ENV is not set')
       end
     end
+
+    # [LAR-358] .envrc derives PROJECT_ROOT from git, which resolves worktrees correctly --
+    # but the loops above source their files under `set -a`, so a PROJECT_ROOT declared in
+    # any of them overwrites it for everything downstream. The tracked .env.<env> files are
+    # covered by the convention test below; the gitignored .env.<env>.local files cannot be
+    # reached by anything shipped from this repo, so the last word has to belong to .envrc.
+    # rindex, not index: the correct derivation also appears near the top of the file.
+    it 'reclaims PROJECT_ROOT after the dotenv files are sourced' do
+      last_source = source.rindex('source "$env_file"')
+      reclaim = source.rindex('git rev-parse --show-toplevel')
+
+      expect(last_source).to be_present
+      expect(reclaim).to be_present
+      expect(reclaim).to be > last_source
+    end
+
+    # The reclaim only buys anything if the values derived FROM PROJECT_ROOT are computed
+    # after it. DATABASE_ROOT_DIR is the one that silently resolved into another checkout.
+    it 'derives DATABASE_ROOT_DIR after reclaiming PROJECT_ROOT' do
+      reclaim = source.rindex('git rev-parse --show-toplevel')
+      database_root = source.rindex('DATABASE_ROOT_DIR=')
+
+      expect(database_root).to be_present
+      expect(database_root).to be > reclaim
+    end
   end
 
   # R1 the selector (RUBY_ENV) is set by the shell, never by a file it selects.
@@ -127,6 +154,13 @@ RSpec.describe 'environment isolation' do
         it 'leaves RUBY_ENV to the shell' do
           expect(declared_variables(path)).not_to include('RUBY_ENV')
         end
+
+        # [LAR-358] Same shape as RUBY_ENV: a value .envrc already derives correctly, which a
+        # file loaded afterwards must not restate. A hardcoded path here is wrong for every
+        # machine but the author's, and wrong for every worktree including theirs.
+        it 'leaves PROJECT_ROOT to .envrc' do
+          expect(declared_variables(path)).not_to include('PROJECT_ROOT')
+        end
       end
     end
 
@@ -136,8 +170,8 @@ RSpec.describe 'environment isolation' do
     # machine to declare which environment it is. RAILS_ENV/NODE_ENV stay out of both:
     # they are declared by .env.<env>, per R3.
     {
-      '.env' => %w[RAILS_ENV RUBY_ENV NODE_ENV],
-      '.env.local' => %w[RAILS_ENV NODE_ENV],
+      '.env' => %w[RAILS_ENV RUBY_ENV NODE_ENV PROJECT_ROOT],
+      '.env.local' => %w[RAILS_ENV NODE_ENV PROJECT_ROOT],
     }.each do |file, forbidden|
       context file do
         let(:path) { Rails.root.join(file) }
