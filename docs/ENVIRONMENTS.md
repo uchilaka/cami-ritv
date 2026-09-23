@@ -174,26 +174,22 @@ supplies the key through that variable, which is why the correction is condition
 For RubyMine, see [RUBYMINE.md](./RUBYMINE.md); the committed run template at
 `.ide-configs/Template RSpec.run.xml` presets `RAILS_ENV=test`.
 
-### Specs that depend on a leaked development environment
+### Specs declare their environment
 
-One spec currently passes only because the development environment leaks in, and fails
-under `bin/with-env`:
+A spec that needs an environment variable declares it, rather than inheriting whatever
+the shell happens to hold. Two files are worth reading as the worked examples:
 
-| Spec | Inherits | Declared in |
-| --- | --- | --- |
-| `spec/requests/errors_spec.rb:15` | `APP_DEBUG_MODE`, via `config.consider_all_requests_local` | `.env.development.local` |
+- `spec/commands/lar_city/cli/images_cmd_spec.rb` shells out to `docker compose build`,
+  so it declares every variable compose has a `:?` guard for — with deliberately fake
+  values, since compose only has to interpolate them.
+- `spec/requests/errors_spec.rb` needs `consider_all_requests_local` to be false. That is
+  decided at boot in `config/environments/test.rb`, not arranged per-example: Rails
+  memoises `show_detailed_exceptions` on the first request of the run, so a `before` or
+  `around` hook only takes effect if that spec happens to make the first request.
 
-Separately, the five examples in `spec/commands/lar_city/cli/images_cmd_spec.rb` shell out
-to `docker compose build` and so depend on whatever compose needs to interpolate its `:?`
-guards. They fail either way on this branch — `PLATFORM_SUBDOMAIN must be set` without
-isolation, `APP_SECRET must be set` with it — because those variables arrive from the
-environment rather than from anything the spec declares.
-
-Both files are `skip_in_ci: true`, so CI has never run them. That also accounts for the
-gap between CI's example count and a local run's.
-
-Specs should declare what they need rather than inherit it. Until that lands, run those
-two files with `bundle exec rspec` directly.
+The consequence is that `bin/with-env test bundle exec rspec` and a run with the
+development environment still loaded now produce the same result. Both files remain
+`skip_in_ci: true`, which is why CI's example count is lower than a local run's.
 
 ## How the rules are enforced
 

@@ -2,15 +2,15 @@
 
 require 'rails_helper'
 
+# The test environment decides consider_all_requests_local at boot (see
+# config/environments/test.rb), so these examples no longer arrange it themselves.
+#
+# The previous `around` hook could not have worked: Rails.application.env_config memoises
+# show_detailed_exceptions on the first request of the run, so assigning the config
+# afterwards only mattered when this file happened to make that first request. It passed
+# alone and failed in a full suite. Its teardown also set the flag to `true`
+# unconditionally, leaving it that way for every example that ran afterwards.
 RSpec.describe ErrorsController, type: :request, skip_in_ci: true do
-  around do |example|
-    with_modified_env(APP_DEBUG_MODE: 'no') do
-      Rails.application.config.consider_all_requests_local = AppUtils.debug_mode?
-      example.run
-      Rails.application.config.consider_all_requests_local = true
-    end
-  end
-
   describe '#not_found' do
     it 'renders the 404 template' do
       get '/nonexistent_path'
