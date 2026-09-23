@@ -1,4 +1,8 @@
 #!/usr/bin/env zsh
+#
+# Routed through the CLI rather than calling `docker compose` directly: compose.yml
+# declares its networks `external: true`, so something has to provision them first or
+# this path fails on a clean machine with a missing-network error. `services:start`
+# does that and then runs the same up/logs pair this script used to duplicate.
 
-docker compose --profile essential up -d &&\
-  docker compose --profile essential logs --follow --since 1m
+bin/thor services:start --profile essential "$@"

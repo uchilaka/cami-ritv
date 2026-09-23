@@ -43,7 +43,6 @@ COPY . .
 FROM src AS web
 
 ARG RAILS_ENV
-ARG RAILS_MASTER_KEY
 # Passed through by docker-compose (see the `web` build args). Without this ARG the
 # value never reaches the build environment and ./bin/unlock-repo no-ops.
 ARG GITCRYPT_KEY_BASE64

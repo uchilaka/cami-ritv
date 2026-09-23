@@ -23,5 +23,12 @@ test:
 staging:
   <<: *default
 
+beta:
+  <<: *default
+
+# NOTE: lab has no section here either, and predates this branch -- it has been running
+# on Solid Queue's own defaults. Tracked in LAR-368 rather than fixed here, so a live
+# environment's worker config does not change inside a beta-enablement PR.
+
 production:
   <<: *default

@@ -71,9 +71,8 @@ Rails.application.configure do
   # Configure logging for the app's mail service.
   config.action_mailer.logger = Rails.logger
 
-  # Fallback must be a host this environment actually allows (see config/allowed_hosts.yml)
-  # and matches HOSTNAME in .env.lab.
-  config.action_mailer.default_url_options = { host: ENV.fetch('HOSTNAME', 'accounts.lab.larcity.tech') }
+  # Fallback must be a host this environment actually allows (see config/allowed_hosts.yml).
+  config.action_mailer.default_url_options = { host: ENV.fetch('HOSTNAME', 'accounts.beta.larcity.tech') }
 
   # Print deprecation notices to the Rails logger.
   # config.active_support.deprecation = :log

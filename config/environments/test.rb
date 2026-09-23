@@ -23,7 +23,12 @@ Rails.application.configure do
   # Only drop the inherited value when there is a key FILE to fall back to. CI has no
   # *.key (they are gitignored) and passes the key through this very variable, so
   # clearing it unconditionally would break the pipeline.
-  if ENV['RAILS_MASTER_KEY'].present? && Rails.root.join('config/credentials/test.key').exist?
+  test_key_paths = [
+    Rails.application.config.credentials.key_path,
+    Rails.root.join('config/credentials/test.key'),
+    Rails.root.join('config/master.key'),
+  ].compact
+  if ENV['RAILS_MASTER_KEY'].present? && test_key_paths.any? { |path| File.exist?(path) }
     ENV['RAILS_MASTER_KEY'] = nil
   end
 

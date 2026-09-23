@@ -1,15 +1,18 @@
 # frozen_string_literal: true
 
 require 'lar_city/base_cmd_stack'
+require 'lar_city/cli/service_networks'
 require 'lar_city/cli/services_cmd'
 require_relative 'features_cmd'
 require_relative 'kick_store_cmd'
 
 class InitApp < Thor::Group
   include LarCity::BaseCmdStack
+  include LarCity::CLI::ServiceNetworks
 
   desc 'Command to initialize the application'
 
+  class_option :skip_migrations, type: :boolean, default: false, desc: 'Skip running database migrations'
   class_option :restore_primary, type: :boolean, default: false, desc: 'Restore primary database from latest backup'
   class_option :restore_crm, type: :boolean, default: false, desc: 'Restore CRM database from latest backup'
 
@@ -25,6 +28,12 @@ class InitApp < Thor::Group
   def touch_keep_file_for_app_store_downloads
     say_info "Creating .keep file in application resource path at: #{app_store_resource_path}"
     FileUtils.touch(File.join(app_store_resource_path, '.keep'), verbose: verbose?, noop: pretend?)
+  end
+
+  # Provisioning lives in LarCity::CLI::ServiceNetworks so every entrypoint that starts
+  # containers shares one list -- see that module for why each network is here.
+  def maybe_setup_service_networks
+    ensure_service_networks!
   end
 
   def start_database_service
@@ -48,6 +57,12 @@ class InitApp < Thor::Group
   end
 
   def apply_data_migrations
+    if options[:skip_migrations]
+      say_info 'Skipping data migrations as per user request.'
+      return
+    end
+
+    say_info 'Applying data migrations...'
     Rails::Command.invoke('data:migrate')
   end
 
