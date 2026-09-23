@@ -9,7 +9,8 @@ require 'open3'
 # ordinary unit tests cannot catch because they live in config files rather than code:
 #
 #   1. config/database.yml defaulting the TEST database to a development name
-#   2. .envrc validating RUBY_ENV only AFTER interpolating it into env file paths
+#   2. the RubyMine RSpec template losing RAILS_ENV=test, or pinning one worktree's name
+#   3. .envrc validating RUBY_ENV only AFTER interpolating it into env file paths
 RSpec.describe 'environment isolation' do
   describe 'config/database.yml' do
     # The `test:` defaults are the last line of defence. spec/rails_helper.rb aborts on a
@@ -40,6 +41,26 @@ RSpec.describe 'environment isolation' do
 
     it 'defaults the crm test database to a test-suffixed name' do
       expect(test_databases.dig('crm', 'database')).to end_with('_test')
+    end
+  end
+
+  describe '.ide-configs/Template RSpec.run.xml' do
+    subject(:template) do
+      Nokogiri::XML(File.read(Rails.root.join('.ide-configs/Template RSpec.run.xml')))
+    end
+
+    # Without this, RubyMine's built-in run controls boot the app in development and the
+    # suite either aborts on the database guard or dies decrypting credentials.
+    it 'presets RAILS_ENV=test' do
+      node = template.at_xpath('//envs/env[@name="RAILS_ENV"]')
+
+      expect(node&.attr('value')).to eq('test')
+    end
+
+    # `<module name="pr-293"/>` pinned the directory name of whichever worktree generated
+    # the file, so it resolved for exactly one checkout and silently failed elsewhere.
+    it 'does not pin a checkout-specific module name' do
+      expect(template.at_xpath('//module')).to be_nil
     end
   end
 

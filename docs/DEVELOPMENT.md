@@ -106,6 +106,11 @@ new `.env` file.
 compose.override.yml`), which variables Compose hard-requires, and why the networks have to
 be provisioned before anything comes up.
 
+## Setting up your IDE
+
+Review the following setup notes for your respective IDE:
+- [RubyMine](./RUBYMINE.md)
+
 ## Working with Render deployments 
 
 ### Validating blueprints
