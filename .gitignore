@@ -75,8 +75,15 @@
 # Environment variable files
 /.env.*
 !/.env.development
+!/.env.lab
+!/.env.beta
 !/.envrc
+# .env.test is tracked and unencrypted on purpose -- it holds only the names that make a
+# test run a test run. See .gitattributes and docs/ENVIRONMENTS.md (R4).
+!/.env.test
+# ...as are the templates, whose only audience is a clone with no git-crypt key.
 !/.env.example
+!/.env.*.example
 /.node-version
 /.ruby-version
 
@@ -130,3 +137,23 @@ chromatic.log
 # DigitalOcean
 .do/*
 app*.yaml
+
+# Agents
+.claude/*
+.gemini/*
+
+# Agentic exceptions — these MUST come after the ignores above: the last
+# matching pattern wins, and a negation cannot re-include anything whose parent
+# directory is itself excluded, which is why these name the directory rather
+# than its contents.
+!.claude/skills/
+!.gemini/skills/
+
+# Terraform / OpenTofu
+.terraform/.terraform/
+.terraform/*.tfstate
+.terraform/*.tfstate.backup
+.terraform/*.tfvars
+
+# Docker compose
+/*compose.override.yml
