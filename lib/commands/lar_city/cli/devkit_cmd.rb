@@ -260,6 +260,53 @@ module LarCity
         end
       end
 
+      # Copy, deliberately, rather than symlink.
+      #
+      # RubyMine rewrites a run configuration on save and stamps it with `<module name="...">`
+      # -- the name of whatever directory the project happens to live in. The tracked configs
+      # already show the drift: `cami` in nine of them, `cami-ritv` in two. A symlink into
+      # .ide-configs would send that churn straight into version control, and in a worktree it
+      # would write the worktree's directory name.
+      #
+      # Copying keeps RubyMine's edits inside .idea, which is gitignored. Sharing a change is
+      # then a deliberate act: edit the file in .ide-configs and re-run this.
+      define_force_option(
+        self,
+        class_option: false,
+        desc: 'Overwrite run configurations that already exist in .idea/runConfigurations'
+      )
+      desc 'ide-configs', 'Install the tracked run configurations into the IDE default location'
+      def ide_configs
+        source_dir = Rails.root.join('.ide-configs')
+        target_dir = Rails.root.join('.idea/runConfigurations')
+
+        configs = Dir.glob(source_dir.join('*.run.xml'))
+        if configs.empty?
+          say_error "No run configurations found in #{source_dir}"
+          return
+        end
+
+        FileUtils.mkdir_p(target_dir, verbose: verbose?, noop: dry_run?)
+
+        installed = 0
+        skipped = 0
+        configs.each do |source|
+          target = target_dir.join(File.basename(source))
+
+          if target.exist? && !force?
+            say_info "Keeping your local #{File.basename(source)} (--force to overwrite)"
+            skipped += 1
+            next
+          end
+
+          FileUtils.cp(source, target, verbose: verbose?, noop: dry_run?)
+          installed += 1
+        end
+
+        say_success "Installed #{installed} run configuration(s) into .idea/runConfigurations" if installed.positive?
+        say_info "Left #{skipped} local configuration(s) alone" if skipped.positive?
+      end
+
       desc 'logs', 'Show the logs for the project'
       def logs
         raise Errors::UnsupportedOSError, 'Unsupported OS' unless mac?

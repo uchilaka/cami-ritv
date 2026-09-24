@@ -154,7 +154,8 @@ env -u RAILS_MASTER_KEY RAILS_ENV=test bundle exec rspec
 to fall back to — so in practice the plain command works too — but CI has no key file and
 supplies the key through that variable, which is why the correction is conditional.
 
-IDE setup, which needs the same variables preset, is documented separately.
+For RubyMine, see [RUBYMINE.md](./RUBYMINE.md); the committed run template at
+`.ide-configs/Template RSpec.run.xml` presets `RAILS_ENV=test`.
 
 ## How the rules are enforced
 
@@ -168,7 +169,7 @@ goes red:
 | R2 | `.env` / `.env.local` declare no selector at all |
 | R1 (ordering) | `.envrc` validates `RUBY_ENV` before interpolating it, and refuses to load without it |
 | R2 (payload) | `.env.local` declares no `APP_DATABASE_*` — the role differs per environment, so the connection belongs in `.env.<env>.local` |
-| R6 | `config/database.yml` test defaults end in `_test` |
+| R6 | `config/database.yml` test defaults end in `_test`; the RubyMine template presets `RAILS_ENV=test` and pins no checkout-specific module |
 
 The dotenv convention checks **skip when git-crypt is locked**, so they guard you locally
 but not in CI. `.env.test` is the exception and is checked everywhere.
