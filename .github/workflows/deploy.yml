@@ -41,7 +41,7 @@ jobs:
     outputs:
       redis_url: ${{ steps.tf_outputs.outputs.redis_url }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           ref: ${{ github.event_name == 'workflow_dispatch' && env.DEPLOY_TARGET_REF || github.ref }}
 
@@ -98,7 +98,7 @@ jobs:
       FLY_API_TOKEN: ${{ env.FLY_ORG_API_TOKEN }}
       WORKFLOW_REF: ${{ github.ref }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           ref: ${{ github.event_name == 'workflow_dispatch' && env.DEPLOY_TARGET_REF || github.ref }}
 
