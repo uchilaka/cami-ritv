@@ -46,7 +46,7 @@ jobs:
           ref: ${{ github.event_name == 'workflow_dispatch' && env.DEPLOY_TARGET_REF || github.ref }}
 
       - name: Setup OpenTofu
-        uses: opentofu/setup-opentofu@v1
+        uses: opentofu/setup-opentofu@v2
         with:
           tofu_version: 1.11.6
 
