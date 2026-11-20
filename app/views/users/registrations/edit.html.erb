@@ -1,12 +1,11 @@
-<% light_mode ||= true %>
 <% content_for :form_layout do %>
   <div class="mb-5 flex justify-between">
     <section class="flex-1">
       <h3>Edit <%= resource_name.to_s.humanize %></h3>
     </section>
     <section class="flex-initial">
-      <!-- Dark mode toggle button -->
-      <%= render "shared/dark_mode_toggle_btn" %>
+      <!-- Theme preference control, mounted by entrypoints/theme_toggle_app.tsx -->
+      <div data-theme-preference-control></div>
     </section>
   </div>
 

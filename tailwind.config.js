@@ -1,5 +1,5 @@
 // Import rails tailwind config
-import { content, theme, plugins } from "./config/tailwind.config";
+import { content, darkMode, theme, plugins } from "./config/tailwind.config";
 
 export default {
   content: [
@@ -8,6 +8,7 @@ export default {
     "./app/frontend/**/*.{vue,js,ts,jsx,tsx}",
     "./app/**/*.{js,ts,jsx,tsx}",
   ],
+  darkMode,
   theme,
   plugins,
 };
