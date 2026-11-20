@@ -52,10 +52,10 @@ class AppUtils
     end
 
     def mounted_master_key_file
-      key_file = ENV.fetch('APP_CONFIG_MASTER_KEY_FILE', "/run/secrets/#{Rails.env}.key")
-      return key_file if File.exist?(key_file)
-
-      nil
+      @mounted_master_key_file ||= begin
+        key_file = ENV.fetch('APP_CONFIG_MASTER_KEY_FILE', "/run/secrets/#{Rails.env}.key")
+        key_file if File.exist?(key_file)
+      end
     end
 
     def assume_ssl?

@@ -56,24 +56,26 @@ module LarCity
             end
         end
 
+        # NOTE: the fallback belongs in the assignment, not an `ensure` block. `ensure`
+        # runs for its side effects and does NOT set a method's return value, so when
+        # neither file existed this returned nil on the first call (the memo was only
+        # populated for later ones) and callers got File.exist?(nil) -> TypeError.
         def compose_config_file
           @compose_config_file ||=
             %w[compose.yml docker-compose.yml]
               .map { |basename| Rails.root.join(basename).to_s }
-              .find { |path| File.exist?(path) }
-
-        ensure
-          @compose_config_file ||= Rails.root.join('docker-compose.yml').to_s
+              .find { |path| File.exist?(path) } ||
+            Rails.root.join('compose.yml').to_s
         end
 
+        # Same `ensure` bug as compose_config_file above -- and this one actually bit:
+        # no override file exists in a clean checkout, so the first caller got nil.
         def compose_override_config_file
           @compose_override_config_file ||=
             %w[compose.override.yml docker-compose.override.yml]
               .map { |basename| Rails.root.join(basename).to_s }
-              .find { |path| File.exist?(path) }
-
-        ensure
-          @compose_override_config_file ||= Rails.root.join('docker-compose.override.yml').to_s
+              .find { |path| File.exist?(path) } ||
+            Rails.root.join('compose.override.yml').to_s
         end
       end
     end

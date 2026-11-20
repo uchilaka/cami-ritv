@@ -9,6 +9,11 @@
 
 ## Configuration
 
+> Which environment the app is in, which `.env` files load, and the rules governing them
+> are documented separately in [ENVIRONMENTS.md](./ENVIRONMENTS.md). This page covers
+> individual variables.
+
+
 ### Development service ports
 
 <table>

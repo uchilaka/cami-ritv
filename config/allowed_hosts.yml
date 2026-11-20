@@ -19,13 +19,13 @@ test:
   - accounts.larcity.ngrok.test
   - accounts.larcity.test
   - www.example.com
+beta:
+  - accounts.beta.larcity.tech
 lab:
   - accounts.larcity.ngrok.dev
-  - accounts.beta.larcity.tech
   - accounts.lab.larcity.tech
   - accounts.lab.larcity.hopto.org
 staging:
-  - accounts.beta.larcity.tech
   - cami-staging-app-ghexn.ondigitalocean.app
   - accounts.staging.lar.city
   - accounts.staging.larcity.org

@@ -25,7 +25,7 @@ jobs:
     env:
       CI: true
       RUN_MODE: ${{ vars.RUN_MODE || 'default' }}
-      # TODO: Change to 16006 to match the port in the docker-compose.yml file
+      # TODO: Change to 16006 to match the port in the compose.yml file
       PORT: 3000
       RAILS_ENV: test
       REDIS_URL: redis://localhost:16079/2

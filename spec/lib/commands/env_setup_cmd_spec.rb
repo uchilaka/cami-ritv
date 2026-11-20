@@ -110,6 +110,7 @@ RSpec.describe EnvSetupCmd, type: :thor do
     context 'when environment-specific template does not exist' do
       it 'builds a default template' do
         expect(content).to include('export NODE_ENV=lab')
+        expect(content).to include('export RUBY_ENV=lab')
         expect(content).to include('export GITCRYPT_KEY_FILE')
       end
     end

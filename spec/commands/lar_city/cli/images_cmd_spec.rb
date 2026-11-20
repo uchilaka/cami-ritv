@@ -10,7 +10,7 @@ module LarCity
 
 let(:options) { { dry_run: dry_run } }
       let(:service_name) { 'web' }
-      let(:compose_file_override) { 'docker-compose.yml' }
+      let(:compose_file_override) { 'compose.yml' }
       let(:dry_run) { true }
       let(:build_output) { %r{Image (.*) Built} }
       let(:push_output) { %r{naming to larcity/accounts-#{service_name}\s} }
@@ -124,7 +124,7 @@ let(:options) { { dry_run: dry_run } }
         it { expect(result).to eq(expected_tag) }
 
         context "with the compose file override" do
-          let(:compose_file_override) { 'docker-compose.yml:compose.override.yml' }
+          let(:compose_file_override) { 'compose.yml:compose.override.yml' }
           let(:override_content) do
             <<~YAML
               version: '3.8'

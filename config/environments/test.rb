@@ -11,12 +11,34 @@ Rails.application.configure do
   dotenv_files = %w[.env.test.local .env.test .env].select { |file| File.exist?(file) }
   Dotenv.load(*dotenv_files)
 
+  # Do not let a dev shell hand the test boot the DEVELOPMENT master key.
+  #
+  # ActiveSupport::EncryptedFile#key reads ENV["RAILS_MASTER_KEY"].presence BEFORE
+  # config/credentials/test.key, so a shell sitting in "development" makes Rails try to
+  # decrypt test.yml.enc with the development key and die in
+  # ActiveSupport::MessageEncryptor::InvalidMessage -- during boot, before a single
+  # example runs. RAILS_ENV=test does not unset it: direnv exported it from
+  # .env.${RUBY_ENV}.local, and Dotenv.load above never overwrites an already-set value.
+  #
+  # Only drop the inherited value when there is a key FILE to fall back to. CI has no
+  # *.key (they are gitignored) and passes the key through this very variable, so
+  # clearing it unconditionally would break the pipeline.
+  test_key_paths = [
+    Rails.application.config.credentials.key_path,
+    Rails.root.join('config/credentials/test.key'),
+    Rails.root.join('config/master.key'),
+  ].compact
+  if ENV['RAILS_MASTER_KEY'].present? && test_key_paths.any? { |path| File.exist?(path) }
+    ENV['RAILS_MASTER_KEY'] = nil
+  end
+
   # Force the test database NAMES, which must never be inherited from a dev shell.
   #
-  # .envrc derives APP_DATABASE_NAME_* from NODE_ENV rather than RAILS_ENV, so a shell
-  # sitting in "development" exports sails_development even for `RAILS_ENV=test`, and
-  # Dotenv.load deliberately does not overwrite already-set variables -- so .env.test.local
-  # cannot correct it. spec/rails_helper.rb truncates whatever this resolves to.
+  # .envrc loads .env.${RUBY_ENV} into the shell and .env.development sets
+  # APP_DATABASE_NAME_PRIMARY to a development name, so a shell sitting in "development"
+  # exports sails_development even for an inline `RAILS_ENV=test`. Dotenv.load deliberately
+  # does not overwrite already-set variables -- so .env.test.local cannot correct it.
+  # spec/rails_helper.rb truncates whatever this resolves to.
   #
   # Only the NAMES are forced. Host, port, user and password are left to the shell so the
   # suite runs against whichever Postgres the developer actually has up; a blanket

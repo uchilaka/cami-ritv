@@ -121,18 +121,62 @@ RSpec.describe LarCity::CLI::ServicesCmd do
     end
   end
 
+  # Assert the COMMAND, not the argument list -- LarCity::CLI::Runnable#run takes *args
+  # and joins them, so pinning the split tests how the string was assembled rather than
+  # what runs. Mirrors spec/lib/commands/init_app_spec.rb, so both callers of
+  # LarCity::CLI::ServiceNetworks are checked the same way.
   describe '#start' do
-    it 'starts the services' do
+    let(:commands) { [] }
+
+    before do
       allow(command).to receive(:options).and_return({ profile: 'batteries-included' })
+      allow(command).to receive(:list_of_networks).and_return(existing_networks)
+      allow(command).to receive(:run) { |*args| commands << args.compact.join(' ') }
       command.start
-      expect(command).to have_received(:run) do |*args|
-        expect(args).to \
-          eq(
+    end
+
+    context 'when every compose network already exists' do
+      # Stub the network LOOKUP rather than one name: SERVICE_NETWORKS holds strings, so
+      # a `.with(:'larcity-apps-net')` symbol stub never matched, and stubbing a single
+      # name left the other two calls unstubbed -- rspec then raised rather than
+      # returning.
+      let(:existing_networks) { LarCity::CLI::ServiceNetworks::SERVICE_NETWORKS }
+
+      it 'creates no networks' do
+        expect(commands.grep(%r{docker network create})).to be_empty
+      end
+
+      it 'starts the services' do
+        expect(commands).to eq(
+          [
             [
-              'docker compose', '--profile batteries-included', 'up --detach', '&&',
-              'docker compose', '--profile batteries-included', 'logs --follow --since 5m',
-            ]
-          )
+              'docker compose --profile batteries-included up --detach',
+              '&&',
+              'docker compose --profile batteries-included logs --follow --since 5m',
+            ].join(' '),
+          ]
+        )
+      end
+    end
+
+    context 'when the compose networks are missing' do
+      let(:existing_networks) { %w[bridge host none] }
+
+      it 'creates every missing network' do
+        expect(commands).to include(
+          'docker network create larcity_apps --driver bridge --ipv6=false',
+          'docker network create larcity-beta-net --driver bridge --ipv6=false',
+          'docker network create larcity-apps-net --driver bridge --ipv6=false'
+        )
+      end
+
+      # The regression this guards: .docker/bin/start-essential ran `compose up` without
+      # provisioning, so the `external: true` networks were missing on a clean machine.
+      it 'provisions them before running compose up' do
+        last_create = commands.rindex { |c| c.start_with?('docker network create') }
+        first_up = commands.index { |c| c.start_with?('docker compose') }
+
+        expect(last_create).to be < first_up
       end
     end
   end

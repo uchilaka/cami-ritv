@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+#
+# Validate the resolved docker compose configuration, but only when this machine
+# actually has an override layer to validate.
+#
+# Why this is a script rather than a package.json one-liner: yarn 4 runs scripts
+# through its own portable shell, which has no `if`/`then`/`fi` -- it parses them
+# as commands and dies with "command not found: else". The obvious one-liner
+# workarounds are worse:
+#
+#   test -f X && docker compose config --quiet              # exits 1 when X is
+#                                                           # absent, so a fresh
+#                                                           # clone "fails"
+#   test -f X && docker compose config --quiet || true      # swallows a REAL
+#                                                           # config failure,
+#                                                           # which is the only
+#                                                           # case worth checking
+#
+# compose.override.yml is gitignored (see docs/DOCKER_COMPOSE.md), so its absence
+# is a normal state -- for a fresh clone and for CI -- and must not read as a
+# failure. Its presence with a broken configuration must.
+set -euo pipefail
+
+cd "$(git rev-parse --show-toplevel)"
+
+if [[ ! -f compose.override.yml ]]; then
+  # Say so rather than passing silently: a check that never ran and a check that
+  # passed should not look identical.
+  echo "check:compose skipped — no compose.override.yml on this machine."
+  echo "  create one with: cp compose.override.yml.example compose.override.yml"
+  exit 0
+fi
+
+exec docker compose config --quiet

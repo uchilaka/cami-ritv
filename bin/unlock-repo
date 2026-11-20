@@ -14,7 +14,7 @@ mkdir -pv ./tmp
 #
 #   1. GITCRYPT_KEY_BASE64 - a base64-encoded key in the environment. This is what
 #      docker-compose passes through as a build arg (see the `web`/`worker` build
-#      args in docker-compose.yml).
+#      args in compose.yml).
 #   2. GITCRYPT_KEY_FILE   - a path to the raw key, defaulting to the location
 #      BuildKit mounts it at (`--mount=type=secret,id=git-crypt.key,dst=...`).
 #      Platforms like Fly pass the key as a build secret rather than an env var,

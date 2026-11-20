@@ -3,6 +3,7 @@
 - [CAMI: Development guide](#cami-development-guide)
   - [First Time Setup / Getting Started](#first-time-setup--getting-started)
   - [Install the CLI](#install-the-cli)
+  - [Running the stack in Docker](#running-the-stack-in-docker)
   - [Working with Render deployments](#working-with-render-deployments)
   - [Managing application secrets](#managing-application-secrets)
     - [Managing `git-crypt` secrets](#managing-git-crypt-secrets)
@@ -90,6 +91,25 @@ Run the following code from the project root:
 ```shell
 bin/thor entrypoint:setup
 ```
+
+## Environments
+
+How this project decides which environment it is in -- and why `RAILS_ENV=test` on its own
+is not enough to make a test run a test run -- is documented in
+[ENVIRONMENTS.md](./ENVIRONMENTS.md). Read it before adding an environment variable or a
+new `.env` file.
+
+## Running the stack in Docker
+
+[DOCKER_COMPOSE.md](./DOCKER_COMPOSE.md) covers how `COMPOSE_FILE` is assembled, why
+`compose.override.yml` is untracked and required (`cp compose.override.yml.example
+compose.override.yml`), which variables Compose hard-requires, and why the networks have to
+be provisioned before anything comes up.
+
+## Setting up your IDE
+
+Review the following setup notes for your respective IDE:
+- [RubyMine](./RUBYMINE.md)
 
 ## Working with Render deployments 
 

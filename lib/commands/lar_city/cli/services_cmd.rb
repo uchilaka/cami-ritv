@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative 'base_cmd'
+require 'lar_city/cli/service_networks'
 
 module LarCity
   module CLI
@@ -26,6 +27,7 @@ module LarCity
       no_commands do
         include ControlFlowHelpers
         include ServiceHelpers
+        include ServiceNetworks
       end
 
       define_force_option self, class_option: false, desc: 'Force overwrite of existing daemon config'
@@ -189,6 +191,12 @@ module LarCity
 
       desc 'start', 'Start the services'
       def start
+        # compose.yml declares its networks `external: true`, so Compose will not create
+        # them and refuses to start anything while they are missing. Guarantee them here
+        # rather than in the callers: this is the single place every start path goes
+        # through, including .docker/bin/start-essential.
+        ensure_service_networks!
+
         run 'docker compose',
             profile_clause,
             'up --detach',

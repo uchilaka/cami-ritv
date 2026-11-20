@@ -39,7 +39,8 @@ RSpec.describe InitApp, type: :command_stack do
     before { allow(FileUtils).to receive(:touch) }
 
     it 'touches .keep file' do
-      expect(FileUtils).to receive(:touch).with('/tmp/app/db/test/postgres/downloads/.keep')
+      expect(FileUtils).to receive(:touch)
+                             .with('/tmp/app/db/test/postgres/downloads/.keep', verbose: false, noop: false)
       instance.touch_keep_file_for_app_store_downloads
     end
   end
@@ -48,6 +49,78 @@ RSpec.describe InitApp, type: :command_stack do
     it 'runs docker-compose up' do
       expect(instance).to receive(:run).with('docker-compose up', '--detach app-store')
       instance.start_database_service
+    end
+  end
+
+  describe '#maybe_setup_service_networks' do
+    # Assert the COMMAND, not the argument list. LarCity::CLI::Runnable#run takes *args
+    # and joins them, so `run 'docker network create', name` and
+    # `run "docker network create #{name}"` are the same command — a spec that pins the
+    # split is testing how the string was assembled, not what gets executed.
+    let(:commands) { [] }
+
+    before do
+      allow(instance).to receive(:list_of_networks).and_return(existing_networks)
+      allow(instance).to receive(:run) { |*args| commands << args.compact.join(' ') }
+    end
+
+    context 'when no service network exists' do
+      let(:existing_networks) { %w[bridge host none] }
+
+      it 'creates every network in SERVICE_NETWORKS, in order' do
+        instance.maybe_setup_service_networks
+
+        expect(commands).to eq(
+          [
+            'docker network create larcity_apps --driver bridge --ipv6=false',
+            'docker network create larcity-beta-net --driver bridge --ipv6=false',
+            'docker network create larcity-apps-net --driver bridge --ipv6=false',
+          ]
+        )
+      end
+    end
+
+    context 'when only the platform network exists' do
+      let(:existing_networks) { %w[bridge larcity-beta-net] }
+
+      it 'creates only the missing ones' do
+        instance.maybe_setup_service_networks
+
+        expect(commands).to eq(
+          [
+            'docker network create larcity_apps --driver bridge --ipv6=false',
+            'docker network create larcity-apps-net --driver bridge --ipv6=false',
+          ]
+        )
+      end
+    end
+
+    context 'when every network already exists' do
+      let(:existing_networks) { %w[larcity_apps larcity-beta-net larcity-apps-net] }
+
+      it 'creates nothing' do
+        instance.maybe_setup_service_networks
+
+        expect(commands).to be_empty
+      end
+    end
+  end
+
+  describe '#apply_data_migrations' do
+    context 'with --skip-migrations' do
+      let(:options) { { skip_migrations: true } }
+
+      it 'does not invoke the data migration command' do
+        expect(Rails::Command).not_to receive(:invoke)
+        instance.apply_data_migrations
+      end
+    end
+
+    context 'without --skip-migrations' do
+      it 'invokes the data migration command' do
+        expect(Rails::Command).to receive(:invoke).with('data:migrate')
+        instance.apply_data_migrations
+      end
     end
   end
 

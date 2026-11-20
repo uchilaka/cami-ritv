@@ -24,7 +24,9 @@ end
 
 required_env_vars = %w[PORT RAILS_ENV]
 
-unless Rails.env.test?
+if Rails.env.test?
+  required_env_vars += %w[APP_DATABASE_NAME_PRIMARY]
+else
   unless AppUtils.skip_config_check?('twenty_crm')
     required_env_vars +=
       case Rails.env

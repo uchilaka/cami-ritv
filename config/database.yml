@@ -112,6 +112,27 @@ lab:
     database: <%= ENV.fetch("APP_DATABASE_NAME_CRM", "twenty_crm_lab") %>
     database_tasks: false
 
+# Mirrors lab: beta runs as containers behind the platform proxy and gets its
+# connection details from the APP_DATABASE_* vars compose passes in.
+beta:
+  primary: &primary_beta
+    <<: *default
+    connect_timeout: 5
+    # See https://github.com/ankane/strong_migrations?tab=readme-ov-file#app-timeouts
+    variables:
+      statement_timeout: 15s
+      lock_timeout: 10s
+    host: <%= ENV.fetch('APP_DATABASE_HOST', 'localhost') %>
+    database: <%= ENV.fetch("APP_DATABASE_NAME_PRIMARY", "sails_beta") %>
+    username: <%= ENV.fetch('APP_DATABASE_USER', 'postgres') %>
+    password: <%= ENV.fetch("APP_DATABASE_PASSWORD", postgres_creds&.password) %>
+  queue:
+    <<: *primary_beta
+  crm:
+    <<: *primary_beta
+    database: <%= ENV.fetch("APP_DATABASE_NAME_CRM", "twenty_crm_beta") %>
+    database_tasks: false
+
 staging:
   primary: &primary_staging
     <<: *default

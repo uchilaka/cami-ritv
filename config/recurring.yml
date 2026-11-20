@@ -58,6 +58,9 @@ development:
 staging:
   <<: *common
 
+beta:
+  <<: *common
+
 lab:
   <<: *home_office
 
