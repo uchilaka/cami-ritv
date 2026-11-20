@@ -5,8 +5,9 @@ import ThemePreferenceControl from './ThemePreferenceControl';
 import { STORAGE_KEY } from './themePreference';
 
 // Tells React 19 that act() is in use, so state updates flush synchronously.
-(globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT =
-  true;
+(
+  globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }
+).IS_REACT_ACT_ENVIRONMENT = true;
 
 type Listener = (event: { matches: boolean }) => void;
 
@@ -26,7 +27,7 @@ const stubSystemScheme = (initiallyDark: boolean) => {
   return {
     setDark(dark: boolean) {
       query.matches = dark;
-      listeners.forEach((listener) => listener({ matches: dark }));
+      listeners.forEach(listener => listener({ matches: dark }));
     },
   };
 };
@@ -61,8 +62,8 @@ describe('ThemePreferenceControl', () => {
   });
 
   afterEach(() => {
-    roots.forEach((root) => act(() => root.unmount()));
-    containers.forEach((container) => container.remove());
+    roots.forEach(root => act(() => root.unmount()));
+    containers.forEach(container => container.remove());
     roots = [];
     containers = [];
     vi.unstubAllGlobals();
@@ -75,10 +76,10 @@ describe('ThemePreferenceControl', () => {
       'Theme'
     );
     const radios = container.querySelectorAll('input[type="radio"]');
-    expect(Array.from(radios).map((radio) => radio.getAttribute('value'))).toEqual(
-      ['light', 'dark', 'system']
-    );
-    radios.forEach((radio) =>
+    expect(
+      Array.from(radios).map(radio => radio.getAttribute('value'))
+    ).toEqual(['light', 'dark', 'system']);
+    radios.forEach(radio =>
       expect(radio.closest('label')?.textContent?.trim()).not.toBe('')
     );
   });

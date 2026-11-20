@@ -29,7 +29,7 @@ const stubSystemScheme = (initiallyDark: boolean) => {
   return {
     setDark(dark: boolean) {
       query.matches = dark;
-      listeners.forEach((listener) => listener({ matches: dark }));
+      listeners.forEach(listener => listener({ matches: dark }));
     },
     listenerCount: () => listeners.size,
   };
@@ -50,10 +50,13 @@ describe('themePreference', () => {
       expect(readPreference()).toBe('system');
     });
 
-    it.each(['light', 'dark', 'system'] as const)('returns a stored %s', (pref) => {
-      localStorage.setItem(STORAGE_KEY, pref);
-      expect(readPreference()).toBe(pref);
-    });
+    it.each(['light', 'dark', 'system'] as const)(
+      'returns a stored %s',
+      pref => {
+        localStorage.setItem(STORAGE_KEY, pref);
+        expect(readPreference()).toBe(pref);
+      }
+    );
 
     it('treats an unrecognised stored value as system', () => {
       localStorage.setItem(STORAGE_KEY, 'auto');
