@@ -72,6 +72,9 @@ module LarCity
             @runnable_result =
               if block_given?
                 output_buffer = []
+                # Read the mode once, up front. The block can call #run again, which
+                # resets the runner's IO mode while this command is still streaming.
+                buffer_output = runnable_eval?
                 status =
                   Open3.popen2e(cmd) do |_stdin, stdout_stderr, wait_thread|
                     reader_thread =
@@ -81,7 +84,7 @@ module LarCity
                           # joined output. Other modes return the process status, so buffering
                           # there would grow memory for the life of a streamed command for
                           # nothing. The block still sees every line either way.
-                          output_buffer << line if runnable_eval?
+                          output_buffer << line if buffer_output
                           block.call(line)
                         end
                       end
@@ -90,7 +93,7 @@ module LarCity
                     reader_thread.join # Wait for the reader thread to finish before the stream is closed
                     process_status
                   end
-                runnable_eval? ? output_buffer.join : status
+                buffer_output ? output_buffer.join : status
               elsif runnable_eval?
                 `#{cmd}`
               else

@@ -26,6 +26,14 @@ RSpec.describe LarCity::CLI::Runnable do
         expect(lines).to eq(%W[first\n second\n])
         expect(result).to eq("first\nsecond\n")
       end
+
+      it 'keeps collecting output when the block itself calls #run' do
+        # A nested #run resets the runner's IO mode, so the outer call must not
+        # re-read the mode after it has started streaming.
+        result = runner.run(cmd, io_mode: 'eval_with_result') { |_line| runner.run('true') }
+
+        expect(result).to eq("first\nsecond\n")
+      end
     end
 
     context 'when the IO mode is not eval' do
