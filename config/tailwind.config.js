@@ -36,10 +36,16 @@ export const plugins = [
   require('@tailwindcss/container-queries'),
 ];
 
+// darkMode is a top-level option, not a theme key. Nested under `theme` it is
+// silently ignored and Tailwind falls back to 'media', which makes every dark:
+// utility follow the OS and ignore the .dark class the theme control sets.
+// Exported so the Vite build (../tailwind.config.js) uses the same strategy.
+export const darkMode = 'selector';
+
 export default {
   content,
+  darkMode,
   theme: {
-    darkMode: 'selector',
     extend: {
       ...emeraldTheme,
     },
