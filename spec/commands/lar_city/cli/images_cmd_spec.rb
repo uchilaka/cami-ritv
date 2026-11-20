@@ -54,6 +54,9 @@ let(:options) { { dry_run: dry_run } }
 
         context 'when building an image with override composition' do
           let(:build_args) { { service: service_name, dry_run: } }
+          # An explicit COMPOSE_FILE turns off docker compose's override auto-discovery,
+          # so the override written below has to be listed here or compose never reads it.
+          let(:compose_file_override) { 'compose.yml:docker-compose.override.yml' }
           let(:push_output) { %r{naming to registry\.test/accounts-#{service_name}:latest} }
           let(:override_compose_file_path) { Rails.root.join('docker-compose.override.yml').to_s }
           let(:override_content) do
@@ -91,7 +94,7 @@ let(:options) { { dry_run: dry_run } }
               output(build_output).to_stdout_from_any_process
           end
 
-          it 'reports the image_id', skip: "TODO: [LAR-341] Look into why this is failing" do
+          it 'reports the image_id' do
             expect { command.invoke(:build, [], **build_args) }.to \
               output(push_output).to_stdout_from_any_process
           end
