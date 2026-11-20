@@ -26,9 +26,12 @@ staging:
 beta:
   <<: *default
 
-# NOTE: lab has no section here either, and predates this branch -- it has been running
-# on Solid Queue's own defaults. Tracked in LAR-368 rather than fixed here, so a live
-# environment's worker config does not change inside a beta-enablement PR.
+# Every environment needs a section. Without one Solid Queue silently falls back to its
+# own defaults (queues "*", 3 threads), dropping the queue priority above and ignoring
+# RAILS_QUEUE_THREADS -- lab ran that way until LAR-368. spec/queue_configuration_spec.rb
+# enforces this for each file in config/environments/.
+lab:
+  <<: *default
 
 production:
   <<: *default
