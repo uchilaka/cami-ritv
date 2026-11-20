@@ -89,9 +89,15 @@ RSpec.describe KickStoreCmd, type: :command_stack do
         )
       end
 
-      instance.create_data_store_if_not_exists
+      begin
+        instance.create_data_store_if_not_exists
 
-      expect(ActiveRecord::Base.connection_db_config.database).to eq(original_db_config.database)
+        expect(ActiveRecord::Base.connection_db_config.database).to eq(original_db_config.database)
+      ensure
+        # If the code under test regresses, this example fails while still bound
+        # to `postgres`. Rebind here so later examples don't inherit it.
+        ActiveRecord::Base.establish_connection(original_db_config)
+      end
     end
   end
 
