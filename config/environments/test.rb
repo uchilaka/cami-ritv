@@ -90,6 +90,20 @@ Rails.application.configure do
   # Render exception templates for rescuable exceptions and raise for other exceptions.
   config.action_dispatch.show_exceptions = :rescuable
 
+  # config/application.rb derives this from AppUtils.debug_mode?, which reads
+  # APP_DEBUG_MODE and defaults to "yes" outside production -- so the TEST environment
+  # inherited a DEVELOPMENT variable to decide whether to render error templates or
+  # Rails' debug page.
+  #
+  # It cannot be corrected from a spec, either. Rails.application.env_config memoises
+  # show_detailed_exceptions on the first request of the run, so assigning
+  # consider_all_requests_local in a before/around hook only takes effect when that spec
+  # happens to make the first request -- which is why spec/requests/errors_spec.rb passed
+  # alone and failed in a full run.
+  #
+  # Decide it here, at boot, where it is read.
+  config.consider_all_requests_local = false
+
   # Disable request forgery protection in test environment.
   config.action_controller.allow_forgery_protection = false
 

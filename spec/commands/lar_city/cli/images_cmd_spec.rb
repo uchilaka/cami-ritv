@@ -15,11 +15,30 @@ let(:options) { { dry_run: dry_run } }
       let(:build_output) { %r{Image (.*) Built} }
       let(:push_output) { %r{naming to larcity/accounts-#{service_name}\s} }
 
+      # These examples shell out to `docker compose build`, so every `:?` guard in
+      # compose.yml has to resolve or compose refuses before the build starts. Declaring
+      # them here rather than inheriting them from the shell is what lets this file run
+      # under bin/with-env, where the development environment is deliberately cleared.
+      #
+      # Values are deliberately fake: compose only has to interpolate them, and a real
+      # credential in a spec is a credential in the repository.
+      #
+      # PLATFORM_SUBDOMAIN is being renamed to PLATFORM_DOMAIN in the beta work. Declaring
+      # both keeps this file green on either side of that rename rather than turning it
+      # into a cross-PR tripwire.
       around do |example|
         with_modified_env(
           CONTAINER_REGISTRY_HOST: 'registry.test',
           CONTAINER_NAME_PREFIX: 'accounts',
-          COMPOSE_FILE: compose_file_override
+          COMPOSE_FILE: compose_file_override,
+          PLATFORM_SUBDOMAIN: 'spec',
+          PLATFORM_DOMAIN: 'spec.invalid',
+          APP_SECRET: 'spec-app-secret',
+          APP_CONFIG_JWT_SECRET_KEY: 'spec-jwt-secret',
+          APP_DATABASE_NAME_PRIMARY: 'sails_test',
+          APP_DATABASE_NAME_CRM: 'twenty_crm_test',
+          APP_DATABASE_USER: 'postgres',
+          APP_DATABASE_PASSWORD: 'postgres'
         ) { example.run }
       end
 
