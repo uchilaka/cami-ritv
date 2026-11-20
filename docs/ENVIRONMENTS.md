@@ -71,8 +71,20 @@ target chain repopulate it.
 simply cannot correct an inherited value, because Dotenv never overwrites a variable that
 is still set — so the variables have to be gone before it runs.
 
-A dedicated entry point for this lands separately; until then, clear the offenders by
-hand (see [Running the test suite](#running-the-test-suite)).
+`bin/with-env` does exactly that:
+
+```shell
+bin/with-env test bundle exec rspec
+bin/with-env test bundle exec thor lx-cli:secrets:edit
+```
+
+It unsets everything `.env.$RUBY_ENV` and `.env.$RUBY_ENV.local` declare, then runs the
+command with `RUBY_ENV`/`RAILS_ENV` set to the target, leaving the target's chain free to
+repopulate it.
+
+On a git-crypt-locked clone it cannot read what those files declare, so it warns loudly
+and continues with degraded isolation rather than refusing to run — a locked checkout
+should still be usable, just not silently wrong.
 
 ### R6 — The runtime corrections stay, as assertions
 
@@ -141,8 +153,13 @@ Fetch them from the vault — see `bin/thor lx-cli:secrets:help`.
 
 ## Running the test suite
 
-From a development shell, the inherited environment must be cleared. The variables that
-matter are the ones `.env.test.local` and `.env.test` own:
+From a development shell, the inherited environment must be cleared:
+
+```shell
+bin/with-env test bundle exec rspec
+```
+
+By hand, if you would rather see what it is doing:
 
 ```shell
 env -u RAILS_MASTER_KEY RAILS_ENV=test bundle exec rspec
@@ -156,6 +173,27 @@ supplies the key through that variable, which is why the correction is condition
 
 For RubyMine, see [RUBYMINE.md](./RUBYMINE.md); the committed run template at
 `.ide-configs/Template RSpec.run.xml` presets `RAILS_ENV=test`.
+
+### Specs that depend on a leaked development environment
+
+One spec currently passes only because the development environment leaks in, and fails
+under `bin/with-env`:
+
+| Spec | Inherits | Declared in |
+| --- | --- | --- |
+| `spec/requests/errors_spec.rb:15` | `APP_DEBUG_MODE`, via `config.consider_all_requests_local` | `.env.development.local` |
+
+Separately, the five examples in `spec/commands/lar_city/cli/images_cmd_spec.rb` shell out
+to `docker compose build` and so depend on whatever compose needs to interpolate its `:?`
+guards. They fail either way on this branch — `PLATFORM_SUBDOMAIN must be set` without
+isolation, `APP_SECRET must be set` with it — because those variables arrive from the
+environment rather than from anything the spec declares.
+
+Both files are `skip_in_ci: true`, so CI has never run them. That also accounts for the
+gap between CI's example count and a local run's.
+
+Specs should declare what they need rather than inherit it. Until that lands, run those
+two files with `bundle exec rspec` directly.
 
 ## How the rules are enforced
 
