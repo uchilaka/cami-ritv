@@ -77,8 +77,11 @@ module LarCity
                     reader_thread =
                       Thread.new do
                         stdout_stderr.each do |line|
-                          # TODO: [LAR-340] There was a condition on eval for this line - review later.
-                          output_buffer << line
+                          # Buffer only in eval mode: that is the only mode that returns the
+                          # joined output. Other modes return the process status, so buffering
+                          # there would grow memory for the life of a streamed command for
+                          # nothing. The block still sees every line either way.
+                          output_buffer << line if runnable_eval?
                           block.call(line)
                         end
                       end
