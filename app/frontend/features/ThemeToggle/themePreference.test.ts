@@ -4,6 +4,7 @@ import {
   applyTheme,
   readPreference,
   resolveTheme,
+  subscribeToPreference,
   subscribeToSystemTheme,
   writePreference,
 } from './themePreference';
@@ -69,6 +70,37 @@ describe('themePreference', () => {
     it('round-trips through readPreference', () => {
       writePreference('dark');
       expect(readPreference()).toBe('dark');
+    });
+  });
+
+  describe('subscribeToPreference', () => {
+    it('hears writes made elsewhere on the page', () => {
+      const onChange = vi.fn();
+      const unsubscribe = subscribeToPreference(onChange);
+      writePreference('dark');
+      expect(onChange).toHaveBeenLastCalledWith('dark');
+      unsubscribe();
+      writePreference('light');
+      expect(onChange).toHaveBeenCalledTimes(1);
+    });
+
+    it('hears writes made in another tab', () => {
+      const onChange = vi.fn();
+      const unsubscribe = subscribeToPreference(onChange);
+      localStorage.setItem(STORAGE_KEY, 'light');
+      window.dispatchEvent(
+        new StorageEvent('storage', { key: STORAGE_KEY, newValue: 'light' })
+      );
+      expect(onChange).toHaveBeenLastCalledWith('light');
+      unsubscribe();
+    });
+
+    it('ignores other storage keys', () => {
+      const onChange = vi.fn();
+      const unsubscribe = subscribeToPreference(onChange);
+      window.dispatchEvent(new StorageEvent('storage', { key: 'unrelated' }));
+      expect(onChange).not.toHaveBeenCalled();
+      unsubscribe();
     });
   });
 

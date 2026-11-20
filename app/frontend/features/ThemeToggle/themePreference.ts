@@ -29,8 +29,38 @@ export const readPreference = (): ThemePreference => {
   return isThemePreference(stored) ? stored : DEFAULT_PREFERENCE;
 };
 
+// The browser's `storage` event only fires in *other* tabs, so same-page
+// listeners (e.g. the navbar control while the account page has its own) are
+// told through this event instead.
+const PREFERENCE_CHANGE_EVENT = 'theme-preference-change';
+
 export const writePreference = (preference: ThemePreference): void => {
   localStorage.setItem(STORAGE_KEY, preference);
+  window.dispatchEvent(
+    new CustomEvent<ThemePreference>(PREFERENCE_CHANGE_EVENT, {
+      detail: preference,
+    })
+  );
+};
+
+/**
+ * Calls `onChange` when the preference is written on this page or in another
+ * tab. Returns an unsubscribe.
+ */
+export const subscribeToPreference = (
+  onChange: (preference: ThemePreference) => void
+): (() => void) => {
+  const onPageChange = (event: Event) =>
+    onChange((event as CustomEvent<ThemePreference>).detail);
+  const onOtherTabChange = (event: StorageEvent) => {
+    if (event.key === STORAGE_KEY) onChange(readPreference());
+  };
+  window.addEventListener(PREFERENCE_CHANGE_EVENT, onPageChange);
+  window.addEventListener('storage', onOtherTabChange);
+  return () => {
+    window.removeEventListener(PREFERENCE_CHANGE_EVENT, onPageChange);
+    window.removeEventListener('storage', onOtherTabChange);
+  };
 };
 
 // window.matchMedia is optional-chained because jsdom (and some embedded
