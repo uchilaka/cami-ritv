@@ -5,12 +5,13 @@ require 'open3'
 
 # Contracts that keep a test run from inheriting a development-shaped environment.
 #
-# These guard three regressions that have each actually happened on this branch, and that
+# These guard four regressions that have each actually happened on this branch, and that
 # ordinary unit tests cannot catch because they live in config files rather than code:
 #
 #   1. config/database.yml defaulting the TEST database to a development name
-#   2. .envrc validating RUBY_ENV only AFTER interpolating it into env file paths
-#   3. a dotenv file clobbering the git-derived PROJECT_ROOT, so a worktree reads the
+#   2. the RubyMine RSpec template losing RAILS_ENV=test, or pinning one worktree's name
+#   3. .envrc validating RUBY_ENV only AFTER interpolating it into env file paths
+#   4. a dotenv file clobbering the git-derived PROJECT_ROOT, so a worktree reads the
 #      main checkout's configuration (LAR-358)
 RSpec.describe 'environment isolation' do
   describe 'config/database.yml' do
