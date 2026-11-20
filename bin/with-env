@@ -33,8 +33,11 @@ project_root="$(git rev-parse --show-toplevel)"
 # git-crypt leaves locked files starting with "\0GITCRYPT". We cannot read the variable
 # names out of one, so isolation degrades to whatever the shell already had. Warn loudly
 # rather than failing: a locked clone should still be able to run things.
+#
+# Compare with the NUL stripped: bash strings cannot hold a NUL, so $'\0GITCRYPT' is ""
+# and a command substitution drops the byte too -- the obvious `==` never matches.
 locked() {
-  [[ -f "$1" ]] && [[ "$(head -c 9 "$1")" == $'\0GITCRYPT' ]]
+  [[ -f "$1" ]] && [[ "$(head -c 9 "$1" | LC_ALL=C tr -d '\000')" == GITCRYPT ]]
 }
 
 declared_in() {
@@ -62,7 +65,9 @@ if (( degraded )); then
 fi
 
 # RUBY_ENV itself must survive -- it is the selector, and .envrc/this script need it.
-exec env "${unset_args[@]}" \
+# The ${arr[@]+...} form keeps an empty list legal under `set -u` before bash 4.4
+# (macOS /bin/bash), when no env file declared anything.
+exec env ${unset_args[@]+"${unset_args[@]}"} \
   RUBY_ENV="$target_env" \
   RAILS_ENV="$target_env" \
   "$@"
