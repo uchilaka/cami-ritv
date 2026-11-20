@@ -109,6 +109,75 @@ RSpec.describe 'environment isolation' do
         expect(output).to include('RUBY_ENV is not set')
       end
     end
+
+    # [LAR-357] A machine-local key outside every checkout only works if a shell export of
+    # GITCRYPT_KEY_FILE survives .envrc. The dotenv files are sourced under `set -a`
+    # BEFORE .envrc applies its `:-` default, so an assignment in any of them silently
+    # replaces the export -- and with it GITCRYPT_KEY_BASE64, which compose requires.
+    describe 'GITCRYPT_KEY_FILE' do
+      # Untracked files are the developer's own business; if one of them pins the key
+      # path, the export is overridden on purpose and there is nothing to assert here.
+      # Every .local file, not just the test ones: .env.local may set RUBY_ENV, which
+      # routes .envrc to a different .env.<env>.local than the one this spec asks for.
+      let(:local_dotenv_defines_key_file) do
+        Rails.root.glob('.env*.local').any? do |path|
+          path.read.match?(%r{^\s*(export\s+)?GITCRYPT_KEY_FILE=})
+        end
+      end
+
+      # Placeholders for the two guards .envrc enforces after the dotenv files load; a
+      # value from .env.local wins over these, which is fine -- only the key path matters.
+      let(:base_env) do
+        {
+          'RUBY_ENV' => 'test',
+          'CONTAINER_REGISTRY_HOST' => 'registry.invalid',
+          'CONTAINER_NAME_PREFIX' => 'spec',
+          'GITCRYPT_KEY_BASE64' => nil,
+        }
+      end
+
+      def source_envrc(env, print:)
+        Open3.capture2e(
+          env, 'bash', '-c', %(source .envrc >/dev/null 2>&1 || exit 1; printf '%s' "$#{print}"),
+          chdir: Rails.root.to_s
+        )
+      end
+
+      before do
+        skip 'a local dotenv file pins GITCRYPT_KEY_FILE' if local_dotenv_defines_key_file
+      end
+
+      it 'keeps an absolute path exported by the shell' do
+        Dir.mktmpdir do |dir|
+          key_file = File.join(dir, 'machine-local.key')
+          output, status = source_envrc(base_env.merge('GITCRYPT_KEY_FILE' => key_file), print: 'GITCRYPT_KEY_FILE')
+
+          expect([status.success?, output]).to eq([true, key_file])
+        end
+      end
+
+      # The compose stack fails hard without GITCRYPT_KEY_BASE64, so prove the derived
+      # value follows the exported path too. The key written here is a dummy -- but if the
+      # override regresses, .envrc encodes the REAL key, so compare digests: a failure diff
+      # must never be able to print key material into a terminal or CI log.
+      it 'derives GITCRYPT_KEY_BASE64 from the exported key file' do
+        Dir.mktmpdir do |dir|
+          key_file = File.join(dir, 'machine-local.key')
+          File.binwrite(key_file, 'not-a-real-git-crypt-key')
+          output, status = source_envrc(base_env.merge('GITCRYPT_KEY_FILE' => key_file), print: 'GITCRYPT_KEY_BASE64')
+          derived_digest = Digest::SHA256.hexdigest(Base64.decode64(output))
+
+          expect([status.success?, derived_digest])
+            .to eq([true, Digest::SHA256.hexdigest('not-a-real-git-crypt-key')])
+        end
+      end
+
+      it 'falls back to the repo-relative key when nothing is exported' do
+        output, status = source_envrc(base_env.merge('GITCRYPT_KEY_FILE' => nil), print: 'GITCRYPT_KEY_FILE')
+
+        expect([status.success?, output]).to eq([true, 'config/credentials/git-crypt.key'])
+      end
+    end
   end
 
   # R1 the selector (RUBY_ENV) is set by the shell, never by a file it selects.
@@ -172,6 +241,27 @@ RSpec.describe 'environment isolation' do
         # of them are present, so it would pass with two of the three sitting there.
         it "declares none of #{forbidden.join(', ')}" do
           expect(declared_variables(path) & forbidden).to be_empty
+        end
+      end
+    end
+
+    # [LAR-357] The key path is machine-specific, and these files are sourced before .envrc
+    # applies its default, so a value here overrides the developer's shell export. .envrc
+    # owns the repo-relative fallback. The .example files are copied to .local files, which
+    # are sourced the same way, so they may only mention the variable in a comment. A
+    # tracked value is also a hazard on its own: .envrc base64-encodes whatever file it
+    # names into a variable handed to compose and Docker build args.
+    tracked_dotenv_files =
+      Dir.glob(Rails.root.join('.env*')).reject { |f| f.end_with?('.envrc', '.local') }.sort
+
+    tracked_dotenv_files.each do |file|
+      context "#{File.basename(file)} (git-crypt key path)" do
+        let(:path) { Pathname.new(file) }
+
+        before { skip "#{File.basename(file)} is git-crypt locked" if locked?(path) }
+
+        it 'leaves GITCRYPT_KEY_FILE to the shell and .envrc' do
+          expect(declared_variables(path)).not_to include('GITCRYPT_KEY_FILE')
         end
       end
     end

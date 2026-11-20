@@ -150,8 +150,10 @@ class EnvSetupCmd < Thor::Group
           export RUBY_ENV=#{detected_environment}
         SHARED_HEADER
 
+        # No GITCRYPT_KEY_FILE here (LAR-357): this lands in .env.<env>.local, which .envrc
+        # sources before applying its default, so it would override a machine-local key
+        # path exported from the developer's shell.
         file_header = <<~HEADER
-          export GITCRYPT_KEY_FILE="config/credentials/git-crypt.key"
           export PORT=16006
 
           # Was 1 for local debugging

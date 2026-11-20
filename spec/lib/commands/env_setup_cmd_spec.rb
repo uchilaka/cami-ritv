@@ -111,7 +111,13 @@ RSpec.describe EnvSetupCmd, type: :thor do
       it 'builds a default template' do
         expect(content).to include('export NODE_ENV=lab')
         expect(content).to include('export RUBY_ENV=lab')
-        expect(content).to include('export GITCRYPT_KEY_FILE')
+      end
+
+      # [LAR-357] The output is a .env.<env>.local file, which .envrc sources before applying
+      # its GITCRYPT_KEY_FILE default -- so an assignment here would override a machine-local
+      # key path exported from the shell.
+      it 'leaves GITCRYPT_KEY_FILE to the shell and .envrc' do
+        expect(content).not_to match(%r{^[ \t]*(?:export[ \t]+)?GITCRYPT_KEY_FILE=})
       end
     end
   end

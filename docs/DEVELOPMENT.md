@@ -195,9 +195,9 @@ bin/worktree-init pr-245-phase2 pr-245-phase2/docker-consistency
 export GITCRYPT_KEY_FILE="$HOME/.config/git-crypt/cami-ritv.key" # chmod 600
 ```
 
-One canonical key would then serve the main checkout and every worktree, it could not be committed or removed by `git clean -xfd`, and `yarn keys:unlock` would start working inside worktrees too.
+One canonical key then serves the main checkout and every worktree, it cannot be committed or removed by `git clean -xfd`, and `yarn keys:unlock` works inside worktrees too. `.envrc` resolves absolute and `~/`-prefixed paths, and derives `GITCRYPT_KEY_BASE64` from whichever key the path names.
 
-> ⚠️ **This does not currently take effect** ([LAR-357](https://linear.app/larcity-and-affiliates/issue/LAR-357)). `.env:1` sets `export GITCRYPT_KEY_FILE="config/credentials/git-crypt.key"`, and `.envrc` sources the `.env` files with `set -a` *after* applying its own default — so the tracked value clobbers any shell export. To adopt a machine-local key, that line has to come out of `.env` first, which is a team decision since `.env` is tracked and shared. `.envrc` itself now handles absolute and `~/`-prefixed paths correctly, so it is ready for that change.
+Set it in your shell, not in a dotenv file. `.envrc` sources every `.env*` file with `set -a` before applying its own default, so an assignment in any of them overrides your export ([LAR-357](https://linear.app/larcity-and-affiliates/issue/LAR-357)). The tracked `.env` and `.env.example` deliberately leave it unset, and `spec/environment_isolation_spec.rb` enforces that.
 
 ### ⚠️ `PROJECT_ROOT` is wrong inside worktrees ([LAR-358](https://linear.app/larcity-and-affiliates/issue/LAR-358))
 
