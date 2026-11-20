@@ -48,6 +48,29 @@ module LarCity
     module InstanceMethods
       protected
 
+      # Binds ActiveRecord::Base to +target+ for the duration of the block, then
+      # restores whatever it was bound to before.
+      #
+      # Rails' `db:*` tasks — and the data_migrate gem's `data:migrate`, which has
+      # no target of its own — all operate on whatever database ActiveRecord::Base
+      # happens to be bound to. `db:create:*` is the trap: it binds the process to
+      # the postgres maintenance database to issue CREATE DATABASE and only rebinds
+      # to the target afterwards. When the database already exists the CREATE raises
+      # DatabaseAlreadyExists, Rails swallows it *before* that rebind, and every
+      # task invoked later in the same process inherits the maintenance binding.
+      # See LAR-335.
+      def with_database(target: :primary)
+        original_db_config = ActiveRecord::Base.connection_db_config
+        db_config =
+          ActiveRecord::Base.configurations.configs_for(env_name: Rails.env, name: target.to_s)
+        raise ArgumentError, "No #{Rails.env} database configured for target: #{target}" if db_config.nil?
+
+        ActiveRecord::Base.establish_connection(db_config)
+        yield
+      ensure
+        ActiveRecord::Base.establish_connection(original_db_config) if original_db_config
+      end
+
       def wait_for_db(target: :primary, max_attempts: 30, delay: 2)
         if pretend?
           say_warning 'Pretend mode enabled - skipping database connection check.'
