@@ -2,7 +2,7 @@
 
 ## System Requirements
 
-- Ruby: `3.4.4`
+- Ruby: `3.4.13`
 - Mise: [mise.dev](https://mise.jdx.dev/getting-started.html)
 - Brew (only for macOS/Linux users): <https://brew.sh/>
 - Yarn v4+: [yarnpkg.com](https://yarnpkg.com/)

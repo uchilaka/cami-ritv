@@ -13,7 +13,7 @@ Review and merge the outstanding Dependabot PRs.
 - Rebase `main` and execute a clean `bundle update` and `yarn upgrade` to ensure `Gemfile.lock` and `yarn.lock` are fully synced with the latest acceptable versions.
 
 ## 3. Verify Toolchain Versions
-- Check `.tool-versions` or `mise.toml` to ensure the project uses the latest stable Ruby (e.g. Ruby 3.4.4) and Node versions matching production/Render capabilities.
+- Check `.tool-versions` or `mise.toml` to ensure the project uses the latest stable Ruby (e.g. Ruby 3.4.13) and Node versions matching production/Render capabilities.
 - Run `bin/thor entrypoint:setup` to ensure the local CLI toolchain is refreshed.
 
 ## 4. Run the Linter and Test Suite

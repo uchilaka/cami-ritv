@@ -1,5 +1,5 @@
 # syntax = docker/dockerfile:1.2
-FROM ruby:3.4.4 AS base
+FROM ruby:3.4.13 AS base
 # Install git-crypt and other dependencies
 RUN apt-get update -qq && \
   apt-get install -y --no-install-recommends \

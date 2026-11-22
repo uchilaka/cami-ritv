@@ -15,7 +15,7 @@ NODE_ENV          = { required = true }
 COMPOSE_PROFILE   = { required = true }
 
 [tools]
-ruby = "3.4.4"
+ruby = "3.4.13"
 
 [tasks."check:images"]
 description   = "Check docker hub images used by the flagship service and its dependencies"
