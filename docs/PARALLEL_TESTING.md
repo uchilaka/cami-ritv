@@ -17,7 +17,7 @@ This document outlines the steps required to re-enable parallel testing using Kn
   strategy:
     fail-fast: false
     matrix:
-      ruby-version: [3.4.4]
+      ruby-version: ['3.4']
       node-version: [22.x]
       ci_node_total: [2] # Set to desired number of parallel nodes
       ci_node_index: [0, 1] # Must match the total nodes (0 to total-1)
